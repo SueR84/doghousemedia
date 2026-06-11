@@ -1,0 +1,57 @@
+:root {
+  /* ── Easing ── */
+  --ease-rise:   cubic-bezier(.2, .7, .2, 1); /* @kind other */
+  --ease-snap:   cubic-bezier(.3, 1.5, .5, 1); /* @kind other */
+  --ease-out:    cubic-bezier(.2, .7, .2, 1); /* @kind other */
+  --ease-linear: linear; /* @kind other */
+
+  /* ── Duration ── */
+  --duration-fast:    0.18s; /* @kind other */
+  --duration-mid:     0.25s; /* @kind other */
+  --duration-slow:    0.8s; /* @kind other */
+  --duration-marquee: 34s; /* @kind other */
+}
+
+/* ── Keyframes ── */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(26px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes drift {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@keyframes pulse {
+  0%,  100% { transform: scale(1);    opacity: .9; }
+  50%       { transform: scale(1.06); opacity: 1; }
+}
+
+@keyframes earwag {
+  0%,  40%, 100% { transform: rotate(0deg); }
+  10%            { transform: rotate(-10deg); }
+  20%            { transform: rotate(-3deg); }
+  30%            { transform: rotate(-8deg); }
+}
+
+@keyframes punch {
+  0%, 72%, 100% { transform: translateY(0)    scale(1); }
+  80%           { transform: translateY(-14px) scale(1.08); }
+  88%           { transform: translateY(3px)   scale(.99); }
+  94%           { transform: translateY(0)     scale(1); }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration:   0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration:  0.01ms !important;
+  }
+}

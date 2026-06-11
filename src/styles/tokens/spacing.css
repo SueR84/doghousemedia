@@ -1,0 +1,37 @@
+:root {
+  /* ── Spacing scale (4px base) ── */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* ── Border radius ── */
+  --radius-sm:   6px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   16px;
+  --radius-2xl:  24px;
+  --radius-full: 9999px;
+
+  /* ── Border width ── */
+  --border:       1px solid var(--color-border);
+  --border-thick: 1.5px solid var(--color-ink);
+
+  /* ── Shadows ── */
+  --shadow-card:  0 1px 3px rgba(15,20,23,.06), 0 4px 12px rgba(15,20,23,.06);
+  --shadow-hover: 0 18px 40px rgba(15,20,23,.1);
+  --shadow-focus: 0 0 0 3px rgba(115,149,161,.18);
+
+  /* ── Layout ── */
+  --max-w-content: 1200px;
+  --max-w-text:    68ch;
+  --nav-height:    76px;
+}

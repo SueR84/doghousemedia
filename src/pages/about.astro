@@ -1,0 +1,263 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+
+const team = [
+  {
+    name: "Emma Walkin",
+    role: "Director",
+    bio: "Leads media production and oversees overall studio operations.",
+  },
+  {
+    name: "Alan Higgison",
+    role: "Creative Lead",
+    bio: "Creative director on the media production side, with a sharp eye for what makes film work.",
+  },
+  {
+    name: "Susan Ryan",
+    role: "Operations Director",
+    bio: "Over 20 years of IT experience across Ireland and the UK — programming, consultancy, and project management.",
+  },
+];
+---
+
+<Layout title="About Us — Doghouse Media">
+  <Nav />
+
+  <main>
+    <!-- Page header -->
+    <section class="about-hero">
+      <div class="wrap">
+        <div class="eyebrow">About</div>
+        <h1>A small Dublin team with a big passion for craft.</h1>
+        <p class="about-lead">
+          We've been helping good brands get noticed since 2013. Two disciplines
+          under one roof — web and video — so nothing gets lost in translation.
+        </p>
+      </div>
+    </section>
+
+    <!-- How we work -->
+    <section class="about-section reveal">
+      <div class="wrap about-grid">
+        <div>
+          <span class="kicker">How we work</span>
+          <h2>Built on trust and honest delivery.</h2>
+          <p>
+            We start every project with a proper conversation — getting to know
+            your objectives, your audience, and what success looks like for you.
+            From there, we keep you in the loop at every stage, so there are no
+            surprises at the end.
+          </p>
+          <p>
+            Whether it's a custom website you can manage yourself or a marketing
+            video that stops the scroll, the goal is the same: work that makes
+            you stand out and holds up long after launch.
+          </p>
+        </div>
+        <div class="about-aside">
+          <div class="about-stat">
+            <span class="stat-num">2013</span>
+            <span class="stat-label">Founded</span>
+          </div>
+          <div class="about-stat">
+            <span class="stat-num">2</span>
+            <span class="stat-label">Crafts, one roof</span>
+          </div>
+          <div class="about-stat">
+            <span class="stat-num">Dublin</span>
+            <span class="stat-label">Based in Ireland</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Team -->
+    <section class="about-team reveal">
+      <div class="wrap">
+        <span class="kicker">The team</span>
+        <div class="team-grid">
+          {
+            team.map((member) => (
+              <div class="team-card">
+                <div class="team-avatar" aria-hidden="true" />
+                <h3>{member.name}</h3>
+                <span class="team-role">{member.role}</span>
+                <p>{member.bio}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="wrap cta-wrap">
+      <div class="cta reveal">
+        <div class="cta-inner">
+          <h2>Like what you see? <span class="red">Let's talk.</span></h2>
+          <p>Tell us your idea and we'll tell you straight whether we're the right studio for it.</p>
+          <a href="mailto:susan@doghousemedia.ie" class="btn btn-cream">Get in touch</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .about-hero {
+    padding: 80px 0 64px;
+  }
+  .about-hero h1 {
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: clamp(36px, 5vw, 64px);
+    letter-spacing: -0.04em;
+    line-height: 1.02;
+    max-width: 16ch;
+    margin: 12px 0 24px;
+  }
+  .about-lead {
+    font-size: clamp(17px, 1.8vw, 20px);
+    max-width: 52ch;
+    opacity: 0.75;
+    line-height: 1.55;
+  }
+
+  .about-section {
+    padding: 64px 0;
+    border-top: 1px solid var(--line);
+  }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 80px;
+    align-items: start;
+  }
+  .about-grid h2 {
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: clamp(24px, 2.8vw, 34px);
+    letter-spacing: -0.035em;
+    line-height: 1.1;
+    margin: 10px 0 20px;
+  }
+  .about-grid p {
+    font-size: 16px;
+    line-height: 1.65;
+    opacity: 0.8;
+    margin-bottom: 16px;
+  }
+
+  .about-aside {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    padding-top: 42px;
+  }
+  .about-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .stat-num {
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: 32px;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gray);
+  }
+
+  .about-team {
+    padding: 64px 0 80px;
+    border-top: 1px solid var(--line);
+  }
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    margin-top: 32px;
+  }
+  .team-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .team-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--steel-tint);
+    margin-bottom: 10px;
+  }
+  .team-card h3 {
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: -0.02em;
+  }
+  .team-role {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 8px;
+  }
+  .team-card p {
+    font-size: 15px;
+    line-height: 1.6;
+    opacity: 0.72;
+  }
+
+  @media (max-width: 760px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    .about-aside {
+      flex-direction: row;
+      flex-wrap: wrap;
+      padding-top: 0;
+    }
+    .team-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    const els = document.querySelectorAll<HTMLElement>(".reveal");
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+      return;
+    els.forEach((el) => el.classList.add("armed"));
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add("in");
+            io.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -6% 0px" }
+    );
+    els.forEach((el) => io.observe(el));
+    setTimeout(() => {
+      els.forEach((el) => {
+        if (!el.classList.contains("in")) el.classList.add("in");
+      });
+    }, 1200);
+  })();
+</script>

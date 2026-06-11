@@ -1,0 +1,202 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Nav from "../components/Nav.astro";
+import Mark from "../components/Mark.astro";
+import Footer from "../components/Footer.astro";
+
+const clients = [
+  "Boston Scientific",
+  "Amgen",
+  "UCD",
+  "Irish Research Council",
+  "Coroflo",
+  "Real Nation",
+];
+
+const cases = [
+  {
+    grad: "linear-gradient(135deg,#7a3138,#BD1C30)",
+    tagColor: "var(--red)",
+    tag: "Web · E-commerce",
+    title: "Merrion Medical Aesthetics",
+    body: "Booking platform and e-commerce build for a Dublin skincare clinic.",
+    delay: ".08s",
+  },
+  {
+    grad: "linear-gradient(135deg,#3a8294,#15282E)",
+    tagColor: "var(--teal)",
+    tag: "Video · Live event",
+    title: "Lifestyle Sports",
+    body: "An all-female crew capturing their International Women's Day event.",
+    delay: ".18s",
+  },
+  {
+    grad: "linear-gradient(135deg,#7a3138,#BD1C30)",
+    tagColor: "var(--red)",
+    tag: "Video · Brand film",
+    title: "Boston Scientific",
+    body: "Corporate brand film for a global MedTech leader.",
+    delay: ".28s",
+  },
+  {
+    grad: "linear-gradient(135deg,#3a8294,#15282E)",
+    tagColor: "var(--teal)",
+    tag: "Web · WordPress",
+    title: "Irish Research Council",
+    body: "Accessible, grant-discoverable website for a government research body.",
+    delay: ".38s",
+  },
+];
+---
+
+<Layout>
+  <Nav />
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="wrap">
+      <div class="eyebrow">Web + Video · Dublin</div>
+      <h1>
+        <span class="w" style="animation-delay:.2s">We build </span><span
+          class="w"
+          style="animation-delay:.3s"><span class="punch blue">websites</span></span
+        ><span class="w" style="animation-delay:.4s"> and shoot </span><span
+          class="w"
+          style="animation-delay:.5s"><span class="punch punch-2 red">film</span></span
+        ><span class="w" style="animation-delay:.6s"> that get good brands noticed.</span>
+      </h1>
+      <p class="hero-sub">
+        An independent, female-owned studio. Two crafts, one roof — from MedTech to
+        charity to the brands you'd recognise.
+      </p>
+      <div class="hero-actions">
+        <a href="#work" class="btn btn-primary">See the work</a>
+        <a href="#contact" class="btn btn-ghost">Talk to us</a>
+      </div>
+    </div>
+    <Mark animated={true} class="hero-mark" />
+  </header>
+
+  <!-- Trust ticker -->
+  <section class="trust">
+    <div class="wrap">
+      <div class="trust-label">Trusted by</div>
+      <div class="marquee">
+        <div class="marquee-track">
+          {
+            [0, 1].map(() => (
+              <div class="marquee-item">
+                {clients.map((c) => (
+                  <>
+                    <span>{c}</span>
+                    <i class="dot" />
+                  </>
+                ))}
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services / rooms -->
+  <section class="rooms" id="services">
+    <div class="wrap">
+      <div class="kicker">What we do</div>
+
+      <div class="room flip room-band reveal" id="video">
+        <div class="room-text">
+          <span class="room-tag">Video · Production</span>
+          <h3>Film that earns attention</h3>
+          <p class="room-body">
+            From strategy to final grade. Brand films, event coverage, and the short,
+            sharp promos that stop the scroll. Full crew or a nimble two-person unit,
+            whatever the job needs.
+          </p>
+          <a href="#" class="room-link">Explore video →</a>
+        </div>
+        <div class="room-visual video"></div>
+      </div>
+
+      <div class="room reveal" id="web">
+        <div class="room-text">
+          <span class="room-tag blue">Web · Development</span>
+          <h3>Sites built to last, and to be found</h3>
+          <p class="room-body">
+            Considered, fast, accessible websites on WordPress or modern static builds.
+            Plus the care plans that keep them secure, quick and climbing the rankings
+            long after launch.
+          </p>
+          <a href="#" class="room-link">Explore web →</a>
+        </div>
+        <div class="room-visual" style="color:var(--gray)">Web mockup</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Work grid -->
+  <section class="work" id="work">
+    <div class="wrap">
+      <div class="work-head reveal">
+        <h2>A few we're proud of</h2>
+        <a href="#">All work →</a>
+      </div>
+      <div class="work-grid">
+        {
+          cases.map((c) => (
+            <a href="#" class="case reveal" style={`transition-delay:${c.delay}`}>
+              <div class="case-img" style={`background:${c.grad}`} />
+              <div class="case-body">
+                <span class="case-tag" style={`color:${c.tagColor}`}>
+                  {c.tag}
+                </span>
+                <h4>{c.title}</h4>
+                <p>{c.body}</p>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA band -->
+  <section class="wrap cta-wrap" id="about">
+    <div class="cta reveal">
+      <div class="cta-inner">
+        <h2>Got something you want to <span class="red">get off the ground?</span></h2>
+        <p>Tell us the idea. We'll tell you straight whether we're the right studio for it.</p>
+        <a href="mailto:susan@doghousemedia.ie" class="btn btn-cream">Start a project</a>
+      </div>
+    </div>
+  </section>
+
+  <Footer />
+</Layout>
+
+<script>
+  (function () {
+    const els = document.querySelectorAll<HTMLElement>(".reveal");
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+      return;
+    els.forEach((el) => el.classList.add("armed"));
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add("in");
+            io.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -6% 0px" }
+    );
+    els.forEach((el) => io.observe(el));
+    setTimeout(() => {
+      els.forEach((el) => {
+        if (!el.classList.contains("in")) el.classList.add("in");
+      });
+    }, 1200);
+  })();
+</script>

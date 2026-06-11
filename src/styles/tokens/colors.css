@@ -1,0 +1,35 @@
+:root {
+  /* ── Base palette ── */
+  --color-ink:        #0F1417;
+  --color-cream:      #FAF7F0;
+  --color-red:        #BD1C30;
+  --color-teal:       #2C6E7F;
+  --color-steel:      #7395a1;
+  --color-deep-teal:  #15282E;
+  --color-line:       #E5E1D8;
+  --color-gray:       #9b9890;
+  --color-steel-tint: #EAF1F4;
+  --color-red-tint:   #FDEAED;
+  --color-teal-light: #8FC4D2;
+
+  /* ── Semantic roles ── */
+  --color-bg:           var(--color-cream);
+  --color-surface:      #ffffff;
+  --color-text:         var(--color-ink);
+  --color-text-muted:   var(--color-gray);
+  --color-border:       var(--color-line);
+
+  --color-accent-film:    var(--color-red);
+  --color-accent-web:     var(--color-teal);
+  --color-accent-support: var(--color-steel);
+
+  --color-focus-ring:   var(--color-steel);
+  --color-focus-bg:     rgba(115, 149, 161, 0.18);
+
+  /* ── Dark surface ── */
+  --color-dark-bg:      var(--color-ink);
+  --color-dark-text:    var(--color-cream);
+  --color-film-bg:      var(--color-deep-teal);
+  --color-film-text:    var(--color-cream);
+  --color-film-accent:  var(--color-teal-light);
+}

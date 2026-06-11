@@ -1,0 +1,23 @@
+---
+import Mark from "./Mark.astro";
+
+const links = [
+  { label: "Work", href: "#work" },
+  { label: "Video", href: "#video" },
+  { label: "Web", href: "#web" },
+  { label: "Studio", href: "#about" },
+];
+---
+
+<nav>
+  <div class="wrap nav-inner">
+    <a href="#" class="logo-lockup">
+      <Mark size={38} />
+      <span class="logo-word">Doghouse Media</span>
+    </a>
+    <div class="nav-links">
+      {links.map((l) => <a href={l.href}>{l.label}</a>)}
+      <a href="mailto:susan@doghousemedia.ie" class="nav-cta">Start a project</a>
+    </div>
+  </div>
+</nav>
