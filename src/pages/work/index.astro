@@ -1,0 +1,266 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import Nav from "../../components/Nav.astro";
+import Footer from "../../components/Footer.astro";
+
+const allProjects = await getCollection("projects", ({ data }) => data.status === "publish");
+
+// Sort: projects with images first, then alphabetically by title
+allProjects.sort((a, b) => {
+  const aHasImg = a.data.projectImage ? 1 : 0;
+  const bHasImg = b.data.projectImage ? 1 : 0;
+  if (bHasImg !== aHasImg) return bHasImg - aHasImg;
+  return a.data.title.localeCompare(b.data.title);
+});
+
+const allTypes = [...new Set(allProjects.flatMap((p) => p.data.projectType))].sort();
+---
+
+<Layout
+  title="Work — Doghouse Media"
+  description="Web and video projects from Doghouse Media — an independent Dublin studio."
+>
+  <Nav />
+
+  <main>
+    <section class="work-hero">
+      <div class="wrap">
+        <div class="eyebrow">Portfolio</div>
+        <h1>Work we're proud of.</h1>
+      </div>
+    </section>
+
+    <section class="work-listing">
+      <div class="wrap">
+        <!-- Filter tabs -->
+        <div class="filter-bar" id="filters">
+          <button class="filter-btn active" data-filter="all">All</button>
+          {allTypes.map((t) => (
+            <button class="filter-btn" data-filter={t}>{t}</button>
+          ))}
+        </div>
+
+        <div class="project-grid" id="project-grid">
+          {
+            allProjects.map((proj) => (
+              <a
+                href={`/work/${proj.id}/`}
+                class="project-card"
+                data-types={proj.data.projectType.join(",")}
+              >
+                <div class="project-img">
+                  {proj.data.projectImage ? (
+                    <img
+                      src={proj.data.projectImage}
+                      alt={proj.data.title}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : (
+                    <div
+                      class={`project-img-placeholder ${proj.data.craft}`}
+                      aria-hidden="true"
+                    />
+                  )}
+                </div>
+                <div class="project-info">
+                  <div class="project-types">
+                    {proj.data.projectType.map((t) => (
+                      <span class={`type-pill ${t === "Video Production" ? "red" : "teal"}`}>
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                  <h3>{proj.data.title}</h3>
+                  <p class="project-client">{proj.data.client}</p>
+                  {proj.data.shortDescription && (
+                    <p class="project-desc">{proj.data.shortDescription}</p>
+                  )}
+                </div>
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .work-hero {
+    padding: 80px 0 48px;
+  }
+  .work-hero h1 {
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: clamp(40px, 5.5vw, 72px);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin-top: 12px;
+  }
+
+  .work-listing {
+    padding-bottom: 100px;
+  }
+
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 48px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+  }
+  .filter-btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 7px 16px;
+    border: 1.5px solid var(--line);
+    border-radius: 99px;
+    background: transparent;
+    color: var(--gray);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .filter-btn:hover,
+  .filter-btn.active {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--cream);
+  }
+
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px 32px;
+  }
+
+  .project-card {
+    text-decoration: none;
+    color: var(--ink);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .project-card:hover .project-img img,
+  .project-card:hover .project-img-placeholder {
+    transform: scale(1.03);
+  }
+
+  .project-img {
+    aspect-ratio: 4/3;
+    overflow: hidden;
+    border-radius: 8px;
+    background: var(--steel-tint);
+    margin-bottom: 16px;
+  }
+  .project-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s var(--ease-rise);
+    display: block;
+  }
+  .project-img-placeholder {
+    width: 100%;
+    height: 100%;
+    transition: transform 0.4s var(--ease-rise);
+  }
+  .project-img-placeholder.web {
+    background: linear-gradient(135deg, #3a8294, #15282e);
+  }
+  .project-img-placeholder.video {
+    background: linear-gradient(135deg, #7a3138, #bd1c30);
+  }
+  .project-img-placeholder.both {
+    background: linear-gradient(135deg, #3a8294, #7a3138);
+  }
+
+  .project-types {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 8px;
+  }
+  .type-pill {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 99px;
+  }
+  .type-pill.red {
+    background: var(--color-red-tint);
+    color: var(--red);
+  }
+  .type-pill.teal {
+    background: var(--steel-tint);
+    color: var(--teal);
+  }
+
+  .project-info h3 {
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+  .project-client {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 6px;
+  }
+  .project-desc {
+    font-size: 14px;
+    line-height: 1.5;
+    opacity: 0.65;
+  }
+
+  .project-card.hidden {
+    display: none;
+  }
+
+  @media (max-width: 900px) {
+    .project-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 560px) {
+    .project-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>(".filter-btn");
+  const cards = document.querySelectorAll<HTMLAnchorElement>(".project-card");
+
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      buttons.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      const filter = btn.dataset.filter!;
+      cards.forEach((card) => {
+        const types = (card.dataset.types || "").split(",");
+        if (filter === "all" || types.includes(filter)) {
+          card.classList.remove("hidden");
+        } else {
+          card.classList.add("hidden");
+        }
+      });
+    });
+  });
+</script>

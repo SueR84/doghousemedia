@@ -1,0 +1,319 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import Nav from "../../components/Nav.astro";
+import Footer from "../../components/Footer.astro";
+
+export async function getStaticPaths() {
+  const projects = await getCollection("projects");
+  return projects.map((proj) => ({ params: { slug: proj.id } }));
+}
+
+const { slug } = Astro.params;
+const allProjects = await getCollection("projects");
+const proj = allProjects.find((p) => p.id === slug);
+if (!proj) return Astro.redirect("/work/");
+
+const { Content } = await render(proj);
+const { data } = proj;
+
+const isDraft = data.status === "draft";
+---
+
+<Layout
+  title={`${data.title} — Doghouse Media`}
+  description={data.shortDescription || `${data.title} — a Doghouse Media project.`}
+>
+  <Nav />
+
+  <main>
+    {isDraft && (
+      <div class="draft-banner">
+        <div class="wrap">Draft — not published</div>
+      </div>
+    )}
+
+    <!-- Project hero image -->
+    {data.projectImage ? (
+      <div class="proj-hero-img">
+        <img src={data.projectImage} alt={data.title} />
+      </div>
+    ) : (
+      <div class={`proj-hero-placeholder ${data.craft}`} aria-hidden="true" />
+    )}
+
+    <div class="wrap proj-wrap">
+      <!-- Sidebar meta -->
+      <aside class="proj-meta">
+        <div class="proj-types">
+          {data.projectType.map((t) => (
+            <span class={`type-pill ${t === "Video Production" ? "red" : "teal"}`}>{t}</span>
+          ))}
+        </div>
+
+        {data.client && (
+          <div class="meta-block">
+            <span class="meta-label">Client</span>
+            <span class="meta-val">{data.client}</span>
+          </div>
+        )}
+        {data.service && (
+          <div class="meta-block">
+            <span class="meta-label">Services</span>
+            <span class="meta-val">{data.service}</span>
+          </div>
+        )}
+        {data.websiteLink && (
+          <a
+            href={data.websiteLink}
+            class="btn btn-primary meta-link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Visit site →
+          </a>
+        )}
+
+        <a href="/work/" class="back-link">← All work</a>
+      </aside>
+
+      <!-- Main content -->
+      <article class="proj-content">
+        <h1>{data.title}</h1>
+        {data.shortDescription && (
+          <p class="proj-lead">{data.shortDescription}</p>
+        )}
+
+        <div class="proj-body">
+          <Content />
+        </div>
+
+        <!-- Video embed -->
+        {data.projectVideo && (
+          <div class="proj-video">
+            <div class="video-wrap">
+              <iframe
+                src={data.projectVideo.replace("vimeo.com/", "player.vimeo.com/video/")}
+                allow="autoplay; fullscreen; picture-in-picture"
+                allowfullscreen
+                loading="lazy"
+                title={`${data.title} video`}
+              />
+            </div>
+          </div>
+        )}
+
+        <!-- Gallery -->
+        {data.projectGallery.length > 0 && (
+          <div class="proj-gallery">
+            {data.projectGallery.map((url) => (
+              <img src={url} alt="" loading="lazy" decoding="async" />
+            ))}
+          </div>
+        )}
+      </article>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .draft-banner {
+    background: var(--color-red);
+    color: var(--cream);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 0;
+    text-align: center;
+  }
+
+  .proj-hero-img {
+    width: 100%;
+    max-height: 520px;
+    overflow: hidden;
+  }
+  .proj-hero-img img {
+    width: 100%;
+    height: 520px;
+    object-fit: cover;
+    display: block;
+  }
+  .proj-hero-placeholder {
+    width: 100%;
+    height: 320px;
+  }
+  .proj-hero-placeholder.web {
+    background: linear-gradient(135deg, #3a8294, #15282e);
+  }
+  .proj-hero-placeholder.video {
+    background: linear-gradient(135deg, #7a3138, #bd1c30);
+  }
+  .proj-hero-placeholder.both {
+    background: linear-gradient(135deg, #3a8294, #7a3138);
+  }
+
+  .proj-wrap {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 64px;
+    padding-top: 56px;
+    padding-bottom: 100px;
+    align-items: start;
+  }
+
+  /* Meta sidebar */
+  .proj-meta {
+    position: sticky;
+    top: calc(var(--nav-height) + 24px);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .proj-types {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .type-pill {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 99px;
+  }
+  .type-pill.red {
+    background: var(--color-red-tint);
+    color: var(--red);
+  }
+  .type-pill.teal {
+    background: var(--steel-tint);
+    color: var(--teal);
+  }
+  .meta-block {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .meta-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gray);
+  }
+  .meta-val {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .meta-link {
+    font-size: 14px;
+    padding: 10px 20px;
+    align-self: flex-start;
+  }
+  .back-link {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--gray);
+    text-decoration: none;
+    margin-top: 8px;
+  }
+  .back-link:hover {
+    color: var(--ink);
+  }
+
+  /* Main content */
+  .proj-content h1 {
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: clamp(28px, 3.6vw, 46px);
+    letter-spacing: -0.04em;
+    line-height: 1.02;
+    margin-bottom: 16px;
+  }
+  .proj-lead {
+    font-size: 19px;
+    line-height: 1.55;
+    opacity: 0.8;
+    margin-bottom: 36px;
+    max-width: 60ch;
+  }
+  .proj-body {
+    font-size: 16px;
+    line-height: 1.72;
+    max-width: 68ch;
+  }
+  .proj-body :global(h2),
+  .proj-body :global(h3) {
+    font-family: var(--disp);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin: 32px 0 12px;
+  }
+  .proj-body :global(h2) { font-size: 22px; }
+  .proj-body :global(h3) { font-size: 18px; }
+  .proj-body :global(p) { margin-bottom: 16px; opacity: 0.82; }
+  .proj-body :global(ul),
+  .proj-body :global(ol) { padding-left: 24px; margin-bottom: 16px; opacity: 0.82; }
+  .proj-body :global(li) { margin-bottom: 6px; }
+  .proj-body :global(a) { color: var(--teal); }
+
+  /* Video */
+  .proj-video {
+    margin-top: 48px;
+  }
+  .video-wrap {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--ink);
+  }
+  .video-wrap iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border: 0;
+  }
+
+  /* Gallery */
+  .proj-gallery {
+    margin-top: 48px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .proj-gallery img {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    border-radius: 6px;
+    display: block;
+  }
+  .proj-gallery img:first-child:nth-last-child(odd) {
+    grid-column: 1 / -1;
+    aspect-ratio: 16/9;
+  }
+
+  @media (max-width: 760px) {
+    .proj-wrap {
+      grid-template-columns: 1fr;
+      gap: 32px;
+      padding-top: 32px;
+    }
+    .proj-meta {
+      position: static;
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+    .proj-gallery {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,4 +1,5 @@
 ---
+import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
 import Nav from "../components/Nav.astro";
 import Mark from "../components/Mark.astro";
@@ -13,40 +14,18 @@ const clients = [
   "Real Nation",
 ];
 
-const cases = [
-  {
-    grad: "linear-gradient(135deg,#7a3138,#BD1C30)",
-    tagColor: "var(--red)",
-    tag: "Web · E-commerce",
-    title: "Merrion Medical Aesthetics",
-    body: "Booking platform and e-commerce build for a Dublin skincare clinic.",
-    delay: ".08s",
-  },
-  {
-    grad: "linear-gradient(135deg,#3a8294,#15282E)",
-    tagColor: "var(--teal)",
-    tag: "Video · Live event",
-    title: "Lifestyle Sports",
-    body: "An all-female crew capturing their International Women's Day event.",
-    delay: ".18s",
-  },
-  {
-    grad: "linear-gradient(135deg,#7a3138,#BD1C30)",
-    tagColor: "var(--red)",
-    tag: "Video · Brand film",
-    title: "Boston Scientific",
-    body: "Corporate brand film for a global MedTech leader.",
-    delay: ".28s",
-  },
-  {
-    grad: "linear-gradient(135deg,#3a8294,#15282E)",
-    tagColor: "var(--teal)",
-    tag: "Web · WordPress",
-    title: "Irish Research Council",
-    body: "Accessible, grant-discoverable website for a government research body.",
-    delay: ".38s",
-  },
+// Pick 4 featured published projects with images (mix of web + video)
+const featuredSlugs = [
+  "merrion-clinic",
+  "we-assembled-an-all-female-crew-for-lifestyle-sports-international-womens-day-event",
+  "website-for-photographer",
+  "promo-national-orthopaedic-hospital",
 ];
+const allProjects = await getCollection("projects", ({ data }) => data.status === "publish");
+const featured = featuredSlugs
+  .map((s) => allProjects.find((p) => p.id === s))
+  .filter(Boolean);
+const delays = [".08s", ".18s", ".28s", ".38s"];
 ---
 
 <Layout>
@@ -140,22 +119,39 @@ const cases = [
     <div class="wrap">
       <div class="work-head reveal">
         <h2>A few we're proud of</h2>
-        <a href="#">All work →</a>
+        <a href="/work/">All work →</a>
       </div>
       <div class="work-grid">
         {
-          cases.map((c) => (
-            <a href="#" class="case reveal" style={`transition-delay:${c.delay}`}>
-              <div class="case-img" style={`background:${c.grad}`} />
-              <div class="case-body">
-                <span class="case-tag" style={`color:${c.tagColor}`}>
-                  {c.tag}
-                </span>
-                <h4>{c.title}</h4>
-                <p>{c.body}</p>
-              </div>
-            </a>
-          ))
+          featured.map((proj, i) => {
+            const isVideo = proj.data.projectType.includes("Video Production");
+            const tagColor = isVideo ? "var(--red)" : "var(--teal)";
+            const grad = isVideo
+              ? "linear-gradient(135deg,#7a3138,#BD1C30)"
+              : "linear-gradient(135deg,#3a8294,#15282E)";
+            const tag = proj.data.projectType.join(" · ");
+            return (
+              <a href={`/work/${proj.id}/`} class="case reveal" style={`transition-delay:${delays[i]}`}>
+                {proj.data.projectImage ? (
+                  <div class="case-img" style="padding:0;overflow:hidden">
+                    <img
+                      src={proj.data.projectImage}
+                      alt={proj.data.title}
+                      loading="lazy"
+                      style="width:100%;height:100%;object-fit:cover;display:block"
+                    />
+                  </div>
+                ) : (
+                  <div class="case-img" style={`background:${grad}`} />
+                )}
+                <div class="case-body">
+                  <span class="case-tag" style={`color:${tagColor}`}>{tag}</span>
+                  <h4>{proj.data.title}</h4>
+                  <p>{proj.data.shortDescription || proj.data.client}</p>
+                </div>
+              </a>
+            );
+          })
         }
       </div>
     </div>
