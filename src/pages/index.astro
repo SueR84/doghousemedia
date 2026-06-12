@@ -26,6 +26,12 @@ const featured = featuredSlugs
   .map((s) => allProjects.find((p) => p.id === s))
   .filter(Boolean);
 const delays = [".08s", ".18s", ".28s", ".38s"];
+
+// Scroll-reactive marquee — two drifting rows of project thumbnails
+const withImages = allProjects.filter((p) => p.data.projectImage);
+const mqHalf = Math.ceil(withImages.length / 2);
+const rowA = withImages.slice(0, mqHalf);
+const rowB = withImages.slice(mqHalf);
 ---
 
 <Layout>
@@ -93,7 +99,7 @@ const delays = [".08s", ".18s", ".28s", ".38s"];
             sharp promos that stop the scroll. Full crew or a nimble two-person unit,
             whatever the job needs.
           </p>
-          <a href="#" class="room-link">Explore video →</a>
+          <a href="/media-production/" class="room-link">Explore video →</a>
         </div>
         <div class="room-visual video"></div>
       </div>
@@ -107,7 +113,7 @@ const delays = [".08s", ".18s", ".28s", ".38s"];
             Plus the care plans that keep them secure, quick and climbing the rankings
             long after launch.
           </p>
-          <a href="#" class="room-link">Explore web →</a>
+          <a href="/web-development/" class="room-link">Explore web →</a>
         </div>
         <div class="room-visual" style="color:var(--gray)">Web mockup</div>
       </div>
@@ -157,6 +163,36 @@ const delays = [".08s", ".18s", ".28s", ".38s"];
     </div>
   </section>
 
+  <!-- Scroll-reactive marquee -->
+  <section class="home-marquee" id="reel" aria-label="Project reel">
+    <div class="mq-row" data-dir="1">
+      <div class="mq-track">
+        {
+          [0, 1, 2].map(() =>
+            rowA.map((p) => (
+              <a href={`/work/${p.id}/`} class="mq-tile" aria-label={p.data.title}>
+                <img src={p.data.projectImage} alt={p.data.title} loading="lazy" />
+              </a>
+            ))
+          )
+        }
+      </div>
+    </div>
+    <div class="mq-row" data-dir="-1">
+      <div class="mq-track">
+        {
+          [0, 1, 2].map(() =>
+            rowB.map((p) => (
+              <a href={`/work/${p.id}/`} class="mq-tile" aria-label={p.data.title}>
+                <img src={p.data.projectImage} alt={p.data.title} loading="lazy" />
+              </a>
+            ))
+          )
+        }
+      </div>
+    </div>
+  </section>
+
   <!-- CTA band -->
   <section class="wrap cta-wrap" id="about">
     <div class="cta reveal">
@@ -170,6 +206,110 @@ const delays = [".08s", ".18s", ".28s", ".38s"];
 
   <Footer />
 </Layout>
+
+<style>
+  .home-marquee {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 40px 0 8px;
+    overflow: hidden;
+  }
+  .home-marquee .mq-row {
+    overflow: hidden;
+  }
+  .home-marquee .mq-track {
+    display: flex;
+    gap: 14px;
+    width: max-content;
+    will-change: transform;
+  }
+  .home-marquee .mq-tile {
+    flex: none;
+    width: 360px;
+    height: 228px;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--steel-tint);
+    display: block;
+  }
+  .home-marquee .mq-tile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s var(--ease-rise);
+  }
+  .home-marquee .mq-tile:hover img {
+    transform: scale(1.05);
+  }
+  @media (max-width: 700px) {
+    .home-marquee .mq-tile {
+      width: 248px;
+      height: 158px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .home-marquee .mq-track {
+      will-change: auto;
+    }
+  }
+</style>
+
+<script>
+  // Scroll-reactive marquee
+  (function () {
+    const reduce =
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) return;
+
+    const section = document.getElementById("reel");
+    if (!section) return;
+
+    const rows = Array.from(
+      section.querySelectorAll<HTMLElement>(".mq-row")
+    ).map((row) => ({
+      track: row.querySelector<HTMLElement>(".mq-track")!,
+      dir: Number(row.dataset.dir) || 1,
+      loop: 0,
+    }));
+
+    function measure() {
+      rows.forEach((r) => {
+        r.loop = r.track.scrollWidth / 3;
+      });
+    }
+    measure();
+    window.addEventListener("resize", measure);
+
+    function update() {
+      const rect = section.getBoundingClientRect();
+      const offset = (window.innerHeight - rect.top) * 0.18;
+      rows.forEach((r) => {
+        if (!r.loop) return;
+        const x = (((r.dir * offset) % r.loop) + r.loop) % r.loop;
+        r.track.style.transform = `translate3d(${
+          r.dir > 0 ? x - r.loop : -x
+        }px,0,0)`;
+      });
+    }
+
+    let ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        update();
+        ticking = false;
+      });
+    }
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+  })();
+</script>
 
 <script>
   (function () {

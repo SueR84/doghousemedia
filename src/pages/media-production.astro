@@ -1,0 +1,251 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+
+const services = [
+  { title: "Social Media Shorts", body: "Short, sharp video built for rapid emotional engagement — the kind that stops a thumb mid-scroll and makes people actually watch." },
+  { title: "Promotional + VBCs", body: "Content designed to convert, including Video Business Cards that put a face and a story to your brand in seconds." },
+  { title: "Live Event Streaming", body: "Interviews, conferences and occasions captured and broadcast live, documented properly so the moment outlasts the day." },
+  { title: "Aerial Coverage", body: "Cinematic drone footage from state-of-the-art equipment, flown by fully qualified and insured operators." },
+  { title: "Corporate Communications", body: "Strategically designed messaging videos that say what you need to say — clearly, on-brand and with confidence." },
+  { title: "Instructional & Training", body: "Clear, watchable training and how-to content. Past clients include LEGO, the Irish Red Cross and Ted Baker." },
+];
+
+// Recent video work — pulled from the projects collection
+const portfolioSlugs = [
+  "promo-national-orthopaedic-hospital",
+  "irish-charity-promo-films-in-south-sudan",
+  "promotional-for-pharmaceutical",
+  "promotional-video-for-events-venue",
+];
+const allProjects = await getCollection("projects", ({ data }) => data.status === "publish");
+const portfolio = portfolioSlugs
+  .map((s) => allProjects.find((p) => p.id === s))
+  .filter(Boolean);
+const delays = [".06s", ".14s", ".22s", ".30s"];
+---
+
+<Layout title="Media Production — Doghouse Media" description="Video and media production in Dublin — brand films, social shorts, live event streaming, aerial drone coverage, corporate and training video. From concept through post-production and distribution.">
+  <Nav />
+
+  <main>
+    <!-- Hero -->
+    <section class="mp-hero">
+      <div class="wrap">
+        <span class="eyebrow">Video · Production</span>
+        <h1>Media to move and inspire your audience.</h1>
+        <p class="mp-lead">
+          We present you at your best and motivate your audience to act. From concept
+          development through post-production and distribution strategy, we craft film
+          that earns attention and holds it.
+        </p>
+        <div class="mp-actions">
+          <a href="mailto:susan@doghousemedia.ie?subject=Media%20Production%20Enquiry" class="btn btn-primary">Start a project</a>
+          <a href="#work" class="btn btn-ghost">See recent work</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services -->
+    <section class="mp-section reveal" id="services">
+      <div class="wrap">
+        <span class="kicker">What we make</span>
+        <h2 class="mp-h2">Exceptional content will get you the results you need.</h2>
+        <p class="mp-intro">
+          Video does the heavy lifting across marketing campaigns, e-learning, advertising
+          and storytelling. Here's where we come in.
+        </p>
+        <div class="mp-grid">
+          {
+            services.map((s, i) => (
+              <div class="mp-card">
+                <span class="mp-num">{String(i + 1).padStart(2, "0")}</span>
+                <h3>{s.title}</h3>
+                <p>{s.body}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Recent work -->
+    <section class="work" id="work">
+      <div class="wrap">
+        <div class="work-head reveal">
+          <h2>A quick glance at some past work</h2>
+          <a href="/work/">See more →</a>
+        </div>
+        <div class="work-grid">
+          {
+            portfolio.map((proj, i) => {
+              const grad = "linear-gradient(135deg,#7a3138,#BD1C30)";
+              const tag = proj.data.projectType.length
+                ? proj.data.projectType.join(" · ")
+                : "Video Production";
+              return (
+                <a href={`/work/${proj.id}/`} class="case reveal" style={`transition-delay:${delays[i]}`}>
+                  {proj.data.projectImage ? (
+                    <div class="case-img" style="padding:0;overflow:hidden">
+                      <img
+                        src={proj.data.projectImage}
+                        alt={proj.data.title}
+                        loading="lazy"
+                        style="width:100%;height:100%;object-fit:cover;display:block"
+                      />
+                    </div>
+                  ) : (
+                    <div class="case-img" style={`background:${grad}`} />
+                  )}
+                  <div class="case-body">
+                    <span class="case-tag" style="color:var(--red)">{tag}</span>
+                    <h4>{proj.data.title}</h4>
+                    <p>{proj.data.shortDescription || proj.data.client}</p>
+                  </div>
+                </a>
+              );
+            })
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA band -->
+    <section class="wrap cta-wrap">
+      <div class="cta reveal">
+        <div class="cta-inner">
+          <h2>Let's <span class="red">do this.</span></h2>
+          <p>We'd love to hear about your idea and help you get it off the ground.</p>
+          <a href="mailto:susan@doghousemedia.ie" class="btn btn-cream">Contact us</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .mp-hero {
+    padding: 80px 0 56px;
+  }
+  .mp-hero h1 {
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: clamp(38px, 5.6vw, 72px);
+    letter-spacing: -0.045em;
+    line-height: 1;
+    max-width: 16ch;
+    margin: 14px 0 24px;
+  }
+  .mp-lead {
+    font-size: clamp(17px, 1.8vw, 20px);
+    max-width: 56ch;
+    opacity: 0.78;
+    line-height: 1.55;
+  }
+  .mp-actions {
+    display: flex;
+    gap: 14px;
+    margin-top: 36px;
+    flex-wrap: wrap;
+  }
+
+  .mp-section {
+    padding: 64px 0;
+    border-top: 1px solid var(--line);
+  }
+  .mp-h2 {
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: clamp(26px, 3.4vw, 42px);
+    letter-spacing: -0.04em;
+    line-height: 1.04;
+    margin: -28px 0 14px;
+    max-width: 22ch;
+  }
+  .mp-intro {
+    font-size: 17px;
+    line-height: 1.6;
+    opacity: 0.76;
+    max-width: 52ch;
+    margin-bottom: 44px;
+  }
+  .mp-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+  .mp-card {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 28px 26px 30px;
+    background: #fff;
+    transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+  }
+  .mp-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 40px rgba(15, 20, 23, 0.08);
+    border-color: var(--red);
+  }
+  .mp-num {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--red);
+    display: block;
+    margin-bottom: 14px;
+  }
+  .mp-card h3 {
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: -0.025em;
+    margin-bottom: 10px;
+  }
+  .mp-card p {
+    font-size: 15px;
+    line-height: 1.62;
+    opacity: 0.74;
+  }
+
+  @media (max-width: 860px) {
+    .mp-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 600px) {
+    .mp-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    const els = document.querySelectorAll<HTMLElement>(".reveal");
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+      return;
+    els.forEach((el) => el.classList.add("armed"));
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add("in");
+            io.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -6% 0px" }
+    );
+    els.forEach((el) => io.observe(el));
+    setTimeout(() => {
+      els.forEach((el) => {
+        if (!el.classList.contains("in")) el.classList.add("in");
+      });
+    }, 1200);
+  })();
+</script>

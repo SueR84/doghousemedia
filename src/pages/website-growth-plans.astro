@@ -1,0 +1,409 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+
+// WordPress care plan tiers — placeholder pricing, edit freely
+const plans = [
+  {
+    name: "Essential",
+    price: "49",
+    tagline: "Keep the lights on — secure, updated and backed up.",
+    features: [
+      "Security hardening & firewall",
+      "WordPress core & plugin updates",
+      "24/7 uptime monitoring",
+      "Weekly automated backups",
+      "Monthly performance check",
+      "Email support",
+    ],
+    featured: false,
+  },
+  {
+    name: "Growth",
+    price: "99",
+    tagline: "Everything in Essential, plus hands-on care and content help.",
+    features: [
+      "Everything in Essential",
+      "Daily automated backups",
+      "Malware detection & removal",
+      "Speed & performance optimisation",
+      "1 hour of content/dev edits per month",
+      "GDPR & compliance checks",
+      "Priority support",
+    ],
+    featured: true,
+  },
+  {
+    name: "Pro",
+    price: "199",
+    tagline: "For busy sites that need real development time every month.",
+    features: [
+      "Everything in Growth",
+      "3 hours of dev/content time per month",
+      "Migration & email configuration",
+      "Staging environment for safe changes",
+      "Conversion & SEO reporting",
+      "Quarterly strategy call",
+      "Same-day priority support",
+    ],
+    featured: false,
+  },
+];
+
+// The nine management features (from the live page)
+const care = [
+  { title: "Security Hardening", body: "Malware detection and removal, login protection and a web application firewall keeping threats out." },
+  { title: "CMS Updates", body: "Ongoing WordPress core, theme and plugin maintenance so your site stays fast and secure." },
+  { title: "Uptime Monitoring", body: "Continuous availability checks with instant notifications the moment anything goes down." },
+  { title: "Migration & Email", body: "Domain and host transfers handled cleanly, plus professional email setup and configuration." },
+  { title: "Performance Optimisation", body: "Load-speed monitoring and improvements so your pages stay quick on every device." },
+  { title: "Development & Bug Fixes", body: "Issue resolution with optional support-hour packages for larger pieces of work." },
+  { title: "Backup Solutions", body: "Automated backups with secure off-site storage — restore in minutes if you ever need to." },
+  { title: "Content Management", body: "Regular updates to blog posts, landing pages and copy so your site never goes stale." },
+  { title: "Compliance Checks", body: "GDPR and CCPA audits to keep you on the right side of changing data regulation." },
+];
+---
+
+<Layout title="Website Growth Plans — Doghouse Media" description="WordPress website care and growth plans from Doghouse Media. Security, updates, backups, monitoring and ongoing support — so your site keeps working long after launch.">
+  <Nav />
+
+  <main>
+    <!-- Hero -->
+    <section class="gp-hero">
+      <div class="wrap">
+        <span class="eyebrow">Website Care · WordPress</span>
+        <h1>Website growth plans.</h1>
+        <p class="gp-lead">
+          Enjoy peace of mind knowing your website is in capable hands. Digital success
+          begins with visibility — so we keep your WordPress site secure, fast and
+          monitored around the clock, with backups and support whenever you need them.
+        </p>
+        <div class="gp-actions">
+          <a href="#plans" class="btn btn-primary">See the plans</a>
+          <a href="mailto:susan@doghousemedia.ie?subject=Website%20Growth%20Plan%20Enquiry" class="btn btn-ghost">Talk to us</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing tiers -->
+    <section class="gp-plans reveal" id="plans">
+      <div class="wrap">
+        <span class="kicker">Choose your plan</span>
+        <div class="plan-grid">
+          {
+            plans.map((plan) => (
+              <div class={`plan-card${plan.featured ? " plan-featured" : ""}`}>
+                {plan.featured && <span class="plan-badge">Most popular</span>}
+                <h3 class="plan-name">{plan.name}</h3>
+                <p class="plan-tagline">{plan.tagline}</p>
+                <div class="plan-price">
+                  <span class="plan-amount">&euro;{plan.price}</span>
+                  <span class="plan-period">/ month</span>
+                </div>
+                <ul class="plan-feats">
+                  {plan.features.map((f) => (
+                    <li>{f}</li>
+                  ))}
+                </ul>
+                <a
+                  href={`mailto:susan@doghousemedia.ie?subject=${plan.name}%20Growth%20Plan`}
+                  class={`btn ${plan.featured ? "btn-primary" : "btn-ghost"} plan-cta`}
+                >
+                  Get started
+                </a>
+              </div>
+            ))
+          }
+        </div>
+        <p class="plan-note">
+          Plans are customised to fit the needs of your website — these are starting
+          points. Need something bigger? <a href="mailto:susan@doghousemedia.ie">Tell us about your site.</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- What's covered -->
+    <section class="gp-section reveal">
+      <div class="wrap">
+        <span class="kicker">What's covered</span>
+        <h2 class="gp-h2">Everything your WordPress site needs to keep growing.</h2>
+        <div class="care-grid">
+          {
+            care.map((c) => (
+              <div class="care-card">
+                <h3>{c.title}</h3>
+                <p>{c.body}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA band -->
+    <section class="wrap cta-wrap">
+      <div class="cta reveal">
+        <div class="cta-inner">
+          <h2>Like what you see? <span class="red">Let's talk.</span></h2>
+          <p>We'd love to hear about your site and help you keep it growing.</p>
+          <a href="mailto:susan@doghousemedia.ie" class="btn btn-cream">Contact us</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  /* Hero */
+  .gp-hero {
+    padding: 80px 0 56px;
+  }
+  .gp-hero h1 {
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: clamp(38px, 5.6vw, 72px);
+    letter-spacing: -0.045em;
+    line-height: 1;
+    margin: 14px 0 24px;
+  }
+  .gp-lead {
+    font-size: clamp(17px, 1.8vw, 20px);
+    max-width: 56ch;
+    opacity: 0.78;
+    line-height: 1.55;
+  }
+  .gp-actions {
+    display: flex;
+    gap: 14px;
+    margin-top: 36px;
+    flex-wrap: wrap;
+  }
+
+  /* Pricing */
+  .gp-plans {
+    padding: 56px 0 64px;
+    border-top: 1px solid var(--line);
+  }
+  .plan-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 26px;
+    align-items: start;
+  }
+  .plan-card {
+    position: relative;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 34px 30px 32px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+  .plan-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 40px rgba(15, 20, 23, 0.08);
+  }
+  .plan-featured {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+  .plan-featured .plan-name,
+  .plan-featured .plan-amount {
+    color: var(--cream);
+  }
+  .plan-featured .plan-tagline,
+  .plan-featured .plan-period,
+  .plan-featured .plan-feats li {
+    color: var(--cream);
+    opacity: 0.82;
+  }
+  .plan-featured .plan-feats li::before {
+    color: var(--red);
+  }
+  .plan-badge {
+    position: absolute;
+    top: -12px;
+    left: 30px;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    background: var(--red);
+    color: var(--cream);
+    padding: 6px 12px;
+    border-radius: 999px;
+  }
+  .plan-name {
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: 24px;
+    letter-spacing: -0.03em;
+    margin-bottom: 8px;
+  }
+  .plan-tagline {
+    font-size: 14px;
+    line-height: 1.55;
+    opacity: 0.72;
+    min-height: 44px;
+    margin-bottom: 18px;
+  }
+  .plan-price {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+  }
+  .plan-featured .plan-price {
+    border-bottom-color: rgba(250, 247, 240, 0.18);
+  }
+  .plan-amount {
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: 44px;
+    letter-spacing: -0.04em;
+  }
+  .plan-period {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    color: var(--gray);
+  }
+  .plan-feats {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    margin-bottom: 28px;
+    flex: 1;
+  }
+  .plan-feats li {
+    position: relative;
+    padding-left: 26px;
+    font-size: 15px;
+    line-height: 1.45;
+    opacity: 0.82;
+  }
+  .plan-feats li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--teal);
+    font-weight: 700;
+  }
+  .plan-cta {
+    text-align: center;
+    width: 100%;
+  }
+  .plan-featured .btn-primary {
+    background: var(--red);
+  }
+  .plan-featured .btn-primary:hover {
+    background: var(--cream);
+    color: var(--ink);
+  }
+  .plan-note {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 15px;
+    opacity: 0.72;
+  }
+  .plan-note a {
+    color: var(--ink);
+    border-bottom: 2px solid var(--red);
+    text-decoration: none;
+  }
+
+  /* What's covered */
+  .gp-section {
+    padding: 64px 0;
+    border-top: 1px solid var(--line);
+  }
+  .gp-h2 {
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: clamp(26px, 3.4vw, 42px);
+    letter-spacing: -0.04em;
+    line-height: 1.04;
+    margin: -28px 0 44px;
+    max-width: 22ch;
+  }
+  .care-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+  .care-card {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 26px 24px 28px;
+    background: #fff;
+    transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+  }
+  .care-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 40px rgba(15, 20, 23, 0.08);
+    border-color: var(--steel);
+  }
+  .care-card h3 {
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: 19px;
+    letter-spacing: -0.025em;
+    margin-bottom: 9px;
+  }
+  .care-card p {
+    font-size: 15px;
+    line-height: 1.6;
+    opacity: 0.74;
+  }
+
+  @media (max-width: 860px) {
+    .plan-grid,
+    .care-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .plan-featured {
+      transform: none;
+    }
+  }
+  @media (max-width: 600px) {
+    .plan-grid,
+    .care-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    const els = document.querySelectorAll<HTMLElement>(".reveal");
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+      return;
+    els.forEach((el) => el.classList.add("armed"));
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add("in");
+            io.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -6% 0px" }
+    );
+    els.forEach((el) => io.observe(el));
+    setTimeout(() => {
+      els.forEach((el) => {
+        if (!el.classList.contains("in")) el.classList.add("in");
+      });
+    }, 1200);
+  })();
+</script>

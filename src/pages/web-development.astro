@@ -1,0 +1,428 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+
+// Core development service cards
+const services = [
+  {
+    title: "Design & Development",
+    body: "In a world where everything increasingly looks the same, you need to stand out. We craft bespoke websites by combining technical skill with creative solutions — designed around your brand, not a template.",
+  },
+  {
+    title: "Mobile Responsive",
+    body: "A responsive, fast-performing website is key — not only to your user's experience, but to how your site performs in search. Every build looks and works right on any screen.",
+  },
+  {
+    title: "A Truly Flexible CMS",
+    body: "Take back control. We hand over a content management system you can actually use, with easy-to-access video guides that walk you through everything you need to know.",
+  },
+  {
+    title: "SEO Ready to Go",
+    body: "Search Engine Optimisation is an ongoing task, but it starts early — baked into the design process from the very first wireframe, not bolted on at the end.",
+  },
+  {
+    title: "GDPR Compliant",
+    body: "We'll work with you on your Privacy Policy and Cookie statement so your site stays on the right side of data regulation from day one.",
+  },
+  {
+    title: "Speed, Speed, Speed",
+    body: "If your website isn't optimised for speed, potential customers will lose patience and leave. We obsess over performance so visitors stay and convert.",
+  },
+];
+
+// Platforms / tooling we build on
+const platforms = [
+  "WordPress",
+  "WooCommerce",
+  "HighLevel",
+  "Webflow",
+  "Shopify",
+  "GiveWP",
+  "Astro",
+  "LearnDash",
+];
+
+// "Take your website further" — extended offerings
+const further = [
+  {
+    title: "e-Commerce",
+    body: "We work with both Shopify and WooCommerce to sell physical or digital products — secure checkout, inventory and the lot.",
+  },
+  {
+    title: "Online Courses",
+    body: "Custom delivery of eLearning education courses. We use LearnDash but can integrate with most LMS solutions to fit how you teach.",
+  },
+  {
+    title: "Membership & Subscription",
+    body: "We'll build a platform for you to offer exclusive content, courses or products to your subscribers on a recurring basis.",
+  },
+  {
+    title: "Donations & Payments",
+    body: "For charities and non-profits we use the powerful, tried-and-tested donation platform GiveWP to take payments with confidence.",
+  },
+  {
+    title: "Office Integrations",
+    body: "We use tools like Zapier and custom form-building to connect your website to your CRM, booking software and back-office systems.",
+  },
+  {
+    title: "Events Platforms",
+    body: "Create and promote in-person or online events — ticket selling, attendee management, recurring events and Zoom integration.",
+  },
+];
+
+// Recent web work — pulled from the projects collection
+const portfolioSlugs = [
+  "orthondontist-website",
+  "networking-website-for-university",
+  "subscription-website-for-music-video-platform",
+  "online-shop-for-beauty-salon",
+];
+const allProjects = await getCollection("projects", ({ data }) => data.status === "publish");
+const portfolio = portfolioSlugs
+  .map((s) => allProjects.find((p) => p.id === s))
+  .filter(Boolean);
+const delays = [".06s", ".14s", ".22s", ".30s"];
+---
+
+<Layout title="Web Development — Doghouse Media" description="Bespoke website design and development in Dublin. Fast, responsive, SEO-ready websites on WordPress, Shopify and modern platforms — plus the care plans to keep them growing.">
+  <Nav />
+
+  <main>
+    <!-- Hero -->
+    <section class="dev-hero">
+      <div class="wrap">
+        <span class="eyebrow">Web · Development</span>
+        <h1>Website design &amp; development.</h1>
+        <p class="dev-lead">
+          Our goal is to build your visibility and make sure your website keeps working
+          for you long after it has gone live. We take a project-based approach, with a
+          graphic designer on every build to ensure a clean, consistent design that
+          reflects your brand strategy and visual identity.
+        </p>
+        <div class="dev-actions">
+          <a href="mailto:susan@doghousemedia.ie?subject=Web%20Development%20Enquiry" class="btn btn-primary">Enquire about web development</a>
+          <a href="#work" class="btn btn-ghost">See recent work</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Core services -->
+    <section class="dev-section reveal">
+      <div class="wrap">
+        <span class="kicker">What we do</span>
+        <h2 class="dev-h2">What's part of our development service?</h2>
+        <div class="svc-grid">
+          {
+            services.map((s, i) => (
+              <div class="svc-card">
+                <span class="svc-num">{String(i + 1).padStart(2, "0")}</span>
+                <h3>{s.title}</h3>
+                <p>{s.body}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Platforms -->
+    <section class="dev-platforms reveal">
+      <div class="wrap">
+        <span class="kicker">Built on the best tools</span>
+        <div class="platform-row">
+          {platforms.map((p) => <span class="platform-chip">{p}</span>)}
+        </div>
+      </div>
+    </section>
+
+    <!-- Take it further -->
+    <section class="dev-section reveal">
+      <div class="wrap">
+        <span class="kicker">Go further</span>
+        <h2 class="dev-h2">Take your website further.</h2>
+        <div class="svc-grid">
+          {
+            further.map((s) => (
+              <div class="svc-card">
+                <h3>{s.title}</h3>
+                <p>{s.body}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Growth band -->
+    <section class="wrap">
+      <div class="grow-band reveal">
+        <div class="grow-inner">
+          <span class="room-tag">Website care plans</span>
+          <h2>It doesn't stop there. Let's scale it, let's grow it.</h2>
+          <p>
+            Our relationship with you begins the moment your site goes live. You take
+            care of business — we'll take care of your website. Our Website Care Plans
+            give you peace of mind plus ongoing support for any technical issues.
+          </p>
+          <a href="/website-growth-plans/" class="grow-link">Website growth plans →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recent work -->
+    <section class="work" id="work">
+      <div class="wrap">
+        <div class="work-head reveal">
+          <h2>A quick glance at some recent development work</h2>
+          <a href="/work/">See more →</a>
+        </div>
+        <div class="work-grid">
+          {
+            portfolio.map((proj, i) => {
+              const grad = "linear-gradient(135deg,#3a8294,#15282E)";
+              const tag = proj.data.projectType.length
+                ? proj.data.projectType.join(" · ")
+                : "Web Development";
+              return (
+                <a href={`/work/${proj.id}/`} class="case reveal" style={`transition-delay:${delays[i]}`}>
+                  {proj.data.projectImage ? (
+                    <div class="case-img" style="padding:0;overflow:hidden">
+                      <img
+                        src={proj.data.projectImage}
+                        alt={proj.data.title}
+                        loading="lazy"
+                        style="width:100%;height:100%;object-fit:cover;display:block"
+                      />
+                    </div>
+                  ) : (
+                    <div class="case-img" style={`background:${grad}`} />
+                  )}
+                  <div class="case-body">
+                    <span class="case-tag" style="color:var(--teal)">{tag}</span>
+                    <h4>{proj.data.title}</h4>
+                    <p>{proj.data.shortDescription || proj.data.client}</p>
+                  </div>
+                </a>
+              );
+            })
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA band -->
+    <section class="wrap cta-wrap">
+      <div class="cta reveal">
+        <div class="cta-inner">
+          <h2>Like what you see? <span class="red">Let's talk.</span></h2>
+          <p>We'd love to hear about your idea and help you get it off the ground.</p>
+          <a href="mailto:susan@doghousemedia.ie" class="btn btn-cream">Contact us</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  /* Hero */
+  .dev-hero {
+    padding: 80px 0 56px;
+  }
+  .dev-hero h1 {
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: clamp(38px, 5.6vw, 72px);
+    letter-spacing: -0.045em;
+    line-height: 1.0;
+    max-width: 14ch;
+    margin: 14px 0 24px;
+  }
+  .dev-lead {
+    font-size: clamp(17px, 1.8vw, 20px);
+    max-width: 56ch;
+    opacity: 0.78;
+    line-height: 1.55;
+  }
+  .dev-actions {
+    display: flex;
+    gap: 14px;
+    margin-top: 36px;
+    flex-wrap: wrap;
+  }
+
+  /* Generic section + heading */
+  .dev-section {
+    padding: 64px 0;
+    border-top: 1px solid var(--line);
+  }
+  .dev-h2 {
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: clamp(26px, 3.4vw, 42px);
+    letter-spacing: -0.04em;
+    line-height: 1.04;
+    margin: -28px 0 44px;
+    max-width: 20ch;
+  }
+
+  /* Service cards */
+  .svc-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+  .svc-card {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 28px 26px 30px;
+    background: #fff;
+    transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+  }
+  .svc-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 40px rgba(15, 20, 23, 0.08);
+    border-color: var(--steel);
+  }
+  .svc-num {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--teal);
+    display: block;
+    margin-bottom: 14px;
+  }
+  .svc-card h3 {
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: -0.025em;
+    margin-bottom: 10px;
+  }
+  .svc-card p {
+    font-size: 15px;
+    line-height: 1.62;
+    opacity: 0.74;
+  }
+
+  /* Platforms */
+  .dev-platforms {
+    padding: 56px 0;
+    border-top: 1px solid var(--line);
+  }
+  .platform-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: -24px;
+  }
+  .platform-chip {
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 10px 22px;
+    background: var(--cream);
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .platform-chip:hover {
+    background: var(--ink);
+    color: var(--cream);
+    border-color: var(--ink);
+  }
+
+  /* Growth band */
+  .grow-band {
+    background: var(--deep-teal);
+    border-radius: 16px;
+    margin: 24px 0 8px;
+  }
+  .grow-inner {
+    padding: 64px 56px;
+    max-width: 60ch;
+  }
+  .grow-inner .room-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: #8fc4d2;
+    margin-bottom: 16px;
+    display: block;
+  }
+  .grow-inner h2 {
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: clamp(28px, 3.6vw, 44px);
+    letter-spacing: -0.04em;
+    line-height: 1.04;
+    color: var(--cream);
+    margin-bottom: 18px;
+  }
+  .grow-inner p {
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--cream);
+    opacity: 0.82;
+    margin-bottom: 26px;
+  }
+  .grow-link {
+    font-weight: 600;
+    color: var(--cream);
+    text-decoration: none;
+    border-bottom: 2px solid var(--teal);
+    padding-bottom: 2px;
+    transition: color 0.18s;
+  }
+  .grow-link:hover {
+    color: #8fc4d2;
+  }
+
+  @media (max-width: 860px) {
+    .svc-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 600px) {
+    .svc-grid {
+      grid-template-columns: 1fr;
+    }
+    .grow-inner {
+      padding: 44px 28px;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    const els = document.querySelectorAll<HTMLElement>(".reveal");
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+      return;
+    els.forEach((el) => el.classList.add("armed"));
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add("in");
+            io.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -6% 0px" }
+    );
+    els.forEach((el) => io.observe(el));
+    setTimeout(() => {
+      els.forEach((el) => {
+        if (!el.classList.contains("in")) el.classList.add("in");
+      });
+    }, 1200);
+  })();
+</script>

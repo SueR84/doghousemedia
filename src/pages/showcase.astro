@@ -1,0 +1,383 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+
+const allProjects = await getCollection("projects", ({ data }) => data.status === "publish");
+const withImages = allProjects.filter((p) => p.data.projectImage);
+
+// Marquee rows — split the projects into two drifting rows
+const half = Math.ceil(withImages.length / 2);
+const rowA = withImages.slice(0, half);
+const rowB = withImages.slice(half);
+
+// Sticky-stack featured cards
+const stackSlugs = [
+  "orthondontist-website",
+  "subscription-website-for-music-video-platform",
+  "merrion-clinic",
+  "irish-charity-promo-films-in-south-sudan",
+];
+const stack = stackSlugs
+  .map((s) => withImages.find((p) => p.id === s))
+  .filter(Boolean);
+---
+
+<Layout title="Showcase — Doghouse Media" description="A motion-led look at recent Doghouse Media work.">
+  <Nav />
+
+  <main class="showcase">
+    <!-- Hero -->
+    <section class="sc-hero">
+      <div class="wrap">
+        <span class="eyebrow">Showcase · In motion</span>
+        <h1>Work that <span class="punch red">moves.</span></h1>
+        <p class="sc-lead">
+          A scroll through the studio's recent web and film projects — keep going and the
+          work comes with you.
+        </p>
+      </div>
+    </section>
+
+    <!-- Scroll-reactive marquee -->
+    <section class="sc-marquee" id="marquee">
+      <div class="mq-row" data-dir="1">
+        <div class="mq-track">
+          {
+            [0, 1, 2].map(() =>
+              rowA.map((p) => (
+                <a href={`/work/${p.id}/`} class="mq-tile" aria-label={p.data.title}>
+                  <img src={p.data.projectImage} alt={p.data.title} loading="lazy" />
+                </a>
+              ))
+            )
+          }
+        </div>
+      </div>
+      <div class="mq-row" data-dir="-1">
+        <div class="mq-track">
+          {
+            [0, 1, 2].map(() =>
+              rowB.map((p) => (
+                <a href={`/work/${p.id}/`} class="mq-tile" aria-label={p.data.title}>
+                  <img src={p.data.projectImage} alt={p.data.title} loading="lazy" />
+                </a>
+              ))
+            )
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Sticky-stacking featured cards -->
+    <section class="sc-stack">
+      <div class="wrap">
+        <span class="kicker">Featured projects</span>
+      </div>
+      <div class="stack-wrap">
+        {
+          stack.map((p, i) => {
+            const isVideo = p.data.projectType.some((t) => t.includes("Video"));
+            const accent = isVideo ? "var(--red)" : "var(--teal)";
+            return (
+              <div class="stack-item" style={`--i:${i}`}>
+                <article
+                  class="stack-card"
+                  style={`top:${88 + i * 26}px; --accent:${accent}`}
+                  data-index={i}
+                  data-total={stack.length}
+                >
+                  <div class="card-head">
+                    <span class="card-num">{String(i + 1).padStart(2, "0")}</span>
+                    <div class="card-meta">
+                      <span class="card-cat" style={`color:${accent}`}>
+                        {p.data.projectType.join(" · ") || "Project"}
+                      </span>
+                      <h3>{p.data.title}</h3>
+                    </div>
+                    <a href={`/work/${p.id}/`} class="card-link">View project →</a>
+                  </div>
+                  <div class="card-media">
+                    <img src={p.data.projectImage} alt={p.data.title} loading="lazy" />
+                  </div>
+                </article>
+              </div>
+            );
+          })
+        }
+      </div>
+    </section>
+
+    <!-- CTA band -->
+    <section class="wrap cta-wrap">
+      <div class="cta">
+        <div class="cta-inner">
+          <h2>Want this energy on <span class="red">your site?</span></h2>
+          <p>Tell us the idea and we'll bring the motion.</p>
+          <a href="mailto:susan@doghousemedia.ie" class="btn btn-cream">Start a project</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  /* Hero */
+  .sc-hero {
+    padding: 80px 0 48px;
+  }
+  .sc-hero h1 {
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: clamp(44px, 8vw, 104px);
+    letter-spacing: -0.045em;
+    line-height: 0.98;
+    margin: 14px 0 22px;
+  }
+  .sc-lead {
+    font-size: clamp(17px, 1.8vw, 20px);
+    max-width: 46ch;
+    opacity: 0.78;
+    line-height: 1.55;
+  }
+
+  /* Marquee */
+  .sc-marquee {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 32px 0 80px;
+    overflow: hidden;
+  }
+  .mq-row {
+    overflow: hidden;
+  }
+  .mq-track {
+    display: flex;
+    gap: 14px;
+    width: max-content;
+    will-change: transform;
+  }
+  .mq-tile {
+    flex: none;
+    width: 380px;
+    height: 240px;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--steel-tint);
+    display: block;
+  }
+  .mq-tile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s var(--ease-rise);
+  }
+  .mq-tile:hover img {
+    transform: scale(1.05);
+  }
+  @media (max-width: 700px) {
+    .mq-tile {
+      width: 260px;
+      height: 168px;
+    }
+  }
+
+  /* Sticky stack */
+  .sc-stack {
+    padding: 40px 0 0;
+  }
+  .sc-stack .kicker {
+    margin-bottom: 8px;
+  }
+  .stack-wrap {
+    position: relative;
+  }
+  .stack-item {
+    height: 92vh;
+  }
+  .stack-card {
+    position: sticky;
+    max-width: 1136px;
+    margin: 0 auto;
+    background: var(--ink);
+    color: var(--cream);
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow: 0 30px 70px rgba(15, 20, 23, 0.28);
+    transform-origin: top center;
+    will-change: transform;
+  }
+  .card-head {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+  .card-num {
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: clamp(40px, 6vw, 84px);
+    letter-spacing: -0.04em;
+    line-height: 0.8;
+    color: var(--accent);
+  }
+  .card-cat {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    display: block;
+    margin-bottom: 6px;
+  }
+  .card-meta h3 {
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: clamp(20px, 2.6vw, 34px);
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+  .card-link {
+    font-family: var(--body);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--cream);
+    text-decoration: none;
+    border: 1.5px solid rgba(250, 247, 240, 0.4);
+    border-radius: 999px;
+    padding: 10px 20px;
+    white-space: nowrap;
+    transition: background 0.18s, color 0.18s, border-color 0.18s;
+  }
+  .card-link:hover {
+    background: var(--cream);
+    color: var(--ink);
+    border-color: var(--cream);
+  }
+  .card-media {
+    border-radius: 16px;
+    overflow: hidden;
+    aspect-ratio: 16 / 8;
+    background: var(--deep-teal);
+  }
+  .card-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  @media (max-width: 700px) {
+    .stack-item {
+      height: auto;
+      margin-bottom: 20px;
+    }
+    .stack-card {
+      position: static;
+      padding: 18px;
+    }
+    .card-head {
+      grid-template-columns: auto 1fr;
+      gap: 16px;
+    }
+    .card-link {
+      grid-column: 1 / -1;
+      justify-self: start;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mq-track {
+      will-change: auto;
+    }
+    .stack-card {
+      transform: none !important;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    const reduce =
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // ── Scroll-reactive marquee ───────────────────────────────────────────
+    const marquee = document.getElementById("marquee");
+    const rows = Array.from(
+      document.querySelectorAll<HTMLElement>(".mq-row")
+    ).map((row) => ({
+      track: row.querySelector<HTMLElement>(".mq-track")!,
+      dir: Number(row.dataset.dir) || 1,
+      // one-third of the tripled track = a single seamless loop length
+      loop: 0,
+    }));
+
+    function measure() {
+      rows.forEach((r) => {
+        r.loop = r.track.scrollWidth / 3;
+      });
+    }
+    measure();
+    window.addEventListener("resize", measure);
+
+    let offset = 0;
+    function update() {
+      if (!marquee) return;
+      const rect = marquee.getBoundingClientRect();
+      // progress of the section through the viewport
+      offset = (window.innerHeight - rect.top) * 0.18;
+      rows.forEach((r) => {
+        // wrap within one loop length so it never runs out of tiles
+        const x = ((r.dir * offset) % r.loop || 0) - (r.dir > 0 ? r.loop : 0);
+        r.track.style.transform = `translate3d(${x}px,0,0)`;
+      });
+    }
+
+    // ── Sticky-stack scale-down ───────────────────────────────────────────
+    const cards = Array.from(
+      document.querySelectorAll<HTMLElement>(".stack-card")
+    );
+    function updateStack() {
+      cards.forEach((card) => {
+        const index = Number(card.dataset.index);
+        const total = Number(card.dataset.total);
+        const target = 1 - (total - 1 - index) * 0.04;
+        const rect = card.getBoundingClientRect();
+        const stickTop = parseFloat(getComputedStyle(card).top) || 0;
+        // how far past its pin point the card has travelled
+        const past = stickTop - rect.top;
+        const range = window.innerHeight * 0.85;
+        const p = Math.min(Math.max(past / range, 0), 1);
+        const scale = 1 - (1 - target) * p;
+        card.style.transform = `scale(${scale})`;
+      });
+    }
+
+    let ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        if (!reduce) {
+          update();
+          updateStack();
+        }
+        ticking = false;
+      });
+    }
+
+    if (!reduce) {
+      update();
+      updateStack();
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onScroll);
+    }
+  })();
+</script>
