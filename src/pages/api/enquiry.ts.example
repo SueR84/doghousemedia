@@ -1,0 +1,71 @@
+// ---------------------------------------------------------------------------
+// Mailgun enquiry endpoint — READY TO ACTIVATE
+// ---------------------------------------------------------------------------
+// The Start-a-project modal POSTs its JSON here. Until this is live the modal
+// gracefully falls back to a pre-filled mailto: handoff, so nothing breaks.
+//
+// To go live:
+//   1. Add a server adapter, e.g.:  npx astro add node   (or vercel / netlify)
+//   2. Rename this file:  src/pages/api/enquiry.ts.example  ->  src/pages/api/enquiry.ts
+//   3. Set env vars:  MAILGUN_API_KEY, MAILGUN_DOMAIN, ENQUIRY_TO (optional)
+//   4. Deploy. The modal will POST here automatically — no frontend change needed.
+// ---------------------------------------------------------------------------
+
+import type { APIRoute } from "astro";
+
+export const prerender = false;
+
+export const POST: APIRoute = async ({ request }) => {
+  let data: Record<string, string>;
+  try {
+    data = await request.json();
+  } catch {
+    return new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400 });
+  }
+
+  if (!data.name || !data.email) {
+    return new Response(JSON.stringify({ error: "Missing name or email" }), {
+      status: 422,
+    });
+  }
+
+  const apiKey = import.meta.env.MAILGUN_API_KEY;
+  const domain = import.meta.env.MAILGUN_DOMAIN;
+  const to = import.meta.env.ENQUIRY_TO ?? "hello@doghousemedia.ie";
+
+  if (!apiKey || !domain) {
+    return new Response(JSON.stringify({ error: "Mailgun not configured" }), {
+      status: 500,
+    });
+  }
+
+  const lines = Object.entries(data)
+    .map(([k, v]) => `${k}: ${v}`)
+    .join("\n");
+
+  const body = new URLSearchParams({
+    from: `Doghouse Website <noreply@${domain}>`,
+    to,
+    "h:Reply-To": data.email,
+    subject: `New ${data.track || "project"} enquiry — ${data.name}`,
+    text: lines,
+  });
+
+  const res = await fetch(`https://api.mailgun.net/v3/${domain}/messages`, {
+    method: "POST",
+    headers: {
+      Authorization: "Basic " + Buffer.from(`api:${apiKey}`).toString("base64"),
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body,
+  });
+
+  if (!res.ok) {
+    return new Response(JSON.stringify({ error: "Send failed" }), { status: 502 });
+  }
+
+  return new Response(JSON.stringify({ ok: true }), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+};

@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import StartProjectModal from "../components/StartProjectModal.astro";
 
 interface Props {
   title?: string;
@@ -25,5 +26,31 @@ const {
   </head>
   <body>
     <slot />
+    <StartProjectModal />
+
+    <script>
+      // Lenis smooth scroll — site-wide eased / inertial scrolling.
+      // Skipped when the user prefers reduced motion.
+      import Lenis from "lenis";
+      import "lenis/dist/lenis.css";
+
+      const reduce =
+        window.matchMedia &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (!reduce) {
+        const lenis = new Lenis({
+          duration: 1.1,
+          easing: (t: number) => 1 - Math.pow(1 - t, 3), // easeOutCubic
+          smoothWheel: true,
+        });
+
+        function raf(time: number) {
+          lenis.raf(time);
+          requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+      }
+    </script>
   </body>
 </html>

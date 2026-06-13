@@ -1,0 +1,115 @@
+---
+// Drop-in hover-to-preview behaviour for project cards.
+// Usage on any card:
+//   <a ... data-video={vimeoEmbed(url)}>
+//     <div class="..." data-video-frame>
+//       <img .../>
+//       <span class="hv-play" aria-hidden="true">▶</span>
+//     </div>
+//   </a>
+// Include <HoverVideo /> once per page. See vimeoEmbed() in the page frontmatter.
+---
+
+<style is:global>
+  /* The frame the player is injected into. */
+  [data-video-frame] {
+    position: relative;
+    overflow: hidden;
+  }
+  /* Play badge */
+  .hv-play {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    z-index: 2;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--red);
+    color: #fff;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 2px;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  [data-video].hv-playing .hv-play {
+    opacity: 0;
+  }
+  /* Injected Vimeo background player — sized to COVER a 4:3 card with 16:9
+     video (crop the sides) so no background shows through. */
+  .hv-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 133.34%;
+    height: 100%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    border: 0;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+  [data-video].hv-playing .hv-video {
+    opacity: 1;
+  }
+</style>
+
+<script>
+  // Build the Vimeo background player once per card, then pause/play via
+  // postMessage so repeat hovers are instant.
+  (function () {
+    const canHover = window.matchMedia && window.matchMedia("(hover: hover)").matches;
+    const reduce =
+      window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!canHover || reduce) return;
+
+    const VIMEO = "https://player.vimeo.com";
+
+    // Warm DNS/TLS to Vimeo's hosts so the first player loads faster.
+    ["https://player.vimeo.com", "https://i.vimeocdn.com", "https://f.vimeocdn.com"].forEach(
+      (host) => {
+        const l = document.createElement("link");
+        l.rel = "preconnect";
+        l.href = host;
+        l.crossOrigin = "";
+        document.head.appendChild(l);
+      }
+    );
+
+    function tell(iframe: HTMLIFrameElement, method: string) {
+      iframe.contentWindow?.postMessage(JSON.stringify({ method }), VIMEO);
+    }
+
+    document.querySelectorAll<HTMLElement>("[data-video]").forEach((card) => {
+      const src = card.dataset.video;
+      if (!src) return;
+      const frame =
+        card.querySelector<HTMLElement>("[data-video-frame]") || card;
+      let iframe: HTMLIFrameElement | null = null;
+
+      card.addEventListener("mouseenter", () => {
+        if (!iframe) {
+          iframe = document.createElement("iframe");
+          iframe.className = "hv-video";
+          iframe.allow = "autoplay";
+          iframe.tabIndex = -1;
+          iframe.setAttribute("aria-hidden", "true");
+          iframe.src = src; // background=1 autoplays on load
+          frame.appendChild(iframe);
+        } else {
+          tell(iframe, "play");
+        }
+        card.classList.add("hv-playing");
+      });
+
+      card.addEventListener("mouseleave", () => {
+        card.classList.remove("hv-playing");
+        if (iframe) tell(iframe, "pause");
+      });
+    });
+  })();
+</script>

@@ -1,0 +1,270 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+
+const allProjects = await getCollection("projects", ({ data }) => data.status === "publish");
+const withImages = allProjects.filter((p) => p.data.projectImage);
+
+// Four thumbnails for the fan-out → 2×2 grid hero.
+const cards = withImages.slice(0, 4);
+
+// Per-image fanned-deck start rotation + stacking order.
+const meta = [
+  { rot: 10, z: 2, kind: "Web" },
+  { rot: 15, z: 4, kind: "Web" },
+  { rot: -5, z: 1, kind: "Web" },
+  { rot: 5, z: 3, kind: "Web" },
+];
+---
+
+<Layout>
+  <Nav />
+
+  <!-- Hero -->
+  <header class="hero hero-split">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <div class="eyebrow">Web + Video · Dublin</div>
+        <h1>
+          <span class="w" style="animation-delay:.2s">We build </span><span
+            class="w"
+            style="animation-delay:.3s"><span class="punch blue">websites</span></span
+          ><span class="w" style="animation-delay:.4s"> and shoot </span><span
+            class="w"
+            style="animation-delay:.5s"><span class="punch punch-2 red">film</span></span
+          ><span class="w" style="animation-delay:.6s"> that get good brands noticed.</span>
+        </h1>
+        <p class="hero-sub">
+          An independent, female-owned studio. Two crafts, one roof — from MedTech to
+          charity to the brands you'd recognise.
+        </p>
+        <div class="hero-actions">
+          <a href="#work" class="btn btn-primary">See the work</a>
+          <a href="#contact" class="btn btn-ghost">Talk to us</a>
+        </div>
+      </div>
+
+      <!-- Empty right column. The deck floats here (via transform) at scroll = 0;
+           this anchor only marks the pile's resting centre. -->
+      <div class="hero-deck" aria-hidden="true">
+        <div class="fan-anchor" id="fanAnchor"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Final destination: a real, responsive 2×2 grid. The cards live in these
+       slots; the animation is a transform offset that resolves to none here. -->
+  <section class="fan-grid wrap" id="fanGrid" aria-label="Selected work">
+    {
+      cards.map((p, i) => (
+        <div class="slot">
+          <a
+            href={`/work/${p.id}/`}
+            class="fan-card"
+            style={`--z:${meta[i].z};`}
+            data-rot={meta[i].rot}
+            data-z={meta[i].z}
+            aria-label={p.data.title}
+          >
+            <span class="fan-thumb">
+              <img src={p.data.projectImage} alt={p.data.title} loading="eager" />
+            </span>
+            <span class="fan-cap">
+              <span class="fan-title">{p.data.title}</span>
+              <span class="fan-view">View Project →</span>
+            </span>
+          </a>
+        </div>
+      ))
+    }
+  </section>
+
+  <section class="fan-after wrap" id="contact">
+    <h2>That's the deck.</h2>
+    <p>Scroll up and down — the cards stay glued to your scroll position and reverse smoothly.</p>
+  </section>
+
+  <Footer />
+</Layout>
+
+<style>
+  .hero-split { padding-top: 80px; padding-bottom: 0; }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    align-items: center;
+    gap: 40px;
+    min-height: 40vh;
+  }
+  .hero-split h1 {
+    font-size: clamp(42px, 5.8vw, 80px);
+    max-width: 13ch;
+  }
+  .hero-split .hero-sub { font-size: 17px; margin-top: 22px; }
+
+  .hero-deck { position: relative; height: 100%; min-height: 360px; }
+  .fan-anchor {
+    position: absolute;
+    top: 50%;
+    left: 56%;
+    width: 1px;
+    height: 1px;
+  }
+
+  /* ---- Final 2×2 grid (the resting state) ---- */
+  .fan-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 36px 40px;
+    padding-top: 0;
+    padding-bottom: 96px;
+    max-width: 1500px;
+  }
+  .slot { min-width: 0; }
+
+  .fan-card {
+    display: block;
+    transform-origin: center;
+    will-change: transform;
+    text-decoration: none;
+    color: inherit;
+    opacity: 0; /* revealed by JS once positioned (avoids flash) */
+    --p: 1;
+  }
+  .fan-card.loaded { opacity: 1; }
+
+  .fan-thumb {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 12;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--steel-tint);
+    box-shadow: 0 22px 50px rgba(0, 0, 0, 0.18);
+  }
+  .fan-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s var(--ease-rise);
+  }
+  .fan-card:hover .fan-thumb img { transform: scale(1.04); }
+
+  .fan-cap {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 14px;
+    /* Captions fade in only once the grid has settled. */
+    opacity: var(--p);
+    transform: translateY(calc((1 - var(--p)) * 6px));
+  }
+  .fan-title {
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .fan-view {
+    flex: none;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray);
+  }
+
+  .fan-after {
+    min-height: 60vh;
+    padding-top: 40px;
+  }
+  .fan-after h2 { font-family: var(--disp); font-weight: 800; letter-spacing: -0.03em; }
+  .fan-after p { opacity: 0.7; margin-top: 12px; }
+
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 28px; min-height: 0; }
+    .hero-deck { display: none; } /* pile travels from grid itself on small screens */
+    .fan-grid { gap: 22px; }
+  }
+  @media (max-width: 600px) {
+    .fan-grid { grid-template-columns: 1fr; }
+    .fan-title { font-size: 18px; }
+  }
+
+  /* Reduced motion → static, settled 2×2 grid; no pile, no travel. */
+  @media (prefers-reduced-motion: reduce) {
+    .fan-card {
+      opacity: 1 !important;
+      transform: none !important;
+      --p: 1;
+      will-change: auto;
+    }
+    .hero-deck { display: none; }
+  }
+</style>
+
+<script>
+  (function () {
+    const reduce =
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) return;
+
+    const grid = document.getElementById("fanGrid");
+    const anchor = document.getElementById("fanAnchor");
+    if (!grid || !anchor) return;
+    const cards = Array.from(grid.querySelectorAll<HTMLElement>(".fan-card"));
+
+    const START_SCALE = 0.62; // pile scale relative to final grid size
+    const rots = cards.map((c) => Number(c.dataset.rot) || 0);
+    const zs = cards.map((c) => Number(c.dataset.z) || 1);
+
+    const smoothstep = (x: number) => x * x * (3 - 2 * x);
+
+    function update() {
+      // Progress 0→1 over the first ~0.7 viewport heights of scroll.
+      const vh = window.innerHeight;
+      let p = window.scrollY / (vh * 0.7);
+      p = Math.max(0, Math.min(1, p));
+      const t = 1 - smoothstep(p); // t=1 at top (piled), t=0 settled
+
+      const a = anchor.getBoundingClientRect();
+      const acx = a.left + a.width / 2;
+      const acy = a.top + a.height / 2;
+
+      cards.forEach((c, i) => {
+        const slot = c.parentElement!; // untransformed layout box
+        const s = slot.getBoundingClientRect();
+        const scx = s.left + s.width / 2;
+        const scy = s.top + s.height / 2;
+        const dx = (acx - scx) * t;
+        const dy = (acy - scy) * t;
+        const scale = 1 - (1 - START_SCALE) * t;
+        const rot = rots[i] * t;
+        c.style.transform = `translate(${dx}px, ${dy}px) scale(${scale}) rotate(${rot}deg)`;
+        c.style.zIndex = t > 0.02 ? String(zs[i]) : "auto";
+        c.style.setProperty("--p", String(1 - t));
+        if (!c.classList.contains("loaded")) c.classList.add("loaded");
+      });
+    }
+
+    let ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        update();
+        ticking = false;
+      });
+    }
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    // Re-measure once images have loaded (slot heights can shift).
+    window.addEventListener("load", update);
+  })();
+</script>

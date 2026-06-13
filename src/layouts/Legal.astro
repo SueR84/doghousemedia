@@ -1,0 +1,79 @@
+---
+import Layout from "./Layout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+
+interface Props {
+  title: string;
+  updated: string;
+}
+
+const { title, updated } = Astro.props;
+---
+
+<Layout title={`${title} — Doghouse Media`}>
+  <Nav />
+  <main class="legal">
+    <div class="wrap">
+      <div class="eyebrow">Legal</div>
+      <h1>{title}</h1>
+      <p class="legal-updated">Last updated: {updated}</p>
+      <article class="legal-prose">
+        <slot />
+      </article>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .legal {
+    padding: 72px 0 40px;
+  }
+  .legal h1 {
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: clamp(32px, 4.5vw, 52px);
+    letter-spacing: -0.04em;
+    line-height: 1.04;
+    margin: 12px 0 10px;
+  }
+  .legal-updated {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--gray);
+    margin-bottom: 40px;
+  }
+  .legal-prose {
+    max-width: 70ch;
+  }
+  .legal-prose :global(h2) {
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: clamp(20px, 2.4vw, 26px);
+    letter-spacing: -0.025em;
+    margin: 40px 0 14px;
+  }
+  .legal-prose :global(p),
+  .legal-prose :global(li) {
+    font-size: 16px;
+    line-height: 1.7;
+    opacity: 0.82;
+  }
+  .legal-prose :global(p) {
+    margin-bottom: 16px;
+  }
+  .legal-prose :global(ul) {
+    margin: 0 0 16px;
+    padding-left: 22px;
+  }
+  .legal-prose :global(li) {
+    margin-bottom: 8px;
+  }
+  .legal-prose :global(a) {
+    color: var(--red);
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+  }
+</style>

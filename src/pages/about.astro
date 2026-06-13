@@ -6,18 +6,17 @@ import Footer from "../components/Footer.astro";
 const team = [
   {
     name: "Emma Walkin",
-    role: "Director",
-    bio: "Leads media production and oversees overall studio operations.",
-  },
-  {
-    name: "Alan Higgison",
-    role: "Creative Lead",
-    bio: "Creative director on the media production side, with a sharp eye for what makes film work.",
+    role: "Founder",
+    bio: "Leads media production and oversees overall studio operations — from first brief to final grade.",
+    photo: "/assets/team/emma-walkin.jpeg",
+    linkedin: "https://www.linkedin.com/in/emma-walkin-57865041",
   },
   {
     name: "Susan Ryan",
-    role: "Operations Director",
-    bio: "Over 20 years of IT experience across Ireland and the UK — programming, consultancy, and project management.",
+    role: "Founder",
+    bio: "Over 20 years of IT experience across Ireland and the UK — spanning programming, consultancy, and project management.",
+    photo: "/assets/team/susan-ryan.jpeg",
+    linkedin: "https://www.linkedin.com/in/susan-ryan-4b4b8627",
   },
 ];
 ---
@@ -81,10 +80,28 @@ const team = [
           {
             team.map((member) => (
               <div class="team-card">
-                <div class="team-avatar" aria-hidden="true" />
+                <img
+                  class="team-avatar"
+                  src={member.photo}
+                  alt={member.name}
+                  width="500"
+                  height="500"
+                  loading="lazy"
+                />
                 <h3>{member.name}</h3>
                 <span class="team-role">{member.role}</span>
                 <p>{member.bio}</p>
+                <a
+                  class="team-linkedin"
+                  href={member.linkedin}
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" fill="currentColor">
+                    <path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.64h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1V21h-4v-5.4c0-1.29-.02-2.95-1.8-2.95-1.8 0-2.08 1.4-2.08 2.85V21H9z"/>
+                  </svg>
+                  LinkedIn
+                </a>
               </div>
             ))
           }
@@ -184,9 +201,10 @@ const team = [
   }
   .team-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 40px;
     margin-top: 32px;
+    max-width: 720px;
   }
   .team-card {
     display: flex;
@@ -194,11 +212,29 @@ const team = [
     gap: 6px;
   }
   .team-avatar {
-    width: 72px;
-    height: 72px;
+    width: 96px;
+    height: 96px;
     border-radius: 50%;
     background: var(--steel-tint);
-    margin-bottom: 10px;
+    object-fit: cover;
+    margin-bottom: 14px;
+  }
+  .team-linkedin {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .team-linkedin:hover {
+    color: var(--red);
   }
   .team-card h3 {
     font-family: var(--disp);
@@ -215,9 +251,9 @@ const team = [
     margin-bottom: 8px;
   }
   .team-card p {
-    font-size: 15px;
-    line-height: 1.6;
-    opacity: 0.72;
+    font-size: 17px;
+    line-height: 1.65;
+    opacity: 0.78;
   }
 
   @media (max-width: 760px) {

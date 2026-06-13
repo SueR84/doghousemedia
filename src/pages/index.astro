@@ -14,18 +14,7 @@ const clients = [
   "Real Nation",
 ];
 
-// Pick 4 featured published projects with images (mix of web + video)
-const featuredSlugs = [
-  "merrion-clinic",
-  "we-assembled-an-all-female-crew-for-lifestyle-sports-international-womens-day-event",
-  "website-for-photographer",
-  "promo-national-orthopaedic-hospital",
-];
 const allProjects = await getCollection("projects", ({ data }) => data.status === "publish");
-const featured = featuredSlugs
-  .map((s) => allProjects.find((p) => p.id === s))
-  .filter(Boolean);
-const delays = [".08s", ".18s", ".28s", ".38s"];
 
 // Scroll-reactive marquee — two drifting rows of project thumbnails
 const withImages = allProjects.filter((p) => p.data.projectImage);
@@ -115,7 +104,26 @@ const rowB = withImages.slice(mqHalf);
           </p>
           <a href="/web-development/" class="room-link">Explore web →</a>
         </div>
-        <div class="room-visual" style="color:var(--gray)">Web mockup</div>
+        <div class="room-visual web-mock" aria-hidden="true">
+          <div class="bm-bar">
+            <span class="bm-dot"></span><span class="bm-dot"></span><span class="bm-dot"></span>
+            <span class="bm-url">doghousemedia.ie</span>
+          </div>
+          <div class="bm-body">
+            <div class="bm-score">
+              <svg viewBox="0 0 36 36" class="bm-ring">
+                <circle cx="18" cy="18" r="16" class="bm-ring-bg"></circle>
+                <circle cx="18" cy="18" r="16" class="bm-ring-fg"></circle>
+              </svg>
+              <span class="bm-num">100</span>
+            </div>
+            <ul class="bm-metrics">
+              <li>Performance</li>
+              <li>Accessibility</li>
+              <li>SEO</li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -127,68 +135,35 @@ const rowB = withImages.slice(mqHalf);
         <h2>A few we're proud of</h2>
         <a href="/work/">All work →</a>
       </div>
-      <div class="work-grid">
-        {
-          featured.map((proj, i) => {
-            const isVideo = proj.data.projectType.includes("Video Production");
-            const tagColor = isVideo ? "var(--red)" : "var(--teal)";
-            const grad = isVideo
-              ? "linear-gradient(135deg,#7a3138,#BD1C30)"
-              : "linear-gradient(135deg,#3a8294,#15282E)";
-            const tag = proj.data.projectType.join(" · ");
-            return (
-              <a href={`/work/${proj.id}/`} class="case reveal" style={`transition-delay:${delays[i]}`}>
-                {proj.data.projectImage ? (
-                  <div class="case-img" style="padding:0;overflow:hidden">
-                    <img
-                      src={proj.data.projectImage}
-                      alt={proj.data.title}
-                      loading="lazy"
-                      style="width:100%;height:100%;object-fit:cover;display:block"
-                    />
-                  </div>
-                ) : (
-                  <div class="case-img" style={`background:${grad}`} />
-                )}
-                <div class="case-body">
-                  <span class="case-tag" style={`color:${tagColor}`}>{tag}</span>
-                  <h4>{proj.data.title}</h4>
-                  <p>{proj.data.shortDescription || proj.data.client}</p>
-                </div>
-              </a>
-            );
-          })
-        }
-      </div>
     </div>
-  </section>
 
-  <!-- Scroll-reactive marquee -->
-  <section class="home-marquee" id="reel" aria-label="Project reel">
-    <div class="mq-row" data-dir="1">
-      <div class="mq-track">
-        {
-          [0, 1, 2].map(() =>
-            rowA.map((p) => (
-              <a href={`/work/${p.id}/`} class="mq-tile" aria-label={p.data.title}>
-                <img src={p.data.projectImage} alt={p.data.title} loading="lazy" />
-              </a>
-            ))
-          )
-        }
+    <!-- Scroll-reactive carousel -->
+    <div class="home-marquee" id="reel" aria-label="Project reel">
+      <div class="mq-row" data-dir="1">
+        <div class="mq-track">
+          {
+            [0, 1, 2].map(() =>
+              rowA.map((p) => (
+                <a href={`/work/${p.id}/`} class="mq-tile" aria-label={p.data.title}>
+                  <img src={p.data.projectImage} alt={p.data.title} loading="lazy" />
+                </a>
+              ))
+            )
+          }
+        </div>
       </div>
-    </div>
-    <div class="mq-row" data-dir="-1">
-      <div class="mq-track">
-        {
-          [0, 1, 2].map(() =>
-            rowB.map((p) => (
-              <a href={`/work/${p.id}/`} class="mq-tile" aria-label={p.data.title}>
-                <img src={p.data.projectImage} alt={p.data.title} loading="lazy" />
-              </a>
-            ))
-          )
-        }
+      <div class="mq-row" data-dir="-1">
+        <div class="mq-track">
+          {
+            [0, 1, 2].map(() =>
+              rowB.map((p) => (
+                <a href={`/work/${p.id}/`} class="mq-tile" aria-label={p.data.title}>
+                  <img src={p.data.projectImage} alt={p.data.title} loading="lazy" />
+                </a>
+              ))
+            )
+          }
+        </div>
       </div>
     </div>
   </section>
@@ -208,6 +183,117 @@ const rowB = withImages.slice(mqHalf);
 </Layout>
 
 <style>
+  /* Web room — browser-window performance mockup */
+  .web-mock {
+    background: #fff !important;
+    display: flex !important;
+    flex-direction: column;
+    padding: 0 !important;
+    overflow: hidden;
+  }
+  .web-mock .bm-bar {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    background: var(--cream);
+  }
+  .web-mock .bm-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--line);
+  }
+  .web-mock .bm-url {
+    margin-left: 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--gray);
+  }
+  .web-mock .bm-body {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    padding: 24px;
+  }
+  .web-mock .bm-score {
+    position: relative;
+    width: 104px;
+    height: 104px;
+    flex: none;
+  }
+  .web-mock .bm-ring {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+  .web-mock .bm-ring-bg {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 3;
+  }
+  .web-mock .bm-ring-fg {
+    fill: none;
+    stroke: var(--teal);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 100.5 100.5;
+    stroke-dashoffset: 100.5;
+    animation: bm-fill 1.6s var(--ease-rise) forwards;
+  }
+  @keyframes bm-fill {
+    to { stroke-dashoffset: 0; }
+  }
+  .web-mock .bm-num {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: 30px;
+    letter-spacing: -0.03em;
+    color: var(--teal);
+  }
+  .web-mock .bm-metrics {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .web-mock .bm-metrics li {
+    position: relative;
+    padding-left: 24px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .web-mock .bm-metrics li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    top: -1px;
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    background: var(--teal);
+    color: #fff;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .web-mock .bm-ring-fg { animation: none; stroke-dashoffset: 0; }
+  }
+
   .home-marquee {
     display: flex;
     flex-direction: column;

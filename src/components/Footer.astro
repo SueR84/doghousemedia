@@ -1,15 +1,136 @@
 ---
 import Mark from "./Mark.astro";
+
+const year = new Date().getFullYear();
+
+const explore = [
+  { label: "Studio", href: "/about/" },
+  { label: "Contact", href: "/contact/" },
+];
+
+const legal = [
+  { label: "Terms & Conditions", href: "/terms/" },
+  { label: "Cookie Policy", href: "/cookie-policy/" },
+  { label: "Privacy Policy", href: "/privacy-policy/" },
+];
 ---
 
 <footer>
-  <div class="wrap foot-inner">
-    <a href="#" class="logo-lockup">
-      <Mark size={30} />
-      <span class="logo-word">Doghouse Media</span>
-    </a>
-    <div class="foot-meta">
-      Dublin, Ireland · <a href="mailto:susan@doghousemedia.ie">susan@doghousemedia.ie</a> · © 2026
+  <div class="wrap foot-top">
+    <div class="foot-brand">
+      <a href="/" class="logo-lockup">
+        <Mark size={30} />
+        <span class="logo-word">Doghouse Media</span>
+      </a>
+      <p class="foot-blurb">
+        An independent web &amp; video studio in Dublin, Ireland.
+      </p>
+    </div>
+
+    <nav class="foot-col" aria-label="Explore">
+      <span class="foot-head">Explore</span>
+      {explore.map((l) => <a href={l.href}>{l.label}</a>)}
+    </nav>
+
+    <nav class="foot-col" aria-label="Legal">
+      <span class="foot-head">Legal</span>
+      {legal.map((l) => <a href={l.href}>{l.label}</a>)}
+    </nav>
+
+    <div class="foot-col">
+      <span class="foot-head">Get in touch</span>
+      <a href="mailto:hello@doghousemedia.ie">hello@doghousemedia.ie</a>
+      <span class="foot-static">13 Adelaide Rd<br />Dublin 2, D02 P950</span>
     </div>
   </div>
+
+  <div class="wrap foot-bottom">
+    <span>© {year} Doghouse Media. All rights reserved.</span>
+    <span>Dublin, Ireland</span>
+  </div>
 </footer>
+
+<style>
+  footer {
+    border-top: 1px solid var(--line);
+    margin-top: 80px;
+  }
+  .foot-top {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1.2fr;
+    gap: 48px;
+    padding: 64px 32px 48px;
+  }
+  .foot-brand .logo-word {
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+  }
+  .foot-blurb {
+    font-size: 14px;
+    line-height: 1.6;
+    opacity: 0.7;
+    margin: 16px 0 0;
+    max-width: 30ch;
+  }
+
+  .foot-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .foot-head {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 4px;
+  }
+  .foot-col a {
+    font-size: 14px;
+    color: var(--ink);
+    text-decoration: none;
+    opacity: 0.75;
+    transition: opacity 0.18s, color 0.18s;
+  }
+  .foot-col a:hover {
+    opacity: 1;
+    color: var(--red);
+  }
+  .foot-static {
+    font-size: 14px;
+    line-height: 1.6;
+    opacity: 0.6;
+  }
+
+  .foot-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px 32px;
+    border-top: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--gray);
+  }
+
+  @media (max-width: 760px) {
+    .foot-top {
+      grid-template-columns: 1fr 1fr;
+      gap: 36px;
+    }
+    .foot-brand {
+      grid-column: 1 / -1;
+    }
+    .foot-bottom {
+      flex-direction: column;
+      gap: 8px;
+      text-align: center;
+    }
+  }
+</style>

@@ -1,0 +1,197 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+
+const address = "13 Adelaide Rd, Dublin 2, D02 P950, Ireland";
+const email = "hello@doghousemedia.ie";
+const mapsLink =
+  "https://www.google.com/maps/search/?api=1&query=13+Adelaide+Rd,+Dublin+2,+D02+P950,+Ireland";
+const mapsEmbed =
+  "https://www.google.com/maps?q=13%20Adelaide%20Rd,%20Dublin%202,%20D02%20P950,%20Ireland&output=embed";
+---
+
+<Layout title="Contact — Doghouse Media">
+  <Nav />
+
+  <main>
+    <!-- Page header -->
+    <section class="contact-hero">
+      <div class="wrap">
+        <div class="eyebrow">Contact</div>
+        <h1>Let's work together.</h1>
+        <p class="contact-lead">
+          To find out more about us or see if we're the right fit, let's set up
+          a discovery call. Tell us your idea and we'll tell you straight whether
+          we're the right studio for it.
+        </p>
+      </div>
+    </section>
+
+    <!-- Details + map -->
+    <section class="contact-section reveal">
+      <div class="wrap contact-grid">
+        <div class="contact-details">
+          <span class="kicker">Get in touch</span>
+
+          <div class="contact-item">
+            <span class="contact-label">Email</span>
+            <a href={`mailto:${email}`} class="contact-value">{email}</a>
+          </div>
+
+          <div class="contact-item">
+            <span class="contact-label">Studio</span>
+            <a href={mapsLink} target="_blank" rel="noopener" class="contact-value">
+              13 Adelaide Rd<br />Dublin 2, D02 P950<br />Ireland
+            </a>
+          </div>
+
+          <div class="contact-item">
+            <span class="contact-label">Hours</span>
+            <span class="contact-value muted">Mon–Fri, 9am–5:30pm</span>
+          </div>
+
+          <button type="button" class="btn btn-primary contact-btn" data-start-project>
+            Start a project
+          </button>
+        </div>
+
+        <div class="contact-map">
+          <iframe
+            title={`Map showing Doghouse Media at ${address}`}
+            src={mapsEmbed}
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .contact-hero {
+    padding: 80px 0 64px;
+  }
+  .contact-hero h1 {
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: clamp(36px, 5vw, 64px);
+    letter-spacing: -0.04em;
+    line-height: 1.02;
+    max-width: 16ch;
+    margin: 12px 0 24px;
+  }
+  .contact-lead {
+    font-size: clamp(17px, 1.8vw, 20px);
+    max-width: 52ch;
+    opacity: 0.75;
+    line-height: 1.55;
+  }
+
+  .contact-section {
+    padding: 64px 0 80px;
+    border-top: 1px solid var(--line);
+  }
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 64px;
+    align-items: start;
+  }
+
+  .contact-details {
+    display: flex;
+    flex-direction: column;
+  }
+  .contact-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 20px 0;
+    border-top: 1px solid var(--line);
+  }
+  .contact-item:first-of-type {
+    border-top: none;
+    padding-top: 0;
+  }
+  .contact-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gray);
+  }
+  .contact-value {
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: 19px;
+    letter-spacing: -0.02em;
+    line-height: 1.4;
+    color: var(--ink);
+    text-decoration: none;
+    transition: color 0.18s;
+  }
+  a.contact-value:hover {
+    color: var(--red);
+  }
+  .contact-value.muted {
+    opacity: 0.7;
+  }
+  .contact-btn {
+    margin-top: 32px;
+    align-self: start;
+  }
+
+  .contact-map {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--steel-tint);
+  }
+  .contact-map iframe {
+    display: block;
+    width: 100%;
+    height: 440px;
+    border: 0;
+  }
+
+  @media (max-width: 760px) {
+    .contact-grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    .contact-map iframe {
+      height: 320px;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    const els = document.querySelectorAll<HTMLElement>(".reveal");
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+      return;
+    els.forEach((el) => el.classList.add("armed"));
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add("in");
+            io.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -6% 0px" }
+    );
+    els.forEach((el) => io.observe(el));
+    setTimeout(() => {
+      els.forEach((el) => {
+        if (!el.classList.contains("in")) el.classList.add("in");
+      });
+    }, 1200);
+  })();
+</script>

@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import Nav from "../../components/Nav.astro";
 import Footer from "../../components/Footer.astro";
+import HoverVideo from "../../components/HoverVideo.astro";
 
 const allProjects = await getCollection("projects", ({ data }) => data.status === "publish");
 
@@ -15,6 +16,15 @@ allProjects.sort((a, b) => {
 });
 
 const allTypes = [...new Set(allProjects.flatMap((p) => p.data.projectType))].sort();
+
+// Turn a Vimeo URL into a muted, looping background-player embed for hover previews.
+// Returns "" when the URL has no numeric video id (e.g. channel/showcase links).
+function vimeoEmbed(url: string): string {
+  const m = url.match(/vimeo\.com\/(\d+)(?:\/([0-9a-z]+))?/i);
+  if (!m) return "";
+  const hash = m[2] ? `h=${m[2]}&` : "";
+  return `https://player.vimeo.com/video/${m[1]}?${hash}background=1&autoplay=1&muted=1&loop=1&dnt=1`;
+}
 ---
 
 <Layout
@@ -43,13 +53,16 @@ const allTypes = [...new Set(allProjects.flatMap((p) => p.data.projectType))].so
 
         <div class="project-grid" id="project-grid">
           {
-            allProjects.map((proj) => (
+            allProjects.map((proj) => {
+              const videoEmbed = vimeoEmbed(proj.data.projectVideo);
+              return (
               <a
                 href={`/work/${proj.id}/`}
                 class="project-card"
                 data-types={proj.data.projectType.join(",")}
+                data-video={videoEmbed || undefined}
               >
-                <div class="project-img">
+                <div class="project-img" data-video-frame>
                   {proj.data.projectImage ? (
                     <img
                       src={proj.data.projectImage}
@@ -63,6 +76,7 @@ const allTypes = [...new Set(allProjects.flatMap((p) => p.data.projectType))].so
                       aria-hidden="true"
                     />
                   )}
+                  {videoEmbed && <span class="hv-play" aria-hidden="true">▶</span>}
                 </div>
                 <div class="project-info">
                   <div class="project-types">
@@ -79,13 +93,15 @@ const allTypes = [...new Set(allProjects.flatMap((p) => p.data.projectType))].so
                   )}
                 </div>
               </a>
-            ))
+              );
+            })
           }
         </div>
       </div>
     </section>
   </main>
 
+  <HoverVideo />
   <Footer />
 </Layout>
 
@@ -154,12 +170,14 @@ const allTypes = [...new Set(allProjects.flatMap((p) => p.data.projectType))].so
   }
 
   .project-img {
+    position: relative;
     aspect-ratio: 4/3;
     overflow: hidden;
     border-radius: 8px;
     background: var(--steel-tint);
     margin-bottom: 16px;
   }
+  /* Hover-to-preview styling lives in the shared <HoverVideo /> component. */
   .project-img img {
     width: 100%;
     height: 100%;
