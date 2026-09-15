@@ -93,6 +93,18 @@
 .pl-tag.is-film { background-color: var(--pl-a3); color: var(--pl-accent-film); }
 .pl-tag.is-web  { background-color: var(--pl-a1); color: var(--pl-accent-web); }
 .pl-tag.is-both { background-color: var(--color-line); color: var(--pl-text); }
+/* Cross-cutting capability tags: accessibility, bilingual, AI, e-commerce, LMS.
+   Deliberately quieter than the craft tag so they read as a qualifier on the
+   work, not as a third pillar. */
+.pl-tag.is-capability {
+  background-color: transparent;
+  box-shadow: inset 0 0 0 1px var(--color-line);
+  color: var(--pl-text-muted, var(--pl-text));
+}
+/* A card with no case study, no film and no live site has nowhere to go, so it
+   does not pretend to be interactive. */
+.pl-work-card.is-static { cursor: default; }
+.pl-work-card.is-static:hover { transform: none; }
 
 /* ---- Cards --------------------------------------------------
    1.25rem padding, 1.25rem radius, no shadow, inner media at

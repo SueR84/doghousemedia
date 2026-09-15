@@ -1,27 +1,148 @@
 ---
+/**
+ * Work grid card. MESSAGING-PLAN section 8.
+ *
+ * Destination, in order:
+ *   caseStudy  -> /work/<slug>/           a page we wrote
+ *   video      -> the film on Vimeo       no page, but the film is the point
+ *   liveUrl    -> the client's live site  no page, but the site is the point
+ *   none       -> no link at all          rather than a dead card
+ *
+ * Film cards show a still by default and play a short muted loop on hover or
+ * keyboard focus. Never under prefers-reduced-motion, never on touch, and the
+ * file is not fetched at all until it plays (preload="none").
+ */
 import type { CollectionEntry } from 'astro:content';
 
 interface Props { project: CollectionEntry<'projects'>; tint?: string; reveal?: boolean }
 const { project, tint, reveal = false } = Astro.props;
 const d = project.data;
+
 const craftLabel = { web: 'Web', video: 'Video', both: 'Web + video' }[d.craft];
 const craftClass = { web: 'is-web', video: 'is-film', both: 'is-both' }[d.craft];
+
+const capabilityLabel: Record<string, string> = {
+  ai: 'AI',
+  accessibility: 'Accessibility',
+  bilingual: 'Bilingual',
+  ecommerce: 'E-commerce',
+  lms: 'Learning platform',
+};
+
+const vimeoUrl = d.video ? `https://vimeo.com/${d.video}${d.videoHash ? `/${d.videoHash}` : ''}` : null;
+
+const href = d.caseStudy ? `/work/${project.id}/` : (vimeoUrl ?? d.liveUrl ?? null);
+const isExternal = Boolean(href && !href.startsWith('/'));
+
+const linkLabel = d.caseStudy
+  ? `${d.title}, case study`
+  : vimeoUrl
+    ? `Watch ${d.title} on Vimeo, opens in a new tab`
+    : `Visit ${d.title}, opens in a new tab`;
+
+const showPreview = Boolean(d.preview && d.cover);
+
+// A film wants 16:9. A website screenshot wants the taller article crop.
+// Putting both in one ratio makes one of them look wrong.
+const mediaRatio = d.craft === 'web' ? 'is-article' : 'is-wide';
 ---
 <article
-  class="pl-work-card pl-hover-scale pl-hover-zoom"
+  class:list={['pl-work-card', 'pl-hover-scale', 'pl-hover-zoom', { 'is-static': !href }]}
   style={tint ? `background-color:${tint}` : undefined}
   data-reveal={reveal ? 'up' : undefined}
+  data-preview-card={showPreview ? '' : undefined}
 >
-  <a class="pl-work-card__link" href={`/work/${project.id}/`} aria-label={d.title}></a>
-  <div class="pl-media is-article">
-    {d.cover ? <img src={d.cover} alt="" loading="lazy" decoding="async" width="800" height="676" /> : null}
+  {href ? (
+    <a
+      class="pl-work-card__link"
+      href={href}
+      aria-label={linkLabel}
+      target={isExternal ? '_blank' : undefined}
+      rel={isExternal ? 'noopener noreferrer' : undefined}
+    ></a>
+  ) : null}
+
+  <div class:list={['pl-media', mediaRatio]}>
+    {d.cover ? (
+      <img src={d.cover} alt="" loading="lazy" decoding="async" width="800" height="676" />
+    ) : null}
+    {showPreview ? (
+      <video
+        class="pl-work-card__preview"
+        data-preview
+        src={d.preview}
+        poster={d.cover}
+        muted
+        loop
+        playsinline
+        preload="none"
+        tabindex="-1"
+        aria-hidden="true"
+      ></video>
+    ) : null}
   </div>
+
   <div class="pl-work-card__body pl-stack pl-stack-xs" style="width:100%">
     <div class="pl-work-card__meta" style="width:100%">
       <span class="u-eyebrow">{d.client}</span>
       <span class="u-eyebrow u-nowrap">{d.year}</span>
     </div>
     <h3 class="u-xl u-medium">{d.title}</h3>
-    <span class:list={['pl-tag', craftClass, 'u-xs']} style="margin-top:.5rem">{craftLabel}</span>
+    <div class="pl-row is-wrap" style="gap:.375rem;margin-top:.5rem">
+      <span class:list={['pl-tag', craftClass, 'u-xs']}>{craftLabel}</span>
+      {d.capabilities.map((c) => (
+        <span class="pl-tag is-capability u-xs">{capabilityLabel[c] ?? c}</span>
+      ))}
+    </div>
   </div>
 </article>
+
+<style>
+  /* The still is the resting state. The loop sits on top and fades in only
+     while it is playing, so there is no flash of an empty video element. */
+  .pl-work-card__preview {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 240ms ease;
+    pointer-events: none;
+  }
+  .pl-work-card__preview.is-playing { opacity: 1; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pl-work-card__preview { display: none; }
+  }
+</style>
+
+<script>
+  // Astro bundles this once no matter how many cards render it.
+  const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
+  const motionOk = window.matchMedia('(prefers-reduced-motion: no-preference)');
+  const allowed = () => fine.matches && motionOk.matches;
+
+  document.querySelectorAll<HTMLElement>('[data-preview-card]').forEach((card) => {
+    const video = card.querySelector<HTMLVideoElement>('[data-preview]');
+    if (!video) return;
+
+    const start = () => {
+      if (!allowed()) return;
+      video.classList.add('is-playing');
+      void video.play().catch(() => video.classList.remove('is-playing'));
+    };
+
+    const stop = () => {
+      video.classList.remove('is-playing');
+      video.pause();
+      video.currentTime = 0;
+    };
+
+    card.addEventListener('pointerenter', start);
+    card.addEventListener('pointerleave', stop);
+    card.addEventListener('focusin', start);
+    card.addEventListener('focusout', stop);
+    motionOk.addEventListener('change', () => { if (!allowed()) stop(); });
+  });
+</script>

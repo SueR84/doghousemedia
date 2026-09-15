@@ -11,7 +11,15 @@ import Button from '../../components/pipely/Button.astro';
 import PhoneFold from '../../components/sections/PhoneFold.astro';
 
 export async function getStaticPaths() {
-  const projects = await getCollection('projects', ({ data }) => !data.draft);
+  // Only case studies get a page. MESSAGING-PLAN section 8: four projects earn
+  // one by having a real testimonial or a real result behind them. Everything
+  // else is a thumbnail on the Work page that links to the film or the live
+  // site. The old site had twenty-one thin project pages; that is the thing
+  // this filter exists to prevent coming back.
+  const projects = await getCollection(
+    'projects',
+    ({ data }) => data.caseStudy && !data.draft,
+  );
   return projects.map((project) => ({
     params: { slug: project.id },
     props: { project },

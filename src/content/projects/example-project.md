@@ -17,7 +17,7 @@ quote:
   role: Role
 featured: true
 order: 1
-draft: false
+draft: true
 ---
 
 ## The problem

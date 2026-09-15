@@ -50,12 +50,15 @@ const clients = [
 // episode at vimeo.com/1225926198, pulled from Vimeo's own thumbnail. The
 // film is public and embeddable with no hash, so the card could link or
 // embed it rather than pointing at the work index.
-// A featured card must never promise a case study that is not there. Draft
-// projects are filtered out of work/[...slug].astro's getStaticPaths, so a
-// card pointing at a draft slug would 404. Resolve against the collection and
-// fall back to the work index with a label that is actually true.
+// A featured card must never promise a case study that is not there. Since
+// MESSAGING-PLAN section 8, a page exists only where `caseStudy` is true AND
+// the project is not a draft, which is exactly the filter in
+// work/[...slug].astro's getStaticPaths. Keep the two in step: not-draft alone
+// is no longer enough, most projects are thumbnails with no page at all.
+// Resolve against the collection and fall back to the work index with a label
+// that is actually true.
 const liveCaseStudies = new Set(
-  (await getCollection('projects', ({ data }) => !data.draft)).map((p) => p.id),
+  (await getCollection('projects', ({ data }) => data.caseStudy && !data.draft)).map((p) => p.id),
 );
 const caseStudy = (slug: string) =>
   liveCaseStudies.has(slug)

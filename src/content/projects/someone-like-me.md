@@ -11,6 +11,9 @@ services:
   - "Accessibility"
 order: 1
 draft: false
+caseStudy: true
+capabilities: ["accessibility", "bilingual"]
+
 ---
 
 ## The problem

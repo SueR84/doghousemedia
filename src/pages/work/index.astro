@@ -1,14 +1,22 @@
 ---
 /**
- * Work index. MESSAGING-PLAN §8.
+ * Work index. MESSAGING-PLAN section 8.
  *
- * Four case studies, then a curated thumbnail grid of twelve to fifteen.
- * Two filters only, Video and Web. Five filters on twelve items is friction
- * for no gain.
+ * Two sections, not a filter row. Film first, then websites.
  *
- * TODO before launch: the grid currently renders every non-draft project in
- * the collection, twenty-one of them, most inherited from the old site. Sue
- * curates this down. Drop anything you would not put in front of Kerry Group.
+ * A filter makes the two disciplines peers you choose between, which quietly
+ * undoes the decision that video leads. Two labelled sections let film sit
+ * first and read bigger, they are linkable (#film, #websites), and they need
+ * no JavaScript and no live region announcing "showing 6 of 24", which matters
+ * against the WCAG 2.2 AA commitment and the 15KB JS budget in BUILD-SPEC.
+ *
+ * A `craft: both` project appears once, under Film, and carries the "Web +
+ * video" tag. Showing it twice would be worse than showing it once.
+ *
+ * TODO before launch: this renders every non-draft project, most inherited
+ * from the old site. MESSAGING-PLAN says twelve to fifteen, chosen on quality.
+ * Drop anything you would not put in front of Kerry Group. Set `draft: true`
+ * on the ones that go.
  */
 import { getCollection } from 'astro:content';
 import Site from '../../layouts/Site.astro';
@@ -19,20 +27,26 @@ const projects = (await getCollection('projects', (p) => !p.data.draft)).sort(
   (a, b) => a.data.order - b.data.order || b.data.year - a.data.year,
 );
 
-const counts = {
-  all: projects.length,
-  video: projects.filter((p) => p.data.craft !== 'web').length,
-  web: projects.filter((p) => p.data.craft !== 'video').length,
-};
+const film = projects.filter((p) => p.data.craft !== 'web');
+const web = projects.filter((p) => p.data.craft === 'web');
 
-// Cards alternate Cream and White so the tinted pill tag always reads
-// against them. The craft colour is carried by the tag, not the fill.
+// Cards alternate Cream and White so the tinted pill tag always reads against
+// them. The craft colour is carried by the tag, not the fill.
 const tintFor = (i: number) => (i % 2 ? 'var(--pl-a2)' : 'var(--pl-a3)');
 
-const filters = [
-  { id: 'all', label: 'All', count: counts.all },
-  { id: 'video', label: 'Video', count: counts.video },
-  { id: 'web', label: 'Web', count: counts.web },
+const sections = [
+  {
+    id: 'film',
+    heading: 'Film',
+    lead: 'Work for medtech, corporate and charity clients, most of it explaining something that is hard to explain.',
+    items: film,
+  },
+  {
+    id: 'websites',
+    heading: 'Websites',
+    lead: 'Sites built to be used by the team that owns them, updated without us, and handed over cleanly.',
+    items: web,
+  },
 ];
 ---
 
@@ -49,38 +63,32 @@ const filters = [
           <h1 class="u-h2 u-max-40 u-balance" id="work-heading" data-reveal>
             Films and websites made for organisations with something difficult to explain.
           </h1>
-          <div class="pl-gap-sm"></div>
-          <div class="pl-row is-wrap" data-reveal style="gap:.5rem" role="group" aria-label="Filter work">
-            {filters.map((f) => (
-              <button
-                class="pl-filter"
-                type="button"
-                data-work-filter={f.id}
-                aria-pressed={f.id === 'all' ? 'true' : 'false'}
-              >
-                {f.label} <span class="u-muted">{f.count}</span>
-              </button>
-            ))}
-          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="pl-panel is-secondary" aria-label="All work">
-    <div class="pl-gutter pl-pad-md">
-      <div class="pl-container is-md">
-        <p class="u-sm u-muted" data-work-status role="status" aria-live="polite"></p>
-        <div class="pl-grid-3" data-reveal-stagger="100" data-work-grid>
-          {projects.map((p, i) => (
-            <div data-craft={p.data.craft}>
+  {sections.map((section, s) => (
+    <section
+      class:list={['pl-panel', s % 2 === 0 ? 'is-secondary' : null]}
+      id={section.id}
+      aria-labelledby={`${section.id}-heading`}
+    >
+      <div class="pl-gutter pl-pad-md">
+        <div class="pl-container is-md">
+          <h2 class="u-h3 u-balance" id={`${section.id}-heading`} data-reveal>{section.heading}</h2>
+          <div style="height:.75rem"></div>
+          <p class="u-max-40 u-muted" data-reveal>{section.lead}</p>
+          <div class="pl-gap-sm"></div>
+          <div class="pl-grid-3" data-reveal-stagger="100">
+            {section.items.map((p, i) => (
               <WorkCard project={p} tint={tintFor(i)} reveal />
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  ))}
 
   <section class="pl-panel is-inverse">
     <div class="pl-gutter pl-pad-lg">
@@ -96,30 +104,3 @@ const filters = [
     </div>
   </section>
 </Site>
-
-<script>
-  // Two filters plus All. Items are hidden with the `hidden` attribute so
-  // they leave the accessibility tree, not just the layout.
-  const grid = document.querySelector<HTMLElement>('[data-work-grid]');
-  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-work-filter]');
-  const status = document.querySelector<HTMLElement>('[data-work-status]');
-
-  if (grid && buttons.length) {
-    const items = Array.from(grid.children) as HTMLElement[];
-
-    const apply = (filter: string) => {
-      let shown = 0;
-      items.forEach((item) => {
-        const craft = item.dataset.craft ?? 'web';
-        const match = filter === 'all' || craft === filter || craft === 'both';
-        item.hidden = !match;
-        if (match) shown += 1;
-      });
-      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.workFilter === filter)));
-      if (status) status.textContent = `Showing ${shown} of ${items.length}`;
-    };
-
-    buttons.forEach((b) => b.addEventListener('click', () => apply(b.dataset.workFilter ?? 'all')));
-    apply('all');
-  }
-</script>

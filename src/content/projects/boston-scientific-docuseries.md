@@ -13,6 +13,8 @@ order: 1
 # out of getStaticPaths in work/[...slug].astro, so no page is built and the
 # homepage card keeps pointing at the work index until this flips to false.
 draft: true
+caseStudy: true
+
 ---
 
 <!-- TODO before this can publish. MESSAGING-PLAN §12: the problem, what we

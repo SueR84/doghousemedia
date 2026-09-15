@@ -27,6 +27,21 @@ const projects = defineCollection({
     quote: z.object({ text: z.string(), name: z.string(), role: z.string().optional() }).optional(),
     gallery: z.array(z.string()).default([]),
     featured: z.boolean().default(false),
+    // MESSAGING-PLAN section 8 and 12. Only a project with a real testimonial
+    // or a real result earns a page of its own. Everything else is a thumbnail
+    // on the Work page and links out to the film or the live site instead.
+    // The old site's mistake was twenty-one thin pages; do not rebuild it.
+    caseStudy: z.boolean().default(false),
+    // Cross-cutting capabilities shown as tags, deliberately NOT a third
+    // craft value. AI is a block inside Web Development, not a pillar, so it
+    // must not grow its own section on the Work page. Same for accessibility,
+    // bilingual, e-commerce and LMS.
+    capabilities: z.array(z.enum(['ai', 'accessibility', 'bilingual', 'ecommerce', 'lms'])).default([]),
+    // Short muted loop for the Work grid, three to six seconds, a few hundred
+    // KB, self-hosted in /public. Not a Vimeo embed: six iframes would eat the
+    // 15KB JS budget in BUILD-SPEC section 9 and set cookies. The full film
+    // stays on the case study page. `cover` doubles as the poster frame.
+    preview: z.string().optional(),
     order: z.number().default(0),
     draft: z.boolean().default(false),
   }),
