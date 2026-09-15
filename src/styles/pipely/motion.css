@@ -1,0 +1,156 @@
+/* PIPELY FORK — motion
+   A direct port of the Pipely Webflow IX2 interaction set. Every
+   duration and easing is the template's actual value.
+
+   Webflow easing -> cubic-bezier
+     outQuart  0.165, 0.84, 0.44, 1
+     outQuad   0.25, 0.46, 0.45, 0.94
+     inQuad    0.55, 0.085, 0.68, 0.53 */
+
+/* ---- 1. Scroll reveal --------------------------------------
+   86 of these on the template's home page. opacity 0 + Y 15px,
+   700ms outQuart, children stagger in 100ms steps. */
+/* Scoped to `html.js`, set by an inline script in the layout head. Without
+   JavaScript every reveal element would stay at opacity 0 and the site would
+   render blank, which on a site that sells accessibility auditing is not a
+   defect we get to ship. */
+.js .pipely [data-reveal] {
+  opacity: 0;
+  transform: translateY(var(--pl-reveal-shift));
+  transition:
+    opacity var(--pl-dur-reveal) var(--pl-ease-out-quart),
+    transform var(--pl-dur-reveal) var(--pl-ease-out-quart),
+    filter var(--pl-dur-reveal) var(--pl-ease-out-quart);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+.js .pipely [data-reveal].is-in { opacity: 1; transform: none; filter: none; }
+
+.js .pipely [data-reveal='fade']  { transform: none; }
+.js .pipely [data-reveal='right'] { transform: translateX(var(--pl-reveal-shift-x)); filter: blur(6px); }
+.js .pipely [data-reveal='left']  { transform: translateX(calc(-1 * var(--pl-reveal-shift-x))); filter: blur(6px); }
+/* The hero avatar cluster: the template slides each chip in from 300% of
+   its own width under a heavy blur, staggered 100ms apart. */
+.js .pipely [data-reveal='slide'] { transform: translateX(300%); filter: blur(20px); }
+.js .pipely [data-reveal='rise']  { transform: translateY(100px); transition-duration: var(--pl-dur-slow); }
+
+/* Frame stays put, picture slides up inside it. */
+.pipely .pl-reveal-media { overflow: clip; }
+.js .pipely .pl-reveal-media > * {
+  transform: translateY(12%) scale(1.06);
+  transition: transform var(--pl-dur-slow) var(--pl-ease-out-quart);
+}
+.js .pipely .pl-reveal-media.is-in > * { transform: none; }
+
+/* ---- 2. Sticky horizontal scroll ---------------------------
+   Outer section 300vw tall, inner wrap sticks, track slides
+   sideways. Track X: 0 -> -101.5% -> -203% -> -304.5% across
+   scroll progress 0.02 to 0.75. 101.5 = panel + 1.5% gap. */
+.pipely .pl-hscroll { position: relative; height: 300vw; border-radius: var(--pl-r-section); overflow: clip; }
+.pipely .pl-hscroll__wrap {
+  position: sticky; top: 1rem;
+  display: flex; flex-direction: column;
+  height: calc(100svh - 2rem);
+  padding-bottom: var(--pl-gutter);
+  border-radius: var(--pl-r-section);
+  background-color: var(--pl-primary);
+  overflow: clip;
+}
+.pipely .pl-hscroll__head {
+  position: sticky; top: 0; z-index: 2;
+  display: flex; flex-direction: column; justify-content: center;
+  width: 100%; height: 9.75rem;
+  background-color: var(--pl-primary);
+}
+.pipely .pl-hscroll__body { height: 100%; min-height: 0; }
+.pipely .pl-hscroll__track { display: flex; gap: 1.5%; width: 100%; height: 100%; will-change: transform; }
+.pipely .pl-hscroll__panel { flex: none; width: 100%; height: 100%; }
+
+/* Under tablet the whole thing unrolls into a vertical stack,
+   same as the template does. */
+@media (max-width: 991px) {
+  .pipely .pl-hscroll { height: auto; }
+  .pipely .pl-hscroll__wrap { position: static; height: auto; padding-bottom: 1rem; }
+  .pipely .pl-hscroll__head { position: static; height: auto; padding-block: 5%; }
+  .pipely .pl-hscroll__track { flex-direction: column; gap: var(--pl-s-lg); transform: none !important; }
+  .pipely .pl-hscroll__panel { width: 100%; height: auto; }
+}
+
+/* ---- 3. Marquee -------------------------------------------- */
+.pipely .pl-marquee { position: relative; display: flex; align-items: center; overflow: clip; }
+.pipely .pl-marquee__track {
+  display: flex; align-items: center; gap: var(--pl-s-xl);
+  flex: none; padding-right: var(--pl-s-xl);
+  animation: pl-drift var(--pl-dur-marquee) linear infinite;
+  will-change: transform;
+}
+.pipely .pl-marquee.is-reverse .pl-marquee__track { animation-direction: reverse; }
+.pipely .pl-marquee:hover .pl-marquee__track { animation-play-state: paused; }
+@keyframes pl-drift { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+.pipely .pl-marquee.is-faded {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+
+/* ---- 4. Drag rail -----------------------------------------
+   Cards sized in vw so the next one always peeks in. */
+.pipely .pl-rail {
+  display: flex; gap: var(--pl-s-xl); width: 100%;
+  overflow-x: auto; scrollbar-width: none;
+  scroll-snap-type: x proximity; cursor: grab;
+}
+.pipely .pl-rail::-webkit-scrollbar { display: none; }
+.pipely .pl-rail.is-dragging { cursor: grabbing; scroll-snap-type: none; user-select: none; }
+.pipely .pl-rail > * { flex: none; width: 28vw; scroll-snap-align: start; }
+@media (max-width: 991px) { .pipely .pl-rail > * { width: 50vw; } }
+@media (max-width: 479px) { .pipely .pl-rail > * { width: 70vw; } }
+
+/* ---- 5. Hover states --------------------------------------- */
+.pipely .pl-hover-scale { transition: transform var(--pl-dur-panel) var(--pl-ease-out-quart); will-change: transform; }
+.pipely .pl-hover-scale:hover { transform: scale(1.05); }
+
+.pipely .pl-hover-zoom { overflow: clip; }
+.pipely .pl-hover-zoom img { transition: transform var(--pl-dur-panel) var(--pl-ease-out-quart); }
+.pipely .pl-hover-zoom:hover img { transform: scale(1.06); }
+
+.pipely .pl-hover-nudge .pl-nudge { transition: transform var(--pl-dur-hover) var(--pl-ease-out-quad); }
+.pipely .pl-hover-nudge:hover .pl-nudge { transform: translateX(25px); }
+
+/* Two stacked copies, one rolls out, one rolls in. */
+.pipely .pl-roll { position: relative; display: inline-block; overflow: clip; vertical-align: bottom; }
+.pipely .pl-roll > span { display: block; transition: transform 250ms var(--pl-ease-out-quad); }
+.pipely .pl-roll > span:last-child { position: absolute; inset: 0; transform: translateY(350%); }
+.pipely .pl-roll:hover > span:first-child { transform: translateY(-350%); }
+.pipely .pl-roll:hover > span:last-child { transform: translateY(0); }
+
+/* ---- 6. Nav hide / show ------------------------------------ */
+.pipely .pl-nav { transition: transform var(--pl-dur-slow) var(--pl-ease-out-quart); }
+.pipely .pl-nav.is-hidden { transform: translateY(-100%); }
+
+/* ---- 7. Scroll-scrubbed progress rail ---------------------- */
+.pipely .pl-progress { position: relative; padding-left: 2rem; }
+.pipely .pl-progress__line { position: absolute; inset: 0 auto 0 0; width: 2px; background-color: var(--pl-border); }
+.pipely .pl-progress__fill { position: absolute; inset: 0 auto auto 0; width: 2px; height: calc(var(--progress, 0) * 100%); background-color: var(--pl-accent-film); }
+.pipely .pl-progress-step__dot {
+  width: 0.75rem; height: 0.75rem; border-radius: 100%;
+  background-color: var(--pl-border-strong);
+  transition: background-color var(--pl-dur-hover) var(--pl-ease-out-quad);
+}
+.pipely .pl-progress-step.is-passed .pl-progress-step__dot { background-color: var(--pl-text); }
+
+/* ---- Reduced motion ---------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .pipely *, .pipely *::before, .pipely *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .js .pipely [data-reveal] { opacity: 1 !important; transform: none !important; filter: none !important; }
+  .js .pipely .pl-reveal-media > * { transform: none !important; }
+  .pipely .pl-hscroll { height: auto; }
+  .pipely .pl-hscroll__wrap { position: static; height: auto; }
+  .pipely .pl-hscroll__track { flex-direction: column; gap: var(--pl-s-lg); transform: none !important; }
+  .pipely .pl-hscroll__panel { width: 100%; height: auto; }
+}

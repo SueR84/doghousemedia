@@ -1,0 +1,106 @@
+---
+import Logo from '../Logo.astro';
+import Button from './Button.astro';
+
+const path = Astro.url.pathname;
+
+// Six items, per MESSAGING-PLAN §4. Two pillars, not three crafts.
+// AI is a block inside Web Development, it is not a nav item.
+// Care and Hosting is footer-only, deliberately.
+const links = [
+  { label: 'Work', href: '/work/' },
+  { label: 'Video', href: '/video-production/' },
+  { label: 'Web', href: '/web-development/' },
+  { label: 'Articles', href: '/blog/' },
+  { label: 'About', href: '/about/' },
+  { label: 'Contact', href: '/contact/' },
+];
+
+const isCurrent = (href: string) =>
+  href === '/' ? path === '/' : path === href || path.startsWith(href);
+---
+<header class="pl-nav" data-pl-nav>
+  <div class="pl-nav__inner">
+    <div class="pl-nav__content">
+      <a class="pl-nav__brand" href="/" aria-label="Doghouse Media, home">
+        <Logo variant="horizontal" size="nav" />
+      </a>
+
+      <nav aria-label="Primary">
+        <ul class="pl-nav__list">
+          {links.map((l) => (
+            <li>
+              <a class="pl-nav__link" href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined}>
+                {l.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <div class="pl-nav__actions">
+        <div class="pl-btn-group pl-nav__cta">
+          <Button href="/contact/" size="sm">Get in touch</Button>
+        </div>
+
+        <button
+          class="pl-nav__toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="pl-mobile-nav"
+          data-pl-nav-toggle
+        >
+          <span class="pl-nav__toggle-bars" aria-hidden="true"><span></span><span></span></span>
+          <span class="pl-nav__toggle-label">Menu</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="pl-nav__mobile" id="pl-mobile-nav" hidden>
+    <nav aria-label="Primary, mobile">
+      <ul class="pl-nav__mobile-list">
+        {links.map((l) => (
+          <li>
+            <a class="pl-nav__mobile-link" href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined}>
+              {l.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <p class="pl-nav__mobile-meta"><a href="mailto:hello@doghousemedia.ie">hello@doghousemedia.ie</a></p>
+  </div>
+</header>
+
+<script>
+  // Mobile menu. Focus stays inside while open, Escape closes and returns
+  // focus to the toggle, and the nav is prevented from hiding on scroll.
+  const header = document.querySelector<HTMLElement>('[data-pl-nav]');
+  const toggle = document.querySelector<HTMLButtonElement>('[data-pl-nav-toggle]');
+  const panel = document.getElementById('pl-mobile-nav');
+
+  if (header && toggle && panel) {
+    const setOpen = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      panel.hidden = !open;
+      header.classList.toggle('is-open', open);
+      document.documentElement.style.overflow = open ? 'hidden' : '';
+    };
+
+    toggle.addEventListener('click', () => {
+      setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+
+    // A resize past the breakpoint should not leave the page scroll-locked.
+    const mq = window.matchMedia('(min-width: 768px)');
+    mq.addEventListener('change', (e) => { if (e.matches) setOpen(false); });
+  }
+</script>

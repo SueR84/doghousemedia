@@ -1,0 +1,28 @@
+---
+/**
+ * Privacy. Renders the `privacy-policy` entry from the legal collection at
+ * /privacy/, which is the URL the footer and the sitemap use.
+ */
+import { getEntry, render } from 'astro:content';
+import Site from '../layouts/Site.astro';
+
+const doc = await getEntry('legal', 'privacy-policy');
+if (!doc) throw new Error('Missing src/content/legal/privacy-policy.md');
+const { Content } = await render(doc);
+
+const fmt = new Intl.DateTimeFormat('en-IE', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<Site title={doc.data.title} description={`Privacy policy for Doghouse Media.`}>
+  <section class="pl-panel">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-sm">
+        <h1 class="u-h2 u-balance">{doc.data.title}</h1>
+        <div class="pl-gap-sm"></div>
+        <p class="u-sm u-muted">Last updated {fmt.format(doc.data.updated)}</p>
+        <div class="pl-gap-md"></div>
+        <div class="pl-prose"><Content /></div>
+      </div>
+    </div>
+  </section>
+</Site>

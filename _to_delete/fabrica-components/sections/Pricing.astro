@@ -1,0 +1,265 @@
+---
+/**
+ * 5.9 — Pricing.
+ *
+ * OPEN QUESTION (BUILD-SPEC §11.3): are we publishing real numbers?
+ * If not, this section is stronger rewritten as "how we work / engagement
+ * models" — a vague pricing block is the weakest thing on a studio page.
+ * The toggle mechanics below work either way.
+ */
+import Panel from '../ui/Panel.astro';
+import Pill from '../ui/Pill.astro';
+import PersonCard from '../ui/PersonCard.astro';
+
+const plans = {
+  project: {
+    price: '€4,950',
+    unit: '/project',
+    features: [
+      'Homepage plus up to 5 inner pages',
+      'Design and build, no templates',
+      'Mobile-first, accessibility checked',
+      'Hosting and SSL set up on Cloudways',
+    ],
+    delivery: '3–5 weeks',
+  },
+  monthly: {
+    price: '€850',
+    unit: '/month',
+    features: [
+      'Ongoing design and development time',
+      'Hosting, backups and updates included',
+      'Content and campaign support',
+      'Cancel with 30 days notice',
+    ],
+    delivery: 'Rolling',
+  },
+};
+---
+
+<section class="pricing section">
+  <div class="container">
+    <Panel tone="ink" class="pricing__panel">
+      <header class="pricing__head reveal">
+        <span class="label pricing__eyebrow">Simple pricing</span>
+        <h2 class="heading">Pricing.</h2>
+      </header>
+
+      <div class="pricing__toggle reveal" style="--i: 1">
+        <div class="switch" role="tablist" aria-label="Billing model">
+          <button
+            class="switch__btn is-active"
+            role="tab"
+            aria-selected="true"
+            data-plan="project"
+            type="button">Per project</button
+          >
+          <button
+            class="switch__btn"
+            role="tab"
+            aria-selected="false"
+            data-plan="monthly"
+            type="button">Monthly</button
+          >
+        </div>
+      </div>
+
+      <div class="pricing__card reveal" style="--i: 2" data-pricing>
+        <div class="pricing__price">
+          <p class="display-l" data-price>{plans.project.price}</p>
+          <p class="label pricing__unit" data-unit>{plans.project.unit}</p>
+        </div>
+
+        <ul class="pricing__features" data-features>
+          {plans.project.features.map((feature) => <li>{feature}</li>)}
+        </ul>
+
+        <div class="pricing__meta">
+          <div class="pricing__delivery">
+            <span class="label">Delivery time</span>
+            <span class="label" data-delivery>{plans.project.delivery}</span>
+          </div>
+          <Pill label="Get in touch" href="/contact" variant="ghost-cream" class="pricing__cta" startProject />
+        </div>
+      </div>
+
+      <div class="pricing__outro reveal">
+        <span class="label pricing__eyebrow">Looking for more?</span>
+        <p class="lead text-resolve">
+          Add video, automation or ongoing SEO. We'll shape something around
+          what your business actually needs rather than what's easiest for us
+          to sell.
+        </p>
+      </div>
+
+      <div class="pricing__person reveal">
+        <PersonCard
+          name="Emma Walkin"
+          role="Production Lead"
+          company="Doghouse Media"
+          tone="ink"
+          ctaLabel="Talk it through"
+          startProject
+        />
+      </div>
+    </Panel>
+  </div>
+</section>
+
+<script define:vars={{ plans }}>
+  const root = document.querySelector('[data-pricing]');
+  const buttons = document.querySelectorAll('.switch__btn');
+  if (root && buttons.length) {
+    const price = root.querySelector('[data-price]');
+    const unit = root.querySelector('[data-unit]');
+    const features = root.querySelector('[data-features]');
+    const delivery = root.querySelector('[data-delivery]');
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const plan = plans[btn.dataset.plan];
+        if (!plan) return;
+
+        buttons.forEach((b) => {
+          const active = b === btn;
+          b.classList.toggle('is-active', active);
+          b.setAttribute('aria-selected', String(active));
+        });
+
+        price.textContent = plan.price;
+        unit.textContent = plan.unit;
+        delivery.textContent = plan.delivery;
+        features.innerHTML = '';
+        plan.features.forEach((f) => {
+          const li = document.createElement('li');
+          li.textContent = f;
+          features.appendChild(li);
+        });
+      });
+    });
+  }
+</script>
+
+<style>
+  .pricing__panel {
+    padding: 96px 64px;
+  }
+
+  .pricing__head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+
+  .pricing__eyebrow {
+    opacity: 0.45;
+  }
+
+  .pricing__toggle {
+    margin-bottom: 32px;
+  }
+
+  .switch {
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--hairline);
+  }
+
+  .switch__btn {
+    padding: 10px 22px;
+    border-radius: var(--r-pill);
+    font-size: var(--fs-body-s);
+    color: var(--cream-60);
+    transition:
+      background-color var(--dur-fast) var(--ease-standard),
+      color var(--dur-fast) var(--ease-standard);
+  }
+
+  .switch__btn.is-active {
+    background: var(--surface);
+    color: var(--ink);
+  }
+
+  .pricing__card {
+    display: grid;
+    grid-template-columns: 300px minmax(0, 1fr);
+    gap: 40px;
+    padding: 40px;
+    border-radius: var(--r-panel);
+    border: 1px solid var(--hairline);
+  }
+
+  .pricing__price {
+    display: grid;
+    gap: 4px;
+    align-content: start;
+  }
+
+  .pricing__unit {
+    opacity: 0.5;
+  }
+
+  .pricing__features {
+    display: grid;
+    gap: 12px;
+    align-content: start;
+    font-size: var(--fs-body-s);
+  }
+
+  .pricing__features li {
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .pricing__meta {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .pricing__delivery {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--surface);
+  }
+
+  .pricing__outro {
+    display: grid;
+    grid-template-columns: 200px minmax(0, 1fr);
+    gap: 24px;
+    margin-top: 96px;
+  }
+
+  .pricing__outro .lead {
+    max-width: 40ch;
+  }
+
+  .pricing__person {
+    margin-top: 48px;
+  }
+
+  @media (max-width: 809.98px) {
+    .pricing__panel {
+      padding: 56px 20px;
+    }
+    .pricing__card {
+      grid-template-columns: 1fr;
+      padding: 24px;
+      gap: 28px;
+    }
+    .pricing__meta {
+      grid-template-columns: 1fr;
+    }
+    .pricing__outro {
+      grid-template-columns: 1fr;
+      margin-top: 64px;
+    }
+  }
+</style>

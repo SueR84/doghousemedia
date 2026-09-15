@@ -1,0 +1,105 @@
+---
+/**
+ * About. MESSAGING-PLAN §10.
+ *
+ * Carries the female-owned positioning with real weight rather than buried
+ * mid-sentence in a hero subhead. Founded 2011, not 2013. Both owners named
+ * with clear roles, because a large organisation wants to know who is
+ * accountable, and both with photos, because an About page with no people
+ * is the clearest tell that a studio is smaller than it looks.
+ */
+import { getCollection } from 'astro:content';
+import Site from '../layouts/Site.astro';
+import Button from '../components/pipely/Button.astro';
+
+const team = (await getCollection('team')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<Site
+  title="About"
+  description="Doghouse Media is an independent video and web studio in Dublin, founded in 2011, female-owned and operated."
+>
+  <section class="pl-panel" aria-labelledby="ab-heading">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div data-reveal-stagger="100">
+          <p class="u-eyebrow" data-reveal>About</p>
+          <div class="pl-gap-sm"></div>
+          <h1 class="u-h2 u-max-40 u-balance" id="ab-heading" data-reveal>
+            We make films and websites for organisations with something difficult to explain.
+          </h1>
+          <div class="pl-gap-sm"></div>
+          <p class="u-lg u-muted u-max-33" data-reveal>
+            Doghouse Media is an independent studio in Dublin, founded in 2011, female-owned and operated.
+            Two of us, fifteen years, and the same two people from the first conversation to the last delivery.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pl-panel is-secondary" aria-labelledby="ab-team">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <h2 class="u-h2 u-max-26" id="ab-team" data-reveal>Who you deal with.</h2>
+        <div class="pl-gap-lg"></div>
+        <div class="pl-grid-2" data-reveal-stagger="120">
+          {team.map((m, i) => (
+            <article class:list={['pl-card', 'is-tight', i % 2 ? 'is-a3' : 'is-a1']} data-reveal>
+              <div class="pl-media is-team pl-reveal-media">
+                {m.data.photo
+                  ? <img src={m.data.photo} alt={`${m.data.name}, ${m.data.role} at Doghouse Media`} loading="lazy" width="600" height="675" />
+                  : null}
+              </div>
+              <div class="pl-stack pl-stack-sm">
+                <h3 class="u-xl u-medium">{m.data.name}</h3>
+                <p class="u-sm u-muted">{m.data.role}</p>
+                <p class="u-muted">{m.data.bio}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+        <p class="u-sm u-muted" style="margin-top:1.5rem" data-placeholder>
+          PLACEHOLDER, not for publication. Both photos are still being assembled. Do not launch this page
+          without them.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="pl-panel" aria-labelledby="ab-story">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-sm">
+        <div class="pl-prose" data-reveal>
+          <h2 id="ab-story">Twenty years before the studio.</h2>
+          <p>
+            Before Doghouse there was two decades of IT consultancy, support and development, including
+            second-line work on critical infrastructure. That is why regulated clients tend to stay. We are
+            comfortable with procurement questions, with sign-off chains, and with the parts of a project that
+            are not the fun parts.
+          </p>
+          <h2>Independent, and staying that way.</h2>
+          <p>
+            No account layer and no handover. The person who scoped the job is the person who does it. For a
+            two-person studio working with organisations that have procurement departments, that is the whole
+            proposition, and it only works if we are honest about what we can take on.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pl-panel is-inverse">
+    <div class="pl-gutter pl-pad-lg">
+      <div class="pl-container is-md u-center">
+        <h2 class="u-h2 u-balance" data-reveal style="color:var(--pl-text-inverse);margin-inline:auto;max-width:30rem">
+          Tell us what you are working on.
+        </h2>
+        <div class="pl-gap-sm"></div>
+        <div class="pl-btn-group" data-reveal style="justify-content:center">
+          <Button href="/contact/" variant="on-dark">Get in touch</Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</Site>

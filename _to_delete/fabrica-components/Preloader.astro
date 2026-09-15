@@ -1,0 +1,45 @@
+---
+/**
+ * M1 — preload cover.
+ *
+ * Deliberately short (see BUILD-SPEC §4.1). The reference holds for ~1.5s,
+ * which is a real tax on a site whose whole pitch is speed. This runs ~1.15s
+ * total and is gated to the first visit of a session.
+ *
+ * Critically: the hero renders underneath, so removing this never reveals a
+ * blank page, and it never blocks LCP for a returning visitor.
+ */
+import Logo from './Logo.astro';
+---
+
+<div class="preloader" data-preloader aria-hidden="true">
+  <span class="preloader__mark">
+    <Logo variant="horizontal" size="nav" animate class="logo--invert" />
+  </span>
+</div>
+
+<script is:inline>
+  (function () {
+    var el = document.querySelector('[data-preloader]');
+    if (!el) return;
+
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var seen = sessionStorage.getItem('dhm:preloaded') === '1';
+
+    if (reduced || seen) {
+      el.remove();
+      return;
+    }
+
+    sessionStorage.setItem('dhm:preloaded', '1');
+    el.addEventListener('animationend', function (e) {
+      if (e.animationName === 'preloader-out') el.remove();
+    });
+  })();
+</script>
+
+<style>
+  .preloader__mark {
+    font-size: clamp(28px, 4vw, 44px);
+  }
+</style>

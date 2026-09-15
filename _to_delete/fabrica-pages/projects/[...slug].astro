@@ -1,0 +1,181 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Pill from '../../components/ui/Pill.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects', ({ data }) => !data.draft);
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const { data } = project;
+---
+
+<Base title={data.title} description={data.summary} image={data.cover}>
+  <article class="case">
+    <header class="case__head container">
+      <p class="label case__meta">{data.client} / {data.year}</p>
+      <h1 class="display-xl">{data.title}.</h1>
+      <p class="lead case__summary">{data.summary}</p>
+
+      <div class="case__actions">
+        {data.services.map((service) => <span class="case__tag">{service}</span>)}
+        {
+          data.liveUrl && (
+            <Pill label="Live website" href={data.liveUrl} variant="primary" size="sm" external />
+          )
+        }
+      </div>
+    </header>
+
+    {
+      data.cover && (
+        <div class="container">
+          <div class="case__cover media-zoom">
+            <img src={data.cover} alt={data.title} width="1520" height="760" />
+          </div>
+        </div>
+      )
+    }
+
+    {
+      data.metrics.length > 0 && (
+        <div class="container">
+          <ul class="case__metrics grid" data-stagger="1">
+            {data.metrics.map((metric) => (
+              <li class="case__metric reveal">
+                <p class="label">{metric.label}</p>
+                <p class="subheading">
+                  {metric.before ? `${metric.before} → ` : ''}
+                  {metric.after}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+
+    <div class="container">
+      <div class="case__body prose">
+        <Content />
+      </div>
+    </div>
+
+    {
+      data.quote && (
+        <div class="container">
+          <blockquote class="case__quote reveal">
+            <p class="subheading">{data.quote.text}</p>
+            <footer class="label case__quoteby">
+              {data.quote.name}
+              {data.quote.role ? `, ${data.quote.role}` : ''}
+            </footer>
+          </blockquote>
+        </div>
+      )
+    }
+  </article>
+</Base>
+
+<style>
+  .case__head {
+    padding-block: calc(var(--nav-h) + 96px) 48px;
+    display: grid;
+    gap: 20px;
+    justify-items: start;
+  }
+
+  .case__meta {
+    opacity: 0.45;
+  }
+
+  .case__summary {
+    max-width: 46ch;
+    opacity: 0.65;
+  }
+
+  .case__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .case__tag {
+    padding: 8px 14px;
+    border-radius: var(--r-chip);
+    border: 1px solid var(--border);
+    font-size: var(--fs-body-s);
+  }
+
+  .case__cover {
+    border-radius: var(--r-panel);
+    aspect-ratio: 2 / 1;
+  }
+
+  .case__cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .case__metrics {
+    gap: 32px var(--gutter);
+    padding-block: 96px;
+  }
+
+  .case__metric {
+    display: grid;
+    gap: 8px;
+  }
+
+  .case__metric .label {
+    opacity: 0.45;
+  }
+
+  .case__body {
+    max-width: 68ch;
+    padding-block: 48px 96px;
+  }
+
+  .case__quote {
+    max-width: 46ch;
+    margin-inline: auto;
+    padding-block: 0 120px;
+    display: grid;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .case__quoteby {
+    opacity: 0.5;
+  }
+
+  .prose :global(h2) {
+    font-size: var(--fs-subheading);
+    margin-block: 48px 16px;
+  }
+
+  .prose :global(h3) {
+    font-size: var(--fs-body-l);
+    margin-block: 32px 12px;
+  }
+
+  .prose :global(p) {
+    margin-bottom: 20px;
+    font-size: var(--fs-body-l);
+    line-height: var(--lh-tight);
+  }
+
+  .prose :global(a) {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+</style>

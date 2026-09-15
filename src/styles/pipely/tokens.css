@@ -1,0 +1,196 @@
+/* ============================================================
+   PIPELY FORK — design tokens
+   Structure, scale and motion lifted from the Pipely Webflow
+   template. Colour and type families are Doghouse brand.
+   Loaded only by /pipely routes via PipelyBase.astro.
+   ============================================================ */
+
+:root {
+  /* Doghouse brand palette. Same values as the main tokens.css,
+     repeated so this layer stands alone. */
+  --color-ink: #0f1417;
+  --color-cream: #faf7f0;
+  --color-white: #ffffff;
+  --color-red: #bd1c30;
+  --color-teal: #2c6e7f;
+  --color-steel: #7395a1;
+  --color-deep-teal: #15282e;
+  --color-line: #e5e1d8;
+  --color-gray: #9b9890;
+  --color-steel-tint: #eaf1f4;
+  --color-red-tint: #fdeaed;
+  --color-teal-light: #8fc4d2;
+
+  /* Surfaces: the three-step warm stack that makes the template work.
+     ground = the page, primary = panels, secondary = cards in panels. */
+  --pl-ground: var(--color-line);
+  --pl-primary: var(--color-white);
+  --pl-secondary: var(--color-cream);
+  --pl-inverse: var(--color-ink);
+  --pl-film: var(--color-deep-teal);
+
+  /* Card fills. Pipely rotates saturated pastels; Doghouse is warm,
+     grounded and restrained, and its tint palette is only Steel tint,
+     Red tint and Teal light. So the rotation stays neutral and the craft
+     signal moves to the pill tags and the deep-teal film band, which is
+     what the brand actually specifies those colours for. */
+  --pl-a1: var(--color-steel-tint);  /* web sections */
+  --pl-a2: var(--color-cream);
+  --pl-a3: var(--color-white);
+  --pl-a4: var(--color-line);
+
+  --pl-text: var(--color-ink);
+  --pl-text-inverse: var(--color-cream);
+  --pl-text-muted: color-mix(in srgb, var(--color-ink) 62%, var(--color-cream));
+  --pl-text-meta: var(--color-gray);
+  --pl-text-on-dark: color-mix(in srgb, var(--color-cream) 70%, transparent);
+
+  --pl-border: var(--color-line);
+  --pl-border-strong: var(--color-gray);
+  --pl-border-inverse: color-mix(in srgb, var(--color-cream) 18%, transparent);
+
+  --pl-accent-film: var(--color-red);
+  --pl-accent-web: var(--color-teal);
+
+  /* Buttons, straight from the brand pack: the primary is Ink with Cream
+     text and it hovers to Red. Red is the hover accent, not the resting
+     colour. On dark panels the pair inverts to Cream on Ink, and still
+     hovers to Red. */
+  --pl-btn-bg: var(--color-ink);
+  --pl-btn-text: var(--color-cream);
+  --pl-btn-bg-hover: var(--color-red);
+  --pl-btn-text-hover: var(--color-cream);
+  --pl-focus-ring: 0 0 0 3px rgb(115 149 161 / 0.3);
+
+  /* Display is Host Grotesk, the template's own face. Body stays Inter,
+     which both the template and the Doghouse brand pack use. */
+  --font-display: 'Host Grotesk', system-ui, -apple-system, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --fw-black: 800;
+
+  /* Type scale: Pipely's, unchanged */
+  --pl-h1: 4.25rem;
+  --pl-h2: 3.75rem;
+  --pl-h3: 2.25rem;
+  --pl-h4: 1.5rem;
+  --pl-3xl: 1.875rem;
+  --pl-xl: 1.25rem;
+  --pl-lg: 1.125rem;
+  --pl-base: 1rem;
+  --pl-sm: 0.875rem;
+  --pl-xs: 0.75rem;
+
+  --pl-lh-h1: 1.1;
+  --pl-lh-h2: 1.06;
+  --pl-lh-h3: 1.22;
+  --pl-lh-h4: 1.33;
+  --pl-lh-body: 1.5;
+  --pl-lh-sm: 1.42;
+  --pl-lh-xl: 1.4;
+
+  --pl-tr-h1: -0.03em;
+  --pl-tr-tight: -0.02em;
+  --pl-tr-caps: 0.12em;
+  --pl-tr-tag: 0.15em;
+  --pl-tr-nav: 0.1em;
+
+  --pl-fw-regular: 400;
+  --pl-fw-medium: 500;
+  --pl-fw-semi: 600;
+  --pl-fw-bold: 700;
+
+  /* Spacing ladder */
+  --pl-s-tiny: 0.125rem;
+  --pl-s-xxs: 0.25rem;
+  --pl-s-xs: 0.5rem;
+  --pl-s-sm: 0.75rem;
+  --pl-s-md: 1rem;
+  --pl-s-lg: 1.25rem;
+  --pl-s-xl: 1.5rem;
+  --pl-s-2xl: 1.75rem;
+  --pl-s-3xl: 2rem;
+  --pl-s-4xl: 2.5rem;
+  --pl-s-5xl: 3rem;
+  --pl-s-6xl: 3.25rem;
+  --pl-s-7xl: 4rem;
+  --pl-s-8xl: 5rem;
+
+  /* Layout rhythm */
+  --pl-gutter: 3.25rem;
+  --pl-shell-pad: 1.5rem;
+  --pl-shell-gap: 1.25rem;
+  --pl-nav-offset: 6.25rem;
+
+  --pl-pad-sm: 3.25rem;
+  --pl-pad-md: 5rem;
+  --pl-pad-lg: 8rem;
+
+  --pl-gap-sm: 3rem;
+  --pl-gap-md: 4.5rem;
+  --pl-gap-lg: 5rem;
+
+  --pl-grid-gap: 1.5rem;
+  --pl-container-md: 80rem;
+  --pl-container-sm: 48rem;
+
+  /* Radii */
+  --pl-r-button: 0.5rem;
+  --pl-r-media: 0.75rem;
+  --pl-r-panel: 1rem;
+  --pl-r-card: 1.25rem;
+  --pl-r-section: 1.5rem;
+  --pl-r-pill: 99rem;
+
+  /* Motion. Webflow easing names kept so the mapping back is one to one. */
+  --pl-ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+  --pl-ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --pl-ease-in-quad: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+
+  --pl-dur-press: 200ms;
+  --pl-dur-hover: 300ms;
+  --pl-dur-panel: 500ms;
+  --pl-dur-reveal: 700ms;
+  --pl-dur-slow: 1000ms;
+  --pl-dur-marquee: 34s;
+
+  --pl-reveal-shift: 15px;
+  --pl-reveal-shift-x: 300px;
+}
+
+@media (max-width: 991px) {
+  :root {
+    --pl-h1: 4rem;
+    --pl-h2: 3.5rem;
+    --pl-gutter: 2.5rem;
+    --pl-shell-pad: 1rem;
+    --pl-shell-gap: 1rem;
+    --pl-pad-md: 4rem;
+    --pl-pad-lg: 6rem;
+    --pl-gap-sm: 2rem;
+    --pl-gap-md: 3rem;
+    --pl-gap-lg: 3rem;
+    --pl-nav-offset: 5.75rem;
+  }
+}
+@media (max-width: 767px) {
+  :root {
+    --pl-h1: 3.5rem;
+    --pl-h2: 2.75rem;
+    --pl-h3: 2rem;
+    --pl-h4: 1.25rem;
+    --pl-xl: 1.125rem;
+    --pl-gutter: 1rem;
+    --pl-pad-sm: 2rem;
+    --pl-pad-md: 3rem;
+    --pl-pad-lg: 4rem;
+    --pl-gap-md: 2rem;
+    --pl-gap-lg: 2rem;
+  }
+}
+@media (max-width: 479px) {
+  :root {
+    --pl-h2: 2.75rem;
+    --pl-h3: 1.75rem;
+  }
+}

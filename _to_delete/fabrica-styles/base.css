@@ -1,0 +1,284 @@
+/* ============================================================
+   Reset, base type, and the grid primitives every section uses.
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  background: var(--root-bg);
+}
+
+body {
+  background: var(--paper);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+/* Headings are Inter Tight, tight tracking, sentence case (house rule). */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-display);
+  letter-spacing: var(--tr-display);
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+:focus-visible {
+  outline: none;
+  border-color: var(--focus-ring-color);
+  box-shadow: var(--focus-ring);
+  border-radius: var(--r-card);
+}
+
+::selection {
+  background: var(--accent-film);
+  color: var(--color-cream);
+}
+
+/* ---------- Layout primitives ---------- */
+
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--page-pad);
+}
+
+/* 4 columns, 4px gutter. Cards sit almost flush so the page reads as one
+   sheet cut into pieces rather than a set of floating boxes. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--gutter);
+}
+
+.grid--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid--6 {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+@media (max-width: 1199.98px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .grid--6 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 809.98px) {
+  .grid,
+  .grid--2 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .grid--6 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.section {
+  padding-block: var(--section-pad);
+}
+
+.section--flush {
+  padding-block: 0;
+}
+
+/* ---------- Type helpers ---------- */
+
+.display-xl {
+  font-family: var(--font-display);
+  font-size: var(--fs-display-xl);
+  font-weight: var(--fw-black);
+  line-height: var(--lh-hero);
+  letter-spacing: var(--tr-hero);
+}
+
+.display-l {
+  font-family: var(--font-display);
+  font-size: var(--fs-display-l);
+  font-weight: var(--fw-black);
+  line-height: var(--lh-hero);
+  letter-spacing: var(--tr-hero);
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-size: var(--fs-heading);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--tr-display);
+}
+
+.subheading {
+  font-family: var(--font-display);
+  font-size: var(--fs-subheading);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--tr-display);
+  line-height: var(--lh-tight);
+}
+
+.lead {
+  font-family: var(--font-body);
+  font-size: var(--fs-lead);
+  font-weight: var(--fw-regular);
+  line-height: 1.4;
+  letter-spacing: var(--tr-tight);
+}
+
+.meta {
+  font-size: var(--fs-body-s);
+}
+
+/* Mono is for kickers, eyebrows, tags and meta only. Never running copy. */
+.label,
+.kicker {
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--tr-label);
+  line-height: 1.4;
+}
+
+.kicker--film {
+  color: var(--accent-film);
+}
+
+.kicker--web {
+  color: var(--accent-web);
+}
+
+.micro {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  font-weight: var(--fw-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--tr-eyebrow);
+}
+
+/* Two-tone paragraph: opening clause at full strength, remainder dropped. */
+.two-tone {
+  color: var(--text-muted);
+}
+.two-tone strong,
+.two-tone .is-lit {
+  color: var(--text);
+  font-weight: inherit;
+}
+.on-ink .two-tone {
+  color: var(--cream-40);
+}
+.on-ink .two-tone strong,
+.on-ink .two-tone .is-lit {
+  color: var(--color-cream);
+}
+
+/* Inline links get a red underline, and the text turns red on hover. */
+.link {
+  border-bottom: 2px solid var(--accent-film);
+  transition: color var(--dur-fast) var(--ease-snap);
+}
+.link:hover {
+  color: var(--accent-film);
+}
+
+/* ---------- Colour contexts ---------- */
+
+.on-ink {
+  color: var(--color-cream);
+}
+
+.on-paper {
+  color: var(--text);
+}
+
+/* ---------- Accessibility ---------- */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10000;
+  padding: 12px 20px;
+  background: var(--ink);
+  color: var(--color-cream);
+  transform: translateY(-120%);
+}
+.skip-link:focus-visible {
+  transform: translateY(0);
+}

@@ -1,0 +1,52 @@
+---
+/**
+ * PIPELY FORK layout.
+ *
+ * Deliberately does NOT import the main tokens/base/motion CSS. This is a
+ * parallel design system for evaluating the Pipely layout and motion against
+ * the existing Fabrica-derived build. Everything it loads is namespaced:
+ * CSS under `.pipely`, classes under `.pl-`, tokens under `--pl-`.
+ */
+import '../styles/pipely/index.css';
+
+import BaseHead from '../components/BaseHead.astro';
+import Nav from '../components/pipely/Nav.astro';
+import Footer from '../components/pipely/Footer.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  projectCount?: number;
+}
+
+const { title, description, image, projectCount } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en-IE">
+  <head>
+    <BaseHead title={title} description={description} image={image} noindex={true} />
+    {/* Host Grotesk is the template's display face. Loaded here only, so the
+        existing pages carry no extra font request. */}
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@300..800&display=swap"
+    />
+  </head>
+
+  <body class="pipely">
+    <Nav projectCount={projectCount} />
+
+    <div class="pl-page">
+      <div class="pl-shell">
+        <main id="main" class="pl-sections"><slot /></main>
+        <Footer />
+      </div>
+    </div>
+
+    <script>
+      import '../scripts/pipely/motion';
+    </script>
+  </body>
+</html>

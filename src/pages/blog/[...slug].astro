@@ -1,0 +1,65 @@
+---
+import { getCollection, render } from 'astro:content';
+import Site from '../../layouts/Site.astro';
+import Button from '../../components/pipely/Button.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const { data } = post;
+
+const fmt = new Intl.DateTimeFormat('en-IE', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<Site title={data.title} description={data.excerpt} image={data.cover}>
+  <article>
+    <section class="pl-panel">
+      <div class="pl-gutter pl-pad-md">
+        <div class="pl-container is-sm">
+          <p class="u-eyebrow" data-reveal>
+            <time datetime={data.date.toISOString()}>{fmt.format(data.date)}</time>
+          </p>
+          <div class="pl-gap-sm"></div>
+          <h1 class="u-h2 u-balance" data-reveal>{data.title}</h1>
+          <div class="pl-gap-sm"></div>
+          <p class="u-lg u-muted" data-reveal>{data.excerpt}</p>
+        </div>
+      </div>
+    </section>
+
+    {data.cover && (
+      <section class="pl-panel is-secondary">
+        <div class="pl-gutter pl-pad-sm">
+          <div class="pl-container is-md">
+            <div class="pl-media" data-reveal>
+              <img src={data.cover} alt="" width="1520" height="760" decoding="async" />
+            </div>
+          </div>
+        </div>
+      </section>
+    )}
+
+    <section class="pl-panel">
+      <div class="pl-gutter pl-pad-md">
+        <div class="pl-container is-sm">
+          <div class="pl-prose" data-reveal><Content /></div>
+        </div>
+      </div>
+    </section>
+  </article>
+
+  <section class="pl-panel is-inverse">
+    <div class="pl-gutter pl-pad-lg">
+      <div class="pl-container is-md u-center">
+        <div class="pl-btn-group" data-reveal style="justify-content:center">
+          <Button href="/blog/" variant="on-dark">More writing</Button>
+          <Button href="/contact/" variant="ghost-cream">Get in touch</Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</Site>

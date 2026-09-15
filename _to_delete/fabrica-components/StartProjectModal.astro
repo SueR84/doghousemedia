@@ -1,0 +1,803 @@
+---
+/**
+ * "Start a project" — multi-step enquiry modal. The site's main CTA.
+ *
+ * Ported from the current doghousemedia.ie build (src/components/
+ * StartProjectModal.astro), same four steps and same questions, restyled onto
+ * the Doghouse tokens.
+ *
+ * Opened by any element carrying [data-start-project].
+ *
+ * Built on native <dialog>, so focus trapping, Esc-to-close and inertness of
+ * the page behind come from the browser rather than from us.
+ *
+ * Posts JSON to /api/enquiry. That endpoint does not exist on a static build —
+ * see the note by the submit handler.
+ */
+const enquiryEmail = 'hello@doghousemedia.ie';
+---
+
+<dialog class="sp" id="start-project" aria-labelledby="sp-title">
+  <div class="sp__shell">
+    <button type="button" class="sp__close" data-sp-close aria-label="Close">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M18 6 6 18M6 6l12 12"></path>
+      </svg>
+    </button>
+
+    <div class="sp__progress" data-sp-progress role="presentation">
+      <span class="sp__dot" data-dot="1"></span>
+      <span class="sp__dot" data-dot="2"></span>
+      <span class="sp__dot" data-dot="3"></span>
+      <span class="sp__dot" data-dot="4"></span>
+    </div>
+
+    <form class="sp__form" novalidate>
+      <!-- Honeypot. Real people never fill this; bots usually do. -->
+      <div class="sp__pot" aria-hidden="true">
+        <label>
+          Company website
+          <input type="text" name="website_url" tabindex="-1" autocomplete="off" />
+        </label>
+      </div>
+
+      <!-- 1 — Track -->
+      <section class="sp__panel" data-panel="1">
+        <span class="kicker kicker--film">Start a project</span>
+        <h2 class="sp__title" id="sp-title">What can we help you build?</h2>
+        <p class="sp__sub">Pick a track and we'll ask the right questions.</p>
+
+        <div class="sp__choices">
+          <button type="button" class="sp__choice" data-track="web">
+            <span class="kicker kicker--web">Web</span>
+            <span class="sp__choicename">Website or web app</span>
+            <span class="sp__choicedesc">Custom sites, redesigns, e-commerce and platforms.</span>
+          </button>
+          <button type="button" class="sp__choice" data-track="video">
+            <span class="kicker kicker--film">Video</span>
+            <span class="sp__choicename">Film or video</span>
+            <span class="sp__choicedesc">Brand films, promos, event and social content.</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- 2 — Project detail -->
+      <section class="sp__panel" data-panel="2" hidden>
+        <span class="kicker kicker--film" data-track-label>Web project</span>
+        <h2 class="sp__title">Tell us about the project.</h2>
+
+        <div data-fields="web">
+          <label class="sp__field">
+            <span class="sp__label">Project type</span>
+            <select name="web_type">
+              <option value="">Select…</option>
+              <option>New website</option>
+              <option>Redesign</option>
+              <option>E-commerce</option>
+              <option>Web app / platform</option>
+            </select>
+          </label>
+          <div class="sp__row">
+            <label class="sp__field">
+              <span class="sp__label">Approx. pages</span>
+              <select name="web_pages">
+                <option value="">Select…</option>
+                <option>1–5</option>
+                <option>6–15</option>
+                <option>16–40</option>
+                <option>40+</option>
+              </select>
+            </label>
+            <label class="sp__field">
+              <span class="sp__label">Need a CMS?</span>
+              <select name="web_cms">
+                <option value="">Select…</option>
+                <option>Yes — I'll edit it myself</option>
+                <option>No</option>
+                <option>Not sure</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div data-fields="video" hidden>
+          <label class="sp__field">
+            <span class="sp__label">Video type</span>
+            <select name="video_type">
+              <option value="">Select…</option>
+              <option>Brand film</option>
+              <option>Promo / advert</option>
+              <option>Event coverage</option>
+              <option>Social content</option>
+            </select>
+          </label>
+          <div class="sp__row">
+            <label class="sp__field">
+              <span class="sp__label">Approx. length</span>
+              <select name="video_length">
+                <option value="">Select…</option>
+                <option>Under 30s</option>
+                <option>30s–2 min</option>
+                <option>2–5 min</option>
+                <option>5 min+</option>
+              </select>
+            </label>
+            <label class="sp__field">
+              <span class="sp__label">Where will it run?</span>
+              <select name="video_usage">
+                <option value="">Select…</option>
+                <option>Website</option>
+                <option>Social media</option>
+                <option>TV / broadcast</option>
+                <option>Internal / events</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <label class="sp__field">
+          <span class="sp__label">Describe what you have in mind</span>
+          <textarea
+            name="description"
+            rows="4"
+            placeholder="A few sentences about your goals, audience, and anything that matters."></textarea>
+        </label>
+      </section>
+
+      <!-- 3 — Budget and timeline -->
+      <section class="sp__panel" data-panel="3" hidden>
+        <span class="kicker kicker--film">Budget &amp; timeline</span>
+        <h2 class="sp__title">What are we working with?</h2>
+        <p class="sp__sub">Ballpark is fine — it helps us scope the right approach.</p>
+
+        <fieldset class="sp__fieldset">
+          <legend class="sp__label">Budget</legend>
+          <div class="sp__chips" data-chips="budget">
+            <button type="button" class="sp__chip" data-value="< €2.5k">&lt; €2.5k</button>
+            <button type="button" class="sp__chip" data-value="€2.5–5k">€2.5–5k</button>
+            <button type="button" class="sp__chip" data-value="€5–10k">€5–10k</button>
+            <button type="button" class="sp__chip" data-value="€10k+">€10k+</button>
+          </div>
+        </fieldset>
+
+        <fieldset class="sp__fieldset">
+          <legend class="sp__label">Timeline</legend>
+          <div class="sp__chips" data-chips="timeline">
+            <button type="button" class="sp__chip" data-value="ASAP">ASAP</button>
+            <button type="button" class="sp__chip" data-value="1–3 months">1–3 months</button>
+            <button type="button" class="sp__chip" data-value="3–6 months">3–6 months</button>
+            <button type="button" class="sp__chip" data-value="Flexible">Flexible</button>
+          </div>
+        </fieldset>
+      </section>
+
+      <!-- 4 — Contact -->
+      <section class="sp__panel" data-panel="4" hidden>
+        <span class="kicker kicker--film">Almost there</span>
+        <h2 class="sp__title">Where can we reach you?</h2>
+        <div class="sp__row">
+          <label class="sp__field">
+            <span class="sp__label">Name *</span>
+            <input type="text" name="name" autocomplete="name" required />
+          </label>
+          <label class="sp__field">
+            <span class="sp__label">Email *</span>
+            <input type="email" name="email" autocomplete="email" required />
+          </label>
+        </div>
+        <div class="sp__row">
+          <label class="sp__field">
+            <span class="sp__label">Company</span>
+            <input type="text" name="company" autocomplete="organization" />
+          </label>
+          <label class="sp__field">
+            <span class="sp__label">Phone</span>
+            <input type="tel" name="phone" autocomplete="tel" />
+          </label>
+        </div>
+        <p class="sp__error" data-sp-error role="alert" hidden></p>
+      </section>
+
+      <!-- Sent -->
+      <section class="sp__panel sp__done" data-panel="done" hidden>
+        <div class="sp__check" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.4">
+            <path d="m5 13 4 4L19 7"></path>
+          </svg>
+        </div>
+        <h2 class="sp__title" data-done-title>Thanks — we're on it.</h2>
+        <p class="sp__sub" data-done-body>
+          Your enquiry is on its way. We'll be in touch within one working day.
+        </p>
+        <button type="button" class="sp__btn sp__btn--primary sp__doneBtn" data-sp-close>Done</button>
+      </section>
+
+      <div class="sp__nav" data-sp-foot>
+        <button type="button" class="sp__back" data-sp-back hidden>← Back</button>
+        <button type="button" class="sp__btn sp__btn--primary sp__advance" data-sp-next hidden>
+          Continue
+        </button>
+        <button type="submit" class="sp__btn sp__btn--primary sp__advance" data-sp-submit hidden>
+          Send enquiry
+        </button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+<script define:vars={{ enquiryEmail }}>
+  (function () {
+    const dialog = document.getElementById('start-project');
+    if (!dialog) return;
+
+    const form = dialog.querySelector('.sp__form');
+    const dots = dialog.querySelectorAll('.sp__dot');
+    const backBtn = dialog.querySelector('[data-sp-back]');
+    const nextBtn = dialog.querySelector('[data-sp-next]');
+    const submitBtn = dialog.querySelector('[data-sp-submit]');
+    const foot = dialog.querySelector('[data-sp-foot]');
+    const progress = dialog.querySelector('[data-sp-progress]');
+    const errorEl = dialog.querySelector('[data-sp-error]');
+    const doneTitle = dialog.querySelector('[data-done-title]');
+    const doneBody = dialog.querySelector('[data-done-body]');
+
+    const data = { track: '', budget: '', timeline: '' };
+    let step = 1; // 1..4, then 'done'
+    let lastFocus = null;
+
+    const showPanel = (name) =>
+      dialog
+        .querySelectorAll('.sp__panel')
+        .forEach((p) => (p.hidden = p.dataset.panel !== String(name)));
+
+    function render() {
+      showPanel(step);
+      progress.hidden = step === 'done';
+      foot.hidden = step === 'done' || step === 1;
+
+      dots.forEach((d, i) => {
+        const n = i + 1;
+        d.classList.toggle('is-active', typeof step === 'number' && n === step);
+        d.classList.toggle('is-done', typeof step === 'number' && n < step);
+      });
+
+      backBtn.hidden = step === 1;
+      nextBtn.hidden = step === 1 || step >= 4;
+      submitBtn.hidden = step !== 4;
+      if (errorEl) errorEl.hidden = true;
+
+      // Move focus to the new step's heading so screen readers announce it.
+      const active = dialog.querySelector(`[data-panel="${step}"] .sp__title`);
+      if (active) {
+        active.setAttribute('tabindex', '-1');
+        active.focus({ preventScroll: true });
+      }
+      dialog.querySelector('.sp__shell').scrollTop = 0;
+    }
+
+    function open() {
+      lastFocus = document.activeElement;
+      step = 1;
+      render();
+      if (typeof dialog.showModal === 'function') dialog.showModal();
+      else dialog.setAttribute('open', '');
+    }
+
+    function close() {
+      if (typeof dialog.close === 'function') dialog.close();
+      else dialog.removeAttribute('open');
+    }
+
+    document.querySelectorAll('[data-start-project]').forEach((btn) =>
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        open();
+      }),
+    );
+
+    dialog
+      .querySelectorAll('[data-sp-close]')
+      .forEach((b) => b.addEventListener('click', close));
+
+    // Backdrop click. Clicks on the backdrop land on the dialog element itself.
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) close();
+    });
+
+    dialog.querySelectorAll('[data-track]').forEach((b) =>
+      b.addEventListener('click', () => {
+        data.track = b.dataset.track;
+        const isWeb = data.track === 'web';
+        dialog.querySelector('[data-fields="web"]').hidden = !isWeb;
+        dialog.querySelector('[data-fields="video"]').hidden = isWeb;
+        const label = dialog.querySelector('[data-track-label]');
+        label.textContent = isWeb ? 'Web project' : 'Video project';
+        label.classList.toggle('kicker--web', isWeb);
+        label.classList.toggle('kicker--film', !isWeb);
+        step = 2;
+        render();
+      }),
+    );
+
+    dialog.querySelectorAll('[data-chips]').forEach((group) => {
+      group.querySelectorAll('.sp__chip').forEach((chip) => {
+        chip.addEventListener('click', () => {
+          const selected = chip.classList.contains('is-selected');
+          group.querySelectorAll('.sp__chip').forEach((c) => {
+            c.classList.remove('is-selected');
+            c.setAttribute('aria-pressed', 'false');
+          });
+          // Clicking the selected chip clears it, so a mis-tap is recoverable.
+          if (!selected) {
+            chip.classList.add('is-selected');
+            chip.setAttribute('aria-pressed', 'true');
+            data[group.dataset.chips] = chip.dataset.value;
+          } else {
+            data[group.dataset.chips] = '';
+          }
+        });
+      });
+    });
+
+    backBtn.addEventListener('click', () => {
+      if (typeof step === 'number' && step > 1) {
+        step -= 1;
+        render();
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (typeof step === 'number' && step < 4) {
+        step += 1;
+        render();
+      }
+    });
+
+    const collect = () => {
+      const fd = new FormData(form);
+      const payload = { track: data.track, budget: data.budget, timeline: data.timeline };
+      for (const [k, v] of fd.entries()) if (v) payload[k] = v;
+      return payload;
+    };
+
+    const asText = (p) =>
+      Object.entries(p)
+        .filter(([k]) => k !== 'website_url')
+        .map(([k, v]) => `${k}: ${v}`)
+        .join('\n');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = form.querySelector('[name="name"]');
+      const email = form.querySelector('[name="email"]');
+      let ok = true;
+      [name, email].forEach((f) => {
+        const valid = f.checkValidity() && f.value.trim();
+        f.classList.toggle('is-invalid', !valid);
+        if (!valid) ok = false;
+      });
+      if (!ok) {
+        errorEl.textContent = 'Please add your name and a valid email.';
+        errorEl.hidden = false;
+        name.focus();
+        return;
+      }
+
+      const payload = collect();
+
+      // Honeypot tripped — pretend it worked, send nothing.
+      if (payload.website_url) {
+        step = 'done';
+        render();
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending…';
+
+      let sent = false;
+      try {
+        const res = await fetch('/api/enquiry', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        sent = res.ok;
+      } catch (err) {
+        sent = false;
+      }
+
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send enquiry';
+
+      if (sent) {
+        doneTitle.textContent = "Thanks — we're on it.";
+        doneBody.textContent =
+          "Your enquiry is on its way. We'll be in touch within one working day.";
+      } else {
+        // No endpoint (or it failed). Hand off to email rather than claiming
+        // success — the original told people it had sent either way, which
+        // silently loses the lead if the handoff never completes.
+        const subject = `New ${payload.track || 'project'} enquiry — ${payload.name}`;
+        window.location.href = `mailto:${enquiryEmail}?subject=${encodeURIComponent(
+          subject,
+        )}&body=${encodeURIComponent(asText(payload))}`;
+        doneTitle.textContent = 'One last step.';
+        doneBody.textContent =
+          "We've opened an email with your answers filled in — press send and it's with us. If nothing opened, mail us at " +
+          enquiryEmail +
+          '.';
+      }
+
+      step = 'done';
+      render();
+    });
+
+    dialog.addEventListener('close', () => {
+      step = 1;
+      if (lastFocus && document.contains(lastFocus)) lastFocus.focus();
+    });
+  })();
+</script>
+
+<style>
+  .sp {
+    border: none;
+    padding: 0;
+    margin: auto;
+    width: min(620px, calc(100vw - 32px));
+    max-height: calc(100dvh - 48px);
+    border-radius: var(--r-panel);
+    background: var(--paper);
+    color: var(--ink);
+    box-shadow: 0 30px 80px rgb(15 20 23 / 0.35);
+    overflow: hidden;
+  }
+
+  .sp::backdrop {
+    background: rgb(15 20 23 / 0.55);
+    backdrop-filter: blur(3px);
+  }
+
+  .sp[open] {
+    animation: sp-pop var(--dur-base) var(--ease-rise);
+  }
+
+  @keyframes sp-pop {
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.985);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .sp__shell {
+    position: relative;
+    padding: 40px;
+    max-height: calc(100dvh - 48px);
+    overflow-y: auto;
+  }
+
+  .sp__close {
+    position: absolute;
+    inset-block-start: 16px;
+    inset-inline-end: 16px;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--r-pill);
+    color: var(--text-muted);
+    transition:
+      color var(--dur-fast) var(--ease-snap),
+      background-color var(--dur-fast) var(--ease-snap);
+  }
+
+  .sp__close:hover {
+    color: var(--ink);
+    background: var(--border);
+  }
+
+  /* Progress */
+  .sp__progress {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+
+  .sp__dot {
+    height: 4px;
+    flex: 1;
+    border-radius: var(--r-pill);
+    background: var(--border);
+    transition: background-color var(--dur-base) var(--ease-rise);
+  }
+
+  .sp__dot.is-active {
+    background: var(--ink);
+  }
+
+  .sp__dot.is-done {
+    background: var(--accent-film);
+  }
+
+  /* Type */
+  .sp__title {
+    font-family: var(--font-display);
+    font-weight: var(--fw-black);
+    font-size: clamp(22px, 3.5vw, 30px);
+    letter-spacing: var(--tr-display);
+    line-height: var(--lh-tight);
+    margin-top: 10px;
+  }
+
+  .sp__title:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
+  .sp__sub {
+    font-size: var(--fs-body-s);
+    line-height: var(--lh-body);
+    color: var(--text-muted);
+    margin-top: 10px;
+  }
+
+  /* Track choice */
+  .sp__choices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 28px;
+  }
+
+  .sp__choice {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+    padding: 24px;
+    border-radius: var(--r-card);
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    transition:
+      border-color var(--dur-fast) var(--ease-snap),
+      transform var(--dur-base) var(--ease-snap),
+      box-shadow var(--dur-base) var(--ease-rise);
+  }
+
+  .sp__choice:hover {
+    border-color: var(--ink);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .sp__choicename {
+    font-family: var(--font-display);
+    font-weight: var(--fw-bold);
+    font-size: 18px;
+    letter-spacing: var(--tr-tight);
+  }
+
+  .sp__choicedesc {
+    font-size: var(--fs-body-s);
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+
+  /* Fields */
+  .sp__field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-top: 18px;
+    flex: 1;
+  }
+
+  .sp__row {
+    display: flex;
+    gap: 16px;
+  }
+
+  .sp__label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    font-weight: var(--fw-medium);
+    letter-spacing: var(--tr-label);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    display: block;
+  }
+
+  .sp__fieldset {
+    border: 0;
+    margin-top: 24px;
+  }
+
+  .sp__field input,
+  .sp__field select,
+  .sp__field textarea {
+    font-family: var(--font-body);
+    font-size: var(--fs-body);
+    color: var(--ink);
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--r-card);
+    padding: 11px 13px;
+    width: 100%;
+    transition: border-color var(--dur-fast) var(--ease-snap);
+  }
+
+  .sp__field textarea {
+    resize: vertical;
+  }
+
+  .sp__field input:focus,
+  .sp__field select:focus,
+  .sp__field textarea:focus {
+    outline: none;
+    border-color: var(--focus-ring-color);
+    box-shadow: var(--focus-ring);
+  }
+
+  .sp__field input.is-invalid {
+    border-color: var(--accent-film);
+  }
+
+  /* Honeypot — off-screen, not display:none, so bots still see it. */
+  .sp__pot {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  /* Chips */
+  .sp__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .sp__chip {
+    font-family: var(--font-body);
+    font-size: var(--fs-body-s);
+    font-weight: var(--fw-semi);
+    padding: 10px 18px;
+    border-radius: var(--r-pill);
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    color: var(--ink);
+    transition:
+      background-color var(--dur-fast) var(--ease-snap),
+      border-color var(--dur-fast) var(--ease-snap),
+      color var(--dur-fast) var(--ease-snap);
+  }
+
+  .sp__chip:hover {
+    border-color: var(--ink);
+  }
+
+  .sp__chip.is-selected {
+    background: var(--ink);
+    color: var(--color-cream);
+    border-color: var(--ink);
+  }
+
+  /* Nav */
+  .sp__nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 32px;
+  }
+
+  .sp__back {
+    font-family: var(--font-body);
+    font-size: var(--fs-body-s);
+    font-weight: var(--fw-semi);
+    color: var(--text-muted);
+    padding: 8px 4px;
+    transition: color var(--dur-fast) var(--ease-snap);
+  }
+
+  .sp__back:hover {
+    color: var(--ink);
+  }
+
+  .sp__advance {
+    margin-left: auto;
+  }
+
+  .sp__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 13px 24px;
+    border-radius: var(--r-card);
+    border: 1.5px solid transparent;
+    font-family: var(--font-body);
+    font-weight: var(--fw-semi);
+    font-size: var(--fs-body);
+    letter-spacing: var(--tr-tight);
+    transition:
+      background-color var(--dur-fast) var(--ease-snap),
+      border-color var(--dur-fast) var(--ease-snap);
+  }
+
+  .sp__btn--primary {
+    background: var(--color-ink);
+    color: var(--color-cream);
+    border-color: var(--color-ink);
+  }
+
+  .sp__btn--primary:hover:not(:disabled) {
+    background: var(--color-red);
+    border-color: var(--color-red);
+  }
+
+  .sp__btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* [hidden] must win against the display rules above. */
+  .sp__nav [hidden],
+  .sp__panel[hidden] {
+    display: none !important;
+  }
+
+  .sp__error {
+    color: var(--accent-film);
+    font-size: var(--fs-body-s);
+    margin-top: 14px;
+  }
+
+  /* Sent */
+  .sp__done {
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .sp__check {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 20px;
+    border-radius: var(--r-pill);
+    background: var(--accent-film);
+    color: var(--color-cream);
+    display: grid;
+    place-items: center;
+  }
+
+  .sp__doneBtn {
+    margin-top: 24px;
+  }
+
+  @media (max-width: 560px) {
+    .sp__shell {
+      padding: 28px 22px;
+    }
+    .sp__choices,
+    .sp__row {
+      grid-template-columns: 1fr;
+      flex-direction: column;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sp[open] {
+      animation: none;
+    }
+    .sp__choice:hover {
+      transform: none;
+    }
+  }
+</style>

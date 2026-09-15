@@ -1,0 +1,285 @@
+---
+/**
+ * Homepage.
+ *
+ * Eight sections. Order revised 11 September 2026: the client logo strip
+ * moved up to sit directly under the hero video, ahead of MESSAGING-PLAN
+ * §5's original placement below the first service block. AI is still not
+ * on this page at all, it lives inside /web-development/.
+ */
+import { getCollection } from 'astro:content';
+import Site from '../layouts/Site.astro';
+import Button from '../components/pipely/Button.astro';
+import Hero from '../components/pipely/Hero.astro';
+import Marquee from '../components/pipely/Marquee.astro';
+import PillarBlock from '../components/sections/PillarBlock.astro';
+import IpadFrame from '../components/sections/IpadFrame.astro';
+
+// Real quotes only. Placeholders are filtered at the schema level so a
+// stand-in cannot reach production.
+const testimonials = (await getCollection('testimonials', (t) => !t.data.placeholder)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+const testimonial = testimonials[0];
+
+// Alt text is the organisation's name and nothing else. These logos are
+// evidence, not decoration, so none of them take alt="".
+const clients = [
+  { file: 'guinness-storehouse', name: 'Guinness Storehouse' },
+  { file: 'boston-scientific', name: 'Boston Scientific' },
+  { file: 'amgen', name: 'Amgen' },
+  { file: 'coroflo', name: 'Coroflo' },
+  { file: 'real-nation', name: 'Real Nation' },
+  { file: 'ucd', name: 'University College Dublin' },
+  { file: 'lifestyle-sports', name: 'Lifestyle Sports' },
+];
+
+// TODO before launch: both of these need their own case study page at
+// /work/<slug>/, and Boston Scientific needs one line on what the film was
+// for. Until then the cards link to the work index and the missing line
+// renders the placeholder warning rather than quietly shipping empty.
+//
+// TODO before launch: both cards need a thumbnail. .pl-media.is-case is
+// 1 : 0.72, so supply landscape, about 1200 x 864. Set `thumb` on the entry
+// and the card renders it above the tag; without it the card is text only.
+//
+// Guinness Storehouse was here until 12 September 2026, swapped out for
+// Boston Scientific per MESSAGING-PLAN §137. Its case study is still owed.
+//
+// The Boston Scientific thumbnail is the title card of the docuseries
+// episode at vimeo.com/1225926198, pulled from Vimeo's own thumbnail. The
+// film is public and embeddable with no hash, so the card could link or
+// embed it rather than pointing at the work index.
+// A featured card must never promise a case study that is not there. Draft
+// projects are filtered out of work/[...slug].astro's getStaticPaths, so a
+// card pointing at a draft slug would 404. Resolve against the collection and
+// fall back to the work index with a label that is actually true.
+const liveCaseStudies = new Set(
+  (await getCollection('projects', ({ data }) => !data.draft)).map((p) => p.id),
+);
+const caseStudy = (slug: string) =>
+  liveCaseStudies.has(slug)
+    ? { href: `/work/${slug}/`, label: 'Read the case study' }
+    : { href: '/work/', label: 'See the work' };
+
+type Thumb = {
+  src: string;
+  alt: string;
+  /** Wraps the screenshot in a device mockup instead of showing it flat. */
+  device?: 'ipad';
+  /** Ground colour behind a portrait device, which does not fill the box. */
+  ground?: string;
+};
+
+const featured = [
+  {
+    client: 'Boston Scientific',
+    craft: 'Video',
+    craftClass: 'is-film',
+    // CLAUDE.md: name the client, never the "EMEA preferred supplier" line.
+    // TODO: confirm this line. Everything in it is verifiable from the film
+    // itself (episode one, docuseries, Boston Scientific) but what the
+    // series was actually FOR is still missing and is the interesting part.
+    line: 'Episode one of a docuseries, made for the medtech manufacturer.',
+    thumb: {
+      src: '/work/featured/boston-scientific-docuseries.jpg',
+      alt: 'Title card from the Boston Scientific docuseries, showing surgical staff in a clinical setting.',
+    } as Thumb | null,
+    slug: 'boston-scientific-docuseries',
+  },
+  {
+    client: 'Someone Like Me (National Disability Authority)',
+    craft: 'Web',
+    craftClass: 'is-web',
+    // The project is named in the heading now, so the line no longer repeats
+    // it. WCAG 2.1 AA is correct for this site and must not become 2.2:
+    // 2.2 is Real Nation's own site. See CLAUDE.md.
+    line: 'Built in English and Irish with human translation review, and tested to WCAG 2.1 AA.',
+    // INTERIM: this is the phone capture from the carousel, standing in so the
+    // mockup can be judged. It is a mobile layout shown at tablet width. A
+    // real iPad capture of someonelikemeartawards.ie replaces it.
+    thumb: {
+      src: '/work/carousel/someone-like-me.jpg',
+      alt: 'The Someone Like Me Art Awards site shown on a tablet.',
+      device: 'ipad',
+      ground: 'var(--color-steel-tint)',
+    } as Thumb | null,
+    // No project file for this one yet, so the card correctly falls back.
+    slug: 'someone-like-me-art-awards',
+  },
+].map((f) => ({ ...f, ...caseStudy(f.slug) }));
+
+---
+
+<Site
+  title="Doghouse Media"
+  description="An independent video and web studio in Dublin. Films and websites for organisations with something difficult to explain."
+>
+  {/* ---------- 1. Hero ---------- */}
+  <Hero
+    heading="Films and websites that make complicated things clear."
+    lead="Doghouse Media is an independent video and web studio in Dublin, working since 2011."
+    primary={{ label: 'See the work', href: '/work/' }}
+  />
+
+  {/* ---------- 2. Client logos ----------
+      Moved up 11 September 2026 to sit directly under the hero video,
+      ahead of the first service block. */}
+  <section class="pl-panel" aria-labelledby="clients-heading">
+    <div class="pl-gutter pl-pad-sm">
+      <div class="pl-container is-md">
+        <p class="u-eyebrow" id="clients-heading" data-reveal>Organisations we work with</p>
+      </div>
+      <div class="pl-gap-sm"></div>
+      <div class="pl-container is-md">
+        <Marquee speed={34}>
+          {clients.map((c) => (
+            <img
+              src={`/clients/${c.file}.webp`}
+              alt={c.name}
+              width="140"
+              height="48"
+              loading="lazy"
+              style="height:2.5rem;width:auto;opacity:.55"
+            />
+          ))}
+        </Marquee>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- 3. Video Production ---------- */}
+  <PillarBlock
+    eyebrow="Video Production"
+    heading="Captivating media production that moves and excites."
+    lead="Medtech, pharma, corporate and charity work, filmed on site rather than staged in a studio."
+    video={{
+      vimeoId: '1218490086',
+      title: "Artybaker Summer '26",
+      behind: { vimeoId: '1218491115', title: "Hawker Summer '26" },
+    }}
+    cta={{ label: 'See the video work', href: '/video-production/' }}
+    tone="film"
+  />
+
+  {/* ---------- 4. Web Development ---------- */}
+  <PillarBlock
+    eyebrow="Web Development"
+    heading="Built so your team can run it long after we leave."
+    lead="Learning platforms, e-commerce and bookings, and bilingual sites in English and Irish, tested to WCAG 2.2 AA."
+    carousel
+    cta={{ label: 'See the web work', href: '/web-development/' }}
+    tone="web"
+    reverse
+  />
+
+  {/* ---------- 5. Two featured case studies ---------- */}
+  <section class="pl-panel is-secondary" aria-labelledby="featured-heading">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div class="pl-row is-between is-top">
+          <div class="pl-stack pl-stack-sm">
+            <p class="u-eyebrow" data-reveal>Selected work</p>
+            <h2 class="u-h2 u-max-26" id="featured-heading" data-reveal>Two recent ones.</h2>
+          </div>
+          <div data-reveal><Button href="/work/" variant="ghost">All work</Button></div>
+        </div>
+
+        <div class="pl-gap-lg"></div>
+
+        {/* is-top, not the default centre: the two cards are different
+            heights whenever one has a thumbnail and the other does not, and
+            centring leaves the shorter one floating mid-row. */}
+        <div class="pl-grid-2 is-top" data-reveal-stagger="120">
+          {featured.map((f) => (
+            <article class="pl-card is-tight" data-reveal>
+              {f.thumb && (
+                <div class="pl-media is-case">
+                  {f.thumb.device === 'ipad'
+                    ? <IpadFrame src={f.thumb.src} alt={f.thumb.alt} ground={f.thumb.ground} />
+                    : <img src={f.thumb.src} alt={f.thumb.alt} loading="lazy" decoding="async" />}
+                </div>
+              )}
+              <span class:list={['pl-tag', f.craftClass, 'u-xs']}>{f.craft}</span>
+              <div class="pl-stack pl-stack-sm">
+                <h3 class="u-xl u-medium">{f.client}</h3>
+                {f.line
+                  ? <p class="u-muted">{f.line}</p>
+                  : <p class="u-muted" data-placeholder>PLACEHOLDER, not for publication. One line needed on what this film was for.</p>}
+              </div>
+              <a class="pl-link" href={f.href}>{f.label}</a>
+            </article>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- 6. Testimonial ----------
+      One quote, or nothing. An empty slot is better than a fake one. */}
+  {testimonial && (
+    <section class="pl-panel" aria-label="Client testimonial">
+      <div class="pl-gutter pl-pad-md">
+        <div class="pl-container is-md">
+          <blockquote class="pl-quote" data-reveal>
+            <p class="u-h3 u-balance u-max-33">{testimonial.data.quote}</p>
+            <footer class="u-sm u-muted" style="margin-top:1.5rem">
+              {testimonial.data.name}, {testimonial.data.company}
+            </footer>
+          </blockquote>
+        </div>
+      </div>
+    </section>
+  )}
+
+  {/* ---------- 7. Who we are ---------- */}
+  <section class="pl-panel is-secondary" aria-labelledby="studio-heading">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div class="pl-grid-2 is-top is-wide">
+          <div class="pl-stack pl-stack-md" data-reveal>
+            <p class="u-eyebrow">The studio</p>
+            <h2 class="u-h2 u-max-26" id="studio-heading">An independent studio, owned and run by two people.</h2>
+          </div>
+          <div class="pl-stack pl-stack-md" data-reveal>
+            <p class="u-lg u-muted u-max-33">
+              Emma Walkin runs video production. Susan Ryan runs web, digital and AI. Founded in Dublin in
+              2011, female-owned and operated, and still the two of us you deal with directly.
+            </p>
+            <div class="pl-btn-group"><Button href="/about/" variant="ghost">About the studio</Button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- 8. Contact band ---------- */}
+  <section class="pl-panel is-inverse" aria-labelledby="contact-heading">
+    <div class="pl-gutter pl-pad-lg">
+      <div class="pl-container is-md u-center">
+        <div data-reveal-stagger="100">
+          <h2
+            class="u-h2 u-balance"
+            id="contact-heading"
+            data-reveal
+            style="color:var(--pl-text-inverse);margin-inline:auto;max-width:30rem"
+          >
+            Tell us what you are working on.
+          </h2>
+          <div class="pl-gap-sm"></div>
+          <p class="u-lg" data-reveal style="color:var(--pl-text-on-dark);margin-inline:auto;max-width:33rem">
+            Send us the outline and we will tell you honestly whether we are the right studio for it.
+          </p>
+          <div class="pl-gap-sm"></div>
+          <div class="pl-btn-group" data-reveal style="justify-content:center">
+            <Button href="/contact/" variant="on-dark">Get in touch</Button>
+          </div>
+          <div class="pl-gap-sm"></div>
+          <p class="u-sm" data-reveal style="color:var(--pl-text-on-dark)">
+            <a href="mailto:hello@doghousemedia.ie">hello@doghousemedia.ie</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Site>

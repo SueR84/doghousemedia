@@ -1,0 +1,23 @@
+---
+interface Props {
+  href?: string;
+  /** Brand pack variants. `primary` is ink and hovers to red; `on-dark`
+   *  is its inverse for dark panels. `red`/`teal` are craft CTAs. */
+  variant?: 'primary' | 'on-dark' | 'ghost' | 'ghost-cream' | 'red' | 'teal';
+  size?: 'md' | 'sm';
+  class?: string;
+  type?: 'button' | 'submit';
+}
+const { href, variant = 'primary', size = 'md', class: cls = '', type = 'button' } = Astro.props;
+const map = {
+  primary: '',
+  'on-dark': 'on-dark',
+  ghost: 'is-ghost',
+  'ghost-cream': 'is-ghost-cream',
+  red: 'is-red',
+  teal: 'is-teal',
+};
+const classes = ['pl-btn', map[variant], size === 'sm' ? 'is-sm' : '', cls].filter(Boolean).join(' ');
+const Tag = href ? 'a' : 'button';
+---
+<Tag class={classes} href={href} type={href ? undefined : type}><slot /></Tag>

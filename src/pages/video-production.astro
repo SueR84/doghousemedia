@@ -1,0 +1,211 @@
+---
+/**
+ * Video Production. Pillar 1. MESSAGING-PLAN §6.
+ *
+ * Section order matters: "How we work" sits AFTER the case studies so the
+ * work convinces first, and process reads as reassurance rather than a
+ * pitch.
+ *
+ * Do not add the Boston Scientific "EMEA preferred supplier" line. Naming
+ * them as a client is fine, the supplier designation is not cleared.
+ */
+import { getCollection } from 'astro:content';
+import Site from '../layouts/Site.astro';
+import Button from '../components/pipely/Button.astro';
+import WorkCard from '../components/pipely/WorkCard.astro';
+
+const films = (await getCollection('projects', (p) => !p.data.draft && p.data.craft !== 'web'))
+  .sort((a, b) => a.data.order - b.data.order || b.data.year - a.data.year)
+  .slice(0, 6);
+
+const testimonials = (await getCollection('testimonials', (t) => !t.data.placeholder)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+const testimonial = testimonials[0];
+
+const deliver = [
+  {
+    title: 'Films people without the background can follow',
+    text: 'A device, a trial, a manufacturing process or a service, explained so that the person watching does not need your training to understand why it matters.',
+  },
+  {
+    title: "A shoot day that produces a campaign, not a video",
+    text: 'One day on site gives you the main film, short cuts for social in landscape, square and vertical, and stills. Planned that way from the brief, not salvaged afterwards.',
+  },
+  {
+    title: 'Work that clears review first time',
+    text: 'Legal, medical and compliance review is part of the schedule rather than a surprise at the end, so approval does not send the edit back to the start.',
+  },
+];
+
+const steps = [
+  { n: '01', title: 'Brief and concept', text: 'What the film has to do, who it is for, and where it will be seen. Agreed before anyone books a camera.' },
+  { n: '02', title: 'Shoot', text: 'A small crew, usually one or two of us, so nobody has to perform for a room.' },
+  { n: '03', title: 'Edit and review', text: 'Cut, graded and subtitled here. You see it, you comment, we cut again.' },
+  { n: '04', title: 'Delivery and formats', text: 'Every version you need in one delivery, captioned, named sensibly and ready to upload.' },
+];
+---
+
+<Site
+  title="Video Production"
+  description="Corporate and medical film from an independent Dublin studio. Fifteen years of work in operating theatres, labs and manufacturing plants."
+>
+  {/* ---------- Position statement ---------- */}
+  <section class="pl-panel" aria-labelledby="vp-heading">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div data-reveal-stagger="100">
+          <p class="u-eyebrow is-film" data-reveal>Video Production</p>
+          <div class="pl-gap-sm"></div>
+          <h1 class="u-h2 u-max-40 u-balance" id="vp-heading" data-reveal>
+            Video that makes complicated things clear.
+          </h1>
+          <div class="pl-gap-sm"></div>
+          <p class="u-lg u-muted u-max-33" data-reveal>
+            We have spent fifteen years making films in operating theatres, labs and manufacturing plants.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- Showreel ---------- */}
+  <section class="pl-panel is-secondary" aria-label="Showreel">
+    <div class="pl-gutter pl-pad-sm">
+      <div class="pl-container is-md">
+        <div class="pl-media is-video" data-reveal>
+          <iframe
+            src="https://player.vimeo.com/video/1218412491?dnt=1&title=0&byline=0&portrait=0"
+            title="Doghouse Media showreel"
+            allow="fullscreen; picture-in-picture"
+            loading="lazy"
+          ></iframe>
+        </div>
+        <p class="u-sm u-muted" style="margin-top:1rem" data-placeholder>
+          PLACEHOLDER, not for publication. Captions must be on this film before launch, and not auto-generated.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- Selected films ---------- */}
+  {films.length > 0 && (
+    <section class="pl-panel" aria-labelledby="vp-films">
+      <div class="pl-gutter pl-pad-md">
+        <div class="pl-container is-md">
+          <h2 class="u-h2 u-max-26" id="vp-films" data-reveal>Selected films.</h2>
+          <div class="pl-gap-lg"></div>
+          <div class="pl-grid-3" data-reveal-stagger="100">
+            {films.map((p, i) => <WorkCard project={p} tint={i % 2 ? 'var(--pl-a2)' : 'var(--pl-a3)'} reveal />)}
+          </div>
+        </div>
+      </div>
+    </section>
+  )}
+
+  {/* ---------- What we deliver ---------- */}
+  <section class="pl-panel is-secondary" aria-labelledby="vp-deliver">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div class="pl-grid-2 is-top is-wide">
+          <div class="pl-stack pl-stack-md" data-reveal>
+            <p class="u-eyebrow is-film">What we deliver</p>
+            <h2 class="u-h2 u-max-26" id="vp-deliver">Three things, every time.</h2>
+          </div>
+          <ul class="pl-service-points" data-reveal-stagger="100">
+            {deliver.map((d) => (
+              <li class="pl-service-points__item" data-reveal>
+                <span class="pl-service-points__title">{d.title}</span>
+                <span class="pl-service-points__text u-muted">{d.text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- Case studies ----------
+      Guinness Storehouse and Boston Scientific, per the plan. Both need
+      their own pages writing before this links anywhere real. */}
+  <section class="pl-panel" aria-labelledby="vp-cases">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <h2 class="u-h2 u-max-26" id="vp-cases" data-reveal>Case studies.</h2>
+        <div class="pl-gap-lg"></div>
+        <div class="pl-grid-2" data-reveal-stagger="120">
+          {['Guinness Storehouse', 'Boston Scientific'].map((client) => (
+            <article class="pl-card is-tight" data-reveal>
+              <span class="pl-tag is-film u-xs">Video</span>
+              <div class="pl-stack pl-stack-sm">
+                <h3 class="u-xl u-medium">{client}</h3>
+                <p class="u-muted" data-placeholder>
+                  PLACEHOLDER, not for publication. Case study to be written, 250 to 400 words.
+                </p>
+              </div>
+              <a class="pl-link" href="/work/">See the work</a>
+            </article>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- How we work ----------
+      After the case studies on purpose. The work convinces, then process
+      reassures that we are not improvising. */}
+  <section class="pl-panel is-secondary" aria-labelledby="vp-how">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <h2 class="u-h2 u-max-26" id="vp-how" data-reveal>How we work.</h2>
+        <div class="pl-gap-lg"></div>
+        <ol class="pl-steps" data-reveal-stagger="100">
+          {steps.map((s) => (
+            <li class="pl-steps__item" data-reveal>
+              <span class="u-eyebrow">{s.n}</span>
+              <span class="pl-stack pl-stack-xs">
+                <span class="u-xl u-medium">{s.title}</span>
+                <span class="u-muted">{s.text}</span>
+              </span>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- Testimonial ---------- */}
+  {testimonial && (
+    <section class="pl-panel" aria-label="Client testimonial">
+      <div class="pl-gutter pl-pad-md">
+        <div class="pl-container is-md">
+          <blockquote class="pl-quote" data-reveal>
+            <p class="u-h3 u-balance u-max-33">{testimonial.data.quote}</p>
+            <footer class="u-sm u-muted" style="margin-top:1.5rem">
+              {testimonial.data.name}, {testimonial.data.company}
+            </footer>
+          </blockquote>
+        </div>
+      </div>
+    </section>
+  )}
+
+  {/* ---------- Contact ---------- */}
+  <section class="pl-panel is-inverse">
+    <div class="pl-gutter pl-pad-lg">
+      <div class="pl-container is-md u-center">
+        <h2 class="u-h2 u-balance" data-reveal style="color:var(--pl-text-inverse);margin-inline:auto;max-width:30rem">
+          Have a film to make?
+        </h2>
+        <div class="pl-gap-sm"></div>
+        <p class="u-lg" data-reveal style="color:var(--pl-text-on-dark);margin-inline:auto;max-width:33rem">
+          Tell us what it has to do and who it is for. We will tell you what it takes.
+        </p>
+        <div class="pl-gap-sm"></div>
+        <div class="pl-btn-group" data-reveal style="justify-content:center">
+          <Button href="/contact/" variant="on-dark">Get in touch</Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</Site>

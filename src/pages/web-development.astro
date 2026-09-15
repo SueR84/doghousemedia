@@ -1,0 +1,270 @@
+---
+/**
+ * Web Development. Pillar 2. MESSAGING-PLAN §7.
+ *
+ * Bilingual gets equal billing with learning platforms and e-commerce on
+ * purpose. Almost nobody in Ireland claims it credibly and it is a route
+ * into public sector work.
+ *
+ * The AI block is deliberately self-contained. If the AI work spins out to
+ * its own brand, that one section and its entry in `aiExamples` lift out
+ * without touching anything else on this page.
+ */
+import Site from '../layouts/Site.astro';
+import Button from '../components/pipely/Button.astro';
+
+const deliver = [
+  {
+    title: 'A site your own team can update',
+    text: 'Editing a paragraph, swapping an image or adding a page is something your people do themselves, without ringing us and without breaking the layout.',
+  },
+  {
+    title: 'Accessibility, GDPR and performance handled up front',
+    text: 'Built in from the start rather than retrofitted when procurement, legal or a funder asks the question.',
+  },
+  {
+    title: 'Bookings, payments, donations and memberships that work',
+    text: 'Money and scheduling are part of the build, not a plugin bolted on at the end and left to drift.',
+  },
+];
+
+const specialities = [
+  {
+    title: 'Learning platforms',
+    text: 'Course delivery, enrolments and certification that runs without you administering it by hand.',
+    example: 'Shapes of Grief',
+  },
+  {
+    title: 'E-commerce and bookings',
+    text: 'Payments, appointments and subscriptions that work reliably, including where clinical or regulatory rules apply.',
+    example: 'Merrion Medical Aesthetics, Beauty by Vaiva',
+  },
+  {
+    title: 'Bilingual sites',
+    text: 'English and Irish delivered properly, with human translation review rather than automated output.',
+    example: 'National Disability Authority',
+  },
+];
+
+// Two examples only. Outcomes, not plumbing. Do not publish a map of a
+// clinic's internal workflow, and leave the internal finance and reporting
+// automation out entirely.
+const aiExamples = [
+  {
+    client: 'Western Rheumatology',
+    text: 'Patients order repeat prescriptions without ringing the clinic, and the medications information on the site stays in sync automatically.',
+  },
+  {
+    client: 'Edithouse, our own business',
+    text: 'A support assistant trained on the business’s own material, answering the questions couples ask before they enquire.',
+  },
+];
+---
+
+<Site
+  title="Web Development"
+  description="Accessible, bilingual and maintainable websites from an independent Dublin studio. WordPress, WooCommerce and Astro."
+>
+  {/* ---------- Position statement ---------- */}
+  <section class="pl-panel" aria-labelledby="wd-heading">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div data-reveal-stagger="100">
+          <p class="u-eyebrow is-web" data-reveal>Web Development</p>
+          <div class="pl-gap-sm"></div>
+          <h1 class="u-h2 u-max-40 u-balance" id="wd-heading" data-reveal>
+            Websites built to be used, updated and handed over.
+          </h1>
+          <div class="pl-gap-sm"></div>
+          <p class="u-lg u-muted u-max-33" data-reveal>
+            Accessible, bilingual where it needs to be, and still working in year three.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- What we deliver ---------- */}
+  <section class="pl-panel is-secondary" aria-labelledby="wd-deliver">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div class="pl-grid-2 is-top is-wide">
+          <div class="pl-stack pl-stack-md" data-reveal>
+            <p class="u-eyebrow is-web">What we deliver</p>
+            <h2 class="u-h2 u-max-26" id="wd-deliver">Three things, every time.</h2>
+          </div>
+          <ul class="pl-service-points" data-reveal-stagger="100">
+            {deliver.map((d) => (
+              <li class="pl-service-points__item" data-reveal>
+                <span class="pl-service-points__title">{d.title}</span>
+                <span class="pl-service-points__text u-muted">{d.text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- Specialities ---------- */}
+  <section class="pl-panel" aria-labelledby="wd-spec">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <h2 class="u-h2 u-max-26" id="wd-spec" data-reveal>Three things we do more than anyone else.</h2>
+        <div class="pl-gap-lg"></div>
+        <div class="pl-grid-3" data-reveal-stagger="100">
+          {specialities.map((s) => (
+            <article class="pl-card is-tight" data-reveal>
+              <div class="pl-stack pl-stack-sm">
+                <h3 class="u-xl u-medium">{s.title}</h3>
+                <p class="u-muted">{s.text}</p>
+              </div>
+              <p class="u-sm u-muted"><span class="u-eyebrow">Example</span> {s.example}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- Accessibility ----------
+      A named section, not a bullet. The NDA claim is the strongest proof on
+      the site. Get the level right: that build was tested to 2.1 AA. This
+      site is built to 2.2 AA. Do not conflate them. */}
+  <section class="pl-panel is-secondary" aria-labelledby="wd-a11y">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div class="pl-grid-2 is-top is-wide">
+          <div class="pl-stack pl-stack-md" data-reveal>
+            <p class="u-eyebrow is-web">Accessibility</p>
+            <h2 class="u-h2 u-max-26" id="wd-a11y">We build sites that pass.</h2>
+          </div>
+          <div class="pl-stack pl-stack-md" data-reveal>
+            <p class="u-lg u-max-33">
+              We built the National Disability Authority&rsquo;s Someone Like Me Art Awards site, tested to
+              WCAG 2.1 AA and delivered in English and Irish with human translation review. This website is
+              built to WCAG 2.2 AA.
+            </p>
+            <p class="u-muted u-max-33">
+              We also audit other people&rsquo;s sites. If you need to know where yours stands, we will tell you.
+            </p>
+            <div class="pl-btn-group">
+              <Button href="/accessibility-audits/" variant="ghost">Accessibility audits</Button>
+            </div>
+            <p class="u-sm u-muted">
+              <a class="pl-link" href="/accessibility/">Our accessibility statement</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- Platforms ----------
+      One sentence, not a logo row. WordPress, WooCommerce and Astro are the
+      only tool names permitted anywhere on the site, once each, inside a
+      benefit sentence. Do not add a theme, a builder or a host. */}
+  <section class="pl-panel" aria-labelledby="wd-platforms">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-sm">
+        <h2 class="u-h3 u-balance" id="wd-platforms" data-reveal>
+          We build mainly in WordPress and WooCommerce, so your team can edit the site themselves. For smaller
+          or faster-moving projects we build static sites in Astro, which means no database, very little to
+          maintain and very little to attack.
+        </h2>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- AI block ----------
+      DETACHABLE. Self-contained by design. Outcomes only, no plumbing. */}
+  <section class="pl-panel is-film" aria-labelledby="wd-ai">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div class="pl-grid-2 is-top is-wide">
+          <div class="pl-stack pl-stack-md" data-reveal>
+            <p class="u-eyebrow u-inverse">AI</p>
+            <h2 class="u-h2 u-max-26" id="wd-ai" style="color:var(--pl-text-inverse)">
+              Work the website can do instead of a person.
+            </h2>
+            <p class="u-lg u-max-26" style="color:var(--pl-text-on-dark)">
+              Not a chatbot bolted to the corner of a page. Specific jobs, taken off someone&rsquo;s desk.
+            </p>
+          </div>
+          <ul class="pl-service-points" data-reveal-stagger="100">
+            {aiExamples.map((a) => (
+              <li class="pl-service-points__item" data-reveal>
+                <span class="pl-service-points__title" style="color:var(--pl-text-inverse)">{a.client}</span>
+                <span class="pl-service-points__text" style="color:var(--pl-text-on-dark)">{a.text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- Case studies ---------- */}
+  <section class="pl-panel" aria-labelledby="wd-cases">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <h2 class="u-h2 u-max-26" id="wd-cases" data-reveal>Case studies.</h2>
+        <div class="pl-gap-lg"></div>
+        <div class="pl-grid-2" data-reveal-stagger="120">
+          <article class="pl-card is-tight" data-reveal>
+            <span class="pl-tag is-web u-xs">Web</span>
+            <div class="pl-stack pl-stack-sm">
+              <h3 class="u-xl u-medium">National Disability Authority</h3>
+              <p class="u-muted">
+                The Someone Like Me Art Awards site, built in English and Irish with human translation review,
+                and tested to WCAG 2.1 AA.
+              </p>
+            </div>
+            <a class="pl-link" href="/work/someone-like-me/">Read the case study</a>
+          </article>
+          <article class="pl-card is-tight" data-reveal>
+            <span class="pl-tag is-web u-xs">Web</span>
+            <div class="pl-stack pl-stack-sm">
+              <h3 class="u-xl u-medium">basis.point</h3>
+              <p class="u-muted">
+                A rebuilt site for the Irish funds industry&rsquo;s charity, with donations and the CRM working
+                together rather than side by side.
+              </p>
+            </div>
+            <a class="pl-link" href="/work/website-for-irish-funds-charity/">Read the case study</a>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- Care and Hosting ---------- */}
+  <section class="pl-panel is-secondary" aria-labelledby="wd-care">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div class="pl-row is-between is-wrap">
+          <div class="pl-stack pl-stack-sm" data-reveal>
+            <h2 class="u-h3 u-max-33" id="wd-care">Someone is still responsible in year three.</h2>
+            <p class="u-muted u-max-33">Hosting, security, updates, backups and the person who answers when it breaks.</p>
+          </div>
+          <div data-reveal><Button href="/care-and-hosting/" variant="ghost">Care and hosting</Button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- Contact ---------- */}
+  <section class="pl-panel is-inverse">
+    <div class="pl-gutter pl-pad-lg">
+      <div class="pl-container is-md u-center">
+        <h2 class="u-h2 u-balance" data-reveal style="color:var(--pl-text-inverse);margin-inline:auto;max-width:30rem">
+          Have a site to build, or one that needs rescuing?
+        </h2>
+        <div class="pl-gap-sm"></div>
+        <div class="pl-btn-group" data-reveal style="justify-content:center">
+          <Button href="/contact/" variant="on-dark">Get in touch</Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</Site>

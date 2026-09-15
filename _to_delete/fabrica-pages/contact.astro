@@ -1,0 +1,200 @@
+---
+/**
+ * Contact.
+ *
+ * No inline form here — the Start a project modal is the single enquiry path,
+ * so there's one thing to maintain and one place leads arrive. This page sets
+ * expectations, then hands off to it. Direct email is given plainly for anyone
+ * who'd rather not use a form at all.
+ */
+import Base from '../layouts/Base.astro';
+import Panel from '../components/ui/Panel.astro';
+import Pill from '../components/ui/Pill.astro';
+import PersonCard from '../components/ui/PersonCard.astro';
+
+const email = 'hello@doghousemedia.ie';
+
+const steps = [
+  {
+    n: '01',
+    title: 'Quick response',
+    body: "We answer within a working day. If we're not the right fit we'll say so and point you somewhere better.",
+  },
+  {
+    n: '02',
+    title: 'A real conversation',
+    body: 'A call or a coffee, not a discovery workshop. We want to understand the problem before quoting anything.',
+  },
+  {
+    n: '03',
+    title: 'Clear next steps',
+    body: 'You get a written scope and a fixed price. No hourly creep, no surprises at invoice time.',
+  },
+];
+---
+
+<Base
+  title="Contact"
+  description="Start a project with Doghouse Media. Web, video and automation from a two-person Dublin studio."
+>
+  <section class="contact">
+    <div class="container">
+      <header class="contact__head">
+        <span class="kicker kicker--film">Get in touch</span>
+        <h1 class="display-xl">Let's talk.</h1>
+        <p class="lead contact__intro">
+          Tell us what you're building. Website, film, or something that should
+          have been automated three years ago.
+        </p>
+      </header>
+
+      <div class="contact__body grid">
+        <div class="contact__cta-col">
+          <Panel tone="ink">
+          <div class="contact__cta">
+            <h2 class="subheading">Start a project</h2>
+            <p class="contact__ctanote">
+              Four short questions — the track, the shape of the job, rough
+              budget, and where to reach you. Takes about a minute.
+            </p>
+
+            <Pill
+              label="Start a project"
+              href={`mailto:${email}`}
+              variant="ghost-cream"
+              startProject
+            />
+
+            <p class="contact__direct">
+              Or mail us straight out: <a class="link" href={`mailto:${email}`}>{email}</a>
+            </p>
+            </div>
+          </Panel>
+        </div>
+
+        <div class="contact__aside">
+          <ol class="contact__steps" data-stagger="1">
+            {
+              steps.map((step) => (
+                <li class="contact__step reveal">
+                  <span class="micro contact__stepnum">{step.n}</span>
+                  <div>
+                    <h3 class="contact__steptitle">{step.title}</h3>
+                    <p class="contact__stepbody">{step.body}</p>
+                  </div>
+                </li>
+              ))
+            }
+          </ol>
+
+          <div class="contact__person reveal">
+            <PersonCard
+              name="Sue Ryan"
+              role="Project Lead"
+              company="Doghouse Media"
+              photo="/team/sue-ryan.jpg"
+              ctaLabel="Ask directly"
+              startProject
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .contact {
+    padding-block: calc(var(--nav-h) + 96px) 120px;
+  }
+
+  .contact__head {
+    display: grid;
+    gap: 14px;
+    justify-items: start;
+    margin-bottom: 64px;
+  }
+
+  .contact__intro {
+    max-width: 42ch;
+    color: var(--text-muted);
+  }
+
+  .contact__body {
+    gap: 40px var(--gutter);
+    align-items: start;
+  }
+
+  .contact__cta-col {
+    grid-column: span 2;
+  }
+
+  .contact__cta {
+    display: grid;
+    justify-items: start;
+    gap: 16px;
+    padding: 40px;
+  }
+
+  .contact__ctanote {
+    font-size: var(--fs-body-s);
+    color: var(--cream-60);
+    max-width: 38ch;
+  }
+
+  .contact__direct {
+    font-size: var(--fs-body-s);
+    color: var(--cream-60);
+    margin-top: 8px;
+  }
+
+  .contact__direct .link {
+    color: var(--color-cream);
+  }
+
+  .contact__aside {
+    grid-column: span 2;
+    display: grid;
+    gap: 40px;
+  }
+
+  .contact__steps {
+    display: grid;
+    gap: 2px;
+  }
+
+  .contact__step {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 16px;
+    padding-block: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  .contact__stepnum {
+    color: var(--text-muted);
+    padding-top: 3px;
+  }
+
+  .contact__steptitle {
+    font-size: var(--fs-body);
+    font-weight: var(--fw-semi);
+    margin-bottom: 6px;
+  }
+
+  .contact__stepbody {
+    font-size: var(--fs-body-s);
+    color: var(--text-muted);
+    max-width: 44ch;
+  }
+
+  @media (max-width: 809.98px) {
+    .contact__cta-col,
+    .contact__aside {
+      grid-column: span 1;
+    }
+    .contact__cta {
+      padding: 28px 24px;
+    }
+  }
+</style>

@@ -1,0 +1,56 @@
+# Doghouse Media website (Astro)
+
+Rebuild of doghousemedia.ie. Independent two-person video and web studio in Dublin, founded 2011.
+
+## The two governing documents
+
+| File | Governs |
+|---|---|
+| `MESSAGING-PLAN.md` | Positioning, audience, page map, nav, copy, register, case studies, blog, what each page says |
+| `BUILD-SPEC.md` | Layout system, design tokens, section anatomy, motion, Astro architecture, performance budget |
+
+**Where they disagree, `MESSAGING-PLAN.md` wins on what the site says and which pages exist. `BUILD-SPEC.md` wins on how it looks and moves.**
+
+BUILD-SPEC was written first, from a Framer reference, before the content decisions were made. Its section 11 asks a list of open questions. Most are now answered below.
+
+## Conflicts already resolved, do not re-litigate
+
+1. **Page map.** BUILD-SPEC §1 lists `/studio`, `/projects`, `/blog`, `/contact` with a five-item nav and no service pages. That is wrong now. The positioning rests on two pillar pages. Use the sitemap in MESSAGING-PLAN §4:
+
+   `/`, `/work/`, `/work/[slug]`, `/video-production/`, `/web-development/`, `/accessibility-audits/`, `/care-and-hosting/`, `/about/`, `/blog/`, `/blog/[slug]`, `/contact/`, `/accessibility/`, `/privacy/`
+
+   Nav: Work, Video Production, Web Development, Blog, About, Contact. Care and Hosting is footer-only.
+
+2. **Pricing, BUILD-SPEC §5.9.** The answer is no. We are not publishing prices anywhere, including Care and Hosting and accessibility audits. The old site's SEO price tiers are being killed deliberately. Replace §5.9 with an engagement-models or how-we-work block, or drop the section.
+
+3. **Homepage section list, BUILD-SPEC §11.6.** Use the eight-section order in MESSAGING-PLAN §5. Note the logo strip sits *below* the first service block, not directly under the hero. That is deliberate.
+
+4. **Projects count superscript, BUILD-SPEC §4.2.** The work page is a curated twelve to fifteen thumbnails plus four case studies, not twenty-seven. Either generate the count honestly from the collection or drop the superscript.
+
+5. **Branding, BUILD-SPEC §11.1 and §11.2.** Settled. Ink `#0F1417`, cream `#FAF7F0`, bandana red `#BD1C30`. Inter Tight 800 display, Inter body, JetBrains Mono labels. Red is the accent.
+
+## Non-negotiables
+
+- **WCAG 2.2 AA.** The site sells accessibility auditing, so it has to pass. BUILD-SPEC §9 sets a performance and a11y budget but names no level. It is 2.2 AA.
+- **Brand red is a cream-background colour only.** `#BD1C30` on `#0F1417` measures about 3:1 and fails for normal text. On `#FAF7F0` it is about 5.8:1 and passes. On the dark panels, red is large text and non-text accents only. BUILD-SPEC §9 checks the greys but not this pair.
+- **Reduced motion.** BUILD-SPEC §6 has a reduced-motion section. The hound mark animation and the preloader are both covered by it.
+- **Hero video**: muted, no essential audio, visible pause control, solid or heavily dimmed backing behind any text over moving footage.
+- **Captions on every embedded film.** Not auto-generated.
+- Publish an accessibility statement at `/accessibility/`.
+
+## Writing rules
+
+- No em dashes. Commas and full stops.
+- No exclamation marks anywhere on the site.
+- Irish/UK English. No Americanisms. The old site mixes "optimization" and "realise".
+- Plain and declarative. Say what was made and who for.
+- Never name a tool where a benefit will do. Only exceptions: WordPress, WooCommerce and Astro, once each, inside a benefit sentence.
+- Banned, carried from the old site: "Let's do this", "Like what you see?", "stop the scroll", "get your digital game on".
+
+## Facts that must be right
+
+- Founded **2011**, not 2013. Fifteen years.
+- The NDA Someone Like Me site was tested to **WCAG 2.1 AA**. Real Nation's own site was tested to 2.2. Do not conflate them.
+- Do **not** publish any Boston Scientific "EMEA preferred supplier" claim. Naming them as a client is fine.
+- Do not write "every website must now be accessible by law". See MESSAGING-PLAN §7a for the correct scope of the European Accessibility Act and the Web Accessibility Directive.
+- Testimonials in hand: Susan Foley (National Orthopaedic Hospital Cappagh), Edel (basis.point), Boston Scientific. Any others in the build are placeholders and must be marked as such.

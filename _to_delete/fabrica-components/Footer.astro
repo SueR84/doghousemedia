@@ -1,0 +1,185 @@
+---
+/**
+ * Four-part footer: contact block, link columns, the giant sign-off mark,
+ * and a dark legal bar.
+ *
+ * The oversized wordmark is the strongest idea here — it wants the real
+ * Doghouse hound mark once branding lands.
+ */
+import Logo from './Logo.astro';
+import Pill from './ui/Pill.astro';
+import PersonCard from './ui/PersonCard.astro';
+
+const year = new Date().getFullYear();
+
+const siteLinks = [
+  { label: 'Studio', href: '/studio' },
+  { label: 'Projects', href: '/projects' },
+  { label: 'Blog', href: '/blog' },
+  { label: 'Contact', href: '/contact' },
+];
+
+// TODO: confirm the real handles before launch.
+const socialLinks = [
+  { label: 'Instagram', href: 'https://instagram.com/' },
+  { label: 'LinkedIn', href: 'https://linkedin.com/' },
+];
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__top grid" data-stagger="1">
+      <div class="footer__pitch reveal">
+        <h2 class="subheading">Have a project in mind?</h2>
+        <p class="footer__note">
+          Tell us what you're building. Web, video or automation, we'll tell you
+          straight whether we're the right fit.
+        </p>
+        <Pill label="Start a project" href="/contact" variant="primary" startProject />
+      </div>
+
+      <nav class="footer__col reveal" aria-label="Footer">
+        <p class="label footer__colhead">Site</p>
+        {siteLinks.map((link) => <a class="footer__link" href={link.href}>{link.label}</a>)}
+      </nav>
+
+      <nav class="footer__col reveal" aria-label="Social">
+        <p class="label footer__colhead">Elsewhere</p>
+        {
+          socialLinks.map((link) => (
+            <a class="footer__link" href={link.href} target="_blank" rel="noopener noreferrer">
+              {link.label}
+              <span class="footer__ext" aria-hidden="true">↗</span>
+            </a>
+          ))
+        }
+      </nav>
+
+      <div class="footer__person reveal">
+        <PersonCard
+          name="Sue Ryan"
+          role="Project Lead"
+          company="Doghouse Media"
+          photo="/team/sue-ryan.jpg"
+          ctaLabel="Ask directly"
+          ctaHref="/contact"
+          startProject
+        />
+      </div>
+    </div>
+
+    <div class="footer__mark reveal" aria-hidden="true">
+      <Logo variant="stacked" size="footer" animate />
+    </div>
+  </div>
+
+  <div class="footer__legal on-ink" data-panel="ink">
+    <div class="container footer__legalinner">
+      <p class="meta">© {year} Doghouse Media. All rights reserved.</p>
+      <p class="meta footer__legallinks">
+        <a href="/legal/privacy-policy">Privacy Policy</a>
+        <a href="/legal/terms-of-service">Terms of Service</a>
+      </p>
+      <p class="meta footer__place">Dublin, Ireland</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--paper);
+    color: var(--ink);
+    padding-block-start: var(--section-pad);
+  }
+
+  .footer__top {
+    align-items: start;
+    gap: 40px var(--gutter);
+  }
+
+  .footer__pitch {
+    display: grid;
+    gap: 20px;
+    justify-items: start;
+    max-width: 34ch;
+  }
+
+  .footer__note {
+    font-size: var(--fs-body-s);
+    opacity: 0.6;
+  }
+
+  .footer__col {
+    display: grid;
+    gap: 10px;
+    align-content: start;
+  }
+
+  .footer__colhead {
+    opacity: 0.45;
+    margin-bottom: 8px;
+  }
+
+  .footer__link {
+    font-size: var(--fs-body-l);
+    font-weight: var(--fw-medium);
+    letter-spacing: var(--tr-tight);
+    transition: opacity var(--dur-fast) var(--ease-standard);
+  }
+
+  .footer__link:hover {
+    opacity: 0.55;
+  }
+
+  .footer__ext {
+    font-size: 0.7em;
+    vertical-align: super;
+    opacity: 0.5;
+  }
+
+  .footer__mark {
+    margin-block: 120px 60px;
+    text-align: center;
+    line-height: 0.85;
+  }
+
+  .footer__legal {
+    background: var(--ink);
+    color: var(--surface);
+    padding-block: 24px;
+  }
+
+  .footer__legalinner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .footer__legallinks {
+    display: flex;
+    gap: 28px;
+  }
+
+  .footer__legalinner a {
+    transition: opacity var(--dur-fast) var(--ease-standard);
+  }
+
+  .footer__legalinner a:hover {
+    opacity: 0.6;
+  }
+
+  .footer__place {
+    opacity: 0.5;
+  }
+
+  @media (max-width: 809.98px) {
+    .footer__mark {
+      margin-block: 72px 40px;
+    }
+    .footer__legalinner {
+      justify-content: flex-start;
+    }
+  }
+</style>

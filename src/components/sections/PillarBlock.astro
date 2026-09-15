@@ -1,0 +1,65 @@
+---
+/**
+ * Pillar block. Used twice on the homepage, once per pillar.
+ *
+ * Eyebrow, heading, one lead line, one link, and a right-hand column that is
+ * one of: three "what we deliver" lines (MESSAGING-PLAN §5, verbatim, not
+ * shortened to fit), a single vertical film in a tilted phone, or the phone
+ * carousel. Never more than one at a time.
+ */
+import Button from '../pipely/Button.astro';
+import PhoneCarousel from './PhoneCarousel.astro';
+import PhoneVideo from './PhoneVideo.astro';
+
+interface Props {
+  eyebrow: string;
+  heading: string;
+  lead?: string;
+  points?: string[];
+  /** Replaces the points column with a portrait film in a tilted phone.
+      `behind` adds a second film in the phone sitting behind it. */
+  video?: {
+    vimeoId: string;
+    title: string;
+    behind?: { vimeoId: string; title: string };
+  };
+  /** Replaces the points column with the phone showcase carousel. */
+  carousel?: boolean;
+  cta: { label: string; href: string };
+  /** `film` tints the eyebrow red, `web` teal. Non-text accent only. */
+  tone?: 'film' | 'web';
+  /** Flips the two columns so the pillars do not read as a repeat. */
+  reverse?: boolean;
+  id?: string;
+}
+
+const { eyebrow, heading, lead, points, video, carousel = false, cta, tone = 'film', reverse = false, id } = Astro.props;
+const headingId = `${(id ?? eyebrow).toLowerCase().replace(/[^a-z0-9]+/g, '-')}-heading`;
+---
+
+<section id={id} class="pl-panel" aria-labelledby={headingId}>
+  <div class="pl-gutter pl-pad-md">
+    <div class="pl-container is-md">
+      <div class:list={['pl-grid-2', 'is-top', 'is-wide', video && 'pl-pillar--media', reverse && 'pl-pillar--reverse']}>
+        <div class="pl-stack pl-stack-md" data-reveal>
+          <p class:list={['u-eyebrow', tone === 'web' ? 'is-web' : 'is-film']}>{eyebrow}</p>
+          <h2 class="u-h2 u-max-40" id={headingId}>{heading}</h2>
+          {lead && <p class="u-lg u-muted u-max-33">{lead}</p>}
+          <div class="pl-btn-group" style="margin-top:.5rem">
+            <Button href={cta.href} variant="ghost">{cta.label}</Button>
+          </div>
+        </div>
+
+        {video ? (
+          <div data-reveal><PhoneVideo vimeoId={video.vimeoId} title={video.title} behind={video.behind} /></div>
+        ) : carousel ? (
+          <div data-reveal><PhoneCarousel /></div>
+        ) : (
+          <ul class="pl-deliver" data-reveal-stagger="100">
+            {points?.map((p) => <li class="pl-deliver__item" data-reveal>{p}</li>)}
+          </ul>
+        )}
+      </div>
+    </div>
+  </div>
+</section>

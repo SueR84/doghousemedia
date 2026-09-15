@@ -1,0 +1,145 @@
+/* ============================================================
+   Doghouse Media — design tokens
+
+   Values come from the Doghouse Media design system (readme.md +
+   tokens/*.css in the brand pack). The layout-specific tokens
+   (grid gutter, page padding, section rhythm) are ours.
+   ============================================================ */
+
+:root {
+  /* ---------- Base palette ---------- */
+  --color-ink: #0f1417;
+  --color-cream: #faf7f0;
+  --color-red: #bd1c30; /* Film / video */
+  --color-teal: #2c6e7f; /* Web */
+  --color-steel: #7395a1;
+  --color-deep-teal: #15282e;
+  --color-line: #e5e1d8;
+  --color-gray: #9b9890;
+  --color-steel-tint: #eaf1f4;
+  --color-red-tint: #fdeaed;
+  --color-teal-light: #8fc4d2;
+
+  /* ---------- Semantic roles ---------- */
+  /* Page is always Cream, never pure white. */
+  --paper: var(--color-cream);
+  --ink: var(--color-ink);
+  --surface: #ffffff;
+  --root-bg: var(--color-ink);
+
+  --text: var(--color-ink);
+  --text-muted: var(--color-gray);
+  --border: var(--color-line);
+
+  --accent-film: var(--color-red);
+  --accent-web: var(--color-teal);
+  --accent-support: var(--color-steel);
+
+  --focus-ring-color: var(--color-steel);
+  --focus-ring: 0 0 0 3px rgba(115, 149, 161, 0.18);
+
+  /* Dark surfaces */
+  --dark-bg: var(--color-ink);
+  --dark-text: var(--color-cream);
+  --film-bg: var(--color-deep-teal);
+  --film-text: var(--color-cream);
+  --film-accent: var(--color-teal-light);
+
+  /* Alpha derivations, so call sites never hand-roll rgba(). */
+  --ink-90: rgb(15 20 23 / 0.9);
+  --ink-60: rgb(15 20 23 / 0.6);
+  --ink-40: rgb(15 20 23 / 0.4);
+  --ink-12: rgb(15 20 23 / 0.12);
+  --cream-90: rgb(250 247 240 / 0.9);
+  --cream-60: rgb(250 247 240 / 0.6);
+  --cream-40: rgb(250 247 240 / 0.4);
+  --cream-12: rgb(250 247 240 / 0.12);
+  --hairline: rgb(250 247 240 / 0.14);
+
+  /* ---------- Layout ---------- */
+  --page-pad: 36px;
+  --container: 1520px;
+  --gutter: 4px;
+  --section-pad: 96px;
+  --nav-h: 76px;
+  --measure: 68ch;
+
+  /* ---------- Radii ---------- */
+  --r-pill: 9999px;
+  --r-panel: 16px; /* large section containers */
+  --r-card: 8px; /* case-study cards, buttons, inputs */
+  --r-media: 8px;
+  --r-chip: 9999px;
+
+  /* ---------- Shadows ---------- */
+  --shadow-card: 0 1px 3px rgba(15, 20, 23, 0.06), 0 4px 12px rgba(15, 20, 23, 0.06);
+  --shadow-hover: 0 18px 40px rgba(15, 20, 23, 0.1);
+
+  /* ---------- Type ---------- */
+  /* Three families, distinct roles. Never mix within a context. */
+  --font-display: 'Inter Tight', system-ui, -apple-system, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semi: 600;
+  --fw-bold: 700;
+  --fw-black: 800;
+
+  --fs-display-xl: clamp(46px, 7.4vw, 96px);
+  --fs-display-l: clamp(36px, 4.2vw, 64px);
+  --fs-heading: clamp(32px, 3.4vw, 46px);
+  --fs-subheading: clamp(24px, 2.4vw, 32px);
+  --fs-lead: clamp(19px, 1.7vw, 24px);
+  --fs-body-l: 19px;
+  --fs-body: 16px;
+  --fs-body-s: 14px;
+  --fs-label: 12px;
+  --fs-micro: 11px;
+
+  --lh-hero: 0.96;
+  --lh-display: 1.02;
+  --lh-tight: 1.2;
+  --lh-body: 1.55;
+
+  --tr-hero: -0.045em;
+  --tr-display: -0.035em;
+  --tr-tight: -0.025em;
+  --tr-label: 0.14em;
+  --tr-eyebrow: 0.18em;
+  --tr-wide: 0.22em;
+
+  /* ---------- Motion ---------- */
+  --ease-rise: cubic-bezier(0.2, 0.7, 0.2, 1); /* scroll reveals */
+  --ease-snap: cubic-bezier(0.3, 1.5, 0.5, 1); /* hover micro-interactions */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-standard: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  --dur-fast: 0.18s;
+  --dur-base: 0.25s;
+  --dur-slow: 0.8s;
+  --dur-marquee: 34s;
+  --stagger: 60ms;
+
+  /* ---------- Depth ---------- */
+  --z-nav: 9;
+  --z-menu: 50;
+  --z-preloader: 9999;
+}
+
+@media (max-width: 1199.98px) {
+  :root {
+    --page-pad: 24px;
+    --section-pad: 80px;
+  }
+}
+
+@media (max-width: 809.98px) {
+  :root {
+    --page-pad: 16px;
+    --section-pad: 64px;
+    --nav-h: 64px;
+    --fs-body-l: 17px;
+  }
+}

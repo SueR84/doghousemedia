@@ -1,0 +1,109 @@
+---
+/**
+ * The rounded container most sections sit inside.
+ *
+ * Tones map to the brand's surface pairings:
+ *   ink   — Ink bg, Cream text, red accent (dark CTA / feature bands)
+ *   film  — Deep teal bg, Cream text, teal-light tags (video work)
+ *   web   — Steel tint bg, Ink text, teal accents (web work)
+ *   surface — white card on cream
+ *   paper — cream, bordered
+ *
+ * Dark tones carry the grain overlay and tag themselves data-panel="ink" so
+ * nav-invert.ts flips the nav when they pass underneath.
+ */
+interface Props {
+  tone?: 'ink' | 'film' | 'web' | 'surface' | 'paper';
+  radius?: 'panel' | 'card' | 'none';
+  bordered?: boolean;
+  as?: string;
+  class?: string;
+  id?: string;
+}
+
+const {
+  tone = 'ink',
+  radius = 'panel',
+  bordered = false,
+  as: Tag = 'div',
+  class: className = '',
+  id,
+} = Astro.props;
+
+const isDark = tone === 'ink' || tone === 'film';
+
+const classes = [
+  'panel',
+  `panel--${tone}`,
+  radius !== 'none' ? `panel--r-${radius}` : '',
+  bordered ? 'panel--bordered' : '',
+  isDark ? 'on-ink' : 'on-paper',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<Tag class={classes} id={id} {...isDark ? { 'data-panel': 'ink' } : {}}>
+  <slot />
+</Tag>
+
+<style>
+  .panel {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .panel--r-panel {
+    border-radius: var(--r-panel);
+  }
+  .panel--r-card {
+    border-radius: var(--r-card);
+  }
+
+  .panel--ink {
+    background: var(--color-ink);
+    color: var(--color-cream);
+    overflow: hidden;
+  }
+
+  .panel--film {
+    background: var(--color-deep-teal);
+    color: var(--color-cream);
+    overflow: hidden;
+  }
+
+  .panel--web {
+    background: var(--color-steel-tint);
+    color: var(--color-ink);
+    border: 1px solid #d2e2e8;
+  }
+
+  .panel--surface {
+    background: var(--surface);
+    color: var(--color-ink);
+  }
+
+  .panel--paper {
+    background: var(--paper);
+    color: var(--color-ink);
+  }
+
+  .panel--bordered {
+    border: 1px solid var(--border);
+  }
+
+  /* Grain at 5%. Stops the large dark areas going flat without reading as
+     texture. Swap /noise.png if the brand ever ships its own tile. */
+  .panel--ink::after,
+  .panel--film::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: url('/noise.png');
+    background-repeat: repeat;
+    opacity: 0.05;
+    pointer-events: none;
+  }
+</style>

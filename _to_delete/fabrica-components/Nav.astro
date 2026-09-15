@@ -1,0 +1,140 @@
+---
+/**
+ * Fixed, transparent, 60px. Because there's no background fill, the link
+ * colour has to invert as dark panels scroll under it — nav-invert.ts
+ * handles that by toggling .nav--on-ink.
+ *
+ * The Projects item carries a live count from the content collection.
+ */
+import { getCollection } from 'astro:content';
+import Logo from './Logo.astro';
+
+const projects = await getCollection('projects', ({ data }) => !data.draft);
+const projectCount = projects.length;
+
+const path = Astro.url.pathname;
+
+const links = [
+  { label: 'Studio', href: '/studio' },
+  { label: 'Projects', href: '/projects', count: projectCount },
+  { label: 'Blog', href: '/blog' },
+  { label: 'Contact', href: '/contact' },
+];
+---
+
+<header class="nav" data-nav>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <div class="nav__inner container">
+    <a class="nav__brand" href="/" aria-label="Doghouse Media, home">
+      <Logo variant="horizontal" size="nav" animate />
+    </a>
+
+    <nav class="nav__links" aria-label="Primary">
+      {
+        links.map((link) => (
+          <a
+            href={link.href}
+            class="nav__link"
+            aria-current={path === link.href ? 'page' : undefined}
+          >
+            {link.label}
+            {link.count !== undefined && link.count > 0 && (
+              <sup class="nav__count">{link.count}</sup>
+            )}
+          </a>
+        ))
+      }
+    </nav>
+
+    <button class="nav__menu" type="button" aria-label="Open menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline: 0;
+    z-index: var(--z-nav);
+    height: var(--nav-h);
+    color: var(--ink);
+    /* Brand sticky-nav treatment: cream at 82% with a 10px blur. The only
+       place blur is used anywhere in the system. */
+    background: rgb(250 247 240 / 0.82);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid transparent;
+  }
+
+  /* Flipped by nav-invert.ts when a dark panel is under the bar. The bar
+     goes transparent there so the panel reads through it. */
+  .nav--on-ink {
+    color: var(--color-cream);
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .nav__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    height: 100%;
+  }
+
+  .nav__brand {
+    flex-shrink: 0;
+  }
+
+  /* Links spread evenly across the middle of the bar rather than clustering. */
+  .nav__links {
+    display: flex;
+    flex: 1;
+    justify-content: space-evenly;
+    gap: 24px;
+  }
+
+  .nav__link {
+    font-size: var(--fs-body-s);
+    font-weight: var(--fw-semi);
+    letter-spacing: var(--tr-tight);
+    transition: opacity var(--dur-fast) var(--ease-standard);
+  }
+
+  .nav__link:hover,
+  .nav__link[aria-current='page'] {
+    opacity: 0.55;
+  }
+
+  .nav__count {
+    font-size: var(--fs-micro);
+    opacity: 0.6;
+    margin-inline-start: 2px;
+  }
+
+  .nav__menu {
+    flex-shrink: 0;
+    display: grid;
+    gap: 4px;
+    width: 32px;
+    padding: 8px 0;
+  }
+
+  .nav__menu span {
+    display: block;
+    height: 1.5px;
+    background: currentColor;
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+
+  @media (max-width: 809.98px) {
+    .nav__links {
+      display: none;
+    }
+  }
+</style>

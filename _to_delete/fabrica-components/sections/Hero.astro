@@ -1,0 +1,207 @@
+---
+/**
+ * 5.1 — Hero.
+ *
+ * Full-bleed dark panel inset 5px from the viewport edge (fabrica.framer.media
+ * reference), with the wordmark overlaid at display size. Service list
+ * top-right, positioning statement bottom-left in the two-tone treatment,
+ * person card bottom-right.
+ *
+ * The + crosshairs are decorative: they sell the "designed on a grid" idea.
+ */
+import Panel from '../ui/Panel.astro';
+import Logo from '../Logo.astro';
+import PersonCard from '../ui/PersonCard.astro';
+import Pill from '../ui/Pill.astro';
+
+const services = [
+  'Video Production',
+  'Web Development',
+  'AI Powered Solutions and Workflows',
+];
+
+const year = new Date().getFullYear();
+---
+
+<section class="hero" id="hero">
+  <Panel tone="ink" class="hero__panel">
+    <!-- TODO: swap for the real hero media once we've shot/chosen it.
+         Wants to be full-bleed, works in black & white, some grain. -->
+    <div class="hero__media" aria-hidden="true"></div>
+
+    <div class="hero__grid">
+      <div class="hero__top">
+        <div class="hero__mark reveal">
+          <Logo variant="stacked" size="hero" animate />
+          <p class="hero__discipline">Two crafts, one roof.</p>
+        </div>
+
+        <ul class="hero__services reveal" style="--i: 1">
+          {services.map((service) => <li>{service}</li>)}
+        </ul>
+      </div>
+
+      <div class="hero__bottom">
+        <div class="hero__pitch">
+        <p class="hero__statement lead two-tone reveal" style="--i: 2">
+          <strong>Web, video and automation under one roof.</strong> Twenty years
+          of building things that work, for people who'd rather talk straight
+          than sit through a pitch.
+        </p>
+
+        <div class="hero__cta reveal" style="--i: 3">
+          <Pill
+            label="Start a project"
+            href="/contact"
+            variant="ghost-cream"
+            size="lg"
+            startProject
+          />
+        </div>
+
+        </div>
+
+        <p class="label hero__copyright">© {year} Doghouse Media</p>
+
+        <div class="hero__person reveal" style="--i: 3">
+          <PersonCard
+            name="Sue Ryan"
+            role="Project Lead"
+            company="Doghouse Media"
+            photo="/team/sue-ryan.jpg"
+            ctaLabel="Let's talk"
+        startProject
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="hero__crosshairs" aria-hidden="true">
+      {Array.from({ length: 4 }).map(() => <span>+</span>)}
+    </div>
+  </Panel>
+</section>
+
+<style>
+  .hero {
+    padding-block-start: var(--nav-h);
+    padding-inline: 5px;
+    width: 100%;
+  }
+
+  /* NOTE: box-model lives on .hero__grid, not here. Astro's scoped styles
+     don't reach a child component's own root element, so padding set on
+     .hero__panel (which belongs to <Panel />) silently does nothing. */
+  .hero__panel {
+    display: flex;
+    width: 100%;
+  }
+
+  /* Placeholder until the real hero media lands. Deep teal bleeding into Ink
+     keeps it on-brand rather than a neutral grey wash. */
+  .hero__media {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(110% 80% at 78% 18%, rgb(21 40 46 / 0.95) 0%, transparent 62%),
+      radial-gradient(90% 70% at 12% 88%, rgb(189 28 48 / 0.16) 0%, transparent 60%),
+      linear-gradient(180deg, #182126 0%, var(--color-ink) 72%);
+  }
+
+  .hero__grid {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 80px;
+    width: 100%;
+    padding: 48px;
+    min-height: min(84vh, 760px);
+  }
+
+  .hero__top {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 40px;
+  }
+
+  /* Statement left, copyright centred, person right — each in its own column
+     so nothing can collide as the copy length changes. */
+  .hero__bottom {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: end;
+    gap: 40px;
+  }
+
+  /* Sub-hero line sits under the lockup, not competing with it. */
+  .hero__discipline {
+    font-family: var(--font-display);
+    font-size: var(--fs-subheading);
+    font-weight: var(--fw-medium);
+    letter-spacing: var(--tr-display);
+    color: var(--cream-60);
+    margin-top: 20px;
+  }
+
+  .hero__services {
+    display: grid;
+    gap: 8px;
+    font-size: var(--fs-body);
+    align-content: start;
+    justify-items: start;
+  }
+
+  .hero__pitch {
+    display: grid;
+    justify-items: start;
+    gap: 28px;
+  }
+
+  .hero__statement {
+    max-width: 30ch;
+  }
+
+  .hero__copyright {
+    opacity: 0.5;
+    padding-bottom: 4px;
+  }
+
+  .hero__crosshairs {
+    position: absolute;
+    inset-inline: 48px;
+    inset-block-end: 38%;
+    display: flex;
+    justify-content: space-between;
+    color: var(--cream-40);
+    font-size: 18px;
+    pointer-events: none;
+  }
+
+  @media (max-width: 1199.98px) {
+    .hero__grid {
+      padding: 32px;
+    }
+  }
+
+  @media (max-width: 809.98px) {
+    .hero__grid {
+      padding: 20px;
+      min-height: 0;
+    }
+    .hero__grid {
+      gap: 48px;
+    }
+    .hero__top,
+    .hero__bottom {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 32px;
+      align-items: start;
+    }
+    .hero__crosshairs {
+      display: none;
+    }
+  }
+</style>

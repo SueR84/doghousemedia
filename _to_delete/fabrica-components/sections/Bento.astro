@@ -1,0 +1,180 @@
+---
+/**
+ * 5.8 — Bento case-study highlight.
+ *
+ * Mixed-size grid: discipline tags, a live link, a split headline, hard
+ * before/after metrics, a pull quote, a PageSpeed tile and a small bar chart.
+ * The chart is plain divs — no charting library.
+ */
+interface Props {
+  title?: string;
+  liveUrl?: string;
+}
+
+const { title = 'Featured case study', liveUrl } = Astro.props;
+
+// TODO: wire to a featured project from the collection once we have one.
+const bars = [
+  { label: 'Dec', value: 22 },
+  { label: 'Jan', value: 34 },
+  { label: 'Feb', value: 30 },
+  { label: 'Mar', value: 48 },
+  { label: 'Apr', value: 62 },
+  { label: 'May', value: 100 },
+];
+---
+
+<section class="bento section">
+  <div class="container">
+    <div class="bento__grid grid" data-stagger="1">
+      <div class="bento__cell bento__cell--wide reveal">
+        <p class="label bento__eyebrow">{title}</p>
+        <h2 class="subheading">
+          Rebuild, rehost, rewire.<br />
+          <span class="bento__dim">Then leave it faster than we found it.</span>
+        </h2>
+        {
+          liveUrl && (
+            <a class="bento__live" href={liveUrl} target="_blank" rel="noopener noreferrer">
+              Live website <span aria-hidden="true">↗</span>
+            </a>
+          )
+        }
+      </div>
+
+      <div class="bento__cell reveal">
+        <p class="label bento__eyebrow">Performance</p>
+        <ul class="bento__metrics">
+          <li><span>Page speed</span><strong>+48%</strong></li>
+          <li><span>Bounce rate</span><strong>−23%</strong></li>
+          <li><span>Conversion</span><strong>4.2% → 5.9%</strong></li>
+        </ul>
+      </div>
+
+      <div class="bento__cell bento__cell--ink reveal">
+        <p class="display-l bento__score">
+          <span data-countup="100">0</span>
+        </p>
+        <p class="bento__scorenote">
+          PageSpeed score. Performance without giving up the look.
+        </p>
+      </div>
+
+      <div class="bento__cell bento__cell--wide reveal">
+        <p class="label bento__eyebrow">Quarterly visits</p>
+        <div class="chart" role="img" aria-label="Monthly visits rising from December through May">
+          {
+            bars.map((bar) => (
+              <div class="chart__col">
+                <div class="chart__bar" style={`--h: ${bar.value}%`} />
+                <span class="micro chart__label">{bar.label}</span>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .bento__grid {
+    gap: var(--gutter);
+  }
+
+  .bento__cell {
+    display: grid;
+    gap: 16px;
+    align-content: start;
+    padding: 32px;
+    border-radius: var(--r-panel);
+    background: var(--surface);
+    min-height: 260px;
+  }
+
+  .bento__cell--wide {
+    grid-column: span 2;
+  }
+
+  .bento__cell--ink {
+    background: var(--ink);
+    color: var(--surface);
+  }
+
+  .bento__eyebrow {
+    opacity: 0.45;
+  }
+
+  .bento__dim {
+    opacity: 0.4;
+  }
+
+  .bento__live {
+    justify-self: start;
+    font-size: var(--fs-body-s);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .bento__metrics {
+    display: grid;
+    gap: 12px;
+  }
+
+  .bento__metrics li {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: var(--fs-body-s);
+  }
+
+  .bento__metrics span {
+    opacity: 0.55;
+  }
+
+  .bento__score {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bento__scorenote {
+    font-size: var(--fs-body-s);
+    opacity: 0.6;
+    max-width: 26ch;
+  }
+
+  .chart {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    gap: 8px;
+    align-items: end;
+    height: 160px;
+  }
+
+  .chart__col {
+    display: grid;
+    align-content: end;
+    gap: 8px;
+    height: 100%;
+  }
+
+  .chart__bar {
+    height: var(--h);
+    border-radius: var(--r-chip);
+    background: var(--ink);
+    opacity: 0.85;
+  }
+
+  .chart__label {
+    text-align: center;
+    opacity: 0.45;
+  }
+
+  @media (max-width: 809.98px) {
+    .bento__cell--wide {
+      grid-column: span 1;
+    }
+  }
+</style>

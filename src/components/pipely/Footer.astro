@@ -1,0 +1,52 @@
+---
+const year = new Date().getFullYear();
+
+// Care and Hosting is footer-only, per MESSAGING-PLAN §4 and §9.
+const columns = [
+  { title: 'What we do', links: [
+    { label: 'Video production', href: '/video-production/' },
+    { label: 'Web development', href: '/web-development/' },
+    { label: 'Accessibility audits', href: '/accessibility-audits/' },
+    { label: 'Care and hosting', href: '/care-and-hosting/' },
+  ]},
+  { title: 'Studio', links: [
+    { label: 'Work', href: '/work/' },
+    { label: 'About', href: '/about/' },
+    { label: 'Blog', href: '/blog/' },
+    { label: 'Contact', href: '/contact/' },
+  ]},
+  { title: 'Legal', links: [
+    { label: 'Accessibility statement', href: '/accessibility/' },
+    { label: 'Privacy', href: '/privacy/' },
+  ]},
+];
+---
+<section class="pl-panel pl-footer">
+  <div class="pl-gutter pl-pad-sm">
+    <div class="pl-container is-md">
+      <div class="pl-footer__top">
+        <div class="pl-stack pl-stack-md">
+          <p class="u-eyebrow u-inverse">Doghouse Media</p>
+          <p class="u-xl u-max-26" style="color:var(--pl-text-inverse)">
+            An independent video and web studio in Dublin, working since 2011.
+          </p>
+        </div>
+        {columns.map((col) => (
+          <div class="pl-footer__column">
+            <p class="u-eyebrow u-inverse">{col.title}</p>
+            {col.links.map((l) => <a class="pl-footer__link" href={l.href}>{l.label}</a>)}
+          </div>
+        ))}
+      </div>
+
+      <div class="pl-gap-lg"></div>
+
+      <div class="pl-row is-between is-wrap">
+        <p class="u-sm">&copy; {year} Doghouse Media. Dublin, Ireland.</p>
+        <p class="u-sm"><a href="mailto:hello@doghousemedia.ie">hello@doghousemedia.ie</a></p>
+      </div>
+
+      <div class="pl-footer__wordmark" style="--wordmark-chars:8" aria-hidden="true">DOGHOUSE</div>
+    </div>
+  </div>
+</section>

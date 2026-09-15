@@ -1,0 +1,229 @@
+---
+import { getCollection } from 'astro:content';
+import PipelyBase from '../../layouts/PipelyBase.astro';
+import Button from '../../components/pipely/Button.astro';
+import Hero from '../../components/pipely/Hero.astro';
+import Marquee from '../../components/pipely/Marquee.astro';
+import Rail from '../../components/pipely/Rail.astro';
+import StickyHorizontal from '../../components/pipely/StickyHorizontal.astro';
+import Accordion from '../../components/pipely/Accordion.astro';
+import WorkCard from '../../components/pipely/WorkCard.astro';
+
+const projects = (await getCollection('projects', (p) => !p.data.draft)).sort(
+  (a, b) => a.data.order - b.data.order || b.data.year - a.data.year,
+);
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const testimonials = (await getCollection('testimonials')).sort((a, b) => a.data.order - b.data.order);
+const faqs = (await getCollection('faqs')).sort((a, b) => a.data.order - b.data.order);
+const team = (await getCollection('team')).sort((a, b) => a.data.order - b.data.order);
+
+const railProjects = projects.filter((p) => p.data.cover).slice(0, 8);
+// Neutral rotation. Craft colour comes from the pill tags, not the fills.
+const tints = ['var(--pl-a3)', 'var(--pl-a2)', 'var(--pl-a3)', 'var(--pl-a2)', 'var(--pl-a3)', 'var(--pl-a2)'];
+// Video shares the AI panel's light tint rather than the dark film band.
+const panelClass = (slug: string, i: number) =>
+  /video|film/.test(slug) ? 'is-a3' : ['is-a1', 'is-a2', 'is-a3'][i % 3];
+
+const clients = ['amgen', 'boston-scientific', 'coroflo', 'real-nation', 'ucd', 'lifestyle-sports', 'guinness-storehouse'];
+
+// One representative cover per service panel, matched to the craft so the
+// video service shows film work and the web services show sites.
+const covered = projects.filter((p) => p.data.cover);
+const pickFor = (title: string, i: number) => {
+  const wantVideo = /video|film/i.test(title);
+  const pool = covered.filter((p) => (wantVideo ? p.data.craft !== 'web' : p.data.craft !== 'video'));
+  const src = (pool.length ? pool : covered)[i % (pool.length || covered.length)];
+  return src?.data.cover;
+};
+
+// The sticky section needs roughly one viewport-width of scroll per panel.
+const hscrollHeight = `${services.length * 100}vw`;
+const panelCovers = services.map((s, i) => s.data.image ?? pickFor(s.data.title, i));
+
+// Four covers for the hero chip cluster, standing in for the template's
+// avatar row. Work, not faces, which is more honest for a two-person studio.
+const heroChips = covered.slice(0, 4).map((p) => p.data.cover!);
+---
+
+<PipelyBase
+  title="Doghouse Media"
+  description="Pipely layout fork. Independent web and video studio in Dublin."
+  projectCount={projects.length}
+>
+  {/* ---------- Hero ---------- */}
+  <Hero
+    heading="Web and video solutions to move and inspire"
+    lead="Easily adapt to changes and scale your operations with our flexible infrastructure, designed to support your business growth."
+    chips={heroChips}
+    count={projects.length}
+    proof={`${projects.length} projects delivered for Irish and international clients.`}
+  />
+
+  {/* ---------- Client logos ---------- */}
+  <section class="pl-panel">
+    <div class="pl-gutter pl-pad-sm">
+      <div class="pl-container is-md">
+        <Marquee speed={28}>
+          {clients.map((c) => (
+            <img src={`/clients/${c}.webp`} alt="" width="140" height="48" loading="lazy" style="height:2.5rem;width:auto;opacity:.55" />
+          ))}
+        </Marquee>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- Services: sticky horizontal scroll ---------- */}
+  <StickyHorizontal
+    id="services"
+    tabs={services.map((s) => s.data.title)}
+    slugs={services.map((s) => s.id)}
+    height={hscrollHeight}
+  >
+    {services.map((s, i) => (
+      <div class="pl-hscroll__panel">
+        <div class:list={['pl-service-panel', panelClass(s.id, i)]}>
+          <div class="pl-service-panel__content">
+            <div class="pl-stack pl-stack-md">
+              <p class="u-eyebrow">{s.data.index}</p>
+              <h2 class="u-h3 u-max-26">{s.data.title}</h2>
+              <p class="u-lg u-muted u-max-33">{s.data.description}</p>
+              {s.data.lead && <p class="u-muted u-max-33">{s.data.lead}</p>}
+            </div>
+            {s.data.points.length > 0 && (
+              <ul class="pl-service-points u-max-33">
+                {s.data.points.map((pt) => (
+                  <li class="pl-service-points__item">
+                    <span class="pl-service-points__title">{pt.title}</span>
+                    <span class="pl-service-points__text u-muted">{pt.text}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <div class="pl-row is-wrap" style="gap:.5rem">
+              {s.data.categories.map((c) => <span class="pl-tag u-xs">{c}</span>)}
+            </div>
+          </div>
+          <div class="pl-media is-fill">
+            {panelCovers[i] ? <img src={panelCovers[i]} alt={s.data.imageAlt} loading="lazy" width="900" height="1100" /> : null}
+          </div>
+        </div>
+      </div>
+    ))}
+  </StickyHorizontal>
+
+  {/* ---------- Selected work: drag rail ---------- */}
+  <section class="pl-panel is-secondary">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div class="pl-row is-between is-top">
+          <div class="pl-stack pl-stack-sm">
+            <p class="u-eyebrow" data-reveal>Selected work</p>
+            <h2 class="u-h2 u-max-33" data-reveal>Twenty years of shipped work.</h2>
+          </div>
+          <div data-reveal><Button href="/pipely/projects/" variant="ghost">All projects</Button></div>
+        </div>
+      </div>
+      <div class="pl-gap-sm"></div>
+    </div>
+
+    {/* Rail bleeds past the right gutter so the next card peeks in. */}
+    <div style="padding-left:var(--pl-gutter)">
+      <Rail arrows>
+        {railProjects.map((p, i) => <WorkCard project={p} tint={tints[i % tints.length]} />)}
+      </Rail>
+    </div>
+    <div class="pl-pad-sm"></div>
+  </section>
+
+  {/* ---------- Studio split ---------- */}
+  <section class="pl-panel">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div class="pl-grid-2 is-top is-wide">
+          <div class="pl-stack-split" data-reveal>
+            <div class="pl-stack pl-stack-md">
+              <p class="u-eyebrow">The studio</p>
+              <h2 class="u-h2 u-max-29">Two people who actually do the work.</h2>
+            </div>
+            <p class="u-lg u-muted u-max-33">
+              No account layer, no handover. You talk to the person building the thing.
+            </p>
+          </div>
+          <div class="pl-grid-2" data-reveal-stagger="120">
+            {team.map((m, i) => (
+              <div class:list={['pl-card', 'is-tight', i % 2 ? 'is-a3' : 'is-a1']} data-reveal>
+                <div class="pl-media is-team pl-reveal-media">
+                  {m.data.photo ? <img src={m.data.photo} alt={m.data.name} loading="lazy" width="600" height="675" /> : null}
+                </div>
+                <div class="pl-stack pl-stack-xs">
+                  <h3 class="u-xl u-medium">{m.data.name}</h3>
+                  <p class="u-sm u-muted">{m.data.role}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- Testimonials ---------- */}
+  <section class="pl-panel is-secondary">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <p class="u-eyebrow" data-reveal>What clients say</p>
+        <div class="pl-gap-sm"></div>
+        <div class="pl-grid-3 is-top" data-reveal-stagger="100">
+          {testimonials.map((t) => (
+            <div class="pl-testimonial" data-reveal>
+              <p class="pl-testimonial__quote">{t.data.quote}</p>
+              <div class="pl-testimonial__author">
+                <span class="pl-testimonial__avatar" aria-hidden="true">{t.data.name.charAt(0)}</span>
+                <span class="pl-stack pl-stack-xs">
+                  <span class="u-medium">{t.data.name}</span>
+                  <span class="u-sm u-muted">{t.data.company}</span>
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- FAQ ---------- */}
+  <section class="pl-panel">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div class="pl-grid-2 is-top is-wide">
+          <div class="pl-stack pl-stack-md" data-reveal>
+            <p class="u-eyebrow">Questions</p>
+            <h2 class="u-h2 u-max-26">The things people ask first.</h2>
+          </div>
+          <div data-reveal>
+            <Accordion items={faqs.map((f) => ({ q: f.data.question, a: f.data.answer }))} />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- CTA ---------- */}
+  <section class="pl-panel is-inverse">
+    <div class="pl-gutter pl-pad-lg">
+      <div class="pl-container is-md u-center">
+        <div data-reveal-stagger="100">
+          <p class="u-eyebrow u-inverse" data-reveal style="justify-content:center">Next step</p>
+          <div class="pl-gap-sm"></div>
+          <h2 class="u-h2 u-balance" data-reveal style="color:var(--pl-text-inverse);margin-inline:auto;max-width:33rem">
+            Got something that needs building?
+          </h2>
+          <div class="pl-gap-sm"></div>
+          <div class="pl-btn-group" data-reveal style="justify-content:center">
+            <Button href="/contact" variant="on-dark">Start a project</Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</PipelyBase>

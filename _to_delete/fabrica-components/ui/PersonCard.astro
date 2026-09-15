@@ -1,0 +1,126 @@
+---
+/**
+ * The floating "talk to a real human" card. Used in the hero, the pricing
+ * outro and the footer. Photo, role, company, name, CTA pill.
+ */
+import Pill from './Pill.astro';
+
+interface Props {
+  name: string;
+  role: string;
+  company?: string;
+  photo?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+  tone?: 'white' | 'ink';
+  class?: string;
+  startProject?: boolean;
+}
+
+const {
+  name,
+  role,
+  company,
+  photo,
+  ctaLabel = "Let's talk",
+  ctaHref = '/contact',
+  tone = 'white',
+  class: className = '',
+  startProject = false,
+} = Astro.props;
+---
+
+<div class={`person person--${tone} ${className}`}>
+  <div class="person__photo">
+    {
+      photo ? (
+        <img src={photo} alt={`${name}, ${role}`} width="120" height="150" loading="lazy" />
+      ) : (
+        <div class="person__placeholder" aria-hidden="true" />
+      )
+    }
+  </div>
+
+  <div class="person__body">
+    <p class="label person__role">{role}</p>
+    {company && <p class="label person__company">at {company}</p>}
+    <p class="person__name">{name}</p>
+    <Pill
+      label={ctaLabel}
+      href={ctaHref}
+      variant={tone === 'white' ? 'primary' : 'ghost-cream'}
+      size="sm"
+      startProject={startProject}
+    />
+  </div>
+</div>
+
+<style>
+  .person {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 4px;
+    padding: 4px;
+    border-radius: var(--r-panel);
+    max-width: 380px;
+  }
+
+  .person--white {
+    background: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--border);
+  }
+
+  .person--ink {
+    background: var(--ink);
+    color: var(--surface);
+  }
+
+  .person__photo,
+  .person__placeholder {
+    width: 120px;
+    height: 100%;
+    min-height: 150px;
+    border-radius: var(--r-media);
+    overflow: hidden;
+  }
+
+  .person__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .person__placeholder {
+    background: color-mix(in srgb, currentColor 10%, transparent);
+  }
+
+  .person__body {
+    display: grid;
+    align-content: center;
+    gap: 2px;
+    padding: 16px;
+  }
+
+  .person__role {
+    font-weight: var(--fw-semi);
+  }
+
+  .person__company {
+    opacity: 0.5;
+    margin-bottom: 6px;
+  }
+
+  .person__name {
+    font-size: var(--fs-body-l);
+    font-weight: var(--fw-semi);
+    letter-spacing: var(--tr-display);
+    margin-bottom: 14px;
+  }
+
+  @media (max-width: 809.98px) {
+    .person {
+      max-width: none;
+    }
+  }
+</style>

@@ -1,0 +1,53 @@
+---
+// Fonts load via the Google Fonts link in BaseHead.astro — the same import
+// the Doghouse brand pack uses (tokens/fonts.css). No npm font packages.
+import '../styles/tokens.css';
+import '../styles/base.css';
+import '../styles/motion.css';
+
+import BaseHead from '../components/BaseHead.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import Preloader from '../components/Preloader.astro';
+import StartProjectModal from '../components/StartProjectModal.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  noindex?: boolean;
+  preload?: boolean;
+}
+
+const {
+  title,
+  description,
+  image,
+  noindex,
+  preload = false,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en-IE" class="no-js">
+  <head>
+    <BaseHead title={title} description={description} image={image} noindex={noindex} />
+  </head>
+
+  <body>
+    {preload && <Preloader />}
+    <Nav />
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <Footer />
+
+    <StartProjectModal />
+
+    <script>
+      import '../scripts/main';
+    </script>
+  </body>
+</html>

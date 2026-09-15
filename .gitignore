@@ -1,0 +1,14 @@
+dist/
+.output/
+.vercel/
+.netlify/
+node_modules/
+.astro/
+*.log
+npm-debug.log*
+.DS_Store
+.env
+.env.production
+.vscode/*
+!.vscode/extensions.json
+.idea/

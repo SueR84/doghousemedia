@@ -1,0 +1,60 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  noindex?: boolean;
+  /** `host-grotesk` is the live site's display face. `inter-tight` is the
+   *  retired Fabrica build's, kept only while those pages are migrated. */
+  display?: 'host-grotesk' | 'inter-tight';
+}
+
+const {
+  title,
+  description,
+  image = '/og-default.jpg',
+  noindex = false,
+  display = 'inter-tight',
+} = Astro.props;
+
+// Host Grotesk carries the display sizes at weight 400. Inter is the body
+// face, JetBrains Mono the labels. See PIPELY-FORK.md.
+const fontHref =
+  display === 'host-grotesk'
+    ? 'https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@300..800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap'
+    : 'https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap';
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(image, Astro.site);
+// No em dashes anywhere on the site, titles included.
+const fullTitle = title === 'Doghouse Media' ? title : `${title} | Doghouse Media`;
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="generator" content={Astro.generator} />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href={fontHref} />
+
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:locale" content="en_IE" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="sitemap" href="/sitemap-index.xml" />
+<meta name="theme-color" content="#0F1417" />

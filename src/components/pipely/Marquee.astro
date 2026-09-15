@@ -1,0 +1,9 @@
+---
+/** Infinite loop strip. Children are cloned once at runtime. */
+interface Props { speed?: number; reverse?: boolean; faded?: boolean; class?: string }
+const { speed, reverse = false, faded = true, class: cls = '' } = Astro.props;
+const classes = ['pl-marquee', reverse ? 'is-reverse' : '', faded ? 'is-faded' : '', cls].filter(Boolean).join(' ');
+---
+<div class={classes} data-marquee data-marquee-speed={speed}>
+  <div class="pl-marquee__track"><slot /></div>
+</div>

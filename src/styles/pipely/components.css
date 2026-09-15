@@ -1,0 +1,630 @@
+/* PIPELY FORK — components. Geometry from Pipely, colour from Doghouse. */
+
+/* ---- Button -------------------------------------------------
+   Signature: uppercase, wide tracking, and it SHRINKS on hover
+   rather than lifting. That squash is the template's best tic. */
+.pl-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pl-s-md);
+  height: 3.5rem;
+  padding-inline: 1.75rem;
+  border: none;
+  border-radius: var(--pl-r-button);
+  background-color: var(--pl-btn-bg);
+  color: var(--pl-btn-text);
+  font-family: var(--font-body);
+  font-size: var(--pl-sm);
+  font-weight: var(--pl-fw-medium);
+  line-height: var(--pl-lh-sm);
+  letter-spacing: var(--pl-tr-caps);
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    transform var(--pl-dur-press) var(--pl-ease-out-quart),
+    background-color var(--pl-dur-press) var(--pl-ease-out-quart),
+    color var(--pl-dur-press) var(--pl-ease-out-quart);
+}
+.pl-btn:hover { transform: scale(0.95); }
+.pl-btn:active { transform: scale(0.93); }
+
+/* Every variant hovers to Red. That is the brand's one rule for buttons. */
+.pl-btn:hover { background-color: var(--pl-btn-bg-hover); color: var(--pl-btn-text-hover); }
+
+/* On a dark panel the primary inverts: Cream on Ink, still hovering to Red. */
+.pl-btn.on-dark { background-color: var(--color-cream); color: var(--color-ink); }
+.pl-btn.on-dark:hover { background-color: var(--color-red); color: var(--color-cream); }
+
+/* Ghost: ink border and text, fills ink on hover. */
+.pl-btn.is-ghost {
+  background-color: transparent;
+  color: var(--color-ink);
+  border: 0.0625rem solid var(--color-ink);
+}
+.pl-btn.is-ghost:hover { background-color: var(--color-ink); color: var(--color-cream); border-color: var(--color-ink); }
+
+/* Ghost cream: the dark-background counterpart. */
+.pl-btn.is-ghost-cream {
+  background-color: transparent;
+  color: var(--color-cream);
+  border: 0.0625rem solid color-mix(in srgb, var(--color-cream) 55%, transparent);
+}
+.pl-btn.is-ghost-cream:hover { background-color: var(--color-cream); color: var(--color-ink); border-color: var(--color-cream); }
+
+/* Craft CTAs. Red for film, teal for web, per the brand pack. */
+.pl-btn.is-red  { background-color: var(--color-red); color: var(--color-cream); }
+.pl-btn.is-red:hover { background-color: color-mix(in srgb, var(--color-red) 86%, var(--color-ink)); }
+.pl-btn.is-teal { background-color: var(--color-teal); color: var(--color-cream); }
+.pl-btn.is-teal:hover { background-color: var(--color-red); }
+.pl-btn.is-sm    { height: 3rem; }
+.pl-btn.is-block { width: 100%; }
+
+.pl-btn-group { display: flex; flex-wrap: wrap; align-items: center; gap: var(--pl-s-sm); }
+@media (max-width: 479px) {
+  .pl-btn-group { flex-direction: column; align-items: stretch; width: 100%; }
+}
+
+.pl-icon-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 3rem; height: 3rem;
+  border: none;
+  border-radius: var(--pl-r-media);
+  background-color: var(--pl-secondary);
+  color: var(--pl-text);
+  cursor: pointer;
+  transition: background-color var(--pl-dur-press) var(--pl-ease-out-quad);
+}
+.pl-icon-btn:hover { background-color: var(--pl-border-strong); }
+.pl-icon-btn.on-tint,
+.pl-panel.is-secondary .pl-icon-btn { background-color: var(--pl-primary); }
+
+/* ---- Tag ---------------------------------------------------- */
+.pl-tag {
+  display: inline-flex; align-items: center;
+  padding: 0.25rem 0.62rem;
+  border-radius: 0.25rem;
+  background-color: var(--pl-primary);
+  font-size: var(--pl-sm);
+  letter-spacing: var(--pl-tr-tag);
+  text-transform: uppercase;
+}
+.pl-tag.is-film { background-color: var(--pl-a3); color: var(--pl-accent-film); }
+.pl-tag.is-web  { background-color: var(--pl-a1); color: var(--pl-accent-web); }
+.pl-tag.is-both { background-color: var(--color-line); color: var(--pl-text); }
+
+/* ---- Cards --------------------------------------------------
+   1.25rem padding, 1.25rem radius, no shadow, inner media at
+   0.75rem. Content pushed apart with a big gap. */
+.pl-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 4rem;
+  padding: var(--pl-s-lg);
+  border-radius: var(--pl-r-card);
+  background-color: var(--pl-primary);
+}
+.pl-card.is-tight { gap: var(--pl-s-lg); justify-content: flex-start; }
+
+/* Surface fills. Neutral by design: the brand is warm and restrained, so
+   the rotation is Steel tint / Cream / White / Line and the craft signal
+   lives in the pill tags and the film band. */
+.pipely .is-a1 { background-color: var(--pl-a1); }
+.pipely .is-a2 { background-color: var(--pl-a2); }
+.pipely .is-a3 { background-color: var(--pl-a3); }
+.pipely .is-a4 { background-color: var(--pl-a4); }
+/* The film band. Deep teal with cream text and teal-light accents is the
+   brand's own pairing for video sections. */
+.pipely .is-film-band { background-color: var(--pl-film); color: var(--pl-text-inverse); }
+.pipely .is-film-band .u-muted { color: color-mix(in srgb, var(--color-cream) 72%, transparent); }
+.pipely .is-film-band .u-eyebrow { color: var(--color-teal-light); }
+.pipely .is-film-band .pl-tag { background-color: color-mix(in srgb, var(--color-cream) 12%, transparent); color: var(--color-teal-light); }
+.pipely .is-film-band .pl-media { background-color: color-mix(in srgb, var(--color-cream) 10%, transparent); }
+.pipely .pl-card.is-secondary { background-color: var(--pl-secondary); }
+@media (max-width: 767px) { .pl-card { gap: 2rem; } }
+
+/* Project / article card. Whole card is one link target. */
+.pl-work-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pl-s-md);
+  padding: var(--pl-s-md);
+  border-radius: var(--pl-r-media);
+  background-color: var(--pl-secondary);
+  cursor: pointer;
+}
+.pl-work-card__link { position: absolute; inset: 0; z-index: 5; }
+.pl-work-card__meta { display: flex; align-items: center; justify-content: space-between; gap: var(--pl-s-sm); }
+.pl-work-card { height: 100%; }
+/* Card tags keep their brand tint, so they read on any card fill.
+   Red tint for film, steel tint for web: exactly what the tint palette
+   reserves those two colours for. */
+/* Body block sits at the bottom so titles of different lengths still line up. */
+.pl-work-card__body { margin-top: auto; }
+
+/* Sticky-scroll service panel: content one side, media the other. */
+.pl-service-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: stretch;
+  height: 100%;
+  padding: var(--pl-s-lg);
+  border-radius: var(--pl-r-card);
+}
+.pl-service-panel .pl-media { background-color: rgb(255 255 255 / 0.45); }
+/* Middle block: three short practice lines, hairline separated. */
+.pl-service-points { display: flex; flex-direction: column; width: 100%; }
+.pl-service-points__item {
+  display: flex; flex-direction: column; gap: 0.15rem;
+  padding-block: 0.85rem;
+  border-top: 1px solid var(--color-line, rgb(0 0 0 / 0.1));
+}
+.pl-service-points__item:last-child { border-bottom: 1px solid var(--color-line, rgb(0 0 0 / 0.1)); }
+.pl-service-points__title { font-size: var(--pl-sm); letter-spacing: var(--pl-tr-tag); text-transform: uppercase; }
+.pl-service-points__text { font-size: var(--pl-sm); }
+.pl-service-panel__content {
+  display: flex; flex-direction: column;
+  justify-content: space-between; align-items: flex-start;
+  gap: 3rem;
+  padding-block: 2rem;
+  min-width: 0;
+}
+@media (max-width: 991px) {
+  .pl-service-panel { grid-template-columns: 1fr; gap: var(--pl-s-xl); }
+  .pl-service-panel .pl-media { background-color: rgb(255 255 255 / 0.45); }
+.pl-service-panel__content { padding-block: 0; gap: var(--pl-s-xl); }
+}
+
+/* ---- Nav ----------------------------------------------------
+   A white rounded bar floating on the ground, inset from the page
+   edges, hiding on scroll down. */
+.pl-nav { position: fixed; inset: 0 0 auto; z-index: 100; }
+.pl-nav__inner {
+  margin: var(--pl-s-lg) var(--pl-shell-pad) 0;
+  padding: var(--pl-s-md) var(--pl-s-2xl);
+  border-radius: var(--pl-r-panel);
+  background-color: var(--pl-primary);
+}
+.pl-nav__content { display: flex; align-items: center; justify-content: space-between; gap: var(--pl-s-md); }
+.pl-nav__list { display: flex; align-items: center; gap: var(--pl-s-lg); }
+.pl-nav__link {
+  display: flex; align-items: center; gap: var(--pl-s-xs);
+  padding: var(--pl-s-sm);
+  font-size: var(--pl-sm);
+  font-weight: var(--pl-fw-medium);
+  line-height: var(--pl-lh-sm);
+  letter-spacing: var(--pl-tr-nav);
+  text-transform: uppercase;
+  opacity: 0.8;
+  transition: opacity var(--pl-dur-hover) var(--pl-ease-out-quad);
+}
+.pl-nav__link:hover, .pl-nav__link[aria-current='page'] { opacity: 1; }
+.pl-nav__count { font-size: 0.625rem; vertical-align: super; color: var(--pl-accent-film); }
+.pl-nav__actions { display: flex; align-items: center; gap: var(--pl-s-sm); }
+
+/* Menu toggle. Hidden on desktop, and the only control below 1100px.
+   Six items, two of them two words long, stop fitting well before the
+   old 767px breakpoint. */
+.pl-nav__toggle {
+  display: none;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid var(--pl-border);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font-size: var(--pl-xs);
+  font-weight: var(--pl-fw-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.pl-nav__toggle-bars { display: block; width: 1rem; }
+.pl-nav__toggle-bars span {
+  display: block;
+  height: 1.5px;
+  background: currentColor;
+  transition: transform var(--pl-dur-hover) var(--pl-ease-out-quad);
+}
+.pl-nav__toggle-bars span + span { margin-top: 4px; }
+.pl-nav.is-open .pl-nav__toggle-bars span:first-child { transform: translateY(2.75px) rotate(45deg); }
+.pl-nav.is-open .pl-nav__toggle-bars span + span { transform: translateY(-2.75px) rotate(-45deg); }
+
+.pl-nav__mobile {
+  margin: var(--pl-s-sm) var(--pl-shell-pad) 0;
+  padding: var(--pl-s-lg) var(--pl-s-xl) var(--pl-s-xl);
+  border-radius: var(--pl-r-panel);
+  background-color: var(--pl-primary);
+}
+.pl-nav__mobile-list { display: grid; gap: 0.25rem; }
+.pl-nav__mobile-link {
+  display: block;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--pl-border);
+  font-size: var(--pl-lg);
+  font-weight: var(--pl-fw-medium);
+}
+.pl-nav__mobile-link[aria-current='page'] { color: var(--pl-accent-film); }
+.pl-nav__mobile-meta { margin-top: var(--pl-s-lg); font-size: var(--pl-sm); color: var(--pl-text-muted); }
+
+/* The nav must not slide away while the menu is open. */
+.pl-nav.is-open { transform: none !important; }
+
+@media (max-width: 1100px) {
+  .pl-nav__list { display: none; }
+  .pl-nav__toggle { display: inline-flex; }
+}
+@media (max-width: 767px) {
+  .pl-nav__inner { padding: var(--pl-s-md) var(--pl-s-lg); }
+  .pl-nav .pl-btn { height: 2.75rem; padding-inline: 1rem; font-size: var(--pl-xs); letter-spacing: 0.08em; }
+  /* Wordmark drops, hound mark stays, so the toggle has room. */
+  .pl-nav__brand .logo__word { display: none; }
+}
+@media (max-width: 520px) {
+  /* Below this the CTA and the toggle fight. The menu carries contact. */
+  .pl-nav__cta { display: none; }
+}
+
+/* ---- Footer ------------------------------------------------- */
+.pl-footer { background-color: var(--pl-inverse); color: var(--pl-text-on-dark); }
+.pl-footer .pl-container { container-type: inline-size; }
+.pl-footer__top { display: grid; grid-template-columns: 1fr min-content min-content min-content; gap: 5rem; width: 100%; }
+.pl-footer__column { display: flex; flex-direction: column; gap: var(--pl-s-xs); }
+.pl-footer__link {
+  padding: var(--pl-s-sm);
+  font-size: var(--pl-sm);
+  font-weight: var(--pl-fw-medium);
+  line-height: var(--pl-lh-sm);
+  white-space: nowrap;
+  color: var(--pl-text-on-dark);
+  transition: color var(--pl-dur-hover) var(--pl-ease-out-quad);
+}
+.pl-footer__link:hover { color: var(--pl-text-inverse); }
+/* Oversized wordmark bleeding off the bottom edge. Pipely hardcodes
+   35vw, which only works for a six-letter word. Set --wordmark-chars. */
+.pl-footer__wordmark {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; margin-bottom: -12%;
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  font-size: min(35cqw, calc(152cqw / var(--wordmark-chars, 6)));
+  line-height: 1.15;
+  letter-spacing: -0.06em;
+  white-space: nowrap;
+  color: var(--color-teal-light);
+}
+@media (max-width: 767px) {
+  .pl-footer__top { grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .pl-footer__wordmark { font-size: min(32cqw, calc(148cqw / var(--wordmark-chars, 6))); }
+}
+
+/* ---- Tabs (drive the sticky horizontal section) ------------- */
+.pl-tabs { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: var(--pl-s-xl); width: 100%; }
+.pl-tab {
+  display: flex; align-items: center; justify-content: center;
+  height: 3.5rem; padding: var(--pl-s-xs);
+  border: none;
+  border-radius: var(--pl-r-media);
+  background-color: var(--pl-secondary);
+  color: var(--pl-text);
+  font-family: var(--font-body);
+  font-size: var(--pl-sm);
+  cursor: pointer;
+  transition: background-color var(--pl-dur-panel) var(--pl-ease-out-quad);
+}
+.pl-tab[aria-selected='true'] { background-color: var(--pl-a1); }
+@media (max-width: 767px) { .pl-tabs { grid-auto-flow: row; gap: var(--pl-s-sm); } }
+
+/* ---- Accordion ---------------------------------------------- */
+.pl-accordion { display: flex; flex-direction: column; width: 100%; }
+.pl-accordion__item { display: flex; flex-direction: column; border-bottom: 0.0625rem solid var(--pl-border-strong); }
+.pl-accordion__question {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--pl-s-md);
+  width: 100%;
+  padding-block: var(--pl-s-md);
+  background: none; border: none; text-align: left;
+  font-family: inherit; font-size: inherit; color: inherit;
+  font-weight: var(--pl-fw-medium);
+  cursor: pointer;
+}
+.pl-accordion__icon { flex: none; width: 1.5rem; height: 1.5rem; transition: transform var(--pl-dur-hover) var(--pl-ease-in-quad); }
+.pl-accordion__item.is-open .pl-accordion__icon { transform: rotate(45deg); transition-timing-function: var(--pl-ease-out-quad); }
+.pl-accordion__answer { overflow: clip; height: 0; transition: height var(--pl-dur-panel) var(--pl-ease-out-quad); }
+.pl-accordion__answer > div { padding-bottom: var(--pl-s-md); color: var(--pl-text-muted); }
+
+/* ---- Testimonial -------------------------------------------- */
+.pl-testimonial {
+  display: flex; flex-direction: column;
+  justify-content: space-between; align-items: flex-start;
+  gap: 2.94rem; padding: 2rem;
+  border-radius: var(--pl-r-media);
+  background-color: var(--pl-secondary);
+  height: 100%;
+}
+.pl-testimonial__quote { font-size: var(--pl-xl); line-height: var(--pl-lh-h4); letter-spacing: var(--pl-tr-tight); }
+.pl-testimonial__author { display: flex; align-items: center; gap: var(--pl-s-xl); }
+.pl-testimonial__avatar {
+  display: flex; align-items: center; justify-content: center;
+  flex: none; width: 3.5rem; height: 3.5rem;
+  border-radius: 100%; overflow: clip;
+  background-color: var(--color-line);
+  font-family: var(--font-display); font-weight: var(--pl-fw-semi);
+}
+
+/* ---- Hero (home-v1) -----------------------------------------------------
+   Heading-and-CTA row in normal flow above a contained, rounded media
+   panel — the template's actual layout. `.pl-panel` supplies the white
+   surface, radius and clip; this file only adds the row/media geometry. */
+.pl-hero__gutter { padding-left: var(--pl-gutter); padding-right: var(--pl-gutter); }
+
+/* The heading gets extra width, taken from the aside column, so it wraps to
+   two lines instead of three or four at the default type scale. */
+@media (min-width: 768px) {
+  .pl-hero__row { grid-template-columns: calc(1fr + 160px) calc(1fr - 160px); }
+}
+
+.pl-hero__aside {
+  max-width: 26rem;
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+.pl-hero__aside .pl-stack { align-items: flex-end; }
+.pl-hero__lead { color: var(--pl-text-muted); }
+
+.pl-hero__media {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--pl-r-media);
+  overflow: clip;
+  background-color: var(--pl-inverse);
+}
+.pl-hero__media picture { position: absolute; inset: 0; display: block; }
+.pl-hero__poster { width: 100%; height: 100%; object-fit: cover; transition: opacity var(--pl-dur-slow) var(--pl-ease-out-quart); }
+.pl-hero.is-playing .pl-hero__poster { opacity: 0; }
+
+.pl-hero__frame-slot { position: absolute; inset: 0; overflow: clip; }
+/* The media panel is itself 16:9, matching Vimeo's background-embed frame,
+   so no cover-sizing hack is needed — just hide the hairline letterbox. */
+.pl-hero__frame-slot iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  transform: scale(1.02);
+  pointer-events: none;
+}
+
+/* Avatar cluster. The template overlaps 3rem circles on a 1rem grid, so
+   each one covers two thirds of the last. Border matches the panel
+   background so overlapping chips read as separated, not stacked flat. */
+.pl-hero__cluster { display: flex; align-items: center; }
+.pl-hero__cluster > * + * { margin-left: -1rem; }
+.pl-hero__chip {
+  position: relative;
+  flex: none;
+  width: 3rem;
+  aspect-ratio: 1;
+  border: 2px solid var(--pl-primary);
+  border-radius: var(--pl-r-pill);
+  overflow: clip;
+  background-color: var(--pl-inverse);
+}
+.pl-hero__chip img { width: 100%; height: 100%; object-fit: cover; }
+.pl-hero__chip.is-count {
+  display: flex; align-items: center; justify-content: center;
+  background-color: var(--color-ink);
+  color: var(--color-cream);
+  font-family: var(--font-body);
+  font-size: var(--pl-xs);
+  font-weight: var(--pl-fw-semi);
+}
+
+.pl-hero__proof { color: var(--pl-text-muted); }
+
+@media (max-width: 767px) {
+  .pl-hero__aside { max-width: none; }
+}
+
+/* ---- Hero pause control -------------------------------------
+   Required by CLAUDE.md: the background loop is muted and carries
+   no essential audio, but it still needs a visible pause. Sits on
+   a solid ink pill so it reads over any frame of the footage. */
+.pl-hero__media { position: relative; }
+.pl-hero__pause {
+  position: absolute;
+  right: var(--pl-s-md);
+  bottom: var(--pl-s-md);
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-ink);
+  color: var(--color-cream);
+  font-size: var(--pl-xs);
+  font-weight: var(--pl-fw-medium);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.pl-hero__pause:hover { background: var(--color-red); }
+.pl-hero__pause-icon {
+  width: 0.625rem;
+  height: 0.75rem;
+  border-left: 3px solid currentColor;
+  border-right: 3px solid currentColor;
+}
+/* Paused state swaps the two bars for a single play triangle. */
+.pl-hero.is-paused .pl-hero__pause-icon {
+  width: 0;
+  height: 0;
+  border: 0;
+  border-top: 0.375rem solid transparent;
+  border-bottom: 0.375rem solid transparent;
+  border-left: 0.625rem solid currentColor;
+}
+
+/* ---- Media pause control ------------------------------------
+   Required by CLAUDE.md wherever something moves on its own: the
+   PhoneVideo loops and the PhoneCarousel's auto-advance. Shared
+   because it is now used twice and the two must not drift apart.
+
+   The look only. Each component positions its own instance, since
+   one sits under a pair of tilted phones and the other under a
+   carousel.
+
+   The paused state keys off aria-pressed rather than a class on an
+   ancestor, so what the icon shows and what a screen reader
+   announces cannot disagree. */
+.pl-pause {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-ink);
+  color: var(--color-cream);
+  font-size: var(--pl-xs);
+  font-weight: var(--pl-fw-medium);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.pl-pause:hover { background: var(--color-red); }
+
+.pl-pause__icon {
+  width: 0.625rem;
+  height: 0.75rem;
+  border-left: 3px solid currentColor;
+  border-right: 3px solid currentColor;
+}
+/* Paused swaps the two bars for a play triangle, as the hero does. */
+.pl-pause[aria-pressed='true'] .pl-pause__icon {
+  width: 0;
+  height: 0;
+  border: 0;
+  border-top: 0.375rem solid transparent;
+  border-bottom: 0.375rem solid transparent;
+  border-left: 0.625rem solid currentColor;
+}
+
+/* ---- Pillar block -------------------------------------------
+   Two on the homepage, one per pillar. The second is reversed so
+   they do not read as the same block twice. */
+.pl-pillar--reverse > *:first-child { order: 2; }
+@media (max-width: 767px) { .pl-pillar--reverse > *:first-child { order: 0; } }
+
+/* Media variant: three equal tracks, text takes two, the video takes one. */
+@media (min-width: 768px) {
+  .pl-pillar--media { grid-template-columns: repeat(3, 1fr); }
+  .pl-pillar--media > *:first-child { grid-column: span 2; }
+}
+
+.pl-deliver { display: flex; flex-direction: column; width: 100%; }
+.pl-deliver__item {
+  padding-block: var(--pl-s-lg);
+  border-top: 1px solid var(--pl-border);
+  font-size: var(--pl-lg);
+  line-height: var(--pl-lh-xl);
+}
+.pl-deliver__item:last-child { border-bottom: 1px solid var(--pl-border); }
+
+/* Eyebrow craft tints. Red on cream measures about 5.8:1 and passes.
+   Never use either of these on an ink or film-band panel. */
+.pipely .u-eyebrow.is-film { color: var(--pl-accent-film); }
+.pipely .u-eyebrow.is-web  { color: var(--pl-accent-web); }
+
+/* ---- Inline link --------------------------------------------- */
+.pipely .pl-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: var(--pl-sm);
+  font-weight: var(--pl-fw-medium);
+  letter-spacing: var(--pl-tr-tag);
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+.pipely .pl-link:hover { color: var(--pl-accent-film); }
+
+/* ---- Pull quote ---------------------------------------------- */
+.pl-quote { margin: 0; max-width: 40rem; }
+.pl-quote p { margin: 0; }
+
+/* ---- Placeholder marker --------------------------------------
+   Anything not cleared for publication is rendered in an obvious
+   state so it cannot ship quietly. Grep for `data-placeholder`
+   before every deploy. */
+.pipely [data-placeholder] {
+  padding: 0.5rem 0.75rem;
+  border: 2px dashed var(--color-red);
+  border-radius: 0.5rem;
+  background: var(--color-red-tint);
+  color: var(--color-red);
+  font-size: var(--pl-sm);
+}
+
+/* ---- Work filters -------------------------------------------- */
+.pipely .pl-filter {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--pl-border);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font-size: var(--pl-sm);
+  cursor: pointer;
+  transition: background-color var(--pl-dur-hover) var(--pl-ease-out-quad);
+}
+.pipely .pl-filter:hover { background: var(--pl-secondary); }
+.pipely .pl-filter[aria-pressed='true'] {
+  background: var(--color-ink);
+  border-color: var(--color-ink);
+  color: var(--color-cream);
+}
+.pipely .pl-filter[aria-pressed='true'] .u-muted { color: var(--pl-text-on-dark); }
+
+/* ---- Prose ---------------------------------------------------
+   Long-form body copy: case studies, blog posts, legal pages. */
+.pipely .pl-prose { max-width: 40rem; font-size: var(--pl-lg); line-height: 1.65; }
+.pipely .pl-prose > * + * { margin-top: 1.25rem; }
+.pipely .pl-prose h2 { margin-top: 3rem; font-size: var(--pl-h3); line-height: var(--pl-lh-h3); }
+.pipely .pl-prose h3 { margin-top: 2.5rem; font-size: var(--pl-xl); }
+.pipely .pl-prose ul, .pipely .pl-prose ol { padding-left: 1.25rem; list-style: revert; }
+.pipely .pl-prose li + li { margin-top: 0.5rem; }
+.pipely .pl-prose a { text-decoration: underline; text-underline-offset: 0.2em; }
+.pipely .pl-prose a:hover { color: var(--pl-accent-film); }
+.pipely .pl-prose img { border-radius: var(--pl-r-media); }
+.pipely .pl-prose blockquote {
+  padding-left: 1.25rem;
+  border-left: 2px solid var(--color-red);
+  font-size: var(--pl-xl);
+}
+
+/* ---- Numbered steps ------------------------------------------ */
+.pl-steps { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--pl-grid-gap); }
+.pl-steps__item {
+  display: flex;
+  gap: var(--pl-s-md);
+  padding-top: var(--pl-s-lg);
+  border-top: 1px solid var(--pl-border);
+}
+@media (max-width: 767px) { .pl-steps { grid-template-columns: 1fr; } }
+
+/* ---- Embedded video ------------------------------------------ */
+.pl-media.is-video { aspect-ratio: 16 / 9; }
+.pl-media.is-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }

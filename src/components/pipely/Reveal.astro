@@ -1,0 +1,19 @@
+---
+/** Scroll reveal wrapper for the Pipely fork. */
+interface Props {
+  variant?: 'up' | 'fade' | 'right' | 'left' | 'rise';
+  stagger?: number;
+  as?: string;
+  class?: string;
+  delay?: number;
+}
+const { variant = 'up', stagger, as: Tag = 'div', class: cls, delay } = Astro.props;
+---
+<Tag
+  class={cls}
+  data-reveal={variant}
+  data-reveal-stagger={stagger ?? undefined}
+  style={delay ? `--reveal-delay:${delay}ms` : undefined}
+>
+  <slot />
+</Tag>

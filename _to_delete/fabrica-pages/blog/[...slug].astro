@@ -1,0 +1,108 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const { data } = post;
+
+const fmt = new Intl.DateTimeFormat('en-IE', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+---
+
+<Base title={data.title} description={data.excerpt} image={data.cover}>
+  <article class="article container">
+    <header class="article__head">
+      <p class="label article__date">{fmt.format(data.date)}</p>
+      <h1 class="heading">{data.title}</h1>
+      <p class="lead article__excerpt">{data.excerpt}</p>
+    </header>
+
+    {
+      data.cover && (
+        <div class="article__cover media-zoom">
+          <img src={data.cover} alt="" width="1520" height="760" />
+        </div>
+      )
+    }
+
+    <div class="article__body prose">
+      <Content />
+    </div>
+  </article>
+</Base>
+
+<style>
+  .article {
+    padding-block: calc(var(--nav-h) + 96px) 120px;
+  }
+
+  .article__head {
+    max-width: 62ch;
+    display: grid;
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  .article__date {
+    opacity: 0.45;
+  }
+
+  .article__excerpt {
+    opacity: 0.65;
+  }
+
+  .article__cover {
+    border-radius: var(--r-panel);
+    aspect-ratio: 2 / 1;
+    margin-bottom: 64px;
+  }
+
+  .article__cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .article__body {
+    max-width: 68ch;
+  }
+
+  .prose :global(h2) {
+    font-size: var(--fs-subheading);
+    margin-block: 48px 16px;
+  }
+
+  .prose :global(h3) {
+    font-size: var(--fs-body-l);
+    margin-block: 32px 12px;
+  }
+
+  .prose :global(p),
+  .prose :global(li) {
+    margin-bottom: 20px;
+    font-size: var(--fs-body-l);
+    line-height: var(--lh-tight);
+  }
+
+  .prose :global(ul) {
+    list-style: disc;
+    padding-inline-start: 1.2em;
+  }
+
+  .prose :global(a) {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+</style>

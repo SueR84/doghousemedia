@@ -1,0 +1,146 @@
+---
+/**
+ * The button. Holds its label twice; on hover the stack slides up so the
+ * second copy takes the first one's place (aria-hidden on copy two).
+ *
+ * Brand hover rules:
+ *   primary    Ink → Red
+ *   ghost      ink outline → fills Ink, text turns Cream
+ *   ghost-cream (on dark) → fills Cream, text turns Ink
+ *   red / teal signpost film and web respectively
+ *
+ * Renders as <a> when href is given, <button> otherwise.
+ */
+interface Props {
+  label: string;
+  href?: string;
+  variant?: 'primary' | 'ghost' | 'ghost-cream' | 'red' | 'teal';
+  size?: 'sm' | 'md' | 'lg';
+  type?: 'button' | 'submit';
+  class?: string;
+  external?: boolean;
+  /** Opens the Start a project modal instead of navigating. */
+  startProject?: boolean;
+}
+
+const {
+  label,
+  href,
+  variant = 'primary',
+  size = 'md',
+  type = 'button',
+  class: className = '',
+  external = false,
+  startProject = false,
+} = Astro.props;
+
+const Tag = href ? 'a' : 'button';
+const classes = ['pill', `pill--${variant}`, `pill--${size}`, className]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<Tag
+  class={classes}
+  {...href ? { href } : { type }}
+  {...external ? { target: '_blank', rel: 'noopener noreferrer' } : {}}
+  {...startProject ? { 'data-start-project': '' } : {}}
+>
+  <span class="pill__labels">
+    <span>{label}</span>
+    <span aria-hidden="true">{label}</span>
+  </span>
+</Tag>
+
+<style>
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--r-card);
+    border: 1.5px solid transparent;
+    font-family: var(--font-body);
+    font-weight: var(--fw-semi);
+    letter-spacing: var(--tr-tight);
+    text-align: center;
+    white-space: nowrap;
+    transition:
+      background-color var(--dur-fast) var(--ease-snap),
+      color var(--dur-fast) var(--ease-snap),
+      border-color var(--dur-fast) var(--ease-snap);
+  }
+
+  .pill--sm {
+    padding: 9px 16px;
+    min-height: 38px;
+    font-size: var(--fs-body-s);
+  }
+
+  .pill--md {
+    padding: 13px 24px;
+    min-height: 48px;
+    font-size: var(--fs-body);
+  }
+
+  .pill--lg {
+    padding: 17px 32px;
+    min-height: 58px;
+    font-size: var(--fs-body-l);
+  }
+
+  .pill--primary {
+    background: var(--color-ink);
+    color: var(--color-cream);
+    border-color: var(--color-ink);
+  }
+  .pill--primary:hover,
+  .pill--primary:focus-visible {
+    background: var(--color-red);
+    border-color: var(--color-red);
+  }
+
+  .pill--ghost {
+    background: transparent;
+    color: var(--color-ink);
+    border-color: var(--color-ink);
+  }
+  .pill--ghost:hover,
+  .pill--ghost:focus-visible {
+    background: var(--color-ink);
+    color: var(--color-cream);
+  }
+
+  /* For use on Ink / Deep teal surfaces. */
+  .pill--ghost-cream {
+    background: transparent;
+    color: var(--color-cream);
+    border-color: var(--color-cream);
+  }
+  .pill--ghost-cream:hover,
+  .pill--ghost-cream:focus-visible {
+    background: var(--color-cream);
+    color: var(--color-ink);
+  }
+
+  .pill--red {
+    background: var(--color-red);
+    color: var(--color-cream);
+    border-color: var(--color-red);
+  }
+  .pill--red:hover,
+  .pill--red:focus-visible {
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+  }
+
+  .pill--teal {
+    background: var(--color-teal);
+    color: var(--color-cream);
+    border-color: var(--color-teal);
+  }
+  .pill--teal:hover,
+  .pill--teal:focus-visible {
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+  }
+</style>

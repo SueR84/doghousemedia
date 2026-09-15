@@ -1,0 +1,48 @@
+---
+import Base from '../layouts/Base.astro';
+import Showreel from '../components/sections/Showreel.astro';
+import Team from '../components/sections/Team.astro';
+import Advantages from '../components/sections/Advantages.astro';
+import TextBreak from '../components/sections/TextBreak.astro';
+import Faq from '../components/sections/Faq.astro';
+---
+
+<Base
+  title="Studio"
+  description="Who we are, how we work, and why we run web and video out of the same room."
+>
+  <header class="pagehead">
+    <div class="container">
+      <p class="label pagehead__eyebrow">About</p>
+      <h1 class="display-xl">Studio.</h1>
+      <p class="lead pagehead__intro">
+        Doghouse Media is a two-person studio in Dublin. Sue runs everything
+        web and digital, Emma runs corporate video. Between us that's forty
+        years of doing this.
+      </p>
+    </div>
+  </header>
+
+  <TextBreak />
+  <Showreel />
+  <Advantages />
+  <Team />
+  <Faq />
+</Base>
+
+<style>
+  .pagehead {
+    padding-block: calc(var(--nav-h) + 96px) 48px;
+  }
+
+  .pagehead__eyebrow {
+    opacity: 0.45;
+    margin-bottom: 16px;
+  }
+
+  .pagehead__intro {
+    max-width: 46ch;
+    margin-top: 32px;
+    opacity: 0.65;
+  }
+</style>

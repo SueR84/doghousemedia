@@ -1,0 +1,307 @@
+---
+/**
+ * Showreel.
+ *
+ * Autoplays silent and loops, but the Vimeo player is only requested once the
+ * section is within 200px of the viewport — so nothing third-party is fetched
+ * on initial load and the reel never competes with LCP.
+ *
+ * "Play with sound" swaps the chromeless ambient embed for the full player,
+ * unmuted and with controls. Under reduced-motion nothing autoplays at all.
+ */
+import Pill from '../ui/Pill.astro';
+import Logo from '../Logo.astro';
+
+interface Props {
+  vimeoId?: string;
+  title?: string;
+}
+
+const { vimeoId = '1218412491', title = 'Doghouse Showreel 2026' } = Astro.props;
+
+const steps = [
+  { n: '01', text: 'One team, start to finish, no handoffs to strangers' },
+  { n: '02', text: 'Scoped properly before anyone writes a line of code' },
+  { n: '03', text: 'Fixed pricing agreed up front, no surprise invoices' },
+  { n: '04', text: 'Still here after launch, because we host it too' },
+];
+
+// Two embeds. The ambient one autoplays silent and loops with no chrome;
+// the second is the same video with sound and controls, swapped in when
+// someone asks for it.
+const ambientSrc = `https://player.vimeo.com/video/${vimeoId}?background=1&autoplay=1&muted=1&loop=1&autopause=0&dnt=1`;
+const soundSrc = `https://player.vimeo.com/video/${vimeoId}?autoplay=1&muted=0&byline=0&portrait=0&title=0&dnt=1`;
+---
+
+<section class="showreel section" id="showreel">
+  <div class="container">
+    <div class="showreel__head grid" data-stagger="1">
+      <div class="showreel__intro reveal">
+        <span class="kicker kicker--film">Video · Production</span>
+        <p class="showreel__brand"><Logo variant="mark" size="sm" /></p>
+        <h2 class="subheading">Two crafts, one roof.</h2>
+        <p class="showreel__note">
+          The same studio that builds the site cuts the film that goes on it.
+        </p>
+      </div>
+
+      <ol class="showreel__steps reveal" style="--i: 1">
+        {
+          steps.map((step) => (
+            <li class="showreel__step">
+              <span class="micro showreel__stepnum">{step.n}</span>
+              <span>{step.text}</span>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+
+    <div
+      class="showreel__player reveal on-ink"
+      data-panel="ink"
+      data-reel
+      data-ambient={ambientSrc}
+      data-sound={soundSrc}
+    >
+      {/* The poster shows until the ambient loop is ready, so there's never
+          a black hole while Vimeo boots. */}
+      <picture>
+        <source srcset="/showreel-poster.webp" type="image/webp" />
+        <img
+          class="showreel__poster"
+          src="/showreel-poster.jpg"
+          alt=""
+          width="1600"
+          height="900"
+          fetchpriority="low"
+          decoding="async"
+        />
+      </picture>
+
+      <div class="showreel__frame-slot" aria-hidden="true"></div>
+
+      <span class="showreel__scrim" aria-hidden="true"></span>
+
+      <button class="showreel__sound" type="button" data-sound-btn>
+        <span class="showreel__soundicon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"></path>
+          </svg>
+        </span>
+        <span class="showreel__soundlabel">Play with sound</span>
+      </button>
+
+      <span class="showreel__caption micro" aria-hidden="true">Showreel · 0:51</span>
+    </div>
+
+    <div class="showreel__cta reveal">
+      <Pill label="See the work" href="/projects" variant="primary" />
+    </div>
+  </div>
+</section>
+
+<script>
+  // The reel autoplays silent, but the player is only requested once the
+  // section is near the viewport — so Vimeo costs nothing on initial load.
+  // Clicking "Play with sound" reloads the same video unmuted with controls.
+  document.querySelectorAll<HTMLElement>('[data-reel]').forEach((wrap) => {
+    const slot = wrap.querySelector<HTMLElement>('.showreel__frame-slot');
+    const button = wrap.querySelector<HTMLButtonElement>('[data-sound-btn]');
+    const { ambient, sound } = wrap.dataset;
+    if (!slot || !ambient) return;
+
+    const mount = (src: string) => {
+      const frame = document.createElement('iframe');
+      frame.src = src;
+      frame.title = 'Doghouse showreel';
+      frame.allow = 'autoplay; fullscreen; picture-in-picture';
+      frame.setAttribute('allowfullscreen', '');
+      frame.className = 'showreel__frame';
+      frame.addEventListener('load', () => wrap.classList.add('is-playing'), { once: true });
+      slot.replaceChildren(frame);
+    };
+
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reduced) {
+      // Don't autoplay anything. The poster stays and the button becomes the
+      // only way in — which is the correct behaviour here.
+      button?.addEventListener('click', () => sound && mount(sound), { once: true });
+      return;
+    }
+
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            mount(ambient);
+            observer.disconnect();
+          }
+        },
+        { rootMargin: '200px 0px' },
+      );
+      observer.observe(wrap);
+    } else {
+      mount(ambient);
+    }
+
+    button?.addEventListener('click', () => {
+      if (!sound) return;
+      wrap.classList.add('is-sound');
+      mount(sound);
+    });
+  });
+</script>
+
+<style>
+  .showreel__head {
+    align-items: start;
+    gap: 40px var(--gutter);
+    margin-bottom: 56px;
+  }
+
+  .showreel__intro {
+    grid-column: span 2;
+    display: grid;
+    gap: 14px;
+    justify-items: start;
+    max-width: 40ch;
+  }
+
+  .showreel__note {
+    font-size: var(--fs-body-s);
+    color: var(--text-muted);
+  }
+
+  .showreel__steps {
+    grid-column: span 2;
+    display: grid;
+    gap: 2px;
+  }
+
+  .showreel__step {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 16px;
+    align-items: baseline;
+    padding-block: 18px;
+    border-top: 1px solid var(--border);
+    font-size: var(--fs-body);
+  }
+
+  .showreel__stepnum {
+    color: var(--text-muted);
+  }
+
+  .showreel__player {
+    position: relative;
+    border-radius: var(--r-panel);
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    background: var(--color-deep-teal);
+  }
+
+  .showreel__poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity var(--dur-slow) var(--ease-rise);
+  }
+
+  /* Once the ambient loop is running the poster fades out from under it. */
+  .showreel__player.is-playing .showreel__poster {
+    opacity: 0;
+  }
+
+  .showreel__frame-slot {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* background=1 crops to a 16:9 fill; scale slightly so Vimeo's own
+     letterboxing never shows at the edges. */
+  .showreel__player :global(.showreel__frame) {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    transform: scale(1.01);
+  }
+
+  .showreel__scrim {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      rgb(15 20 23 / 0.1) 0%,
+      rgb(15 20 23 / 0.05) 45%,
+      rgb(15 20 23 / 0.55) 100%
+    );
+  }
+
+  /* Sound toggle. Sits bottom-right so it never fights the caption. */
+  .showreel__sound {
+    position: absolute;
+    inset-block-end: 24px;
+    inset-inline-end: 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px 12px 16px;
+    border-radius: var(--r-pill);
+    background: var(--accent-film);
+    color: var(--color-cream);
+    font-family: var(--font-body);
+    font-size: var(--fs-body-s);
+    font-weight: var(--fw-semi);
+    transition:
+      transform var(--dur-base) var(--ease-snap),
+      background-color var(--dur-fast) var(--ease-snap);
+  }
+
+  .showreel__sound:hover {
+    transform: scale(1.04);
+    background: var(--color-ink);
+  }
+
+  .showreel__soundicon {
+    display: grid;
+    place-items: center;
+  }
+
+  /* Once sound is on the button has done its job. */
+  .showreel__player.is-sound .showreel__sound {
+    display: none;
+  }
+
+  .showreel__caption {
+    position: absolute;
+    inset-block-end: 24px;
+    inset-inline-start: 24px;
+    color: var(--color-cream);
+  }
+
+  .showreel__cta {
+    margin-top: 40px;
+  }
+
+  @media (max-width: 809.98px) {
+    .showreel__intro,
+    .showreel__steps {
+      grid-column: span 1;
+    }
+    .showreel__sound {
+      inset-block-end: 16px;
+      inset-inline-end: 16px;
+      padding: 10px 16px 10px 12px;
+    }
+    .showreel__caption {
+      inset-block-end: 16px;
+      inset-inline-start: 16px;
+    }
+  }
+</style>

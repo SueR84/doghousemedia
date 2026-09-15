@@ -1,0 +1,102 @@
+---
+/**
+ * Care and Hosting. MESSAGING-PLAN §9.
+ *
+ * Support offer, not a pillar. Footer-only, deliberately out of the main
+ * nav. No public pricing: price tiers are exactly the comparison shopping
+ * this page exists to avoid.
+ *
+ * Pitched at what a large organisation actually worries about, which is who
+ * is responsible when it breaks in year three.
+ */
+import Site from '../layouts/Site.astro';
+import Button from '../components/pipely/Button.astro';
+
+const covers = [
+  { title: 'Hosting', text: 'On infrastructure we choose and manage, sized to what the site actually does.' },
+  { title: 'Security', text: 'Hardening, monitoring and the unglamorous patching that stops the interesting problems.' },
+  { title: 'Updates', text: 'Core, plugins and dependencies, tested before they go near the live site.' },
+  { title: 'Backups', text: 'Taken regularly, stored off the server, and restored occasionally so we know they work.' },
+  { title: 'Uptime and performance', text: 'Watched continuously, so we usually know before you do.' },
+  { title: 'Accessibility checks', text: 'Ongoing, so a site that passed at launch is still passing a year later.' },
+  { title: 'Development and bug fixes', text: 'The small things that come up, done without a new quote each time.' },
+  { title: 'Content updates', text: 'For the times your team would rather hand it to us.' },
+];
+---
+
+<Site
+  title="Care and hosting"
+  description="Hosting, security, updates, backups and accessibility monitoring for websites we build and websites we inherit."
+>
+  <section class="pl-panel" aria-labelledby="ch-heading">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div data-reveal-stagger="100">
+          <p class="u-eyebrow is-web" data-reveal>Care and hosting</p>
+          <div class="pl-gap-sm"></div>
+          <h1 class="u-h2 u-max-40 u-balance" id="ch-heading" data-reveal>
+            Someone is still responsible in year three.
+          </h1>
+          <div class="pl-gap-sm"></div>
+          <p class="u-lg u-muted u-max-33" data-reveal>
+            Most websites are not abandoned deliberately. The person who commissioned it moves on, the agency
+            that built it stops answering, and nobody notices until something breaks in public. This is the
+            arrangement that stops that happening.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pl-panel is-secondary" aria-labelledby="ch-covers">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <h2 class="u-h2 u-max-26" id="ch-covers" data-reveal>What it covers.</h2>
+        <div class="pl-gap-lg"></div>
+        <div class="pl-grid-2 is-top is-wide">
+          <ul class="pl-service-points" data-reveal-stagger="80">
+            {covers.slice(0, 4).map((c) => (
+              <li class="pl-service-points__item" data-reveal>
+                <span class="pl-service-points__title">{c.title}</span>
+                <span class="pl-service-points__text u-muted">{c.text}</span>
+              </li>
+            ))}
+          </ul>
+          <ul class="pl-service-points" data-reveal-stagger="80">
+            {covers.slice(4).map((c) => (
+              <li class="pl-service-points__item" data-reveal>
+                <span class="pl-service-points__title">{c.title}</span>
+                <span class="pl-service-points__text u-muted">{c.text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pl-panel" aria-labelledby="ch-inherit">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-sm">
+        <h2 class="u-h3 u-balance" id="ch-inherit" data-reveal>
+          We take on sites we did not build. If yours was left somewhere you cannot reach, that is usually the
+          first thing to fix.
+        </h2>
+      </div>
+    </div>
+  </section>
+
+  <section class="pl-panel is-inverse">
+    <div class="pl-gutter pl-pad-lg">
+      <div class="pl-container is-md u-center">
+        <h2 class="u-h2 u-balance" data-reveal style="color:var(--pl-text-inverse);margin-inline:auto;max-width:30rem">
+          Want us to look after yours?
+        </h2>
+        <div class="pl-gap-sm"></div>
+        <div class="pl-btn-group" data-reveal style="justify-content:center">
+          <Button href="/contact/" variant="on-dark">Get in touch</Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</Site>

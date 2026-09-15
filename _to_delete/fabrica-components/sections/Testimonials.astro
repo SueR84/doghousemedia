@@ -1,0 +1,135 @@
+---
+/**
+ * 5.6 — Testimonials. Header with rating and count, three quote cards, then
+ * a four-across stat row with count-up numerals.
+ */
+import { getCollection } from 'astro:content';
+import Pill from '../ui/Pill.astro';
+import Stat from '../ui/Stat.astro';
+
+const testimonials = (await getCollection('testimonials')).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+
+const rating =
+  testimonials.length > 0
+    ? (
+        testimonials.reduce((sum, t) => sum + t.data.rating, 0) / testimonials.length
+      ).toFixed(1)
+    : '5.0';
+---
+
+<section class="testimonials section">
+  <div class="container">
+    <div class="testimonials__head grid" data-stagger="1">
+      <div class="testimonials__rating reveal">
+        <p class="display-l">{rating}<span class="testimonials__outof">/5</span></p>
+        <p class="testimonials__note">Average across published client reviews.</p>
+      </div>
+
+      <div class="testimonials__cta reveal" style="--i: 1">
+        <p class="label">Trusted by clients across Ireland and the UK</p>
+        <Pill label="Leave a review" href="/contact" variant="primary" size="sm" />
+      </div>
+    </div>
+
+    <ul class="testimonials__list grid" data-stagger="1">
+      {
+        testimonials.map((t) => (
+          <li class="testimonial reveal">
+            <blockquote class="testimonial__quote">{t.data.quote}</blockquote>
+            <footer class="testimonial__by">
+              <p class="testimonial__name">{t.data.name}</p>
+              <p class="label testimonial__co">
+                {t.data.role ? `${t.data.role}, ` : ''}
+                {t.data.company}
+              </p>
+            </footer>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="testimonials__stats grid" data-stagger="1">
+      <Stat value={120} suffix="k+" title="Monthly visitors" note="Driven across client sites we host and maintain." />
+      <Stat value={50} suffix="+" title="Projects launched" note="Web, video and automation combined." />
+      <Stat value={98} suffix="%" title="Client satisfaction" note="Based on post-project feedback." />
+      <Stat value={24} suffix="h" title="Response time" note="Typical turnaround on support requests." />
+    </div>
+  </div>
+</section>
+
+<style>
+  .testimonials__head {
+    align-items: end;
+    gap: 32px var(--gutter);
+    margin-bottom: 64px;
+  }
+
+  .testimonials__rating {
+    grid-column: span 2;
+  }
+
+  .testimonials__outof {
+    font-size: 0.35em;
+    opacity: 0.5;
+    margin-inline-start: 6px;
+  }
+
+  .testimonials__note {
+    font-size: var(--fs-body-s);
+    opacity: 0.6;
+  }
+
+  .testimonials__cta {
+    grid-column: span 2;
+    display: grid;
+    gap: 16px;
+    justify-items: start;
+    align-content: end;
+  }
+
+  .testimonials__list {
+    gap: var(--gutter);
+    margin-bottom: 120px;
+  }
+
+  .testimonial {
+    grid-column: span 1;
+    display: grid;
+    gap: 24px;
+    align-content: space-between;
+    padding: 32px;
+    border-radius: var(--r-panel);
+    background: var(--surface);
+    min-height: 260px;
+  }
+
+  .testimonial__quote {
+    font-size: var(--fs-body-l);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--tr-tight);
+  }
+
+  .testimonial__name {
+    font-weight: var(--fw-semi);
+  }
+
+  .testimonial__co {
+    opacity: 0.5;
+  }
+
+  .testimonials__stats {
+    gap: 48px var(--gutter);
+  }
+
+  @media (max-width: 809.98px) {
+    .testimonials__rating,
+    .testimonials__cta {
+      grid-column: span 1;
+    }
+    .testimonials__list {
+      margin-bottom: 72px;
+    }
+  }
+</style>

@@ -1,0 +1,203 @@
+---
+/**
+ * Accessibility audits. MESSAGING-PLAN §7a.
+ *
+ * The commercial engine of the accessibility positioning. No public price
+ * at launch. No scaremongering, and no "every website must now be
+ * accessible by law", which is not true and which a procurement officer
+ * will know is not true.
+ *
+ * Legal scope below was verified on 11 September 2026 against the National
+ * Disability Authority, which is the Irish monitoring body for the Web
+ * Accessibility Directive:
+ *   - EAA: commenced 28 June 2025, transposed by S.I. No. 636 of 2023.
+ *     https://nda.ie/accessibility/european-accessibility-act
+ *   - WAD: S.I. No. 358 of 2020, public sector bodies.
+ *     https://nda.ie/monitoring/eu-web-accessibility-directive
+ * Re-check before launch if that is more than a few months from now.
+ */
+import Site from '../layouts/Site.astro';
+import Button from '../components/pipely/Button.astro';
+
+const included = [
+  {
+    title: 'Automated scanning across the site',
+    text: 'Every template and every page pattern, not a sample of three.',
+  },
+  {
+    title: 'The manual testing tools cannot do',
+    text: 'Keyboard navigation, screen reader behaviour, focus order, forms and error handling, colour contrast, media and captions.',
+  },
+  {
+    title: 'Tested against WCAG 2.2 AA',
+    text: 'Reported against 2.1 AA separately where your obligation sits at that level.',
+  },
+  {
+    title: 'Every finding triaged three ways',
+    text: 'What we can fix, what your content team has to fix, and what sits with a third-party supplier and is outside anyone’s control.',
+  },
+  {
+    title: 'A retest after remediation',
+    text: 'So you have a before and an after, rather than a list.',
+  },
+];
+
+const followOn = [
+  { title: 'Remediation by us', text: 'We fix what we said we could fix.' },
+  { title: 'An accessibility statement', text: 'Drafted for publication, accurate to what the site actually does.' },
+  { title: 'Ongoing monitoring', text: 'Accessibility checks as part of Care and Hosting.' },
+];
+
+const laws = [
+  {
+    name: 'The European Accessibility Act',
+    text: 'Has applied since 28 June 2025, transposed into Irish law by S.I. No. 636 of 2023. It covers specific products and services rather than every website: e-commerce, consumer banking, e-books, electronic communications, audiovisual media services, and passenger transport websites, apps and ticketing. Microenterprises providing services are outside the service obligations.',
+  },
+  {
+    name: 'The Web Accessibility Directive',
+    text: 'Covers public sector bodies, their websites and their mobile apps, under S.I. No. 358 of 2020. The National Disability Authority monitors compliance.',
+  },
+];
+---
+
+<Site
+  title="Accessibility audits"
+  description="We audit websites against WCAG 2.2 AA and tell you exactly what needs to change, who has to change it, and in what order."
+>
+  {/* ---------- Position statement ---------- */}
+  <section class="pl-panel" aria-labelledby="aa-heading">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div data-reveal-stagger="100">
+          <p class="u-eyebrow is-web" data-reveal>Accessibility audits</p>
+          <div class="pl-gap-sm"></div>
+          <h1 class="u-h2 u-max-40 u-balance" id="aa-heading" data-reveal>
+            We audit websites against WCAG 2.2 AA and tell you exactly what needs to change, who has to
+            change it, and in what order.
+          </h1>
+          <div class="pl-gap-sm"></div>
+          <div class="pl-btn-group" data-reveal><Button href="/contact/">Request an audit</Button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- Why us ----------
+      The three strongest sentences on the site. Do not soften them and do
+      not add a fourth. */}
+  <section class="pl-panel is-secondary" aria-labelledby="aa-why">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-sm">
+        <p class="u-eyebrow" id="aa-why" data-reveal>Why us</p>
+        <div class="pl-gap-sm"></div>
+        <p class="u-h3 u-balance" data-reveal>
+          We built the National Disability Authority&rsquo;s Someone Like Me Art Awards site and worked through
+          their formal accessibility audit, issue by issue, until it passed. That is the most rigorous
+          accessibility review a website in Ireland is likely to face. We now run the same process for other
+          organisations.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- What an audit is ---------- */}
+  <section class="pl-panel" aria-labelledby="aa-what">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div class="pl-grid-2 is-top is-wide">
+          <div class="pl-stack pl-stack-md" data-reveal>
+            <h2 class="u-h2 u-max-26" id="aa-what">What an audit is.</h2>
+            <p class="u-muted u-max-26">
+              The triage is the part clients tell us they value. Knowing what is yours to fix and what is not
+              is what turns a report into a plan.
+            </p>
+          </div>
+          <ul class="pl-service-points" data-reveal-stagger="100">
+            {included.map((i) => (
+              <li class="pl-service-points__item" data-reveal>
+                <span class="pl-service-points__title">{i.title}</span>
+                <span class="pl-service-points__text u-muted">{i.text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- Follow-on work ---------- */}
+  <section class="pl-panel is-secondary" aria-labelledby="aa-next">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <h2 class="u-h2 u-max-26" id="aa-next" data-reveal>Afterwards, if you want it.</h2>
+        <div class="pl-gap-lg"></div>
+        <div class="pl-grid-3" data-reveal-stagger="100">
+          {followOn.map((f) => (
+            <article class="pl-card is-tight" data-reveal>
+              <div class="pl-stack pl-stack-sm">
+                <h3 class="u-xl u-medium">{f.title}</h3>
+                <p class="u-muted">{f.text}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- The law ----------
+      Two different obligations. Conflating them is the mistake most agency
+      copy makes, and this is the one page where our authority is the whole
+      point. Say who is covered, say it accurately, let the accuracy sell. */}
+  <section class="pl-panel" aria-labelledby="aa-law">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div class="pl-grid-2 is-top is-wide">
+          <div class="pl-stack pl-stack-md" data-reveal>
+            <h2 class="u-h2 u-max-26" id="aa-law">Who the law actually covers.</h2>
+            <p class="u-muted u-max-26">
+              Two separate obligations, often run together in agency copy. They are not the same, and neither
+              of them says every website in Ireland must be accessible.
+            </p>
+          </div>
+          <ul class="pl-service-points" data-reveal-stagger="100">
+            {laws.map((l) => (
+              <li class="pl-service-points__item" data-reveal>
+                <span class="pl-service-points__title">{l.name}</span>
+                <span class="pl-service-points__text u-muted">{l.text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="pl-gap-md"></div>
+        <div class="pl-container is-sm">
+          <p class="u-sm u-muted" data-reveal>
+            Not sure which applies to you, or whether either does. Ask us and we will tell you, including when
+            the answer is neither.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- Contact ----------
+      No public price at launch, consistent with Care and Hosting and with
+      killing the SEO tiers. Revisit after two or three audits. */}
+  <section class="pl-panel is-inverse">
+    <div class="pl-gutter pl-pad-lg">
+      <div class="pl-container is-md u-center">
+        <h2 class="u-h2 u-balance" data-reveal style="color:var(--pl-text-inverse);margin-inline:auto;max-width:30rem">
+          Want to know where your site stands?
+        </h2>
+        <div class="pl-gap-sm"></div>
+        <p class="u-lg" data-reveal style="color:var(--pl-text-on-dark);margin-inline:auto;max-width:33rem">
+          Send us the address. We will tell you what an audit would involve and what it would cost.
+        </p>
+        <div class="pl-gap-sm"></div>
+        <div class="pl-btn-group" data-reveal style="justify-content:center">
+          <Button href="/contact/" variant="on-dark">Request an audit</Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</Site>

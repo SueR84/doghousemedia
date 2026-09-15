@@ -1,0 +1,318 @@
+/* ============================================================
+   Motion — named animations from the Doghouse design system:
+   Rise (scroll reveals), Snap (hover), Drift (marquee),
+   Pulse (play icons), Earwag (the mark's idle).
+   Everything here is CSS or vanilla JS. No framework runtime.
+   ============================================================ */
+
+/* ---------- Rise: scroll reveals, hero stagger ----------
+   The dominant effect on the site. Y +26px → 0 over 0.8s on --ease-rise.
+   We add a blur on the way in; it makes the settle read as deliberate. */
+
+.reveal {
+  opacity: 0;
+  filter: blur(10px);
+  transform: translateY(26px);
+  transition:
+    opacity var(--dur-slow) var(--ease-rise),
+    filter var(--dur-slow) var(--ease-rise),
+    transform var(--dur-slow) var(--ease-rise);
+  transition-delay: calc(var(--i, 0) * var(--stagger));
+  will-change: opacity, filter, transform;
+}
+
+.reveal.is-in {
+  opacity: 1;
+  filter: blur(0);
+  transform: none;
+}
+
+.reveal.is-done {
+  will-change: auto;
+}
+
+/* Below the hero, scrub the same rise+blur directly off scroll position
+   instead of firing it once via IntersectionObserver — it blurs back out if
+   you scroll back up past it, matching the fabrica.framer.media reference.
+   The hero's own .reveal elements are already on screen at load with
+   nothing to scroll past, so a scroll-linked timeline would just render
+   them resolved with no animation; they stay on the transition/JS path
+   above for their load-in stagger. */
+@keyframes reveal-scrub {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(26px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: reveal-scrub linear both;
+    animation-duration: auto;
+    animation-timeline: view();
+    animation-range: entry;
+  }
+
+  #hero .reveal {
+    animation: none;
+  }
+}
+
+/* No-JS safety net. */
+.no-js .reveal {
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+
+/* ---------- Scroll-linked word resolve ---------- */
+
+.text-resolve {
+  color: var(--text-muted);
+}
+.on-ink .text-resolve {
+  color: var(--cream-40);
+}
+
+.text-resolve .word {
+  color: inherit;
+  transition: color var(--dur-fast) var(--ease-rise);
+}
+
+.text-resolve .word.is-lit {
+  color: var(--text);
+}
+.on-ink .text-resolve .word.is-lit {
+  color: var(--color-cream);
+}
+
+/* ---------- Snap: button label swap on hover ----------
+   The pill holds its label twice; on hover the stack slides up so the
+   second copy takes the first one's place. Copy two is aria-hidden. */
+
+.pill__labels {
+  display: grid;
+  overflow: hidden;
+  height: 1lh;
+}
+
+.pill__labels > span {
+  grid-area: 1 / 1;
+  transition: transform var(--dur-base) var(--ease-snap);
+}
+
+.pill__labels > span:nth-child(2) {
+  transform: translateY(100%);
+}
+
+.pill:hover .pill__labels > span:nth-child(1),
+.pill:focus-visible .pill__labels > span:nth-child(1) {
+  transform: translateY(-100%);
+}
+
+.pill:hover .pill__labels > span:nth-child(2),
+.pill:focus-visible .pill__labels > span:nth-child(2) {
+  transform: translateY(0);
+}
+
+/* ---------- Accordion ---------- */
+
+.accordion__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--dur-base) var(--ease-rise);
+}
+
+.accordion__panel > div {
+  overflow: hidden;
+}
+
+details[open] .accordion__panel {
+  grid-template-rows: 1fr;
+}
+
+.accordion__toggle {
+  transition:
+    transform var(--dur-base) var(--ease-snap),
+    border-color var(--dur-fast) var(--ease-snap),
+    color var(--dur-fast) var(--ease-snap);
+}
+
+details[open] .accordion__toggle {
+  transform: rotate(45deg);
+}
+
+.accordion__summary:hover .accordion__toggle {
+  color: var(--accent-film);
+  border-color: var(--accent-film);
+}
+
+/* ---------- Card lift + media zoom ----------
+   translateY(-4px) + shadow on the card, image to scale(1.04). */
+
+.card-lift {
+  transition:
+    transform var(--dur-base) var(--ease-snap),
+    box-shadow var(--dur-base) var(--ease-rise);
+}
+
+.card-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+.media-zoom {
+  overflow: hidden;
+  border-radius: var(--r-media);
+}
+
+.media-zoom img,
+.media-zoom video {
+  transition: transform var(--dur-slow) var(--ease-rise);
+}
+
+a:hover .media-zoom img,
+a:focus-visible .media-zoom img,
+.card-lift:hover .media-zoom img,
+.media-zoom:hover img {
+  transform: scale(1.04);
+}
+
+/* ---------- Preloader ---------- */
+
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-preloader);
+  display: grid;
+  place-items: center;
+  background: var(--ink);
+  color: var(--color-cream);
+  animation: preloader-out var(--dur-slow) var(--ease-rise) 0.35s forwards;
+}
+
+.preloader__mark {
+  animation: rise var(--dur-base) var(--ease-rise) both;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes preloader-out {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* ---------- Earwag: the mark's idle animation ----------
+   Rotates the red collar band. Transform-origin is fixed at the mark's
+   shoulder (60 36 in the 100-unit viewBox) so the ear pivots, not the dog. */
+
+@keyframes earwag {
+  0%,
+  40%,
+  100% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(-10deg);
+  }
+  20% {
+    transform: rotate(-3deg);
+  }
+  30% {
+    transform: rotate(-8deg);
+  }
+}
+
+.logo__collar {
+  transform-origin: 60px 36px;
+}
+
+.logo--animate .logo__collar {
+  animation: earwag 2.6s ease-in-out infinite;
+}
+
+/* ---------- Pulse: play icons, status dots ---------- */
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+}
+
+.pulse {
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+/* ---------- Drift: marquee ticker ---------- */
+
+@keyframes drift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ---------- Nav ---------- */
+
+.nav {
+  transition:
+    color var(--dur-fast) var(--ease-rise),
+    background-color var(--dur-fast) var(--ease-rise);
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    animation: none;
+  }
+
+  .text-resolve .word {
+    color: var(--text);
+  }
+
+  .on-ink .text-resolve .word {
+    color: var(--color-cream);
+  }
+
+  .preloader {
+    display: none;
+  }
+}

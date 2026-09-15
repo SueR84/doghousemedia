@@ -1,0 +1,108 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+
+const fmt = new Intl.DateTimeFormat('en-IE', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+---
+
+<Base title="Blog" description="Notes on web, video and automation from the Doghouse Media workbench.">
+  <header class="pagehead">
+    <div class="container">
+      <p class="label pagehead__eyebrow">Journal</p>
+      <h1 class="display-xl">Blog.</h1>
+    </div>
+  </header>
+
+  <div class="container">
+    <ul class="posts grid" data-stagger="1">
+      {
+        posts.map((post) => (
+          <li class="postcard reveal">
+            <a href={`/blog/${post.id}`}>
+              <div class="postcard__media media-zoom">
+                {post.data.cover ? (
+                  <img src={post.data.cover} alt="" loading="lazy" width="740" height="420" />
+                ) : (
+                  <div class="postcard__placeholder" aria-hidden="true" />
+                )}
+              </div>
+              <p class="label postcard__date">{fmt.format(post.data.date)}</p>
+              <h2 class="postcard__title">{post.data.title}</h2>
+              <p class="postcard__excerpt">{post.data.excerpt}</p>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    {posts.length === 0 && <p class="posts__empty">No posts yet.</p>}
+  </div>
+</Base>
+
+<style>
+  .pagehead {
+    padding-block: calc(var(--nav-h) + 96px) 48px;
+  }
+
+  .pagehead__eyebrow {
+    opacity: 0.45;
+    margin-bottom: 16px;
+  }
+
+  .posts {
+    gap: 48px var(--gutter);
+    padding-bottom: 120px;
+  }
+
+  .postcard a {
+    display: grid;
+    gap: 8px;
+  }
+
+  .postcard__media,
+  .postcard__placeholder {
+    aspect-ratio: 740 / 420;
+    border-radius: var(--r-media);
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+
+  .postcard__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .postcard__placeholder {
+    background:
+      linear-gradient(135deg, var(--color-steel-tint) 0%, #dfe9ed 100%);
+    border: 1px solid var(--border);
+  }
+
+  .postcard__date {
+    opacity: 0.45;
+  }
+
+  .postcard__title {
+    font-size: var(--fs-body-l);
+    font-weight: var(--fw-semi);
+  }
+
+  .postcard__excerpt {
+    font-size: var(--fs-body-s);
+    opacity: 0.6;
+  }
+
+  .posts__empty {
+    opacity: 0.5;
+    padding-bottom: 120px;
+  }
+</style>

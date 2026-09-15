@@ -1,0 +1,41 @@
+---
+import Base from '../layouts/Base.astro';
+
+import Hero from '../components/sections/Hero.astro';
+import ClientLogos from '../components/sections/ClientLogos.astro';
+import Projects from '../components/sections/Projects.astro';
+import Advantages from '../components/sections/Advantages.astro';
+import Services from '../components/sections/Services.astro';
+import Showreel from '../components/sections/Showreel.astro';
+import Testimonials from '../components/sections/Testimonials.astro';
+import TextBreak from '../components/sections/TextBreak.astro';
+import Bento from '../components/sections/Bento.astro';
+import Pricing from '../components/sections/Pricing.astro';
+import Team from '../components/sections/Team.astro';
+import Faq from '../components/sections/Faq.astro';
+import BlogTeaser from '../components/sections/BlogTeaser.astro';
+---
+
+<Base
+  title="Doghouse Media"
+  description="Independent Dublin studio building websites, video and automation for medical, charity and small business clients."
+  preload
+>
+  {/* All 13 sections from the reference are wired up. Comment out whatever
+      we decide to cut — see BUILD-SPEC §11.6 for the shortlist. */}
+  <Hero />
+  <ClientLogos />
+  {/* Reel sits high, straight after the client band — it's the fastest way
+      to show what the studio actually makes. */}
+  <Showreel />
+  <Projects limit={4} />
+  <Advantages />
+  <Services />
+  <Testimonials />
+  <TextBreak />
+  <Bento />
+  <Pricing />
+  <Team />
+  <Faq />
+  <BlogTeaser />
+</Base>

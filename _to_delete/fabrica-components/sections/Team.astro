@@ -1,0 +1,145 @@
+---
+/**
+ * 5.10 — Team.
+ *
+ * With two of us this is a two-card block rather than four, which is more
+ * honest for an independent studio anyway.
+ */
+import { getCollection } from 'astro:content';
+import Pill from '../ui/Pill.astro';
+
+const team = (await getCollection('team')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<section class="team section">
+  <div class="container">
+    <div class="team__head grid" data-stagger="1">
+      <div class="team__intro reveal">
+        <span class="label team__eyebrow">The studio</span>
+        <h2 class="subheading">The people who actually do the work.</h2>
+      </div>
+
+      <div class="team__cta reveal" style="--i: 1">
+        <p class="team__note">
+          No account managers, no layers. You get the two of us and the people
+          we've worked with for years.
+        </p>
+        <Pill label="Work with us" href="/contact" variant="primary" size="sm" startProject />
+      </div>
+    </div>
+
+    <ul class="team__list grid" data-stagger="1">
+      {
+        team.map((person) => (
+          <li class="member reveal">
+            <div class="member__photo media-zoom">
+              {person.data.photo ? (
+                <img
+                  src={person.data.photo}
+                  alt={`${person.data.name}, ${person.data.role}`}
+                  loading="lazy"
+                  width="380"
+                  height="440"
+                />
+              ) : (
+                <div class="member__placeholder" aria-hidden="true" />
+              )}
+            </div>
+            <p class="label member__role">{person.data.role}</p>
+            <p class="label member__co">at {person.data.company}</p>
+            <p class="member__name">{person.data.name}</p>
+            <p class="member__bio">{person.data.bio}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .team__head {
+    align-items: end;
+    gap: 32px var(--gutter);
+    margin-bottom: 56px;
+  }
+
+  .team__intro {
+    grid-column: span 2;
+    display: grid;
+    gap: 12px;
+    max-width: 30ch;
+  }
+
+  .team__eyebrow {
+    opacity: 0.45;
+  }
+
+  .team__cta {
+    grid-column: span 2;
+    display: grid;
+    gap: 16px;
+    justify-items: start;
+  }
+
+  .team__note {
+    font-size: var(--fs-body-s);
+    opacity: 0.6;
+    max-width: 34ch;
+  }
+
+  .team__list {
+    gap: 40px var(--gutter);
+  }
+
+  .member {
+    display: grid;
+    gap: 4px;
+  }
+
+  .member__photo,
+  .member__placeholder {
+    aspect-ratio: 380 / 440;
+    border-radius: var(--r-media);
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+
+  .member__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .member__placeholder {
+    background:
+      linear-gradient(135deg, var(--color-steel-tint) 0%, #dfe9ed 100%);
+    border: 1px solid var(--border);
+  }
+
+  .member__role {
+    font-weight: var(--fw-semi);
+  }
+
+  .member__co {
+    opacity: 0.5;
+  }
+
+  .member__name {
+    font-size: var(--fs-body-l);
+    font-weight: var(--fw-semi);
+    letter-spacing: var(--tr-display);
+    margin-block: 6px 8px;
+  }
+
+  .member__bio {
+    font-size: var(--fs-body-s);
+    opacity: 0.6;
+  }
+
+  @media (max-width: 809.98px) {
+    .team__intro,
+    .team__cta {
+      grid-column: span 1;
+    }
+  }
+</style>

@@ -1,0 +1,135 @@
+---
+/**
+ * An iPad mockup holding one screenshot. Used for web case study thumbnails,
+ * where a bare screenshot reads as a flat image and a device says "this is a
+ * site people use".
+ *
+ * Geometry is a real iPad Pro 11", every measurement a fraction of the body
+ * width so the whole thing scales from one variable:
+ *
+ *   screen        1 : 1.432     (1668 x 2388, portrait)
+ *   body          1 : 1.405     (real device is 1 : 1.399)
+ *   bezel         0.032w        uniform, no notch: iPads do not have one
+ *   body radius   0.100w        corners are concentric, so the screen radius
+ *   screen radius 0.068w        is the body radius minus the bezel
+ *
+ * Portrait by default. A landscape iPad body happens to be 1 : 0.72, exactly
+ * the ratio of .pl-media.is-case, so `orientation="landscape"` fills that box
+ * edge to edge. Portrait leaves ground either side, which is why the ground
+ * colour is a prop rather than transparent.
+ *
+ * The screen is `cover` and anchored to the top, for the same reason as
+ * PhoneCarousel: on a screenshot of a web page the header is the part that
+ * tells you whose site it is, so any crop should come off the bottom.
+ *
+ * No animation and nothing interactive, so there is nothing here for
+ * prefers-reduced-motion to turn off.
+ */
+
+interface Props {
+  src: string;
+  /** Empty string only if the screenshot is genuinely decorative. */
+  alt: string;
+  orientation?: 'portrait' | 'landscape';
+  /** Fills the space the device does not, so portrait has a ground to sit on. */
+  ground?: string;
+  /** Degrees clockwise. 0 keeps it square on. */
+  tilt?: number;
+}
+
+const { src, alt, orientation = 'portrait', ground = 'var(--color-steel-tint)', tilt = 0 } = Astro.props;
+---
+
+<div
+  class:list={['dhip', `is-${orientation}`]}
+  style={`--dhip-ground:${ground};--dhip-tilt:${tilt}deg`}
+>
+  <div class="dhip-body">
+    <div class="dhip-screen">
+      <img src={src} alt={alt} loading="lazy" decoding="async" />
+    </div>
+    <span class="dhip-cam" aria-hidden="true"></span>
+  </div>
+</div>
+
+<style>
+  /* container-type: size so --dhip-w can be a real length in cq units.
+     A percentage will not do: in calc() a percentage resolves against a
+     different basis per property, so `padding: calc(62% * .032)` becomes 2%
+     of the container width while `border-radius` resolves against the
+     element's own box, and the bezel stops being uniform. */
+  .dhip {
+    position: absolute;
+    inset: 0;
+    container-type: size;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--dhip-ground);
+  }
+
+  /* Portrait is driven off the box height, landscape off its width, so the
+     device always sits inside the frame with a margin rather than bleeding. */
+  .dhip-body {
+    position: relative;
+    transform: rotate(var(--dhip-tilt, 0deg));
+    border-radius: calc(var(--dhip-w) * 0.1);
+    padding: calc(var(--dhip-w) * 0.032);
+    background: #14181b;
+    box-shadow:
+      0 1px 3px rgb(0 0 0 / 0.22),
+      0 14px 26px -6px rgb(0 0 0 / 0.28),
+      0 34px 60px -18px rgb(0 0 0 / 0.34),
+      inset 0 0 0 1px rgb(255 255 255 / 0.1);
+  }
+
+  /* No aspect-ratio on the body: the screen sets the height and the bezel
+     adds the rest, so the frame always fits its screen exactly. The body
+     works out at 1 : 1.405, so 62.7cqh of width lands it at 88% of the
+     box height. */
+  .dhip.is-portrait .dhip-body {
+    --dhip-w: 62.7cqh;
+    width: var(--dhip-w);
+  }
+  /* Landscape works out at 1 : 0.72, which is exactly the .pl-media.is-case
+     box, so 92cqw leaves an even margin rather than touching the corners. */
+  .dhip.is-landscape .dhip-body {
+    --dhip-w: 92cqw;
+    width: var(--dhip-w);
+  }
+
+  .dhip-screen {
+    position: relative;
+    overflow: clip;
+    border-radius: calc(var(--dhip-w) * 0.068);
+    background: #000;
+  }
+  .dhip.is-portrait .dhip-screen { aspect-ratio: 1 / 1.432; }
+  .dhip.is-landscape .dhip-screen { aspect-ratio: 1.432 / 1; }
+
+  .dhip-screen img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+  }
+
+  /* Single lens, centred on the short edge. No notch: iPads have none. */
+  .dhip-cam {
+    position: absolute;
+    top: calc(var(--dhip-w) * 0.013);
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(var(--dhip-w) * 0.0085);
+    height: calc(var(--dhip-w) * 0.0085);
+    border-radius: 50%;
+    background: radial-gradient(circle at 34% 30%, #33444f 0%, #0a0e11 65%);
+  }
+  .dhip.is-landscape .dhip-cam {
+    top: 50%;
+    left: calc(var(--dhip-w) * 0.013);
+    transform: translateY(-50%);
+  }
+</style>

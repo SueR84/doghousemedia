@@ -1,0 +1,135 @@
+---
+/**
+ * A book-style folding device (outer cover on one leaf, screen on the
+ * other, joined by a spine) shown opening to reveal a site screenshot.
+ * Built for case studies that want the site itself as the hero rather
+ * than a flat screenshot in a rectangle.
+ *
+ * The open is driven by the site's existing reveal system: [data-reveal]
+ * and the .is-in class that initReveals() in motion.ts adds once via
+ * IntersectionObserver. Un-animated and legible by default (no JS, or JS
+ * before it runs); the .js .pipely gate below only ever adds motion on
+ * top of that, and only outside prefers-reduced-motion, matching every
+ * other reveal on the site.
+ *
+ * Chrome is CSS, not a stock mockup PNG, for the same reasons as
+ * PhoneVideo: crisp at any size, no licence to carry, reads as the same
+ * object as the other hand-built phones on the site.
+ */
+
+interface Props {
+  /** Screenshot shown on the inner display once the device opens. */
+  image: string;
+  /** Names what's on screen, for the image alt text. */
+  alt: string;
+}
+
+const { image, alt } = Astro.props;
+---
+
+<div class="pf" data-reveal>
+  <div class="pf-stage">
+    <div class="pf-device">
+      <div class="pf-leaf pf-leaf--cover" aria-hidden="true">
+        <span class="pf-lens"></span>
+        <span class="pf-lens"></span>
+      </div>
+      <div class="pf-spine" aria-hidden="true"></div>
+      <div class="pf-leaf pf-leaf--screen">
+        <img src={image} alt={alt} width="640" height="1300" loading="lazy" decoding="async" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  .pf {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding-block: 3rem 3.5rem;
+  }
+
+  .pf-stage {
+    width: 100%;
+    max-width: 26rem;
+    perspective: 1600px;
+  }
+
+  .pf-device {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    transform-style: preserve-3d;
+    transform: rotateX(5deg) rotateY(-5deg);
+  }
+
+  .pf-leaf {
+    position: relative;
+    flex: 0 0 auto;
+    width: clamp(9rem, 16vw, 13rem);
+    aspect-ratio: 9 / 18.5;
+    background: var(--color-ink);
+    box-shadow: 0 26px 48px rgb(0 0 0 / 0.28);
+  }
+  .pf-leaf--cover {
+    border-radius: 1.2rem 0 0 1.2rem;
+    transform-origin: right center;
+    /* Open pose. Everything else is what .js adds on top. */
+    transform: rotateY(-22deg);
+  }
+  .pf-leaf--screen {
+    border-radius: 0 1.2rem 1.2rem 0;
+    transform-origin: left center;
+    overflow: hidden;
+    transform: rotateY(22deg);
+  }
+  .pf-leaf--screen img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+  }
+
+  /* Two lens dots on the cover leaf. Generic mockup decoration, not a
+     copy of any one manufacturer's camera module. */
+  .pf-lens {
+    position: absolute;
+    top: 12%;
+    width: 16%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle at 32% 28%, #2c3b45 0%, #0b0f12 62%);
+  }
+  .pf-lens:first-child { left: 16%; }
+  .pf-lens:last-child { left: 38%; }
+
+  /* The hinge line between the two leaves. */
+  .pf-spine {
+    flex: 0 0 auto;
+    width: 3px;
+    background: linear-gradient(180deg, rgb(255 255 255 / 0.2), rgb(0 0 0 / 0.4));
+    transform: translateZ(2px);
+  }
+
+  /* Closed-then-opens only once .js confirms the observer that drives
+     .is-in is actually running. Without it, or under reduced motion, the
+     leaves sit at the legible open pose set above and never move. */
+  .js .pipely .pf-leaf--cover { transform: rotateY(-84deg); }
+  .js .pipely .pf-leaf--screen { transform: rotateY(84deg); }
+  @media (prefers-reduced-motion: no-preference) {
+    .js .pipely .pf-leaf {
+      transition: transform var(--pl-dur-slow) var(--pl-ease-out-quart);
+    }
+    .js .pipely .pf-leaf--cover { transition-delay: 60ms; }
+  }
+  .js .pipely .pf.is-in .pf-leaf--cover { transform: rotateY(-22deg); }
+  .js .pipely .pf.is-in .pf-leaf--screen { transform: rotateY(22deg); }
+
+  @media (max-width: 767px) {
+    .pf-stage { max-width: 20rem; }
+    .pf-leaf { width: clamp(6.5rem, 26vw, 9rem); }
+  }
+</style>

@@ -1,0 +1,58 @@
+---
+/**
+ * M4 — a stat tile. Giant numeral counts up on first entry, with an index
+ * label, a title and a one-line explainer beneath.
+ */
+interface Props {
+  value: number;
+  index?: string;
+  prefix?: string;
+  suffix?: string;
+  decimals?: number;
+  title: string;
+  note?: string;
+}
+
+const { value, index, prefix = '', suffix = '', decimals = 0, title, note } = Astro.props;
+---
+
+<div class="stat reveal">
+  <p class="display-l stat__value">
+    <span
+      data-countup={value}
+      data-prefix={prefix}
+      data-suffix={suffix}
+      data-decimals={decimals}>{prefix}0{suffix}</span
+    >
+  </p>
+  {index && <span class="micro stat__index">{index}</span>}
+  <h3 class="stat__title">{title}</h3>
+  {note && <p class="stat__note">{note}</p>}
+</div>
+
+<style>
+  .stat {
+    display: grid;
+    gap: 8px;
+    align-content: start;
+  }
+
+  .stat__value {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat__index {
+    opacity: 0.45;
+  }
+
+  .stat__title {
+    font-size: var(--fs-body);
+    font-weight: var(--fw-semi);
+  }
+
+  .stat__note {
+    font-size: var(--fs-body-s);
+    opacity: 0.6;
+    max-width: 32ch;
+  }
+</style>

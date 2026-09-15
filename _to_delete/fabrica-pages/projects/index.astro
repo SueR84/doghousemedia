@@ -1,0 +1,29 @@
+---
+import Base from '../../layouts/Base.astro';
+import Projects from '../../components/sections/Projects.astro';
+---
+
+<Base
+  title="Projects"
+  description="Selected web, video and automation work from Doghouse Media."
+>
+  <header class="pagehead">
+    <div class="container">
+      <p class="label pagehead__eyebrow">Selected work</p>
+      <h1 class="display-xl">Projects.</h1>
+    </div>
+  </header>
+
+  <Projects />
+</Base>
+
+<style>
+  .pagehead {
+    padding-block: calc(var(--nav-h) + 96px) 0;
+  }
+
+  .pagehead__eyebrow {
+    opacity: 0.45;
+    margin-bottom: 16px;
+  }
+</style>

@@ -1,0 +1,154 @@
+---
+/**
+ * Hero, following pipely.webflow.io/home/home-v1.
+ *
+ * A heading-and-CTA row in normal flow above a contained, rounded media
+ * panel. The Vimeo player only mounts after load, and never under reduced
+ * motion, so the poster carries LCP and nothing third-party blocks first
+ * paint.
+ *
+ * Accessibility, per CLAUDE.md: the loop is muted, carries no essential
+ * audio, and has a visible pause control. Any type sitting over moving
+ * footage needs a solid backing, which is why the copy sits above the
+ * panel rather than on it.
+ */
+import Button from './Button.astro';
+
+interface Props {
+  vimeoId?: string;
+  poster?: string;
+  posterWebp?: string;
+  heading?: string;
+  lead?: string;
+  chips?: string[];
+  count?: number;
+  proof?: string;
+  primary?: { label: string; href: string };
+  secondary?: { label: string; href: string };
+}
+
+const {
+  vimeoId = '1218412491',
+  // TODO: this poster is a title card with a large green wordmark on it and
+  // it is the LCP image. Replace with a frame from the middle of the reel.
+  poster = '/showreel-poster.jpg',
+  posterWebp = '/showreel-poster.webp',
+  heading = 'Films and websites that make complicated things clear.',
+  lead = 'Doghouse Media is an independent video and web studio in Dublin, working since 2011.',
+  chips = [],
+  count,
+  proof,
+  primary = { label: 'See the work', href: '/work/' },
+  secondary,
+} = Astro.props;
+
+const ambientSrc = `https://player.vimeo.com/video/${vimeoId}?background=1&autoplay=1&muted=1&loop=1&autopause=0&dnt=1`;
+---
+
+<section class="pl-hero pl-panel" data-hero data-ambient={ambientSrc}>
+  <div class="pl-hero__gutter" style="padding-top:var(--pl-pad-md)">
+    <div class="pl-container is-md">
+      <div class="pl-grid-2 is-top pl-hero__row" data-reveal-stagger="100">
+        <h1 class="u-h2 u-balance" data-reveal>{heading}</h1>
+
+        <div class="pl-hero__aside" data-reveal>
+          <p class="u-lg pl-hero__lead">{lead}</p>
+          <div style="height:1.5rem"></div>
+          <div class="pl-btn-group">
+            <Button href={primary.href} variant="ghost">{primary.label}</Button>
+            {secondary && <Button href={secondary.href} variant="ghost">{secondary.label}</Button>}
+          </div>
+
+          {(chips.length > 0 || proof) && (
+            <>
+              <div style="height:2rem"></div>
+              <div class="pl-stack" style="gap:.88rem">
+                {chips.length > 0 && (
+                  <div class="pl-hero__cluster" data-reveal-stagger="100" aria-hidden="true">
+                    {chips.map((src) => (
+                      <span class="pl-hero__chip" data-reveal="slide"><img src={src} alt="" loading="lazy" /></span>
+                    ))}
+                    {count && <span class="pl-hero__chip is-count" data-reveal="slide">{count}</span>}
+                  </div>
+                )}
+                {proof && <p class="u-sm pl-hero__proof">{proof}</p>}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pl-gap-sm"></div>
+
+  <div class="pl-hero__gutter" style="padding-bottom:var(--pl-pad-sm)">
+    <div class="pl-hero__media" data-reveal>
+      <div class="pl-hero__frame-slot" aria-hidden="true"></div>
+      <picture>
+        <source srcset={posterWebp} type="image/webp" />
+        <img
+          class="pl-hero__poster"
+          src={poster}
+          alt="Doghouse Media showreel"
+          width="1600"
+          height="900"
+          fetchpriority="high"
+          decoding="async"
+        />
+      </picture>
+
+      <button class="pl-hero__pause" type="button" data-hero-pause hidden>
+        <span class="pl-hero__pause-icon" aria-hidden="true"></span>
+        <span data-hero-pause-label>Pause background video</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-hero]').forEach((hero) => {
+    const slot = hero.querySelector<HTMLElement>('.pl-hero__frame-slot');
+    const src = hero.dataset.ambient;
+    const pause = hero.querySelector<HTMLButtonElement>('[data-hero-pause]');
+    const label = hero.querySelector<HTMLElement>('[data-hero-pause-label]');
+    if (!slot || !src) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (slot.querySelector('iframe')) return;
+
+    let frame: HTMLIFrameElement | null = null;
+    let playing = true;
+
+    const send = (method: string) => {
+      frame?.contentWindow?.postMessage(JSON.stringify({ method }), 'https://player.vimeo.com');
+    };
+
+    const setState = (next: boolean) => {
+      playing = next;
+      send(next ? 'play' : 'pause');
+      hero.classList.toggle('is-paused', !next);
+      if (pause) pause.setAttribute('aria-pressed', String(!next));
+      if (label) label.textContent = next ? 'Pause background video' : 'Play background video';
+    };
+
+    const mount = () => {
+      frame = document.createElement('iframe');
+      frame.src = src;
+      frame.title = 'Doghouse Media showreel, background loop';
+      frame.allow = 'autoplay; fullscreen; picture-in-picture';
+      frame.setAttribute('tabindex', '-1');
+      frame.setAttribute('aria-hidden', 'true');
+      frame.addEventListener('load', () => {
+        hero.classList.add('is-playing');
+        // The control only appears once there is something to pause.
+        if (pause) { pause.hidden = false; pause.setAttribute('aria-pressed', 'false'); }
+      }, { once: true });
+      slot.replaceChildren(frame);
+    };
+
+    pause?.addEventListener('click', () => setState(!playing));
+
+    if (document.readyState === 'complete') mount();
+    else window.addEventListener('load', mount, { once: true });
+  });
+</script>

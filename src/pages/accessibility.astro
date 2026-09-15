@@ -1,0 +1,74 @@
+---
+/**
+ * Accessibility statement. Required by CLAUDE.md: the site sells
+ * accessibility auditing, so it publishes its own statement and is built to
+ * WCAG 2.2 AA, one level above what we claim for the NDA build.
+ *
+ * TODO before launch: run the full audit on this site and replace the known
+ * issues section with what it actually finds. A statement that claims full
+ * conformance without a test behind it is the exact thing we audit other
+ * people for.
+ */
+import Site from '../layouts/Site.astro';
+
+const updated = new Date('2026-09-11');
+const fmt = new Intl.DateTimeFormat('en-IE', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<Site
+  title="Accessibility statement"
+  description="How doghousemedia.ie is built and tested for accessibility, what we know is not right yet, and how to tell us about a problem."
+>
+  <section class="pl-panel">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-sm">
+        <h1 class="u-h2 u-balance">Accessibility statement</h1>
+        <div class="pl-gap-sm"></div>
+        <p class="u-sm u-muted">Last reviewed {fmt.format(updated)}</p>
+        <div class="pl-gap-md"></div>
+
+        <div class="pl-prose">
+          <p>
+            We audit other people&rsquo;s websites for accessibility, so this one is held to the same standard.
+            This site is built and tested to meet WCAG 2.2 Level AA.
+          </p>
+
+          <h2>What that means here</h2>
+          <ul>
+            <li>Every page can be operated with a keyboard alone, and the focus indicator is always visible.</li>
+            <li>There is a skip link to the main content on every page.</li>
+            <li>Headings run in order, and every image carries alt text that describes it or is marked decorative.</li>
+            <li>Text meets the contrast requirements against the background it sits on.</li>
+            <li>
+              Nothing moves, scrolls or autoplays without a way to stop it, and all motion is switched off for
+              anyone whose device asks for reduced motion.
+            </li>
+            <li>Background video is muted, carries no essential audio, and has a visible pause control.</li>
+            <li>Embedded films carry captions that have been written and checked, not auto-generated.</li>
+          </ul>
+
+          <h2>What we know is not right yet</h2>
+          <p data-placeholder>
+            PLACEHOLDER, not for publication. This section must list the real findings from a full audit of
+            this site, with dates for fixing each one. Publishing a statement with no known issues and no test
+            behind it is the exact thing we audit other people for.
+          </p>
+
+          <h2>Telling us about a problem</h2>
+          <p>
+            If something on this site is hard or impossible to use, write to
+            <a href="mailto:hello@doghousemedia.ie">hello@doghousemedia.ie</a> and tell us what happened and
+            what you were trying to do. We will reply within five working days and tell you what we are doing
+            about it.
+          </p>
+
+          <h2>How this site was tested</h2>
+          <p data-placeholder>
+            PLACEHOLDER, not for publication. Name the date of the test, the tools used, and the assistive
+            technology and browser combinations checked.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Site>

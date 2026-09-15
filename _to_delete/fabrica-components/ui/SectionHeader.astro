@@ -1,0 +1,78 @@
+---
+/**
+ * The header block every section shares: a small eyebrow label, the heading
+ * (always set with a trailing full stop — it's a house rule on this layout),
+ * an optional count, a year stamp, and an intro paragraph.
+ */
+interface Props {
+  eyebrow?: string;
+  heading: string;
+  count?: string | number;
+  stamp?: string;
+  intro?: string;
+  level?: 2 | 3;
+  class?: string;
+}
+
+const {
+  eyebrow,
+  heading,
+  count,
+  stamp,
+  intro,
+  level = 2,
+  class: className = '',
+} = Astro.props;
+
+const Heading = `h${level}` as 'h2' | 'h3';
+---
+
+<header class={`section-header ${className}`}>
+  <div class="section-header__meta">
+    {eyebrow && <span class="label section-header__eyebrow">{eyebrow}</span>}
+    {stamp && <span class="micro section-header__stamp">{stamp}</span>}
+  </div>
+
+  <div class="section-header__title reveal">
+    <Heading class="heading">{heading}.</Heading>
+    {count !== undefined && <span class="micro section-header__count">({count})</span>}
+  </div>
+
+  {intro && <p class="section-header__intro reveal" style="--i: 1">{intro}</p>}
+
+  <slot />
+</header>
+
+<style>
+  .section-header {
+    display: grid;
+    gap: 24px;
+    margin-bottom: 64px;
+  }
+
+  .section-header__meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    opacity: 0.6;
+  }
+
+  .section-header__title {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .section-header__count {
+    opacity: 0.5;
+    padding-top: 0.4em;
+  }
+
+  .section-header__intro {
+    max-width: 46ch;
+    font-size: var(--fs-body-l);
+    line-height: var(--lh-tight);
+    opacity: 0.7;
+  }
+</style>

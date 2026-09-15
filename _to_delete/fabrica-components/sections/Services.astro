@@ -1,0 +1,119 @@
+---
+/**
+ * 5.4 — Services.
+ *
+ * Dark panel on paper. Four accordion rows with a (00n) index rail, the
+ * service title at subheading size, and a + that rotates into an × on open.
+ */
+import { getCollection } from 'astro:content';
+import Panel from '../ui/Panel.astro';
+import Accordion from '../ui/Accordion.astro';
+import Pill from '../ui/Pill.astro';
+
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<section class="services section">
+  <div class="services__frame">
+    <Panel tone="ink" class="services__panel">
+      <div class="services__body">
+        <header class="services__head reveal">
+          <span class="label services__eyebrow">What we do</span>
+          <h2 class="heading">Services.</h2>
+          <span class="micro services__count">({services.length})</span>
+        </header>
+
+        <div class="services__list reveal" style="--i: 1">
+          {
+            services.map((service) => (
+              <Accordion title={service.data.title} index={service.data.index} name="services">
+                <p>{service.data.description}</p>
+                {service.data.categories.length > 0 && (
+                  <>
+                    <p class="label services__catlabel">Categories</p>
+                    <ul class="services__cats">
+                      {service.data.categories.map((cat) => (
+                        <li class="services__cat">{cat}</li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+              </Accordion>
+            ))
+          }
+        </div>
+
+        <div class="services__cta reveal" style="--i: 2">
+          <Pill label="Get started" href="/contact" variant="ghost-cream" startProject />
+        </div>
+      </div>
+    </Panel>
+  </div>
+</section>
+
+<style>
+  /* Full-bleed panel inset only 5px from the viewport edge, same treatment
+     as the hero (fabrica.framer.media reference) — not the standard
+     .container width used for regular content elsewhere on the page. */
+  .services__frame {
+    padding-inline: 5px;
+  }
+
+  /* Astro's scoped styles don't reach a child component's own root element,
+     so padding set on .services__panel (which belongs to <Panel />) would
+     silently do nothing — box-model lives on .services__body instead. */
+  .services__body {
+    padding: 96px 64px;
+  }
+
+  .services__head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 56px;
+  }
+
+  .services__eyebrow {
+    opacity: 0.45;
+    width: 80px;
+    flex-shrink: 0;
+  }
+
+  .services__count {
+    opacity: 0.45;
+  }
+
+  .services__catlabel {
+    opacity: 0.45;
+  }
+
+  .services__cats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .services__cat {
+    padding: 8px 14px;
+    border-radius: var(--r-chip);
+    border: 1px solid var(--hairline);
+    font-size: var(--fs-body-s);
+  }
+
+  .services__cta {
+    margin-top: 56px;
+    padding-inline-start: 104px;
+  }
+
+  @media (max-width: 809.98px) {
+    .services__body {
+      padding: 56px 20px;
+    }
+    .services__eyebrow {
+      width: auto;
+    }
+    .services__cta {
+      padding-inline-start: 0;
+    }
+  }
+</style>

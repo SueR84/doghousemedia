@@ -1,0 +1,61 @@
+---
+/**
+ * 5.11 — FAQ. Same accordion mechanics as Services, plus FAQPage schema for
+ * free rich-result eligibility.
+ */
+import { getCollection } from 'astro:content';
+import SectionHeader from '../ui/SectionHeader.astro';
+import Accordion from '../ui/Accordion.astro';
+
+const faqs = (await getCollection('faqs')).sort((a, b) => a.data.order - b.data.order);
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.data.question,
+    acceptedAnswer: { '@type': 'Answer', text: faq.data.answer },
+  })),
+};
+---
+
+<section class="faq section">
+  <div class="container">
+    <SectionHeader
+      eyebrow="Common questions"
+      heading="FAQ"
+      intro="The things people ask before they get in touch."
+    />
+
+    <div class="faq__list reveal">
+      {
+        faqs.map((faq, i) => (
+          <Accordion title={faq.data.question} index={String(i + 1).padStart(3, '0')}>
+            <p>{faq.data.answer}</p>
+          </Accordion>
+        ))
+      }
+    </div>
+  </div>
+
+  {faqs.length > 0 && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
+</section>
+
+<style>
+  .faq__list {
+    border-top: 1px solid var(--border);
+  }
+
+  .faq :global(.accordion) {
+    border-bottom-color: var(--border);
+  }
+
+  .faq :global(.accordion__toggle) {
+    border-color: var(--border);
+  }
+
+  .faq :global(.accordion__title) {
+    font-size: var(--fs-body-l);
+  }
+</style>

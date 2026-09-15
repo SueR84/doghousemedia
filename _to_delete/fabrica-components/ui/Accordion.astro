@@ -1,0 +1,98 @@
+---
+/**
+ * M7 — accordion row. Built on native <details>/<summary> so keyboard and
+ * screen-reader behaviour comes for free; the native marker is hidden and a
+ * + glyph rotates 45° into an × on open.
+ *
+ * Height animates via grid-template-rows 0fr → 1fr, which avoids having to
+ * measure the panel.
+ */
+interface Props {
+  title: string;
+  index?: string;
+  open?: boolean;
+  name?: string;
+}
+
+const { title, index, open = false, name } = Astro.props;
+---
+
+<details class="accordion" open={open} name={name}>
+  <summary class="accordion__summary">
+    {index && <span class="micro accordion__index">({index})</span>}
+    <span class="accordion__title subheading">{title}</span>
+    <span class="accordion__toggle" aria-hidden="true">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="1.5" />
+      </svg>
+    </span>
+  </summary>
+
+  <div class="accordion__panel">
+    <div>
+      <div class="accordion__content">
+        <slot />
+      </div>
+    </div>
+  </div>
+</details>
+
+<style>
+  .accordion {
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .accordion__summary {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    align-items: center;
+    gap: 24px;
+    padding: 32px 0;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .accordion__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .accordion__index {
+    opacity: 0.45;
+  }
+
+  .accordion__title {
+    transition: opacity var(--dur-fast) var(--ease-standard);
+  }
+
+  .accordion__summary:hover .accordion__title {
+    opacity: 0.65;
+  }
+
+  .accordion__toggle {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 100%;
+    border: 1px solid var(--hairline);
+    flex-shrink: 0;
+  }
+
+  .accordion__content {
+    padding-bottom: 40px;
+    max-width: 62ch;
+    display: grid;
+    gap: 20px;
+  }
+
+  @media (max-width: 809.98px) {
+    .accordion__summary {
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      padding: 24px 0;
+    }
+    .accordion__index {
+      display: none;
+    }
+  }
+</style>

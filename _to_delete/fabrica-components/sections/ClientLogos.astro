@@ -1,0 +1,146 @@
+---
+/**
+ * Client trust band.
+ *
+ * Sits right under the Hero, which is a touch shorter than most viewports —
+ * so this band peeks in at the bottom edge on load and blurs into focus as
+ * it scrolls up into view (the shared .reveal scroll-scrub in motion.css),
+ * echoing the reveal on fabrica.framer.media.
+ *
+ * A Drift marquee (34s linear, pauses on hover) rather than a static grid —
+ * matches the existing doghousemedia.ie homepage and the brand's motion set.
+ *
+ * Set in type, not logos. We only have marks for five of the nine, and a
+ * half-logo half-text row reads as unfinished — the UCD crest-and-wordmark
+ * lockup in particular goes illegible at strip size. Trimmed, height-matched
+ * files are parked in public/clients/ for when the full set exists; restore
+ * the `logo` keys below and the <picture> branch to switch back.
+ *
+ * The track is duplicated so the loop is seamless; the second copy is
+ * aria-hidden and the strip carries a plain-text label for screen readers,
+ * since a scrolling list is useless to them.
+ */
+const clients = [
+  'Boston Scientific',
+  'Guinness Storehouse',
+  'Amgen',
+  'An Post',
+  'UCD',
+  'Kerry Group',
+  'Irish Research Council',
+  'Coroflo',
+  'Real Nation',
+];
+---
+
+<section class="clients reveal" aria-labelledby="clients-label">
+  <div class="container">
+    <p class="label clients__label" id="clients-label">Trusted by</p>
+  </div>
+
+  <div class="marquee" role="group" aria-label={`Clients: ${clients.join(', ')}`}>
+    <div class="marquee__track">
+      {
+        [0, 1].map((copy) => (
+          <div class="marquee__set" aria-hidden={copy === 1 ? 'true' : undefined}>
+            {clients.map((client) => (
+              <>
+                <span class="marquee__item">{client}</span>
+                <i class="marquee__dot" aria-hidden="true" />
+              </>
+            ))}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .clients {
+    padding-block: 56px 72px;
+  }
+
+  .clients__label {
+    color: var(--text-muted);
+    margin-bottom: 28px;
+  }
+
+  .marquee {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      transparent,
+      #000 8%,
+      #000 92%,
+      transparent
+    );
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+
+  .marquee__track {
+    display: flex;
+    width: max-content;
+    animation: drift var(--dur-marquee) linear infinite;
+  }
+
+  .marquee:hover .marquee__track {
+    animation-play-state: paused;
+  }
+
+  .marquee__set {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .marquee__item {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: var(--fw-semi);
+    letter-spacing: var(--tr-display);
+    white-space: nowrap;
+    color: var(--ink-60);
+    transition: color var(--dur-base) var(--ease-rise);
+  }
+
+  .marquee:hover .marquee__item {
+    color: var(--ink);
+  }
+
+  .marquee__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--r-pill);
+    background: var(--accent-film);
+    margin-inline: clamp(24px, 3.4vw, 52px);
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 809.98px) {
+    .marquee__item {
+      font-size: 20px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* No scroll. Wrap and show everything at rest. */
+    .marquee {
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+    .marquee__track {
+      animation: none;
+      width: 100%;
+      padding-inline: var(--page-pad);
+    }
+    .marquee__set {
+      flex-wrap: wrap;
+      justify-content: center;
+      row-gap: 16px;
+    }
+    .marquee__set[aria-hidden='true'] {
+      display: none;
+    }
+  }
+</style>

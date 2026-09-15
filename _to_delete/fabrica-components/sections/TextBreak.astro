@@ -1,0 +1,56 @@
+---
+/**
+ * 5.7 — typographic interlude. No imagery. Gives the eye a rest between the
+ * two heaviest sections. Candidate for the cut if we trim the page down.
+ */
+import Logo from '../Logo.astro';
+---
+
+<section class="textbreak section">
+  <div class="container">
+    <div class="textbreak__inner reveal" data-stagger="1">
+      <p class="textbreak__brand"><Logo variant="mark" size="sm" /></p>
+      <h2 class="subheading textbreak__statement reveal">
+        We'd rather build one thing properly than five things you'll replace in
+        two years.
+      </h2>
+      <div class="textbreak__body reveal" style="--i: 1">
+        <p>
+          Most of what we do is unglamorous: making a site load fast, making a
+          form actually arrive, making a booking flow that a busy person can
+          finish on a phone in a car park.
+        </p>
+        <p>
+          We don't run a sales team and we don't do the flashy pitch. You talk
+          to the person doing the work.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .textbreak__inner {
+    display: grid;
+    gap: 32px;
+    max-width: 68ch;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .textbreak__brand {
+    opacity: 0.4;
+  }
+
+  .textbreak__statement {
+    text-wrap: balance;
+  }
+
+  .textbreak__body {
+    display: grid;
+    gap: 16px;
+    font-size: var(--fs-body-l);
+    line-height: var(--lh-tight);
+    opacity: 0.6;
+  }
+</style>

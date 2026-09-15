@@ -1,0 +1,27 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props { project: CollectionEntry<'projects'>; tint?: string; reveal?: boolean }
+const { project, tint, reveal = false } = Astro.props;
+const d = project.data;
+const craftLabel = { web: 'Web', video: 'Video', both: 'Web + video' }[d.craft];
+const craftClass = { web: 'is-web', video: 'is-film', both: 'is-both' }[d.craft];
+---
+<article
+  class="pl-work-card pl-hover-scale pl-hover-zoom"
+  style={tint ? `background-color:${tint}` : undefined}
+  data-reveal={reveal ? 'up' : undefined}
+>
+  <a class="pl-work-card__link" href={`/work/${project.id}/`} aria-label={d.title}></a>
+  <div class="pl-media is-article">
+    {d.cover ? <img src={d.cover} alt="" loading="lazy" decoding="async" width="800" height="676" /> : null}
+  </div>
+  <div class="pl-work-card__body pl-stack pl-stack-xs" style="width:100%">
+    <div class="pl-work-card__meta" style="width:100%">
+      <span class="u-eyebrow">{d.client}</span>
+      <span class="u-eyebrow u-nowrap">{d.year}</span>
+    </div>
+    <h3 class="u-xl u-medium">{d.title}</h3>
+    <span class:list={['pl-tag', craftClass, 'u-xs']} style="margin-top:.5rem">{craftLabel}</span>
+  </div>
+</article>

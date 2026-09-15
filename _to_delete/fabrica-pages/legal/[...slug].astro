@@ -1,0 +1,59 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const docs = await getCollection('legal');
+  return docs.map((doc) => ({
+    params: { slug: doc.id },
+    props: { doc },
+  }));
+}
+
+const { doc } = Astro.props;
+const { Content } = await render(doc);
+
+const fmt = new Intl.DateTimeFormat('en-IE', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+---
+
+<Base title={doc.data.title} description={`${doc.data.title} for Doghouse Media.`} noindex>
+  <article class="legal container">
+    <h1 class="heading">{doc.data.title}</h1>
+    <p class="label legal__updated">Last updated {fmt.format(doc.data.updated)}</p>
+    <div class="legal__body prose">
+      <Content />
+    </div>
+  </article>
+</Base>
+
+<style>
+  .legal {
+    padding-block: calc(var(--nav-h) + 96px) 120px;
+    max-width: 76ch;
+  }
+
+  .legal__updated {
+    opacity: 0.45;
+    margin-block: 12px 48px;
+  }
+
+  .prose :global(h2) {
+    font-size: var(--fs-body-l);
+    margin-block: 40px 12px;
+  }
+
+  .prose :global(p),
+  .prose :global(li) {
+    margin-bottom: 16px;
+    opacity: 0.75;
+  }
+
+  .prose :global(ul) {
+    list-style: disc;
+    padding-inline-start: 1.2em;
+  }
+</style>

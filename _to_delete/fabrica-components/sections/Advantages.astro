@@ -1,0 +1,59 @@
+---
+/**
+ * 5.3 — Advantages.
+ *
+ * The scroll-linked word resolve (M3) plus a stat row. The paragraph starts
+ * dimmed and lights up word by word as the block travels through the
+ * viewport — text-resolve.ts drives it.
+ */
+import Stat from '../ui/Stat.astro';
+---
+
+<section class="advantages section">
+  <div class="container">
+    <div class="advantages__lead">
+      <span class="label advantages__eyebrow">Why us</span>
+      <p class="lead text-resolve">
+        No fluff. We build things that hold up after launch, and we tell you
+        when an idea is going to cost you more than it returns. That's most of
+        the job.
+      </p>
+    </div>
+
+    <div class="advantages__stats grid" data-stagger="1">
+      <Stat value={50} suffix="+" index="01" title="Projects delivered" note="Across web, video and automation since 2016." />
+      <Stat value={98} suffix="%" index="02" title="Client retention" note="Most of our work comes from people we already know." />
+      <Stat value={20} suffix="+" index="03" title="Years in the trade" note="IT consultancy, support and development." />
+      <Stat value={4} index="04" title="Brands under one roof" note="Doghouse, Edithouse, Page Two, Off Script." />
+    </div>
+  </div>
+</section>
+
+<style>
+  .advantages__lead {
+    display: grid;
+    grid-template-columns: 200px minmax(0, 1fr);
+    gap: 24px;
+    margin-bottom: 120px;
+  }
+
+  .advantages__eyebrow {
+    opacity: 0.45;
+    padding-top: 0.5em;
+  }
+
+  .advantages__lead .lead {
+    max-width: 34ch;
+  }
+
+  .advantages__stats {
+    gap: 48px var(--gutter);
+  }
+
+  @media (max-width: 809.98px) {
+    .advantages__lead {
+      grid-template-columns: 1fr;
+      margin-bottom: 72px;
+    }
+  }
+</style>
