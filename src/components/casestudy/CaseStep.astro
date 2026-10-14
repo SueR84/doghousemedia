@@ -18,6 +18,9 @@ const headingId = id ?? `cs-${n}`;
 // passed as slot="aside" sits beside the words; without it the step is one
 // column as before.
 const hasAside = Astro.slots.has('aside');
+// Optional full-width area under both columns (slot="below"), added 14 October
+// 2026 so a step can split its words and still run a gallery across the page.
+const hasBelow = Astro.slots.has('below');
 ---
 
 <section
@@ -43,6 +46,12 @@ const hasAside = Astro.slots.has('aside');
       </div>
       {hasAside && <div class="cs-step__aside" data-reveal><slot name="aside" /></div>}
       </div>
+      {hasBelow && (
+        <>
+          <div class="pl-gap-lg"></div>
+          <div class="cs-step__below"><slot name="below" /></div>
+        </>
+      )}
     </div>
   </div>
 </section>
@@ -58,6 +67,14 @@ const hasAside = Astro.slots.has('aside');
     color: var(--pl-text-muted);
   }
   .cs-step__body :global(p:last-child) { margin-bottom: 0; }
+  .cs-step__aside :global(p) {
+    max-width: 38rem;
+    margin-bottom: var(--pl-s-md);
+    font-size: var(--pl-lg);
+    line-height: 1.6;
+    color: var(--pl-text-muted);
+  }
+  .cs-step__aside :global(p:last-child) { margin-bottom: 0; }
   .cs-step__split { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
   @media (max-width: 767px) {
     .cs-step__split { grid-template-columns: minmax(0, 1fr); }

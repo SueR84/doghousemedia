@@ -8,6 +8,7 @@
 import { getCollection, render } from 'astro:content';
 import Site from '../../layouts/Site.astro';
 import Button from '../../components/pipely/Button.astro';
+import CaseFacts from '../../components/casestudy/CaseFacts.astro';
 import PhoneFold from '../../components/sections/PhoneFold.astro';
 
 export async function getStaticPaths() {
@@ -31,14 +32,16 @@ const { Content } = await render(project);
 const { data } = project;
 
 const craftLabel = { web: 'Web', video: 'Video', both: 'Web and video' }[data.craft];
+const hasFacts = !!(data.facts && data.facts.length > 0);
 const craftClass = { web: 'is-web', video: 'is-film', both: 'is-both' }[data.craft];
 ---
 
-<Site title={data.title} description={data.summary} image={data.cover}>
+<Site title={data.title} description={data.summary} image={data.cover ?? data.thumb}>
   <article>
     <section class="pl-panel">
       <div class="pl-gutter pl-pad-md">
         <div class="pl-container is-md">
+          <div class:list={[hasFacts && 'pl-grid-2 is-wide is-top cs-hero']}>
           <div data-reveal-stagger="100">
             <div class="pl-row is-wrap" data-reveal style="gap:.5rem">
               <span class="u-eyebrow">{data.client}</span>
@@ -48,11 +51,15 @@ const craftClass = { web: 'is-web', video: 'is-film', both: 'is-both' }[data.cra
             <h1 class="u-h1 u-max-40 u-balance" data-reveal>{data.title}</h1>
             <div class="pl-gap-sm"></div>
             <p class="u-lg u-muted u-max-33" data-reveal>{data.summary}</p>
-            <div class="pl-gap-sm"></div>
-            <div class="pl-row is-wrap" data-reveal style="gap:.5rem">
-              <span class:list={['pl-tag', craftClass, 'u-xs']}>{craftLabel}</span>
-              {data.services.map((s) => <span class="pl-tag u-xs">{s}</span>)}
-            </div>
+            {!hasFacts && (
+              <>
+                <div class="pl-gap-sm"></div>
+                <div class="pl-row is-wrap" data-reveal style="gap:.5rem">
+                  <span class:list={['pl-tag', craftClass, 'u-xs']}>{craftLabel}</span>
+                  {data.services.map((s) => <span class="pl-tag u-xs">{s}</span>)}
+                </div>
+              </>
+            )}
             {data.liveUrl && (
               <>
                 <div class="pl-gap-sm"></div>
@@ -61,6 +68,8 @@ const craftClass = { web: 'is-web', video: 'is-film', both: 'is-both' }[data.cra
                 </div>
               </>
             )}
+          </div>
+          {hasFacts && <CaseFacts items={data.facts} stacked />}
           </div>
         </div>
       </div>
@@ -147,3 +156,4 @@ const craftClass = { web: 'is-web', video: 'is-film', both: 'is-both' }[data.cra
     </div>
   </section>
 </Site>
+

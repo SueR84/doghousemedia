@@ -13,6 +13,8 @@ const projects = defineCollection({
     partner: z.string().optional(),
     // Which side of the studio made it. Drives the red/teal accent.
     craft: z.enum(['web', 'video', 'both']).default('web'),
+    // Facts strip shown inside the case study hero (client, what we did, where, when).
+    facts: z.array(z.object({ label: z.string(), value: z.string() })).optional(),
     cover: z.string().optional(),
     // Optional Work grid image. Falls back to cover. Lets a project keep a
     // portrait phone capture for the device mockups and a composed
@@ -141,4 +143,6 @@ const legal = defineCollection({
 });
 
 export const collections = { projects, posts, services, team, testimonials, faqs, legal };
+
+
 
