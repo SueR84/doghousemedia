@@ -1,299 +1,177 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import Nav from "../components/Nav.astro";
-import Footer from "../components/Footer.astro";
+/**
+ * About. MESSAGING-PLAN §10.
+ *
+ * Carries the female-owned positioning with real weight rather than buried
+ * mid-sentence in a hero subhead. Founded 2011, not 2013. Both owners named
+ * with clear roles, because a large organisation wants to know who is
+ * accountable, and both with photos, because an About page with no people
+ * is the clearest tell that a studio is smaller than it looks.
+ */
+import { getCollection } from 'astro:content';
+import Site from '../layouts/Site.astro';
+import Button from '../components/pipely/Button.astro';
+import AboutHero from '../components/sections/AboutHero.astro';
 
-const team = [
+const team = (await getCollection('team')).sort((a, b) => a.data.order - b.data.order);
+const how = [
   {
-    name: "Emma Walkin",
-    role: "Founder",
-    bio: "Leads media production and oversees overall studio operations — from first brief to final grade.",
-    photo: "/assets/team/emma-walkin.jpeg",
-    linkedin: "https://www.linkedin.com/in/emma-walkin-57865041",
+    title: 'Medical and medtech film.',
+    text: 'We film in clinical settings, from live procedures to educational series, where timing, preparation and technical knowledge decide whether the footage is usable.',
   },
   {
-    name: "Susan Ryan",
-    role: "Founder",
-    bio: "Over 20 years of IT experience across Ireland and the UK — spanning programming, consultancy, and project management.",
-    photo: "/assets/team/susan-ryan.jpeg",
-    linkedin: "https://www.linkedin.com/in/susan-ryan-4b4b8627",
+    title: 'Accessible websites.',
+    text: 'We build and audit websites against WCAG 2.2 AA. Accessibility is part of how we build, not a late check.',
+  },
+  {
+    title: 'AI and automation.',
+    text: 'Assistants and automations wired into the systems you already use, built by someone with twenty years of programming and IT consultancy.',
   },
 ];
 ---
 
-<Layout title="About Us — Doghouse Media">
-  <Nav />
-
-  <main>
-    <!-- Page header -->
-    <section class="about-hero">
-      <div class="wrap">
-        <div class="eyebrow">About</div>
-        <h1>A small Dublin team with a big passion for craft.</h1>
-        <p class="about-lead">
-          We've been helping good brands get noticed since 2013. Two disciplines
-          under one roof — web and video — so nothing gets lost in translation.
-        </p>
-      </div>
-    </section>
-
-    <!-- How we work -->
-    <section class="about-section reveal">
-      <div class="wrap about-grid">
-        <div>
-          <span class="kicker">How we work</span>
-          <h2>Built on trust and honest delivery.</h2>
-          <p>
-            We start every project with a proper conversation — getting to know
-            your objectives, your audience, and what success looks like for you.
-            From there, we keep you in the loop at every stage, so there are no
-            surprises at the end.
-          </p>
-          <p>
-            Whether it's a custom website you can manage yourself or a marketing
-            video that stops the scroll, the goal is the same: work that makes
-            you stand out and holds up long after launch.
-          </p>
-        </div>
-        <div class="about-aside">
-          <div class="about-stat">
-            <span class="stat-num">2013</span>
-            <span class="stat-label">Founded</span>
+<Site
+  title="About"
+  description="Doghouse Media is an independent video and web studio in Dublin, founded in 2011. Specialists in medical and corporate video, accessible websites and AI automation."
+>
+  <section class="pl-panel" aria-labelledby="ab-heading">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div class="pl-grid-2 is-wide">
+          <div data-reveal-stagger="100">
+            <p class="u-eyebrow" data-reveal>About</p>
+            <div class="pl-gap-sm"></div>
+            <h1 class="u-h1 u-max-40 u-balance" id="ab-heading" data-reveal>
+              Film, web and AI for organisations where the detail matters.
+            </h1>
+            <div class="pl-gap-sm"></div>
+            <p class="u-lg u-muted u-max-33" data-reveal>
+              Doghouse Media is an independent studio in Dublin, founded in 2011, female-owned and operated.
+              We film medical procedures and corporate events, build websites that stand up to an
+              accessibility audit, and automate the work behind them. Emma Walkin and Susan Ryan lead every project.
+            </p>
           </div>
-          <div class="about-stat">
-            <span class="stat-num">2</span>
-            <span class="stat-label">Crafts, one roof</span>
-          </div>
-          <div class="about-stat">
-            <span class="stat-num">Dublin</span>
-            <span class="stat-label">Based in Ireland</span>
+          <div data-reveal>
+            <AboutHero />
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- Team -->
-    <section class="about-team reveal">
-      <div class="wrap">
-        <span class="kicker">The team</span>
-        <div class="team-grid">
-          {
-            team.map((member) => (
-              <div class="team-card">
-                <img
-                  class="team-avatar"
-                  src={member.photo}
-                  alt={member.name}
-                  width="500"
-                  height="500"
-                  loading="lazy"
-                />
-                <h3>{member.name}</h3>
-                <span class="team-role">{member.role}</span>
-                <p>{member.bio}</p>
-                <a
-                  class="team-linkedin"
-                  href={member.linkedin}
-                  target="_blank"
-                  rel="noopener"
-                >
-                  <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" fill="currentColor">
-                    <path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.64h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1V21h-4v-5.4c0-1.29-.02-2.95-1.8-2.95-1.8 0-2.08 1.4-2.08 2.85V21H9z"/>
-                  </svg>
-                  LinkedIn
-                </a>
+  <section class="pl-panel is-secondary" aria-labelledby="ab-how">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <h2 class="u-h2 u-max-26" id="ab-how" data-reveal>What we are good at.</h2>
+        <div class="pl-gap-lg"></div>
+        <div class="pl-grid-3" data-reveal-stagger="120">
+          {how.map((h) => (
+            <article class="pl-card is-tight" data-reveal>
+              <div class="pl-stack pl-stack-sm">
+                <h3 class="u-xl u-medium">{h.title}</h3>
+                <p class="u-muted">{h.text}</p>
               </div>
-            ))
-          }
+            </article>
+          ))}
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- CTA -->
-    <section class="wrap cta-wrap">
-      <div class="cta reveal">
-        <div class="cta-inner">
-          <h2>Like what you see? <span class="red">Let's talk.</span></h2>
-          <p>Tell us your idea and we'll tell you straight whether we're the right studio for it.</p>
-          <a href="mailto:susan@doghousemedia.ie" class="btn btn-cream">Get in touch</a>
+  <section class="pl-panel" aria-labelledby="ab-team">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <h2 class="u-h2 u-max-26" id="ab-team" data-reveal>The people behind every project.</h2>
+        <div class="pl-gap-lg"></div>
+        <div class="pl-grid-2 is-stretch" data-reveal-stagger="120">
+          {team.map((m, i) => (
+            <article class:list={['pl-card', 'is-tight', 'ab-person', i % 2 ? 'is-a3' : 'is-a1']} data-reveal>
+              {m.data.photo
+                ? <img class="ab-photo" src={m.data.photo} alt={`${m.data.name}, ${m.data.role} at Doghouse Media`} loading="lazy" width="96" height="96" />
+                : null}
+              <div class="pl-stack pl-stack-sm">
+                <h3 class="u-xl u-medium">{m.data.name}</h3>
+                <p class="u-sm u-muted">{m.data.role}</p>
+                <p class="u-muted">{m.data.bio}</p>
+                {m.data.contact ? <p class="ab-contact"><strong>{m.data.contact}</strong></p> : null}
+                {m.data.linkedin
+                  ? <a class="ab-linkedin u-sm" href={m.data.linkedin} target="_blank" rel="noopener noreferrer" aria-label={`${m.data.name} on LinkedIn (opens in a new tab)`}>LinkedIn profile &rarr;</a>
+                  : null}
+              </div>
+            </article>
+          ))}
         </div>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
 
-  <Footer />
-</Layout>
+  <section class="pl-panel is-secondary" aria-labelledby="ab-story">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-sm">
+        <div class="pl-prose" data-reveal>
+          <h2 id="ab-story">Twenty years of programming and IT behind the work.</h2>
+          <p>
+            Susan's background is programming and IT consultancy, including second-line work on
+            critical infrastructure, where an outage is a serious problem and thinking quickly on your feet is essential.
+            That shaped the studio. We do not cut corners. Planning is at the heart of every project we
+            take on, whether it is a new landing page or a larger video production, so scope, timelines and risks are agreed before work begins. We are
+            experienced in working within procurement processes, approval chains and compliance requirements, and
+            we give the less visible parts of a project the same attention as the creative work.
+          </p>
+          <h2>Who we work with.</h2>
+          <p>
+            We have built trusted relationships with the best in the business. Agencies like Custodian, Real
+            Nation and Dynamic EU have brought us in on significant projects, and through them we have worked
+            with clients including An Post, Diageo, Heineken Ireland, Kerry Group, Lego and the National
+            Disability Authority.
+          </p>
+          <p>
+            Directly, we work mostly with medical and healthcare, charities and non-profits, and corporate
+            teams, including Boston Scientific, Amgen and the Irish Red Cross. We also build and manage websites for
+            smaller businesses and organisations when the brief is a good fit.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pl-panel is-inverse">
+    <div class="pl-gutter pl-pad-lg">
+      <div class="pl-container is-md u-center">
+        <h2 class="u-h2 u-balance" data-reveal style="color:var(--pl-text-inverse);margin-inline:auto;max-width:30rem">
+          Planning a film, a website or an automation? Tell us what you need.
+        </h2>
+        <div class="pl-gap-sm"></div>
+        <div class="pl-btn-group" data-reveal style="justify-content:center">
+          <Button href="/contact/" variant="on-dark">Get in touch</Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</Site>
 
 <style>
-  .about-hero {
-    padding: 80px 0 64px;
+  .ab-person {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1.25rem;
   }
-  .about-hero h1 {
-    font-family: var(--disp);
-    font-weight: 800;
-    font-size: clamp(36px, 5vw, 64px);
-    letter-spacing: -0.04em;
-    line-height: 1.02;
-    max-width: 16ch;
-    margin: 12px 0 24px;
-  }
-  .about-lead {
-    font-size: clamp(17px, 1.8vw, 20px);
-    max-width: 52ch;
-    opacity: 0.75;
-    line-height: 1.55;
-  }
-
-  .about-section {
-    padding: 64px 0;
-    border-top: 1px solid var(--line);
-  }
-  .about-grid {
-    display: grid;
-    grid-template-columns: 1fr 280px;
-    gap: 80px;
-    align-items: start;
-  }
-  .about-grid h2 {
-    font-family: var(--disp);
-    font-weight: 800;
-    font-size: clamp(24px, 2.8vw, 34px);
-    letter-spacing: -0.035em;
-    line-height: 1.1;
-    margin: 10px 0 20px;
-  }
-  .about-grid p {
-    font-size: 16px;
-    line-height: 1.65;
-    opacity: 0.8;
-    margin-bottom: 16px;
-  }
-
-  .about-aside {
-    display: flex;
-    flex-direction: column;
-    gap: 28px;
-    padding-top: 42px;
-  }
-  .about-stat {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-  .stat-num {
-    font-family: var(--disp);
-    font-weight: 800;
-    font-size: 32px;
-    letter-spacing: -0.03em;
-    color: var(--ink);
-  }
-  .stat-label {
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--gray);
-  }
-
-  .about-team {
-    padding: 64px 0 80px;
-    border-top: 1px solid var(--line);
-  }
-  .team-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 40px;
-    margin-top: 32px;
-    max-width: 720px;
-  }
-  .team-card {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .team-avatar {
+  .ab-photo {
+    flex: none;
     width: 96px;
     height: 96px;
     border-radius: 50%;
-    background: var(--steel-tint);
     object-fit: cover;
-    margin-bottom: 14px;
+    object-position: center 25%;
   }
-  .team-linkedin {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 12px;
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--teal);
-    text-decoration: none;
-    transition: color 0.15s;
+  .ab-contact { font-weight: 700; }
+  .ab-linkedin {
+    color: var(--pl-text);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
   }
-  .team-linkedin:hover {
-    color: var(--red);
-  }
-  .team-card h3 {
-    font-family: var(--disp);
-    font-weight: 700;
-    font-size: 18px;
-    letter-spacing: -0.02em;
-  }
-  .team-role {
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--teal);
-    margin-bottom: 8px;
-  }
-  .team-card p {
-    font-size: 17px;
-    line-height: 1.65;
-    opacity: 0.78;
-  }
-
-  @media (max-width: 760px) {
-    .about-grid {
-      grid-template-columns: 1fr;
-      gap: 40px;
-    }
-    .about-aside {
-      flex-direction: row;
-      flex-wrap: wrap;
-      padding-top: 0;
-    }
-    .team-grid {
-      grid-template-columns: 1fr;
-    }
+  .ab-linkedin:hover { color: var(--color-red); }
+  @media (max-width: 480px) {
+    .ab-person { flex-direction: column; }
   }
 </style>
-
-<script>
-  (function () {
-    const els = document.querySelectorAll<HTMLElement>(".reveal");
-    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches)
-      return;
-    els.forEach((el) => el.classList.add("armed"));
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add("in");
-            io.unobserve(e.target);
-          }
-        });
-      },
-      { threshold: 0.12, rootMargin: "0px 0px -6% 0px" }
-    );
-    els.forEach((el) => io.observe(el));
-    setTimeout(() => {
-      els.forEach((el) => {
-        if (!el.classList.contains("in")) el.classList.add("in");
-      });
-    }, 1200);
-  })();
-</script>

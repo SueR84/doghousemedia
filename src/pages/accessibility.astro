@@ -1,0 +1,94 @@
+---
+/**
+ * Accessibility statement. Required by CLAUDE.md: the site sells
+ * accessibility auditing, so it publishes its own statement and is built to
+ * WCAG 2.2 AA, one level above what we claim for the NDA build.
+ *
+ * TODO: run the full audit on this site and replace the known issues and
+ * testing sections with what it actually finds (13 October 2026: both now
+ * say honestly that the audit is still to do). A statement that claims full
+ * conformance without a test behind it is the exact thing we audit other
+ * people for.
+ */
+import Site from '../layouts/Site.astro';
+
+const updated = new Date('2026-10-13');
+const fmt = new Intl.DateTimeFormat('en-IE', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<Site
+  title="Accessibility statement"
+  description="How doghousemedia.ie is built and tested for accessibility, what we know is not right yet, and how to tell us about a problem."
+>
+  <section class="pl-panel">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-sm">
+        <h1 class="u-h1 u-balance">Accessibility statement</h1>
+        <div class="pl-gap-sm"></div>
+        <p class="u-sm u-muted">Last reviewed {fmt.format(updated)}</p>
+        <div class="pl-gap-md"></div>
+
+        <div class="pl-prose">
+          <p>
+            We audit other people&rsquo;s websites for accessibility, so this one is held to the same standard.
+            This site is built to meet WCAG 2.2 Level AA. We have not yet completed a full audit of it, so
+            below we say plainly what we know is not right yet.
+          </p>
+
+          <h2>What that means here</h2>
+          <ul>
+            <li>Every page can be operated with a keyboard alone, and the focus indicator is always visible.</li>
+            <li>There is a skip link to the main content on every page.</li>
+            <li>Headings run in order, and every image carries alt text that describes it or is marked decorative.</li>
+            <li>Text meets the contrast requirements against the background it sits on.</li>
+            <li>
+              Nothing moves, scrolls or autoplays without a way to stop it, and all motion is switched off for
+              anyone whose device asks for reduced motion.
+            </li>
+            <li>Background video is muted, carries no essential audio, and has a visible pause control.</li>
+            <li>
+              Films we embed are given captions that have been written and checked, not auto-generated, apart
+              from the ones listed below.
+            </li>
+          </ul>
+
+          <h2>What we know is not right yet</h2>
+          <p>We know of some areas where accessibility is not yet as good as it should be.</p>
+          <ul>
+            <li>
+              <strong>Captions.</strong> Some embedded films do not have written captions yet, starting with
+              the showreel. Until they are added, those films fall short of WCAG 2.2 success criterion 1.2.2
+              (Captions, prerecorded).
+            </li>
+            <li>
+              <strong>No full audit yet.</strong> We have not completed a full test of this site with a
+              keyboard, a screen reader and magnification, so there may be problems we have not found.
+            </li>
+            <li>
+              <strong>Third-party and embedded content.</strong> Some third-party components and embedded
+              content, including the Vimeo video players, may not fully meet accessibility standards. Their
+              controls are the provider&rsquo;s, so how they work with a keyboard or screen reader is partly
+              outside our control. If one gets in your way, tell us.
+            </li>
+          </ul>
+          <p>We are working to put these right, and we will update this list, with dates, as each item is fixed.</p>
+
+          <h2>Telling us about a problem</h2>
+          <p>
+            If something on this site is hard or impossible to use, write to
+            <a href="mailto:hello@doghousemedia.ie">hello@doghousemedia.ie</a> and tell us what happened and
+            what you were trying to do. We will reply within five working days and tell you what we are doing
+            about it.
+          </p>
+
+          <h2>How this site was tested</h2>
+          <p>
+            A full audit is still to be done. It will cover keyboard-only use, a screen reader and
+            magnification, and this page will be updated with the date, the tools used and the results when it
+            is finished.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Site>

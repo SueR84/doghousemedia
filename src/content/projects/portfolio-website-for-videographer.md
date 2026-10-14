@@ -1,18 +1,17 @@
 ---
 title: "Portfolio website for videographer"
 client: "Edithouse"
-service: "Design, Development, Lead capture"
-shortDescription: "A video rich portfolio website for a wedding creative"
-websiteLink: "https://www.edithouse.ie"
-projectVideo: ""
-projectImage: ""
-projectGallery: []
-projectType:
-  - "Web Development"
+year: 2024
 craft: "web"
-status: "publish"
+summary: "A video rich portfolio website for a wedding creative"
+liveUrl: "https://www.edithouse.ie"
+services:
+  - "Design"
+  - "Development"
+  - "Lead capture"
+order: 8
+draft: true
 ---
-
 We worked with Emma at Edithouse to design and develop their new website. Working closely with Kay at Patterns.ie, Edithouse underwent a complete rebranding process, creating a new logo, color palette, and typography. From the start we aimed to set Edithouse apart from their competitors by creating a custom design for WordPress that was both modern and edgy. 
 
 In this space many Photographers and videographer's use the same out-of-the-box templates meaning many of the

@@ -1,284 +1,106 @@
 ---
-import { getCollection } from "astro:content";
-import Layout from "../../layouts/Layout.astro";
-import Nav from "../../components/Nav.astro";
-import Footer from "../../components/Footer.astro";
-import HoverVideo from "../../components/HoverVideo.astro";
+/**
+ * Work index. MESSAGING-PLAN section 8.
+ *
+ * Two sections, not a filter row. Film first, then websites.
+ *
+ * A filter makes the two disciplines peers you choose between, which quietly
+ * undoes the decision that video leads. Two labelled sections let film sit
+ * first and read bigger, they are linkable (#film, #websites), and they need
+ * no JavaScript and no live region announcing "showing 6 of 24", which matters
+ * against the WCAG 2.2 AA commitment and the 15KB JS budget in BUILD-SPEC.
+ *
+ * A `craft: both` project appears once, under Film, and carries the "Web +
+ * video" tag. Showing it twice would be worse than showing it once.
+ *
+ * TODO before launch: this renders every non-draft project, most inherited
+ * from the old site. MESSAGING-PLAN says twelve to fifteen, chosen on quality.
+ * Drop anything you would not put in front of Kerry Group. Set `draft: true`
+ * on the ones that go.
+ */
+import { getCollection } from 'astro:content';
+import Site from '../../layouts/Site.astro';
+import Button from '../../components/pipely/Button.astro';
+import WorkCard from '../../components/pipely/WorkCard.astro';
 
-const allProjects = await getCollection("projects", ({ data }) => data.status === "publish");
+const projects = (await getCollection('projects', (p) => !p.data.draft)).sort(
+  (a, b) => a.data.order - b.data.order || b.data.year - a.data.year,
+);
 
-// Sort: projects with images first, then alphabetically by title
-allProjects.sort((a, b) => {
-  const aHasImg = a.data.projectImage ? 1 : 0;
-  const bHasImg = b.data.projectImage ? 1 : 0;
-  if (bHasImg !== aHasImg) return bHasImg - aHasImg;
-  return a.data.title.localeCompare(b.data.title);
-});
+const film = projects.filter((p) => p.data.craft !== 'web');
+const web = projects.filter((p) => p.data.craft === 'web');
 
-const allTypes = [...new Set(allProjects.flatMap((p) => p.data.projectType))].sort();
+// Cards alternate Cream and White so the tinted pill tag always reads against
+// them. The craft colour is carried by the tag, not the fill.
+const tintFor = (i: number) => (i % 2 ? 'var(--pl-a2)' : 'var(--pl-a3)');
 
-// Turn a Vimeo URL into a muted, looping background-player embed for hover previews.
-// Returns "" when the URL has no numeric video id (e.g. channel/showcase links).
-function vimeoEmbed(url: string): string {
-  const m = url.match(/vimeo\.com\/(\d+)(?:\/([0-9a-z]+))?/i);
-  if (!m) return "";
-  const hash = m[2] ? `h=${m[2]}&` : "";
-  return `https://player.vimeo.com/video/${m[1]}?${hash}background=1&autoplay=1&muted=1&loop=1&dnt=1`;
-}
+const sections = [
+  {
+    id: 'film',
+    heading: 'Film',
+    lead: 'Work for medtech, corporate and charity clients, most of it explaining something that is hard to explain.',
+    items: film,
+  },
+  {
+    id: 'websites',
+    heading: 'Websites',
+    lead: 'Sites built to be used by the team that owns them, updated without us, and handed over cleanly.',
+    items: web,
+  },
+];
 ---
 
-<Layout
-  title="Work — Doghouse Media"
-  description="Web and video projects from Doghouse Media — an independent Dublin studio."
+<Site
+  title="Work"
+  description="Selected film and web work from Doghouse Media, an independent studio in Dublin."
 >
-  <Nav />
-
-  <main>
-    <section class="work-hero">
-      <div class="wrap">
-        <div class="eyebrow">Portfolio</div>
-        <h1>Work we're proud of.</h1>
-      </div>
-    </section>
-
-    <section class="work-listing">
-      <div class="wrap">
-        <!-- Filter tabs -->
-        <div class="filter-bar" id="filters">
-          <button class="filter-btn active" data-filter="all">All</button>
-          {allTypes.map((t) => (
-            <button class="filter-btn" data-filter={t}>{t}</button>
-          ))}
+  <section class="pl-panel" aria-labelledby="work-heading">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div data-reveal-stagger="100">
+          <p class="u-eyebrow" data-reveal>Work</p>
+          <div class="pl-gap-sm"></div>
+          <h1 class="u-h1 u-max-40 u-balance" id="work-heading" data-reveal>
+            Films and websites made for organisations with something difficult to explain.
+          </h1>
         </div>
+      </div>
+    </div>
+  </section>
 
-        <div class="project-grid" id="project-grid">
-          {
-            allProjects.map((proj) => {
-              const videoEmbed = vimeoEmbed(proj.data.projectVideo);
-              return (
-              <a
-                href={`/work/${proj.id}/`}
-                class="project-card"
-                data-types={proj.data.projectType.join(",")}
-                data-video={videoEmbed || undefined}
-              >
-                <div class="project-img" data-video-frame>
-                  {proj.data.projectImage ? (
-                    <img
-                      src={proj.data.projectImage}
-                      alt={proj.data.title}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  ) : (
-                    <div
-                      class={`project-img-placeholder ${proj.data.craft}`}
-                      aria-hidden="true"
-                    />
-                  )}
-                  {videoEmbed && <span class="hv-play" aria-hidden="true">▶</span>}
-                </div>
-                <div class="project-info">
-                  <div class="project-types">
-                    {proj.data.projectType.map((t) => (
-                      <span class={`type-pill ${t === "Video Production" ? "red" : "teal"}`}>
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                  <h3>{proj.data.title}</h3>
-                  <p class="project-client">{proj.data.client}</p>
-                  {proj.data.shortDescription && (
-                    <p class="project-desc">{proj.data.shortDescription}</p>
-                  )}
-                </div>
-              </a>
-              );
-            })
-          }
+  {sections.map((section, s) => (
+    <section
+      class:list={['pl-panel', s % 2 === 0 ? 'is-secondary' : null]}
+      id={section.id}
+      aria-labelledby={`${section.id}-heading`}
+    >
+      <div class="pl-gutter pl-pad-md">
+        <div class="pl-container is-md">
+          <h2 class="u-h3 u-balance" id={`${section.id}-heading`} data-reveal>{section.heading}</h2>
+          <div style="height:.75rem"></div>
+          <p class="u-max-40 u-muted" data-reveal>{section.lead}</p>
+          <div class="pl-gap-sm"></div>
+          <div class="pl-grid-3" data-reveal-stagger="100">
+            {section.items.map((p, i) => (
+              <WorkCard project={p} tint={tintFor(i)} reveal />
+            ))}
+          </div>
         </div>
       </div>
     </section>
-  </main>
+  ))}
 
-  <HoverVideo />
-  <Footer />
-</Layout>
-
-<style>
-  .work-hero {
-    padding: 80px 0 48px;
-  }
-  .work-hero h1 {
-    font-family: var(--disp);
-    font-weight: 800;
-    font-size: clamp(40px, 5.5vw, 72px);
-    letter-spacing: -0.04em;
-    line-height: 1;
-    margin-top: 12px;
-  }
-
-  .work-listing {
-    padding-bottom: 100px;
-  }
-
-  .filter-bar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 48px;
-    border-bottom: 1px solid var(--line);
-    padding-bottom: 24px;
-  }
-  .filter-btn {
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 7px 16px;
-    border: 1.5px solid var(--line);
-    border-radius: 99px;
-    background: transparent;
-    color: var(--gray);
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .filter-btn:hover,
-  .filter-btn.active {
-    background: var(--ink);
-    border-color: var(--ink);
-    color: var(--cream);
-  }
-
-  .project-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 40px 32px;
-  }
-
-  .project-card {
-    text-decoration: none;
-    color: var(--ink);
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-  .project-card:hover .project-img img,
-  .project-card:hover .project-img-placeholder {
-    transform: scale(1.03);
-  }
-
-  .project-img {
-    position: relative;
-    aspect-ratio: 4/3;
-    overflow: hidden;
-    border-radius: 8px;
-    background: var(--steel-tint);
-    margin-bottom: 16px;
-  }
-  /* Hover-to-preview styling lives in the shared <HoverVideo /> component. */
-  .project-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.4s var(--ease-rise);
-    display: block;
-  }
-  .project-img-placeholder {
-    width: 100%;
-    height: 100%;
-    transition: transform 0.4s var(--ease-rise);
-  }
-  .project-img-placeholder.web {
-    background: linear-gradient(135deg, #3a8294, #15282e);
-  }
-  .project-img-placeholder.video {
-    background: linear-gradient(135deg, #7a3138, #bd1c30);
-  }
-  .project-img-placeholder.both {
-    background: linear-gradient(135deg, #3a8294, #7a3138);
-  }
-
-  .project-types {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin-bottom: 8px;
-  }
-  .type-pill {
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 3px 10px;
-    border-radius: 99px;
-  }
-  .type-pill.red {
-    background: var(--color-red-tint);
-    color: var(--red);
-  }
-  .type-pill.teal {
-    background: var(--steel-tint);
-    color: var(--teal);
-  }
-
-  .project-info h3 {
-    font-family: var(--disp);
-    font-weight: 700;
-    font-size: 17px;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
-    margin-bottom: 4px;
-  }
-  .project-client {
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--gray);
-    margin-bottom: 6px;
-  }
-  .project-desc {
-    font-size: 14px;
-    line-height: 1.5;
-    opacity: 0.65;
-  }
-
-  .project-card.hidden {
-    display: none;
-  }
-
-  @media (max-width: 900px) {
-    .project-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  @media (max-width: 560px) {
-    .project-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-</style>
-
-<script>
-  const buttons = document.querySelectorAll<HTMLButtonElement>(".filter-btn");
-  const cards = document.querySelectorAll<HTMLAnchorElement>(".project-card");
-
-  buttons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      buttons.forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      const filter = btn.dataset.filter!;
-      cards.forEach((card) => {
-        const types = (card.dataset.types || "").split(",");
-        if (filter === "all" || types.includes(filter)) {
-          card.classList.remove("hidden");
-        } else {
-          card.classList.add("hidden");
-        }
-      });
-    });
-  });
-</script>
+  <section class="pl-panel is-inverse">
+    <div class="pl-gutter pl-pad-lg">
+      <div class="pl-container is-md u-center">
+        <h2 class="u-h2 u-balance" data-reveal style="color:var(--pl-text-inverse);margin-inline:auto;max-width:30rem">
+          Tell us what you are working on.
+        </h2>
+        <div class="pl-gap-sm"></div>
+        <div class="pl-btn-group" data-reveal style="justify-content:center">
+          <Button href="/contact/" variant="on-dark">Get in touch</Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</Site>

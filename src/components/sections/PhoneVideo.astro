@@ -1,0 +1,495 @@
+---
+/**
+ * A portrait film shown inside a phone, tilted clockwise, with a second
+ * phone behind it playing a second film.
+ *
+ * Used by PillarBlock in place of the plain 9:16 rounded rectangle.
+ *
+ * Geometry is a real handset, not an approximation. Every measurement is a
+ * fraction of the body width so the whole thing scales from one variable:
+ *
+ *   screen        9 : 19.5      (iPhone 15/16 class)
+ *   body          1 : 2.073     (real device is 1 : 2.09)
+ *   metal rail    0.011w        the bright machined edge
+ *   black bezel   0.029w        inside the rail
+ *   body radius   0.175w        corners are concentric: each inner radius
+ *   rail inner    0.164w        is the one outside it minus that layer's
+ *   screen radius 0.135w        own padding
+ *
+ * The films are 9:16 and the screen is 9:19.5, so each player is fitted to
+ * the screen width, leaving a band of about 9% of the height above and
+ * below. Filling the screen instead would crop 11% off each side, and both
+ * films carry full-bleed burned-in campaign text: at the coffee title card
+ * that crop cuts the last letter off COFFEE. Clipping a client's titles to
+ * flatter the mockup is the wrong trade. The bands cost nothing visually
+ * because the screen, the bezel and the body are all black.
+ *
+ * The chrome is drawn in CSS rather than dropped in as a stock mockup PNG:
+ * it stays crisp at any size, it carries no stock licence into a client
+ * site, and it sits beside the CSS phones in PhoneCarousel without the two
+ * reading as different objects. If a licensed mockup is ever preferred, the
+ * screen is the only part that has to survive.
+ *
+ * The back phone is decorative: aria-hidden, its player untabbable, its
+ * poster alt empty. It is blurred and darkened so it reads as depth of
+ * field rather than as a second thing to look at.
+ *
+ * Playback follows Hero.astro, for the reasons in CLAUDE.md: posters carry
+ * first paint, the muted `background=1` loops mount only after load, they
+ * carry no essential audio, and under reduced motion no iframe mounts at
+ * all and the posters are all that ever paint. The one pause control stops
+ * and starts both players together, so there is never moving footage on
+ * screen that the control does not govern.
+ *
+ * Cannot sit inside `.pl-media`: that has `overflow: clip`, which would
+ * shear the rotated corners off.
+ */
+
+interface Film {
+  vimeoId: string;
+  title: string;
+  poster?: string;
+}
+
+interface Props {
+  vimeoId: string;
+  /** Names the film. Used for the iframe title and the poster alt text. */
+  title: string;
+  /** Still frame behind the loop, and the whole of the reduced-motion view. */
+  poster?: string;
+  /** Overrides the alt text derived from `title`. */
+  posterAlt?: string;
+  /** Second film, for the phone sitting behind. Decorative. */
+  behind?: Film;
+  /** Degrees clockwise. Positive leans the phone to the right. */
+  tilt?: number;
+  /**
+   * Scales the front film (and its poster) up inside the screen. Default
+   * 1.02 just hides Vimeo's hairline letterbox. For a film with padding
+   * baked into its 9:16 frame, set it to screen height divided by picture
+   * height, which pushes the padding off screen and crops the sides.
+   */
+  zoom?: number;
+  /**
+   * 'soft' (default): the back phone is blurred, darkened and tucked in,
+   * reading as depth of field. 'clear': nearly sharp, full colour and set
+   * further out, for when the back film is worth watching in its own right.
+   */
+  behindStyle?: 'soft' | 'clear';
+  /**
+   * Seconds between the two phones trading places. Off by default. Stops
+   * with the pause control, never runs under reduced motion.
+   */
+  swap?: number;
+}
+
+const {
+  vimeoId,
+  title,
+  // TODO: this is Vimeo's default thumbnail and the film opens on black, so
+  // it is a black rectangle. Set a mid-film thumbnail on the video in Vimeo
+  // and re-pull it, or drop a frame in at this path.
+  poster = '/video-pillar-poster.jpg',
+  posterAlt,
+  behind,
+  tilt = 7,
+  zoom = 1.02,
+  behindStyle = 'soft',
+  swap = 0,
+} = Astro.props;
+
+const loopSrc = (id: string) =>
+  `https://player.vimeo.com/video/${id}?background=1&autoplay=1&muted=1&loop=1&autopause=0&dnt=1`;
+
+const backPoster = behind?.poster ?? '/video-pillar-poster-back.jpg';
+---
+
+<div class:list={['dhpv', { 'is-clear-back': behindStyle === 'clear' }]} data-phone-video data-swap={swap || undefined} style={`--dhpv-tilt:${tilt}deg;--dhpv-zoom:${zoom}`}>
+  <div class="dhpv-stage" data-phone-parallax>
+    <div class="dhpv-phone dhpv-phone--back" aria-hidden="true">
+      <div class="dhpv-rail">
+        <div class="dhpv-body">
+          <div class="dhpv-screen is-idle">
+            {behind && (
+              <>
+                <img class="dhpv-poster" src={backPoster} alt="" loading="lazy" decoding="async" />
+                <div
+                  class="dhpv-slot"
+                  data-phone-slot
+                  data-src={loopSrc(behind.vimeoId)}
+                  data-title={behind.title}
+                >
+                </div>
+              </>
+            )}
+            <span class="dhpv-glare"></span>
+          </div>
+          <span class="dhpv-island"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dhpv-phone dhpv-phone--front">
+      <div class="dhpv-rail">
+        <div class="dhpv-body">
+          <div class="dhpv-screen">
+            <img
+              class="dhpv-poster"
+              src={poster}
+              alt={posterAlt ?? `Still from ${title}`}
+              width="1280"
+              height="2276"
+              loading="lazy"
+              decoding="async"
+            />
+            <div
+              class="dhpv-slot"
+              data-phone-slot
+              data-src={loopSrc(vimeoId)}
+              data-title={title}
+            >
+            </div>
+            <span class="dhpv-glare" aria-hidden="true"></span>
+          </div>
+          <span class="dhpv-island"></span>
+        </div>
+      </div>
+      <span class="dhpv-btn is-action" aria-hidden="true"></span>
+      <span class="dhpv-btn is-volup" aria-hidden="true"></span>
+      <span class="dhpv-btn is-voldown" aria-hidden="true"></span>
+      <span class="dhpv-btn is-power" aria-hidden="true"></span>
+    </div>
+  </div>
+
+  <button class="pl-pause dhpv-pause" type="button" data-phone-pause hidden>
+    <span class="pl-pause__icon" aria-hidden="true"></span>
+    <span data-phone-pause-label>Pause video</span>
+  </button>
+</div>
+
+<style>
+  .dhpv {
+    --dhpv-w: clamp(12rem, 20vw, 16.5rem);
+    position: relative;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    /* Rotating grows the bounding box on all four sides, and the back phone
+       leans out to the left. This keeps both clear of the panel edge and
+       leaves room for the control underneath. Sized with headroom for the
+       front phone's full scroll drift (±45px, see FRONT in motion.ts). */
+    padding-block: 3.5rem 5.5rem;
+  }
+
+  /* The two positions live here as variables, on the stage, because that is
+     where initPhoneParallax writes the shift variables they fold in. Each
+     phone reads a position; swapping (below) just hands each phone the
+     other's. Translate first so the offset is measured in the stage's own
+     axes, then rotate the phone about its new centre. */
+  .dhpv-stage {
+    position: relative;
+    width: var(--dhpv-w);
+    --dhpv-t-front:
+      translate3d(var(--dhpv-shift-front-x, 0px), var(--dhpv-shift-front, 0px), 0)
+      rotate(var(--dhpv-tilt, 7deg));
+    --dhpv-f-front: blur(0px) brightness(1) saturate(1);
+    --dhpv-t-back:
+      translate(-31%, -5.5%)
+      translate3d(var(--dhpv-shift-back-x, 0px), var(--dhpv-shift-back, 0px), 0)
+      rotate(-6deg)
+      scale(0.93);
+    --dhpv-f-back: blur(1.9px) brightness(0.72) saturate(0.8);
+  }
+
+  .dhpv-phone { position: relative; width: var(--dhpv-w); }
+
+  /* The four shift variables are set by initPhoneParallax in the motion
+     engine, and are simply absent under reduced motion. Each phone folds
+     its own shift into the transform it already carries, before its
+     rotation, so the pair drifts and fans apart on screen. */
+  .dhpv-phone--front {
+    z-index: 2;
+    transform: var(--dhpv-t-front);
+    filter: var(--dhpv-f-front);
+  }
+  .dhpv-phone--back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    transform: var(--dhpv-t-back);
+    filter: var(--dhpv-f-back);
+  }
+
+  /* Clear variant: out further from behind the front phone, barely any
+     blur, near-full brightness. Still a little softer and smaller than the
+     front, so the pair keeps its depth and the front film still leads. */
+  .dhpv.is-clear-back .dhpv-stage {
+    --dhpv-t-back:
+      translate(-44%, -4%)
+      translate3d(var(--dhpv-shift-back-x, 0px), var(--dhpv-shift-back, 0px), 0)
+      rotate(-7deg)
+      scale(0.95);
+    --dhpv-f-back: blur(0.5px) brightness(0.95) saturate(1);
+  }
+
+  /* Swap: each phone takes the other's position and look. z-index is an
+     integer, so over the transition it flips at the halfway point, while
+     the phones are side by side, and neither cuts through the other. The
+     transition is only on while a swap runs (is-swapping), so it never
+     softens the scroll parallax, which writes these transforms every frame. */
+  .dhpv.is-swapped .dhpv-phone--front { z-index: 1; transform: var(--dhpv-t-back); filter: var(--dhpv-f-back); }
+  .dhpv.is-swapped .dhpv-phone--back { z-index: 2; transform: var(--dhpv-t-front); filter: var(--dhpv-f-front); }
+  .dhpv.is-swapping .dhpv-phone {
+    transition:
+      transform 700ms cubic-bezier(0.65, 0, 0.35, 1),
+      filter 700ms cubic-bezier(0.65, 0, 0.35, 1),
+      z-index 700ms linear;
+  }
+
+  /* The bright machined edge. One gradient stands in for the way a metal
+     rail catches light differently along its length. */
+  .dhpv-rail {
+    position: relative;
+    z-index: 2;
+    padding: calc(var(--dhpv-w) * 0.011);
+    border-radius: calc(var(--dhpv-w) * 0.175);
+    background: linear-gradient(
+      114deg,
+      #9aa3a9 0%, #2b3135 11%, #6d767c 29%,
+      #202528 52%, #737c82 72%, #272c30 86%, #9aa3a9 100%
+    );
+    box-shadow:
+      0 2px 6px rgb(0 0 0 / 0.2),
+      0 20px 34px -8px rgb(0 0 0 / 0.34),
+      0 54px 86px -22px rgb(0 0 0 / 0.46);
+  }
+
+  .dhpv-body {
+    position: relative;
+    padding: calc(var(--dhpv-w) * 0.029);
+    border-radius: calc(var(--dhpv-w) * 0.164);
+    background: #050708;
+  }
+
+  .dhpv-screen {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 9 / 19.5;
+    overflow: clip;
+    border-radius: calc(var(--dhpv-w) * 0.135);
+    background: #000;
+  }
+
+  /* What the back phone falls back to if its film is ever dropped: a lit
+     screen rather than a black hole. */
+  .dhpv-screen.is-idle {
+    background:
+      linear-gradient(158deg, rgb(255 255 255 / 0.14) 0%, rgb(255 255 255 / 0.04) 28%, transparent 56%),
+      #0d1114;
+  }
+
+  /* contain, not cover, so the still is framed exactly as the player frames
+     the film. Otherwise the reduced-motion view crops what the loop does not. */
+  .dhpv-poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: opacity var(--pl-dur-slow) var(--pl-ease-out-quart);
+  }
+  .dhpv.is-playing .dhpv-poster { opacity: 0; }
+  /* The poster zooms with the film, so the still and the first frame line
+     up and the reduced-motion view crops exactly as the loop does. */
+  .dhpv-phone--front .dhpv-poster { transform: scale(var(--dhpv-zoom, 1.02)); }
+
+  /* A single raking reflection across the cover glass. Kept under 13% so it
+     reads as glass without dulling the footage underneath. */
+  .dhpv-glare {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(
+      146deg,
+      rgb(255 255 255 / 0.13) 0%, rgb(255 255 255 / 0.045) 15%, transparent 36%
+    );
+  }
+
+  .dhpv-slot { position: absolute; inset: 0; }
+  /* Global: the iframes are created in the script below, so they never carry
+     the scoping attribute. Fitted to the screen's width and centred, so the
+     whole 9:16 frame survives on a 9:19.5 screen. The 1.02 scale hides
+     Vimeo's hairline letterbox, same trick as .pl-hero__frame-slot. */
+  .dhpv-slot :global(iframe) {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 9 / 16;
+    border: 0;
+    transform: translate(-50%, -50%) scale(1.02);
+    pointer-events: none;
+  }
+  .dhpv-phone--front .dhpv-slot :global(iframe) {
+    transform: translate(-50%, -50%) scale(var(--dhpv-zoom, 1.02));
+  }
+
+  .dhpv-island {
+    position: absolute;
+    top: calc(var(--dhpv-w) * 0.052);
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(var(--dhpv-w) * 0.3);
+    height: calc(var(--dhpv-w) * 0.082);
+    border-radius: 999px;
+    background: #000;
+    z-index: 3;
+  }
+  .dhpv-island::after {
+    content: '';
+    position: absolute;
+    right: 17%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: calc(var(--dhpv-w) * 0.026);
+    height: calc(var(--dhpv-w) * 0.026);
+    border-radius: 50%;
+    background: radial-gradient(circle at 32% 28%, #2c3b45 0%, #0b0f12 62%);
+  }
+
+  /* Side buttons sit under the rail, so only the sliver that protrudes past
+     the body edge is visible. Offsets are percentages of the phone height. */
+  .dhpv-btn {
+    position: absolute;
+    z-index: 1;
+    width: calc(var(--dhpv-w) * 0.012);
+    border-radius: calc(var(--dhpv-w) * 0.006);
+    background: linear-gradient(180deg, #4d5358 0%, #23282c 100%);
+  }
+  .dhpv-btn.is-action  { left: calc(var(--dhpv-w) * -0.007); top: 14%;   height: 4%; }
+  .dhpv-btn.is-volup   { left: calc(var(--dhpv-w) * -0.008); top: 20.5%; height: 6.5%; }
+  .dhpv-btn.is-voldown { left: calc(var(--dhpv-w) * -0.008); top: 29%;   height: 6.5%; }
+  .dhpv-btn.is-power   { right: calc(var(--dhpv-w) * -0.008); top: 22%;  height: 9.5%; }
+
+  /* Only the placement. The pill itself is .pl-pause in components.css,
+     shared with PhoneCarousel. Sits outside the stage so it stays upright
+     and legible while the phones lean and drift, and centred under them
+     rather than on a screen, because anything on a screen would tilt. */
+  .dhpv-pause {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 4;
+  }
+
+  /* Tablet: text and phones still share a row but the phone column is
+     narrow, so the clear back phone tucks back in to the soft position or
+     it runs into the text beside it. */
+  @media (min-width: 768px) and (max-width: 1099px) {
+    .dhpv.is-clear-back .dhpv-stage {
+      --dhpv-t-back:
+        translate(-20%, -4%)
+        translate3d(var(--dhpv-shift-back-x, 0px), var(--dhpv-shift-back, 0px), 0)
+        rotate(-6deg)
+        scale(0.93);
+    }
+  }
+
+  @media (max-width: 767px) {
+    .dhpv { --dhpv-w: min(56vw, 15rem); padding-block: 3rem 5rem; }
+    .dhpv.is-clear-back .dhpv-stage {
+      --dhpv-t-back:
+        translate(-24%, -3%)
+        translate3d(0, var(--dhpv-shift-back, 0px), 0)
+        rotate(-5deg)
+        scale(0.95);
+    }
+    /* Less lean and less offset, so the pair still clears the gutters. */
+    .dhpv-stage {
+      --dhpv-t-back:
+        translate(-21%, -4%)
+        translate3d(0, var(--dhpv-shift-back, 0px), 0)
+        rotate(-4deg)
+        scale(0.94);
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-phone-video]').forEach((root) => {
+    const slots = [...root.querySelectorAll<HTMLElement>('[data-phone-slot]')];
+    const pause = root.querySelector<HTMLButtonElement>('[data-phone-pause]');
+    const label = root.querySelector<HTMLElement>('[data-phone-pause-label]');
+    if (!slots.length) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (root.querySelector('iframe')) return;
+
+    const frames: HTMLIFrameElement[] = [];
+    let playing = true;
+
+    // Swapping. Runs only while the films play, so the one pause control
+    // stops every moving thing in the block, which is what WCAG 2.2.2 asks
+    // of motion that starts by itself and lasts past five seconds. Reduced
+    // motion never gets this far: the early return above covers it.
+    const swapMs = Number(root.dataset.swap ?? 0) * 1000;
+    let swapTimer = 0;
+    const swapOnce = () => {
+      root.classList.add('is-swapping');
+      root.classList.toggle('is-swapped');
+      window.setTimeout(() => root.classList.remove('is-swapping'), 750);
+    };
+    const startSwap = () => {
+      if (!swapMs || swapTimer) return;
+      swapTimer = window.setInterval(swapOnce, swapMs);
+    };
+    const stopSwap = () => {
+      window.clearInterval(swapTimer);
+      swapTimer = 0;
+    };
+
+    const send = (method: string) => {
+      for (const f of frames) {
+        f.contentWindow?.postMessage(JSON.stringify({ method }), 'https://player.vimeo.com');
+      }
+    };
+
+    const setState = (next: boolean) => {
+      playing = next;
+      send(next ? 'play' : 'pause');
+      if (next) startSwap(); else stopSwap();
+      pause?.setAttribute('data-paused', String(!next));
+      if (label) label.textContent = next ? 'Pause video' : 'Play video';
+    };
+
+    const mount = () => {
+      for (const slot of slots) {
+        const src = slot.dataset.src;
+        if (!src) continue;
+        const frame = document.createElement('iframe');
+        frame.src = src;
+        frame.title = `${slot.dataset.title ?? 'Film'}, background loop`;
+        frame.allow = 'autoplay; fullscreen; picture-in-picture';
+        frame.setAttribute('tabindex', '-1');
+        frame.setAttribute('aria-hidden', 'true');
+        // The control appears with the first player to arrive, so it is never
+        // showing while there is nothing yet to pause.
+        frame.addEventListener('load', () => {
+          root.classList.add('is-playing');
+          if (pause?.hidden) { pause.hidden = false; pause.setAttribute('data-paused', 'false'); }
+          if (playing) startSwap();
+        }, { once: true });
+        slot.replaceChildren(frame);
+        frames.push(frame);
+      }
+    };
+
+    pause?.addEventListener('click', () => setState(!playing));
+
+    if (document.readyState === 'complete') mount();
+    else window.addEventListener('load', mount, { once: true });
+  });
+</script>

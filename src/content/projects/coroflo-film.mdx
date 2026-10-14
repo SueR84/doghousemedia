@@ -1,0 +1,125 @@
+---
+title: "Coroflo: explainer films for the Coro breastfeeding monitor"
+client: "Coroflo"
+# TODO: confirm the year. The landscape films were uploaded to Vimeo in
+# September 2026, the animated explainer in November 2025.
+year: 2026
+craft: "video"
+# No cover: it is a video case study and the film carries the top of the
+# page. Removed 5 October 2026 at Sue's request. thumb still feeds the Work grid.
+thumb: "/work/coroflo/card-logo.jpg"
+summary: "Explainer films for Coroflo, showing new parents how to use Coro, a breastfeeding monitor that measures how much milk a baby takes during a feed."
+video: "1228118170"
+services:
+  - "Video Production"
+  - "Editing"
+  - "Animation"
+order: 2
+caseStudy: true
+feature: true
+# Draft off 5 October 2026. Copy filled from Sue's notes the same day,
+# awaiting her sign-off.
+draft: false
+---
+
+import CaseFacts from '../../components/casestudy/CaseFacts.astro';
+import CaseStep from '../../components/casestudy/CaseStep.astro';
+import CaseFilm from '../../components/casestudy/CaseFilm.astro';
+import CaseFilmGrid from '../../components/casestudy/CaseFilmGrid.astro';
+import AppPhone from '../../components/sections/AppPhone.astro';
+
+{/* Rebuilt 5 October 2026 from the films in Vimeo, Library / 001 Doghouse
+    Media / 011 Coroflo, plus the explainer in the parent folder. All six are
+    "embed only" on Vimeo and embed without a hash.
+
+      1228118170  Coro V3 Final Edit 1     1:47  16:9  "Coro: Our Story"
+      1228118164  Coro V2 Final Edit 1     1:23  16:9
+      1228118165  Coro V6 Final Edit 1     1:08  16:9
+      1137657047  Coroflo Explainer Video  0:45  16:9  animation, Nov 2025
+      1228118319  Coro V3 Stories MASTER   0:54  9:16  vertical cut of V3
+      1228118166  Coro V2 Stories MASTER   0:33  9:16  vertical cut of V2
+
+    The two vertical cuts are not embedded here. They are social versions
+    of films already on the page. 1228118319 is used on /video-production/.
+
+    Product facts are from coroflo.com, checked 5 October 2026.
+
+    TODO before launch:
+      - a quote from Coroflo, if one lands, goes in the frontmatter `quote`
+      - the Vimeo titles are raw export names ("Coro V3 Final Edit 1") and
+        show in the player. Rename them at Vimeo.
+      - V3 and V6 thumbnails at Vimeo are the logo end card. Set a frame
+        from the film, then re-save our-story.jpg and film-v6.jpg.
+      - captions on all four films, written not auto-generated. */}
+
+<section class="pl-panel is-inverse">
+  <div class="pl-gutter pl-pad-sm">
+    <div class="pl-container is-md">
+      <CaseFacts
+        items={[
+          { label: 'Client', value: 'Coroflo, Dublin' },
+          { label: 'Product', value: 'Coro breastfeeding monitor' },
+          { label: 'What we did', value: 'Filming, editing and animation' },
+          { label: 'Made for', value: 'New parents, before they buy' },
+        ]}
+      />
+    </div>
+  </div>
+</section>
+
+<CaseFilm
+  vimeoId="1228118170"
+  title="Coro: Our Story, a film for Coroflo"
+  poster="/work/coroflo/film-v2.jpg"
+  caption="Coro: Our Story"
+  time="1:47"
+  duration="PT1M47S"
+/>
+
+<CaseStep n="01" label="The client" title="Coroflo and the Coro monitor" surface="secondary">
+  <AppPhone
+    slot="aside"
+    src="/work/coroflo/coro-app-flow.webp"
+    emptySrc="/work/coroflo/coro-app-flow-empty.webp"
+    alt="The Coro app on a phone during a feed, showing 0.8ml taken so far and a graph of milk flow over eleven seconds."
+    plot={{ top: 25.5, right: 3.148, bottom: 41.583, left: 15.556 }}
+  />
+
+  Coroflo is an Irish company, based at DCU's innovation hub in Glasnevin, Dublin. Its
+  product, Coro, is the first device of its kind in the world: a nipple shield with sensors
+  built into it. While the baby feeds, it measures milk flow, the volume of the feed and the
+  temperature of the milk, and shows the figures on the mother's phone.
+
+  Coro won a Red Dot award for innovation in 2025 and was named in the Best of CES awards
+  at CES 2026.
+
+  Most parents have never used anything like Coro. Coroflo wanted a series of films that
+  showed the product being used in a real family setting. Coro sits between a newborn and
+  their mother during a feed, so parents need to trust it completely before they buy. The
+  films show real parents fitting it, feeding with it and reading the results on their
+  phone.
+</CaseStep>
+
+<CaseStep n="02" label="What we made" title="Explainer films, made with real parents and newborns">
+  We filmed in Ireland with real parents and their newborn babies. Filming a
+  newborn means working around feeds, sleep and whatever the baby decides to do next, so the
+  shoot went at the baby's pace.
+
+  We also made the animation, including a separate 45-second animated explainer. The three
+  films run from just over a minute to just under two, and two of them were also cut
+  vertically for social.
+
+  <CaseFilmGrid
+    films={[
+      { vimeoId: '1228118164', title: 'Coroflo film two', poster: '/work/coroflo/film-v2.jpg', caption: 'Film two', time: '1:23', duration: 'PT1M23S' },
+      { vimeoId: '1228118165', title: 'Coroflo film three', poster: '/work/coroflo/film-v6.jpg', caption: 'Film three', time: '1:08', duration: 'PT1M8S' },
+      { vimeoId: '1137657047', title: 'Coroflo animated explainer', poster: '/work/coroflo/explainer.jpg', caption: 'Animated explainer', time: '0:45', duration: 'PT45S' },
+    ]}
+  />
+</CaseStep>
+
+<CaseStep n="03" label="Where they are used" title="Where the films are used" surface="tint">
+  After years of research and development, Coro went on sale in shops, pharmacies and online
+  in summer 2026. The films were shot and edited in time for the launch, and they run on the
+  Coroflo website and Coroflo's social media channels. We also look after the website.
+</CaseStep>

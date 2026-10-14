@@ -1,0 +1,347 @@
+---
+/**
+ * "Request an audit". The step-by-step enquiry from StartProject, adapted
+ * for the accessibility audits page (22 September 2026). Same shell,
+ * progress dots, chips, footer nav and success screen, from the shared
+ * styles in styles/pipely/start-project.css.
+ *
+ *   1. The website: its address (required) and roughly how big it is, which
+ *      is what an audit quote turns on.
+ *   2. Why now: what is prompting the audit, the timeline, and anything
+ *      else. All optional. The reasons mirror the page's own account of
+ *      the law, so nobody is pushed into picking an obligation they do not
+ *      have: "Just want to know where we stand" is always an answer.
+ *   3. Name and email (required) and organisation.
+ *
+ * Opened by any element carrying [data-audit-request]. Put that on a real
+ * link to /contact/ so the button still works with JavaScript off.
+ *
+ * SUBMISSION. Same arrangement as StartProject: no endpoint yet (CLAUDE.md
+ * launch blocker 7), so sending opens a pre-filled email and the success
+ * screen says so. Set `endpoint` to a URL that accepts a JSON POST.
+ *
+ * Accessibility, as StartProject: focus moves to each new question, invalid
+ * fields carry aria-invalid, errors are live alerts, Escape closes, and
+ * focus returns to the button that opened it.
+ */
+import '../../styles/pipely/start-project.css';
+
+const endpoint = '';
+const enquiryEmail = 'hello@doghousemedia.ie';
+
+const sizes = ['Under 20 pages', '20 to 100 pages', 'Over 100 pages', 'Not sure'];
+const reasons = [
+  'European Accessibility Act',
+  'Public sector obligations',
+  'A procurement or funder requirement',
+  'A complaint or user feedback',
+  'Just want to know where we stand',
+];
+const timelines = ['As soon as possible', 'In the next 3 months', 'Just exploring'];
+---
+
+<dialog class="sp-modal" data-ar aria-labelledby="ar-title-1">
+  <div class="sp-shell">
+    <button type="button" class="sp-close" data-ar-close aria-label="Close">&times;</button>
+
+    <div class="sp-progress" data-ar-progress aria-hidden="true">
+      <span class="sp-step-dot"></span>
+      <span class="sp-step-dot"></span>
+      <span class="sp-step-dot"></span>
+    </div>
+
+    <form class="sp-form" novalidate>
+      {/* Honeypot. Off-screen rather than display:none so bots still find it. */}
+      <div class="sp-pot" aria-hidden="true">
+        <label>Fax number <input type="text" name="fax" tabindex="-1" autocomplete="off" /></label>
+      </div>
+
+      {/* STEP 1: the website */}
+      <section class="sp-panel" data-panel="1">
+        <span class="sp-kicker">Request an audit</span>
+        <h2 class="sp-title" id="ar-title-1" tabindex="-1">Which website?</h2>
+        <p class="sp-sub">The address is enough to start. We will look at it before we reply.</p>
+        <label class="sp-field">
+          <span class="sp-label">Website address *</span>
+          <input
+            type="text"
+            inputmode="url"
+            name="site"
+            autocomplete="url"
+            placeholder="example.ie"
+            spellcheck="false"
+            required
+            aria-describedby="ar-error-1"
+          />
+        </label>
+        <fieldset class="sp-fieldset">
+          <legend class="sp-label">Roughly how big is it?</legend>
+          <div class="sp-chips">
+            {sizes.map((t) => (
+              <label class="sp-chip">
+                <input type="radio" name="size" value={t} />
+                <span>{t}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+        <p class="sp-error" id="ar-error-1" data-ar-error="1" role="alert"></p>
+      </section>
+
+      {/* STEP 2: why now. All optional. */}
+      <section class="sp-panel" data-panel="2" hidden>
+        <span class="sp-kicker">Your audit</span>
+        <h2 class="sp-title" id="ar-title-2" tabindex="-1">What is prompting it?</h2>
+        <p class="sp-sub">Pick any that apply, or skip this. If you are not sure what applies to you, we will tell you.</p>
+        <fieldset class="sp-fieldset">
+          <legend class="sp-label">Reason</legend>
+          <div class="sp-chips">
+            {reasons.map((t) => (
+              <label class="sp-chip">
+                <input type="checkbox" name="reason" value={t} />
+                <span>{t}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+        <fieldset class="sp-fieldset">
+          <legend class="sp-label">Timeline</legend>
+          <div class="sp-chips">
+            {timelines.map((t) => (
+              <label class="sp-chip">
+                <input type="radio" name="timeline" value={t} />
+                <span>{t}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+        <label class="sp-field">
+          <span class="sp-label">Anything else we should know?</span>
+          <textarea name="notes" rows="3"></textarea>
+        </label>
+      </section>
+
+      {/* STEP 3: contact */}
+      <section class="sp-panel" data-panel="3" hidden>
+        <span class="sp-kicker">Almost there</span>
+        <h2 class="sp-title" id="ar-title-3" tabindex="-1">Where can we reach you?</h2>
+        <div class="sp-row">
+          <label class="sp-field">
+            <span class="sp-label">Name *</span>
+            <input type="text" name="name" autocomplete="name" required aria-describedby="ar-error-3" />
+          </label>
+          <label class="sp-field">
+            <span class="sp-label">Email *</span>
+            <input type="email" name="email" autocomplete="email" required aria-describedby="ar-error-3" />
+          </label>
+        </div>
+        <label class="sp-field">
+          <span class="sp-label">Organisation</span>
+          <input type="text" name="organisation" autocomplete="organization" />
+        </label>
+        <p class="sp-error" id="ar-error-3" data-ar-error="3" role="alert"></p>
+      </section>
+
+      {/* SUCCESS */}
+      <section class="sp-panel sp-success" data-panel="done" hidden>
+        <div class="sp-check" aria-hidden="true">&check;</div>
+        <h2 class="sp-title" id="ar-title-done" tabindex="-1" data-done-title>Thanks, we're on it.</h2>
+        <p class="sp-sub" data-done-body>Your request is on its way. We'll be in touch within one working day.</p>
+        <button type="button" class="pl-btn" data-ar-close>Done</button>
+      </section>
+
+      {/* Footer nav */}
+      <div class="sp-nav" data-ar-foot>
+        <button type="button" class="sp-back" data-ar-back>&larr; Back</button>
+        <button type="button" class="pl-btn sp-advance" data-ar-next>Continue</button>
+        <button type="submit" class="pl-btn sp-advance" data-ar-submit>Send request</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+<script define:vars={{ endpoint, enquiryEmail }}>
+  (function () {
+    const dialog = document.querySelector('[data-ar]');
+    if (!dialog) return;
+
+    const form = dialog.querySelector('.sp-form');
+    const dots = dialog.querySelectorAll('.sp-step-dot');
+    const foot = dialog.querySelector('[data-ar-foot]');
+    const back = dialog.querySelector('[data-ar-back]');
+    const nextBtn = dialog.querySelector('[data-ar-next]');
+    const submitBtn = dialog.querySelector('[data-ar-submit]');
+    const progress = dialog.querySelector('[data-ar-progress]');
+    const doneTitle = dialog.querySelector('[data-done-title]');
+    const doneBody = dialog.querySelector('[data-done-body]');
+    const site = form.querySelector('[name="site"]');
+    const name = form.querySelector('[name="name"]');
+    const email = form.querySelector('[name="email"]');
+    const err = (n) => dialog.querySelector(`[data-ar-error="${n}"]`);
+
+    let step = 1; // 1..3, then 'done'
+    let trigger = null;
+
+    function clearErrors() {
+      [err(1), err(3)].forEach((e) => (e.textContent = ''));
+      [site, name, email].forEach((f) => f.removeAttribute('aria-invalid'));
+    }
+
+    function render() {
+      dialog.querySelectorAll('.sp-panel').forEach((p) => (p.hidden = p.dataset.panel !== String(step)));
+      progress.hidden = step === 'done';
+      foot.hidden = step === 'done';
+      back.style.visibility = step === 1 ? 'hidden' : 'visible';
+      nextBtn.hidden = step === 3;
+      submitBtn.hidden = step !== 3;
+
+      dots.forEach((d, i) => {
+        const n = i + 1;
+        d.classList.toggle('active', typeof step === 'number' && n === step);
+        d.classList.toggle('done', typeof step === 'number' && n < step);
+      });
+
+      // Move focus to the new question so a screen reader announces it.
+      const title = dialog.querySelector(`[data-panel="${step}"] .sp-title`);
+      dialog.setAttribute('aria-labelledby', title.id);
+      title.focus({ preventScroll: true });
+      dialog.querySelector('.sp-shell').scrollTop = 0;
+    }
+
+    function open() {
+      form.reset();
+      clearErrors();
+      step = 1;
+      document.documentElement.classList.add('has-modal');
+      dialog.showModal();
+      render();
+    }
+    const close = () => dialog.close();
+
+    // Open triggers. A modified click still follows the fallback link.
+    document.querySelectorAll('[data-audit-request]').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        e.preventDefault();
+        trigger = btn;
+        open();
+      });
+    });
+
+    dialog.querySelectorAll('[data-ar-close]').forEach((b) => b.addEventListener('click', close));
+    dialog.addEventListener('click', (e) => { if (e.target === dialog) close(); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && dialog.open) { e.preventDefault(); close(); }
+    });
+    dialog.addEventListener('close', () => {
+      step = 1;
+      document.documentElement.classList.remove('has-modal');
+      if (trigger && document.contains(trigger)) trigger.focus();
+    });
+
+    // A web address in any of the forms people type: example.ie,
+    // www.example.ie, https://example.ie/page. Needs a dot and no spaces.
+    const looksLikeSite = (v) => /^(https?:\/\/)?[^\s/.]+(\.[^\s/.]+)+(\/\S*)?$/i.test(v.trim());
+
+    function validateStep1() {
+      if (looksLikeSite(site.value)) return true;
+      site.setAttribute('aria-invalid', 'true');
+      err(1).textContent = site.value.trim()
+        ? 'That does not look like a web address. Try something like example.ie.'
+        : 'Please add the website address.';
+      site.focus();
+      return false;
+    }
+
+    back.addEventListener('click', () => { clearErrors(); step -= 1; render(); });
+    nextBtn.addEventListener('click', () => {
+      clearErrors();
+      if (step === 1 && !validateStep1()) return;
+      step += 1;
+      render();
+    });
+
+    // Enter in a text field or on a chip means Continue on steps 1 and 2,
+    // not submit. Enter in the notes box is a new line.
+    form.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && step !== 3 && e.target.tagName === 'INPUT') {
+        e.preventDefault();
+        nextBtn.click();
+      }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (step !== 3) { nextBtn.click(); return; }
+      clearErrors();
+
+      const bad = [name, email].filter((f) => !f.value.trim() || !f.checkValidity());
+      if (bad.length) {
+        bad.forEach((f) => f.setAttribute('aria-invalid', 'true'));
+        err(3).textContent = 'Please add your name and a valid email.';
+        bad[0].focus();
+        return;
+      }
+
+      const fd = new FormData(form);
+      const payload = {
+        interest: 'Accessibility audit',
+        site: site.value.trim(),
+        size: String(fd.get('size') || ''),
+        reasons: fd.getAll('reason').map(String),
+        timeline: String(fd.get('timeline') || ''),
+        notes: String(fd.get('notes') || '').trim(),
+        name: name.value.trim(),
+        email: email.value.trim(),
+        organisation: String(fd.get('organisation') || '').trim(),
+      };
+
+      // Honeypot filled: act as if it sent, send nothing.
+      if (form.querySelector('[name="fax"]').value) { step = 'done'; render(); return; }
+
+      let sent = false;
+      if (endpoint) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending';
+        try {
+          const res = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          sent = res.ok;
+        } catch (error) {
+          sent = false;
+        }
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send request';
+      }
+
+      if (sent) {
+        doneTitle.textContent = "Thanks, we're on it.";
+        doneBody.textContent = "Your request is on its way. We'll look at the site and be in touch within one working day.";
+      } else {
+        // No endpoint, or it failed: hand off to a pre-filled email.
+        const subject = `Accessibility audit request: ${payload.site}`;
+        const body = [
+          `Website: ${payload.site}`,
+          `Size: ${payload.size || 'Not given'}`,
+          `Prompted by: ${payload.reasons.length ? payload.reasons.join(', ') : 'Not given'}`,
+          `Timeline: ${payload.timeline || 'Not given'}`,
+          '',
+          payload.notes || '(No other details)',
+          '',
+          `Name: ${payload.name}`,
+          `Email: ${payload.email}`,
+          `Organisation: ${payload.organisation || 'Not given'}`,
+        ].join('\n');
+        window.location.href = `mailto:${enquiryEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        doneTitle.textContent = 'One last step.';
+        doneBody.textContent = `We've opened an email with your answers filled in. Press send and it reaches us. If nothing opened, write to ${enquiryEmail}.`;
+      }
+
+      step = 'done';
+      render();
+    });
+  })();
+</script>

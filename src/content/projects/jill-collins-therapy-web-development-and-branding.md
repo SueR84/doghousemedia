@@ -1,18 +1,17 @@
 ---
 title: "Jill Collins Therapy - Web Development and Branding"
 client: "Jill Collins Therapy"
-service: "Website Development, Booking Integration"
-shortDescription: "Holistic Health Web Development and Branding"
-websiteLink: "https://jillcollinstherapy.ie/"
-projectVideo: ""
-projectImage: "https://doghousemedia.ie/wp-content/uploads/2024/07/Jill-Collins-website.jpg"
-projectGallery: []
-projectType:
-  - "Web Development"
+year: 2024
 craft: "web"
-status: "publish"
+summary: "Holistic Health Web Development and Branding"
+cover: "/work/jill-collins-website.jpg"
+liveUrl: "https://jillcollinstherapy.ie/"
+services:
+  - "Website Development"
+  - "Booking Integration"
+order: 9
+draft: false
 ---
-
 Project Overview:
 
  Jill Collins is a dedicated therapist with 13 years of experience, driven by a passion for holistic health. With a diverse skillset, she employs various therapeutic approaches to help clients achieve optimal well-being. 

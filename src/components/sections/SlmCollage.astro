@@ -1,0 +1,270 @@
+---
+/**
+ * Someone Like Me thumbnail, built as separate layers rather than one flat
+ * image, so the pieces can move apart as the card scrolls through view.
+ *
+ * On entry the layers sit stacked close together. By the time the card
+ * reaches the middle of the screen they have fanned out into the collage,
+ * the language pill has switched from English to Gaeilge, and from there
+ * each layer drifts at its own speed until the card leaves.
+ *
+ * Accessibility (WCAG 2.2 AA, see CLAUDE.md):
+ *   - Movement is tied to the visitor's own scrolling, it never runs by
+ *     itself, so 2.2.2 does not ask for a pause control.
+ *   - Under prefers-reduced-motion, and with JavaScript off, the layers sit
+ *     in their finished positions and nothing moves.
+ *   - The whole box is one image to assistive tech (role="img" + alt).
+ *     Every layer inside is aria-hidden.
+ *   - Sticker text is quoted from the client site. The Irish line carries
+ *     lang="ga". Neither is read out, the alt text covers them.
+ *
+ * Geometry is drawn on a 1600 x 1152 board (the .pl-media.is-case ratio)
+ * and scaled with container units, so --u is one board pixel at any width.
+ */
+interface Props { alt: string }
+const { alt } = Astro.props;
+const base = '/work/featured/slm';
+---
+<div class="slm" data-slm role="img" aria-label={alt}>
+  <div class="slm-board" aria-hidden="true">
+
+    <svg class="slm-l slm-tri" data-d="-1.2" data-r="-10" data-fx="-200" data-fy="-160" data-fr="-40" viewBox="0 0 100 100"><polygon points="0,0 100,10 30,90"/></svg>
+    <svg class="slm-l slm-arc" data-d="-0.8" data-r="14" data-fy="-220" data-fr="60" viewBox="0 0 100 100"><path d="M10 90 A40 40 0 0 1 90 90"/></svg>
+    <svg class="slm-l slm-ring" data-d="1" data-r="-24" data-fx="-200" data-fy="200" data-fr="-60" viewBox="0 0 100 100"><g><circle cx="30" cy="30" r="14"/><circle cx="58" cy="26" r="14"/><circle cx="76" cy="50" r="14"/><circle cx="60" cy="76" r="14"/><circle cx="30" cy="72" r="14"/><circle cx="16" cy="50" r="14"/></g></svg>
+    <svg class="slm-l slm-vee" data-d="1.6" data-r="0" data-fy="240" viewBox="0 0 100 70"><polyline points="5,10 50,60 95,10"/></svg>
+
+    <div class="slm-l slm-toggle" data-d="-0.3" data-r="0"><span>English</span><span>Gaeilge</span><i class="slm-pill"></i></div>
+    <div class="slm-l slm-label" data-d="-0.3" data-r="0">EN / GA · WCAG 2.1 AA · NDA</div>
+
+    <div class="slm-l slm-win slm-en" data-d="-0.35" data-r="-1.2" data-fx="260" data-fy="200" data-fr="-6" data-fs="0.08">
+      <div class="slm-bar"><i></i><i></i><i></i><span>someonelikemeartawards.ie</span></div>
+      <img src={`${base}/slm-en.webp`} alt="" width="1200" height="680" loading="lazy" decoding="async" />
+    </div>
+
+    <div class="slm-l slm-win slm-ga" data-d="0.5" data-r="1.6" data-fx="-420" data-fy="-330" data-fr="8" data-fs="0.1">
+      <div class="slm-bar"><i></i><i></i><i></i><span>someonelikemeartawards.ie<b>/ga/</b></span></div>
+      <img src={`${base}/slm-ga.webp`} alt="" width="1200" height="402" loading="lazy" decoding="async" />
+    </div>
+
+
+    <svg class="slm-l slm-splat" data-d="-1.3" data-r="30" data-fx="-500" data-fy="400" data-fr="120" data-fs="0.6" viewBox="0 0 100 100"><path d="M50 8c8 0 10 12 18 10s14-8 18 0-6 14-2 22 16 8 12 18-16 4-20 12 4 20-6 22-12-10-20-8-12 14-20 8 0-16-6-22-20-2-20-12 12-10 12-18-12-14-6-20 14 2 20-2 2-10 10-10z"/></svg>
+
+    <div class="slm-l slm-sticker slm-s-ga" data-d="0.9" data-r="-4" data-fx="420" data-fy="-300" data-fr="12" data-fs="0.2">
+      <i class="slm-tape"></i>
+      <span class="slm-tag">GA</span>
+      <p lang="ga"><em>Réidh le dul i ngleic</em> leis an gceist?</p>
+    </div>
+
+    <div class="slm-l slm-sticker slm-s-en" data-d="-0.6" data-r="4" data-fx="-520" data-fy="-340" data-fr="-12" data-fs="0.2">
+      <span class="slm-tag">EN</span>
+      <p>We can’t wait to see <em>what you create.</em></p>
+    </div>
+  </div>
+
+  <!-- The phone and the orange star sit outside the clipped board so they
+       can break out past the edges of the card. -->
+  <div class="slm-float" aria-hidden="true">
+    <svg class="slm-l slm-star" data-d="1.4" data-r="40" data-fx="220" data-fy="160" data-fr="90" viewBox="0 0 100 100"><polygon points="50,0 61,32 95,25 70,50 95,75 61,68 50,100 39,68 5,75 30,50 5,25 39,32"/></svg>
+    <div class="slm-l slm-phone" data-d="-0.9" data-r="4" data-fx="-600" data-fy="300" data-fr="-14" data-fs="0.12">
+      <div class="slm-scr"><img src={`${base}/slm-phone.webp`} alt="" width="520" height="1050" loading="lazy" decoding="async" /></div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .slm { position: absolute; inset: 0; container-type: inline-size; border-radius: inherit; }
+  /* Let the phone out of the card's media box. The board keeps its own clip. */
+  :global(.pl-media:has(> .slm)) { overflow: visible; }
+  .slm-board, .slm-float {
+    --u: calc(100cqw / 1600);
+    --navy: #26205C; --red: #D8262E; --yellow: #F2B533; --green: #4E9A5B;
+    --blue: #3E9AD6; --orange: #EE7B30; --paper: #F3ECDC;
+    position: absolute; inset: 0;
+  }
+  .slm-float { pointer-events: none; }
+  .slm-board {
+    overflow: clip; border-radius: inherit;
+    background:
+      radial-gradient(calc(1200 * var(--u)) calc(700 * var(--u)) at 30% 20%, #2f2872 0%, transparent 60%),
+      radial-gradient(calc(900 * var(--u)) calc(600 * var(--u)) at 85% 90%, #1d184a 0%, transparent 60%),
+      var(--navy);
+  }
+
+  /* Each layer: finished position, then a scroll offset from the script.
+     --s is spread, 0 stacked to 1 fanned out. --p is parallax, -1 to 1. */
+  .slm-l {
+    position: absolute; --s: 1; --p: 0;
+    /* Master strengths. Turn these down to calm the whole thing at once.
+       --k: how far layers start from home. --kp: scroll drift in board px.
+       --kr: how much of each layer's rotation to use. */
+    --k: .45; --kp: 60; --kr: .4;
+    translate:
+      calc((1 - var(--s)) * var(--fx, 0) * var(--k) * var(--u))
+      calc((1 - var(--s)) * var(--fy, 0) * var(--k) * var(--u) + var(--p) * var(--d, 0) * var(--kp) * var(--u));
+    rotate: calc(var(--rot, 0deg) + (var(--p) * var(--r, 0) + (1 - var(--s)) * var(--fr, 0)) * var(--kr) * 1deg);
+    scale: calc(1 - (1 - var(--s)) * var(--fs, 0) * var(--k));
+    will-change: translate, rotate, scale;
+  }
+
+  .slm-tri   { left: calc(-40 * var(--u)); top: calc(-60 * var(--u)); width: calc(260 * var(--u)); fill: var(--yellow); }
+  .slm-arc   { left: calc(1040 * var(--u)); top: calc(-70 * var(--u)); width: calc(230 * var(--u)); fill: none; stroke: var(--green); stroke-width: 22; }
+  /* Pokes out past the right and bottom edges by a fixed amount at any width. */
+  .slm-star  { right: -28px; bottom: -28px; width: calc(230 * var(--u)); fill: var(--orange); }
+  .slm-ring  { left: calc(-60 * var(--u)); top: calc(980 * var(--u)); width: calc(240 * var(--u)); fill: none; stroke: var(--blue); stroke-width: 5; }
+  .slm-vee   { left: calc(560 * var(--u)); top: calc(1040 * var(--u)); width: calc(160 * var(--u)); fill: none; stroke: var(--green); stroke-width: 16; }
+  .slm-splat { left: calc(1130 * var(--u)); top: calc(70 * var(--u)); width: calc(130 * var(--u)); fill: var(--red); }
+
+  .slm-toggle {
+    left: calc(70 * var(--u)); top: calc(58 * var(--u));
+    display: flex; gap: calc(4 * var(--u)); padding: calc(6 * var(--u));
+    border-radius: 999px; background: #fff;
+    box-shadow: 0 calc(16 * var(--u)) calc(30 * var(--u)) calc(-10 * var(--u)) rgb(8 6 30 / .6);
+  }
+  .slm-toggle span {
+    position: relative; z-index: 1;
+    font: 700 calc(22 * var(--u)) var(--font-display);
+    padding: calc(10 * var(--u)) calc(22 * var(--u)); color: var(--navy);
+    transition: color .25s;
+  }
+  /* The red pill slides from English to Gaeilge as --lang goes 0 to 1.
+     The script measures both words and sets --x0/--w0 and --x1/--w1. */
+  .slm-toggle { --lang: 1; }
+  .slm-pill {
+    position: absolute; top: calc(6 * var(--u)); bottom: calc(6 * var(--u));
+    left: calc(var(--x0, 0px) + (var(--x1, 0px) - var(--x0, 0px)) * var(--lang));
+    width: calc(var(--w0, 0px) + (var(--w1, 0px) - var(--w0, 0px)) * var(--lang));
+    border-radius: 999px; background: var(--red);
+  }
+  .slm-toggle span:nth-child(1) { color: color-mix(in srgb, var(--navy), #fff calc((1 - var(--lang, 1)) * 100%)); }
+  .slm-toggle span:nth-child(2) { color: color-mix(in srgb, var(--navy), #fff calc(var(--lang, 1) * 100%)); }
+
+  .slm-label {
+    left: calc(392 * var(--u)); top: calc(80 * var(--u));
+    font: 500 calc(16 * var(--u)) var(--font-mono); letter-spacing: .12em;
+    color: #F3ECDC; opacity: .85; white-space: nowrap;
+  }
+
+  .slm-win {
+    border-radius: calc(14 * var(--u)); overflow: hidden; background: #fff;
+    box-shadow: 0 calc(40 * var(--u)) calc(80 * var(--u)) calc(-20 * var(--u)) rgb(8 6 30 / .7),
+                0 calc(12 * var(--u)) calc(24 * var(--u)) rgb(8 6 30 / .35);
+  }
+  .slm-win img { display: block; width: 100%; height: auto; }
+  .slm-bar {
+    height: calc(42 * var(--u)); background: #FBF8F1; border-bottom: 1px solid #e6dfcf;
+    display: flex; align-items: center; gap: calc(8 * var(--u)); padding: 0 calc(16 * var(--u));
+  }
+  .slm-bar i { width: calc(12 * var(--u)); height: calc(12 * var(--u)); border-radius: 50%; background: #d9d1bf; }
+  .slm-bar span {
+    margin-left: calc(14 * var(--u)); flex: 1; height: calc(26 * var(--u)); border-radius: 999px; background: #EDE6D6;
+    display: flex; align-items: center; padding: 0 calc(14 * var(--u));
+    font: 500 calc(14 * var(--u)) var(--font-mono); color: #3b355f; white-space: nowrap;
+  }
+  .slm-bar b { color: var(--red); font-weight: 700; }
+  .slm-en { left: calc(70 * var(--u)); top: calc(160 * var(--u)); width: calc(880 * var(--u)); --rot: -2.5deg; }
+  .slm-ga { left: calc(590 * var(--u)); top: calc(560 * var(--u)); width: calc(880 * var(--u)); --rot: 1.8deg; }
+
+  .slm-phone {
+    /* Top edge rests about 40px above the card at any width. */
+    left: calc(1215 * var(--u)); top: -40px;
+    width: calc(300 * var(--u)); height: calc(600 * var(--u)); --rot: 5deg;
+    padding: calc(12 * var(--u)); border-radius: calc(44 * var(--u)); background: #111;
+    box-shadow: 0 calc(40 * var(--u)) calc(80 * var(--u)) calc(-20 * var(--u)) rgb(8 6 30 / .8);
+  }
+  .slm-scr { height: 100%; border-radius: calc(34 * var(--u)); overflow: hidden; }
+  .slm-scr img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+
+  .slm-sticker {
+    background: var(--paper);
+    box-shadow: 0 calc(24 * var(--u)) calc(50 * var(--u)) calc(-16 * var(--u)) rgb(8 6 30 / .7);
+  }
+  .slm-sticker p { margin: 0; font: 800 calc(44 * var(--u))/1.02 var(--font-display); letter-spacing: -.02em; color: var(--navy); }
+  .slm-sticker em { font-style: normal; color: var(--red); }
+  .slm-tag {
+    display: inline-block; margin-bottom: calc(14 * var(--u));
+    font: 700 calc(14 * var(--u)) var(--font-mono); letter-spacing: .08em;
+    padding: calc(6 * var(--u)) calc(10 * var(--u)); border-radius: calc(6 * var(--u));
+  }
+  .slm-tape {
+    position: absolute; width: calc(120 * var(--u)); height: calc(34 * var(--u));
+    top: calc(-16 * var(--u)); left: 50%; transform: translateX(-50%) rotate(-3deg);
+    background: rgb(242 181 51 / .85);
+  }
+  .slm-s-ga { left: calc(60 * var(--u)); top: calc(770 * var(--u)); width: calc(500 * var(--u)); --rot: -4deg; padding: calc(26 * var(--u)) calc(30 * var(--u)) calc(28 * var(--u)); }
+  .slm-s-ga .slm-tag { background: var(--red); color: #fff; }
+  .slm-s-en { left: calc(1125 * var(--u)); top: calc(905 * var(--u)); width: calc(420 * var(--u)); --rot: 3deg; padding: calc(22 * var(--u)) calc(26 * var(--u)) calc(24 * var(--u)); }
+  .slm-s-en p { font-size: calc(36 * var(--u)); }
+  .slm-s-en .slm-tag { background: var(--navy); color: #fff; }
+</style>
+
+<script>
+  const motionOk = window.matchMedia('(prefers-reduced-motion: no-preference)');
+  const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
+  const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+
+  document.querySelectorAll<HTMLElement>('[data-slm]').forEach((root) => {
+    const layers = [...root.querySelectorAll<HTMLElement>('.slm-l')];
+    const pill = root.querySelector<HTMLElement>('.slm-pill')!;
+    const toggle = root.querySelector<HTMLElement>('.slm-toggle')!;
+
+    // Copy the data attributes into custom properties once.
+    for (const l of layers) {
+      for (const k of ['d', 'r', 'fx', 'fy', 'fr', 'fs'] as const) {
+        const v = l.dataset[k];
+        if (v !== undefined) l.style.setProperty(`--${k}`, v);
+      }
+    }
+
+    let visible = false;
+    let queued = false;
+
+    const words = toggle.querySelectorAll<HTMLElement>('span');
+    const measure = () => {
+      const [en, ga] = words;
+      toggle.style.setProperty('--x0', `${en.offsetLeft}px`);
+      toggle.style.setProperty('--w0', `${en.offsetWidth}px`);
+      toggle.style.setProperty('--x1', `${ga.offsetLeft}px`);
+      toggle.style.setProperty('--w1', `${ga.offsetWidth}px`);
+    };
+    measure();
+    new ResizeObserver(measure).observe(root);
+    document.fonts?.ready.then(measure);
+
+    const settle = () => {
+      for (const l of layers) { l.style.setProperty('--s', '1'); l.style.setProperty('--p', '0'); }
+      toggle.style.setProperty('--lang', '1');
+    };
+
+    const update = () => {
+      queued = false;
+      if (!motionOk.matches) { settle(); return; }
+      const r = root.getBoundingClientRect();
+      const vh = window.innerHeight;
+      // -1 as the card's top enters the bottom of the screen,
+      // 0 when the card is centred, 1 as its bottom leaves the top.
+      const p = clamp(((r.top + r.height / 2) - vh / 2) / ((vh + r.height) / 2), -1, 1) * -1;
+      // Spread goes 0 to 1 from entry to just before centre, so the
+      // stacked state is actually on screen long enough to be seen.
+      const s = ease(clamp((p + 0.95) / 0.85, 0, 1));
+      // The language pill switches just after the layers open out.
+      const lang = ease(clamp((p + 0.4) / 0.3, 0, 1));
+      for (const l of layers) {
+        l.style.setProperty('--s', s.toFixed(4));
+        l.style.setProperty('--p', p.toFixed(4));
+      }
+      toggle.style.setProperty('--lang', lang.toFixed(4));
+    };
+
+    const request = () => { if (visible && !queued) { queued = true; requestAnimationFrame(update); } };
+
+    new IntersectionObserver((entries) => {
+      visible = entries[0].isIntersecting;
+      if (visible) request();
+    }, { rootMargin: '10% 0px' }).observe(root);
+
+    window.addEventListener('scroll', request, { passive: true });
+    window.addEventListener('resize', request);
+    motionOk.addEventListener('change', () => (motionOk.matches ? request() : settle()));
+    update();
+  });
+</script>

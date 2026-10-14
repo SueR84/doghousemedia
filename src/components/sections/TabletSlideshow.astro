@@ -1,0 +1,956 @@
+---
+/**
+ * A landscape tablet that slides in from the left edge of its panel, then
+ * crossfades through screenshots of sites we have built. Homepage web
+ * block, from 21 September 2026, replacing the phone carousel there (which
+ * moved to /web-development/).
+ *
+ * Screenshots are flat captures of the live sites at 1194 x 834, the
+ * landscape iPad Pro 11" viewport, so they fill the screen without a crop.
+ * Consent banners were hidden in the capture, never accepted. Re-capture
+ * when a client redesigns: the files are in /public/work/tablet/.
+ *
+ * Geometry follows IpadFrame's landscape body (bezel 0.032w, radii 0.100w
+ * and 0.068w). It carries a hairline edge and, from 24 September 2026, a
+ * soft shadow: an agreed exception to PIPELY-FORK's no-shadow rule for
+ * this one device, which floats over the panel edge.
+ *
+ * Motion, all off under prefers-reduced-motion:
+ *   - Slide in: once, as the block scrolls into view. The panel clips its
+ *     overflow, so the tablet appears to come out of the left margin.
+ *   - Scroll drift: while the block crosses the screen the tablet rises a
+ *     little, eases out of the margin and levels off from a slight tilt.
+ *     It only ever moves left of its resting place, so it never closes
+ *     the gap to the text.
+ *   - Crossfade: a new site every 4 seconds, 7 on the two slides that
+ *     carry cards over the screenshot, Loreto South Sudan and Shapes of
+ *     Grief. That runs past five seconds,
+ *     so WCAG 2.2.2 applies and there is a visible pause button. It also
+ *     stops while the block is off screen.
+ * With reduced motion or no JavaScript, the first site is shown still and
+ * the pause button never appears.
+ *
+ * Accessibility: each screenshot has alt text naming the site. The slides
+ * not showing are aria-hidden, so a screen reader meets one site at a time
+ * rather than five overlapping images. The visible caption names the site
+ * too; it is not a live region, because announcing every four seconds
+ * would talk over the rest of the page.
+ */
+interface Slide {
+  src: string;
+  name: string;
+  alt: string;
+  /** Shows the donation form and chart cards over this slide. */
+  give?: boolean;
+  /** Shows the course progress cards over this slide. */
+  lms?: boolean;
+  /** Shows the clinic assistant panel raised over this slide. */
+  chat?: boolean;
+  /** A mobile screenshot shown in a phone over this slide. */
+  phoneShot?: { src: string; focus?: string };
+  /** Projects built in partnership: the caption reads "Built with ..."
+      instead of "Built by us". Real Nation designed and ran Our World
+      Awards and Someone Like Me, and must always be credited. */
+  partner?: string;
+}
+
+const slides: Slide[] = [
+  {
+    src: '/work/tablet/ourworld.jpg',
+    name: 'Our World Awards',
+    alt: 'Our World Awards homepage for Irish Aid, a bilingual schools site with a Gaeilge switch, headed Welcome to Our World Awards. Built in partnership with Real Nation, who designed and ran the project.',
+    partner: 'Real Nation',
+  },
+  {
+    src: '/work/tablet/loretosouthsudan.jpg',
+    name: 'Loreto South Sudan',
+    alt: 'Loreto South Sudan homepage, headed Educating girls in South Sudan, with a donate button in the header. Shown with its donation form, which offers one-off or monthly gifts from 15 to 120 euro.',
+    give: true,
+  },
+  {
+    src: '/work/tablet/basispoint.jpg',
+    name: 'basis.point',
+    alt: 'basis.point homepage, headed Empowering young futures, over a photo of a child playing with wooden letters. Shown with the volunteering page on a phone, headed Premier and Prestige Patron Volunteering Opportunities, above a button to register your interest.',
+    /* Captured at the iPhone 16 viewport, 393 x 852 at 3x, so the phone
+       crops nothing. A capture at any other shape loses the sides of the
+       heading once it is fitted to the screen. */
+    phoneShot: { src: '/work/tablet/basispoint-volunteering.jpg' },
+  },
+  {
+    src: '/work/tablet/wrh.jpg',
+    name: 'Western Rheumatology',
+    alt: 'Western Rheumatology homepage with the clinic assistant open. A patient asks where the clinic is located and the assistant answers with its two locations, Blackrock Health Clinic and Bon Secours Hospital.',
+    chat: true,
+  },
+  {
+    src: '/work/tablet/offscript.jpg',
+    name: 'Off Script',
+    alt: 'Off Script homepage, styled like a camcorder viewfinder, with the line: We post a camcorder. Your people film. You get a tape.',
+  },
+  {
+    src: '/work/tablet/shapesofgrief.jpg',
+    name: 'Shapes of Grief',
+    alt: 'Shapes of Grief homepage, a grief training platform with course sign-up and an illustrated hero. Shown with a learner\u2019s view of the course: a lesson marked complete, and progress through the four levels of the Grief Training Programme.',
+    lms: true,
+  },
+  {
+    src: '/work/tablet/galwaybraces.jpg',
+    name: 'Galway Braces',
+    alt: 'Galway Braces homepage, an orthodontic practice site headed Specialist Galway Orthodontic Practice.',
+  },
+];
+---
+
+<figure class="dhts" data-tablet-slideshow>
+  <div class="dhts-drift">
+  <div class="dhts-device">
+    <div class="dhts-screen">
+      {slides.map((s, i) => (
+        <img
+          class:list={['dhts-slide', i === 0 && 'is-active']}
+          src={s.src}
+          alt={s.alt}
+          width="1200"
+          height="838"
+          loading={i === 0 ? 'eager' : 'lazy'}
+          decoding="async"
+          aria-hidden={i === 0 ? undefined : 'true'}
+          data-name={s.name}
+          data-give={s.give ? '' : undefined}
+          data-lms={s.lms ? '' : undefined}
+          data-chat={s.chat ? '' : undefined}
+          data-phone-shot={s.phoneShot?.src}
+          data-phone-focus={s.phoneShot?.focus}
+          data-partner={s.partner}
+        />
+      ))}
+    </div>
+    <span class="dhts-cam" aria-hidden="true"></span>
+  </div>
+
+  {/* Loreto South Sudan's donation form, redrawn from the live GiveWP form
+      (form 7326, checked 21 September 2026): title, one-off or monthly,
+      the four real levels with 30 euro preselected, the real button text
+      and the site's green #72bf44. The chart beside it carries no figures
+      on purpose: the form's goal is switched off, so there are no public
+      totals, and we do not invent them. Decorative, and aria-hidden,
+      because the slide's alt text already describes the form. */}
+  <div class="dhts-give" aria-hidden="true">
+    <div class="dhts-card dhts-chart">
+      <span class="dhts-card__title">Donations</span>
+      <span class="dhts-chart__bars">
+        {[34, 46, 40, 58, 52, 71, 66, 88].map((h, i) => <span style={`--h:${h}%;--i:${i}`}></span>)}
+      </span>
+      <span class="dhts-chart__legend"><i></i>One-off <i class="is-monthly"></i>Monthly</span>
+    </div>
+    <div class="dhts-card dhts-form">
+      <span class="dhts-card__title">Donate to Loreto South Sudan</span>
+      <span class="dhts-form__freq"><b>One Time</b><span>Monthly</span></span>
+      <span class="dhts-form__amounts">
+        <span>€15</span><b>€30</b><span>€65</span><span>€120</span>
+      </span>
+      <span class="dhts-form__go">Donate Now &rarr;</span>
+    </div>
+  </div>
+
+  {/* Shapes of Grief runs a learning platform, so its slide shows what a
+      learner sees, on a phone beside the tablet: the lesson marked
+      complete, then progress through the course. Drawn rather than
+      screenshotted, so it stays sharp at any size, from the platform's own
+      screens (supplied 25 September 2026) and its colours, sage #7a8c73
+      for complete and plum #a33757 for the accent. The level names are the
+      real ones. No learner and no figures beyond the lesson state.
+
+      The phone is a real iPhone 16: body 1 : 2.0615, screen 393 x 852 pt
+      with an even bezel, Dynamic Island 126 x 37 pt. Decorative, and
+      aria-hidden: the slide's alt text describes it. */}
+  <div class="dhts-lms" aria-hidden="true">
+    <div class="dhts-phone">
+      <div class="dhts-phone__screen">
+        <span class="dhts-phone__island"></span>
+        <div class="dhts-phone__ui">
+          <span class="dhts-lesson__title">Yalom on Dying, Death and Grief</span>
+          <span class="dhts-lesson__crumb">Grief Training Programme &rsaquo; Yalom on Dying, Deat...</span>
+          <span class="dhts-lesson__complete">Complete</span>
+          <span class="dhts-lesson__tabs"><b>Lesson</b><span>Materials</span></span>
+          <span class="dhts-lesson__sub">With Irvin Yalom and Liz Gleeson</span>
+          <span class="dhts-lesson__lines"><i></i><i></i><i></i><i class="is-short"></i></span>
+          <span class="dhts-progress">
+            <span class="dhts-progress__label">Your progress</span>
+            <span class="dhts-progress__bar"><i></i></span>
+            <span class="dhts-progress__levels">
+              <span class="is-done"><i></i>Level One</span>
+              <span class="is-current"><i></i>Level Two</span>
+              <span><i></i>Level Three</span>
+              <span><i></i>Level Four</span>
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {/* A page on a phone, for the slides that carry one. The screenshot is
+      swapped per slide by the script, so one phone serves them all. Real
+      iPhone 16 proportions, as everywhere else. Decorative, and
+      aria-hidden: the slide's alt text describes the page. */}
+  <div class="dhts-shot" aria-hidden="true">
+    <div class="dhts-shot__screen">
+      <span class="dhts-shot__island"></span>
+      <img data-shot alt="" loading="lazy" decoding="async" />
+    </div>
+  </div>
+
+  {/* The clinic assistant, raised off the page so it reads at tablet size
+      (25 September 2026). A screenshot of the real conversation, supplied
+      by the studio: a patient asks where the clinic is and the assistant
+      answers with both locations. It sits over the small one in the page
+      screenshot behind it. Decorative, and aria-hidden: the slide's alt
+      text carries the exchange. */}
+  <div class="dhts-chat" aria-hidden="true">
+    <img src="/work/tablet/wrh-chat.jpg" alt="" width="694" height="1074" loading="lazy" decoding="async" />
+    {/* The thread continues under the screenshot: the patient types a
+        second question, then the assistant starts composing. Typed by the
+        script so it reads as live rather than as another still. */}
+    <div class="dhts-chat__live">
+      <span class="dhts-chat__ask"><span data-chat-type></span><i class="dhts-chat__caret"></i></span>
+      <span class="dhts-chat__reply" data-chat-reply>
+        <i></i><i></i><i></i>
+      </span>
+    </div>
+  </div>
+  </div>
+
+  <figcaption class="dhts-bar">
+    {/* Pause first, beside the caption (22 September 2026). Leading rather
+        than trailing, so it stays put while the site name changes length. */}
+    <button class="pl-pause dhts-pause" type="button" data-pause hidden data-paused="false">
+      <span class="pl-pause__icon" aria-hidden="true"></span>
+      <span class="sr-only" data-pause-label>Pause slideshow</span>
+    </button>
+    <span class="dhts-label">
+      <span class="u-eyebrow" data-credit-out>{slides[0].partner ? `Built with ${slides[0].partner}` : 'Built by us'}</span>
+      <span class="dhts-name" data-name-out>{slides[0].name}</span>
+    </span>
+  </figcaption>
+</figure>
+
+<style>
+  /* The tablet bleeds off the left edge of its panel with a third of it
+     hidden (21 September 2026). The visible two thirds run from the panel
+     edge to 3rem short of the column's right side, which widens the gap to
+     the text. --dhts-edge is the distance from the column to the panel
+     edge, measured by the script; the fallback is the gutter alone, which
+     is right below the container's max width. The panel's overflow: clip
+     does the hiding. */
+  .dhts {
+    --dhts-edge: var(--pl-gutter);
+    --dhts-gap: 3rem;
+    margin: 0;
+    container-type: inline-size;
+  }
+
+  .dhts-device,
+  .dhts-bar,
+  .dhts-give,
+  .dhts-lms,
+  .dhts-chat,
+  .dhts-shot {
+    --dhts-w: calc((var(--dhts-edge) + 100cqw - var(--dhts-gap)) * 1.5 * 0.8);
+    /* Pulled 200px in from the margin (21 September 2026) so more of the
+       screen shows. Capped so the tablet never runs past its own column,
+       which keeps at least the 3rem grid gap to the text, and never so far
+       that the left edge comes clear of the panel. */
+    --dhts-shift: min(200px, var(--dhts-w) / 3, 100cqw - (var(--dhts-w) * 2 / 3 - var(--dhts-edge)));
+  }
+
+  .dhts-device {
+    /* Visible part = two thirds of the device, then the whole thing at
+       80% (21 September 2026), which leaves a wider gap to the text. */
+    --dhts-w: calc((var(--dhts-edge) + 100cqw - var(--dhts-gap)) * 1.5 * 0.8);
+    position: relative;
+    width: var(--dhts-w);
+    margin-left: calc(var(--dhts-shift) - var(--dhts-edge) - var(--dhts-w) / 3);
+    padding: calc(var(--dhts-w) * 0.032);
+    border-radius: calc(var(--dhts-w) * 0.1);
+    /* White iPad. A soft shadow was added on request, 24 September 2026:
+       PIPELY-FORK says no shadows, and the rest of the site still has
+       none, so this is a deliberate exception for the one device that
+       floats over the panel edge. Two layers, a tight contact shadow and
+       a wide soft one, both cool to match the palette. */
+    background: linear-gradient(145deg, #ffffff 0%, #f3f2ef 55%, #e9e7e2 100%);
+    border: 1px solid rgb(15 20 23 / 0.14);
+    box-shadow:
+      0 2px 6px rgb(15 20 23 / 0.06),
+      0 18px 40px -12px rgb(15 20 23 / 0.18),
+      0 40px 80px -28px rgb(15 20 23 / 0.22);
+  }
+
+  @media (max-width: 767px) {
+    .dhts { --dhts-gap: 0rem; }
+  }
+
+  .dhts-screen {
+    position: relative;
+    aspect-ratio: 1.432 / 1;
+    overflow: clip;
+    border-radius: calc(var(--dhts-w) * 0.068);
+    background: #000;
+    outline: 1px solid rgb(15 20 23 / 0.1);
+  }
+
+  .dhts-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    opacity: 0;
+  }
+  .dhts-slide.is-active { opacity: 1; }
+
+  /* Single lens on the short edge. Landscape puts it on the right here,
+     because the left edge is the hidden third. */
+  .dhts-cam {
+    position: absolute;
+    top: 50%;
+    right: calc(var(--dhts-w) * 0.016);
+    width: calc(var(--dhts-w) * 0.008);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: #3a4146;
+    border: 1px solid #c9ccce;
+    transform: translate(50%, -50%);
+  }
+
+  .dhts-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--pl-s-sm);
+    margin-top: var(--pl-s-md);
+    /* Ends where the tablet's visible edge does, so a long caption wraps
+       under the tablet rather than running out into the gap. */
+    max-width: calc(var(--dhts-w) * 2 / 3 - var(--dhts-edge) + var(--dhts-shift));
+  }
+  .dhts-label {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 0.75rem;
+  }
+  .dhts-name { font-weight: var(--pl-fw-medium); }
+
+  /* Icon only, as on PortraitLoop. 2.25rem clears the 24px target minimum. */
+  .dhts-pause {
+    flex: none;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+  }
+
+  /* ---- Donation cards over the Loreto slide ----------------------
+     Laid over the visible part of the tablet, from the column's left edge
+     to the device's visible right edge, and sized off the device width so
+     they scale with it. Hidden below 992px, where they would be too small
+     to read. White cards with a hairline, no shadow. */
+  .dhts-drift { position: relative; }
+  .dhts-give {
+    --give: #72bf44;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: calc(var(--dhts-w) * 2 / 3 - var(--dhts-edge) + var(--dhts-shift));
+    pointer-events: none;
+    font-size: calc(var(--dhts-w) * 0.0155);
+    line-height: 1.3;
+    color: #1f2326;
+  }
+  /* A phone holding one page's screenshot. Same body as the course phone:
+     iPhone 16 proportions, white, with the island. The screen crops the
+     screenshot rather than squashing it, from the focus point the slide
+     gives. */
+  .dhts-shot {
+    --phone-w: calc(var(--dhts-w) * 0.2);
+    position: absolute;
+    right: calc(var(--dhts-w) * 0.06);
+    bottom: calc(var(--dhts-w) * 0.04);
+    width: var(--phone-w);
+    aspect-ratio: 71.6 / 147.6;
+    box-sizing: border-box;
+    padding: calc(var(--phone-w) * 0.04555);
+    border-radius: calc(var(--phone-w) * 0.173);
+    background: #fdfcfa;
+    border: 1px solid rgb(15 20 23 / 0.16);
+    box-shadow: 0 calc(var(--phone-w) * 0.05) calc(var(--phone-w) * 0.14) rgb(15 20 23 / 0.18);
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+  }
+  .dhts.is-shot .dhts-shot { opacity: 1; visibility: visible; }
+  .dhts-shot__screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: calc(var(--phone-w) * 0.127);
+    background: #fff;
+  }
+  .dhts-shot__screen img { width: 100%; height: 100%; object-fit: cover; }
+  .dhts-shot__island {
+    position: absolute;
+    top: calc(var(--phone-w) * 0.028);
+    left: 50%;
+    width: calc(var(--phone-w) * 0.29);
+    height: calc(var(--phone-w) * 0.085);
+    border-radius: 999px;
+    background: #0b0b0b;
+    transform: translateX(-50%);
+    z-index: 2;
+  }
+
+  /* The clinic assistant, lifted off the page: the same panel as the one
+     in the screenshot behind it, larger, with a hairline and a soft shadow
+     so it separates from the site. Sized off the tablet width. */
+  .dhts-chat {
+    position: absolute;
+    right: calc(var(--dhts-w) * 0.05);
+    bottom: calc(var(--dhts-w) * 0.05);
+    width: calc(var(--dhts-w) * 0.26);
+    border-radius: calc(var(--dhts-w) * 0.014);
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid rgb(15 20 23 / 0.16);
+    box-shadow:
+      0 calc(var(--dhts-w) * 0.01) calc(var(--dhts-w) * 0.03) rgb(15 20 23 / 0.12),
+      0 calc(var(--dhts-w) * 0.04) calc(var(--dhts-w) * 0.09) rgb(15 20 23 / 0.22);
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+  }
+  /* The screenshot carries its own "Type your message" box at the foot.
+     Crop it off: the thread continues underneath in live markup, so the
+     still has to end at the assistant's last bubble. */
+  .dhts-chat img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 581 / 600;
+    object-fit: cover;
+    object-position: top;
+  }
+
+  /* The live part of the thread, drawn to match the panel above it: the
+     patient's bubble is the clinic's pale green, the assistant's is its
+     blue. Sizes follow the tablet, as everything else here does. */
+  .dhts-chat__live {
+    display: grid;
+    gap: calc(var(--dhts-w) * 0.008);
+    padding: calc(var(--dhts-w) * 0.012) calc(var(--dhts-w) * 0.014) calc(var(--dhts-w) * 0.016);
+    background: #f7f9fa;
+    font-size: calc(var(--dhts-w) * 0.0125);
+    line-height: 1.35;
+  }
+  .dhts-chat__ask {
+    justify-self: end;
+    max-width: 88%;
+    min-height: 1.35em;
+    padding: 0.5em 0.7em;
+    border-radius: 0.6em;
+    background: #c6ded5;
+    color: #1d3b4a;
+  }
+  .dhts-chat__caret {
+    display: inline-block;
+    width: 0.08em;
+    height: 1em;
+    margin-left: 0.1em;
+    background: #1d3b4a;
+    vertical-align: -0.12em;
+    opacity: 0;
+  }
+  .dhts-chat__reply {
+    display: inline-flex;
+    gap: 0.28em;
+    justify-self: start;
+    padding: 0.65em 0.75em;
+    border-radius: 0.6em;
+    background: #4b7cb3;
+    opacity: 0;
+  }
+  .dhts-chat__reply i {
+    width: 0.38em;
+    height: 0.38em;
+    border-radius: 50%;
+    background: #fff;
+    opacity: 0.55;
+  }
+  .dhts-chat.is-typing .dhts-chat__caret { opacity: 1; }
+  .dhts-chat.is-replying .dhts-chat__reply { opacity: 1; }
+
+  /* The caret blinks and the three dots rise, both only while the reply is
+     actually being composed, and both off under prefers-reduced-motion.
+     Pausing the slideshow stops them: the script drops the classes. */
+  @media (prefers-reduced-motion: no-preference) {
+    .dhts-chat.is-typing .dhts-chat__caret { animation: dhts-caret 900ms steps(1, end) infinite; }
+    .dhts-chat.is-replying .dhts-chat__reply i { animation: dhts-dot 1200ms ease-in-out infinite; }
+    .dhts-chat.is-replying .dhts-chat__reply i:nth-child(2) { animation-delay: 160ms; }
+    .dhts-chat.is-replying .dhts-chat__reply i:nth-child(3) { animation-delay: 320ms; }
+  }
+  @keyframes dhts-caret { 50% { opacity: 0; } }
+  @keyframes dhts-dot {
+    30% { transform: translateY(-0.22em); opacity: 1; }
+    60% { transform: none; opacity: 0.55; }
+  }
+  .dhts.is-chat .dhts-chat { opacity: 1; visibility: visible; }
+
+  /* The course phone. Same overlay frame as the donation cards, but one
+     device rather than two cards. Sized off the tablet width so it scales
+     with it; iPhone 16 proportions throughout. */
+  .dhts-lms {
+    --sage: #7a8c73;
+    --plum: #a33757;
+    --phone-w: calc(var(--dhts-w) * 0.2);
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: calc(var(--dhts-w) * 2 / 3 - var(--dhts-edge) + var(--dhts-shift));
+    pointer-events: none;
+    color: #1f2326;
+  }
+  .dhts-phone {
+    position: absolute;
+    right: calc(var(--dhts-w) * 0.06);
+    bottom: calc(var(--dhts-w) * 0.04);
+    width: var(--phone-w);
+    /* aspect-ratio, not a calculated height: the body is 71.6 x 147.6 mm,
+       and letting the box derive its own height keeps it exact. */
+    aspect-ratio: 71.6 / 147.6;
+    box-sizing: border-box;
+    padding: calc(var(--phone-w) * 0.04555);
+    border-radius: calc(var(--phone-w) * 0.173);
+    background: #fdfcfa;
+    border: 1px solid rgb(15 20 23 / 0.16);
+    box-shadow: 0 calc(var(--phone-w) * 0.05) calc(var(--phone-w) * 0.14) rgb(15 20 23 / 0.18);
+    opacity: 0;
+    visibility: hidden;
+  }
+  .dhts.is-lms .dhts-phone { opacity: 1; visibility: visible; }
+  .dhts-phone__screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: calc(var(--phone-w) * 0.127);
+    background: #fff;
+  }
+  .dhts-phone__island {
+    position: absolute;
+    top: calc(var(--phone-w) * 0.028);
+    left: 50%;
+    width: calc(var(--phone-w) * 0.29);
+    height: calc(var(--phone-w) * 0.085);
+    border-radius: 999px;
+    background: #0b0b0b;
+    transform: translateX(-50%);
+    z-index: 2;
+  }
+  .dhts-phone__ui {
+    display: grid;
+    gap: 0.55em;
+    padding: calc(var(--phone-w) * 0.17) calc(var(--phone-w) * 0.07) 0;
+    font-size: calc(var(--phone-w) * 0.062);
+    line-height: 1.3;
+  }
+
+  .dhts-lesson__title { font-weight: 600; font-size: 1.3em; line-height: 1.15; }
+  .dhts-lesson__crumb {
+    padding: 0.45em 0.5em;
+    border-radius: 0.25em;
+    background: #f4f2f0;
+    font-size: 0.78em;
+    color: #6b767d;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .dhts-lesson__complete {
+    padding: 0.4em 0;
+    border-radius: 0.25em;
+    background: var(--sage);
+    color: #fff;
+    font-size: 0.75em;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-align: center;
+    text-transform: uppercase;
+  }
+  .dhts-lesson__tabs {
+    display: flex;
+    gap: 1.1em;
+    padding-bottom: 0.35em;
+    border-bottom: 1px solid rgb(15 20 23 / 0.12);
+    font-size: 0.85em;
+  }
+  .dhts-lesson__tabs b { color: var(--plum); font-weight: 600; box-shadow: 0 0.35em 0 var(--plum); }
+  .dhts-lesson__tabs span { color: #6b767d; }
+  .dhts-lesson__sub { font-weight: 600; font-size: 0.9em; }
+  .dhts-lesson__lines { display: grid; gap: 0.4em; }
+  .dhts-lesson__lines i { height: 0.42em; border-radius: 999px; background: rgb(15 20 23 / 0.12); }
+  .dhts-lesson__lines i.is-short { width: 62%; }
+
+  .dhts-progress {
+    display: grid;
+    gap: 0.5em;
+    margin-top: 0.3em;
+    padding-top: 0.6em;
+    border-top: 1px solid rgb(15 20 23 / 0.12);
+  }
+  .dhts-progress__label { font-weight: 600; font-size: 0.85em; }
+  .dhts-progress__bar {
+    height: 0.45em;
+    border-radius: 999px;
+    background: rgb(15 20 23 / 0.1);
+    overflow: hidden;
+  }
+  .dhts-progress__bar i { display: block; width: 45%; height: 100%; background: var(--sage); }
+  /* The bar fills as the slide arrives, and the finished level ticks in
+     behind it. Both run once per appearance, not on a loop, and neither
+     runs under prefers-reduced-motion: the end state is the resting one. */
+  @media (prefers-reduced-motion: no-preference) {
+    .dhts.is-lms .dhts-progress__bar i {
+      animation: dhts-fill 1100ms 350ms cubic-bezier(0.22, 0.61, 0.36, 1) backwards;
+    }
+    .dhts.is-lms .dhts-progress__levels .is-done i {
+      animation: dhts-tick 500ms 1250ms ease-out backwards;
+    }
+  }
+  @keyframes dhts-fill { from { width: 4%; } }
+  @keyframes dhts-tick {
+    from { border-color: #cdd5d9; background: transparent; transform: scale(0.8); }
+  }
+  .dhts-progress__levels { display: grid; gap: 0.35em; font-size: 0.8em; }
+  .dhts-progress__levels span { display: flex; align-items: center; gap: 0.5em; color: #6b767d; }
+  .dhts-progress__levels i {
+    width: 0.75em;
+    height: 0.75em;
+    border-radius: 50%;
+    border: 1.5px solid rgb(15 20 23 / 0.25);
+  }
+  .dhts-progress__levels .is-done { color: #1f2326; }
+  .dhts-progress__levels .is-done i { border-color: var(--sage); background: var(--sage); }
+  .dhts-progress__levels .is-current { color: var(--plum); font-weight: 600; }
+  .dhts-progress__levels .is-current i { border-color: var(--plum); }
+
+  .dhts-card {
+    position: absolute;
+    bottom: calc(var(--dhts-w) * 0.075);
+    display: flex;
+    flex-direction: column;
+    gap: 0.8em;
+    padding: 1.1em;
+    border: 1px solid rgb(15 20 23 / 0.14);
+    border-radius: 0.9em;
+    background: #fff;
+    opacity: 0;
+    visibility: hidden;
+  }
+  /* Scoped to each group: an unscoped .dhts-card rule showed the donation
+     cards on the Shapes of Grief slide too (found 25 September 2026). */
+  .dhts.is-give .dhts-give .dhts-card { opacity: 1; visibility: visible; }
+  .dhts-card__title { font-weight: 600; }
+
+  .dhts-form {
+    right: calc(var(--dhts-w) * 0.07);
+    width: calc(var(--dhts-w) * 0.3);
+  }
+  .dhts-form__freq {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 0.2em;
+    border: 1px solid var(--give);
+    border-radius: 0.4em;
+    text-align: center;
+  }
+  .dhts-form__freq > * { padding: 0.45em 0; border-radius: 0.3em; font-weight: 500; }
+  .dhts-form__freq b { background: var(--give); color: #fff; }
+  .dhts-form__amounts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.45em;
+  }
+  .dhts-form__amounts > * {
+    padding: 0.55em 0;
+    border: 1px solid rgb(15 20 23 / 0.2);
+    border-radius: 0.4em;
+    text-align: center;
+    font-weight: 600;
+  }
+  .dhts-form__amounts b { border-color: var(--give); background: var(--give); color: #fff; }
+  .dhts-form__go {
+    padding: 0.7em 0;
+    border-radius: 0.4em;
+    background: var(--give);
+    color: #fff;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .dhts-chart {
+    right: calc(var(--dhts-w) * (0.07 + 0.3 + 0.025));
+    width: calc(var(--dhts-w) * 0.2);
+  }
+  .dhts-chart__bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.35em;
+    height: 6.5em;
+    border-bottom: 1px solid rgb(15 20 23 / 0.14);
+  }
+  /* Each bar is a monthly base with the one-off gifts stacked on top. */
+  .dhts-chart__bars > span {
+    flex: 1;
+    height: var(--h);
+    border-radius: 0.2em 0.2em 0 0;
+    background: linear-gradient(to top, #3f8a1f 0 45%, var(--give) 45% 100%);
+    transform-origin: bottom;
+  }
+  .dhts-chart__legend {
+    display: flex;
+    align-items: center;
+    gap: 0.35em;
+    font-size: 0.85em;
+    color: #5a6166;
+  }
+  .dhts-chart__legend i {
+    width: 0.7em;
+    height: 0.7em;
+    border-radius: 0.15em;
+    background: var(--give);
+  }
+  .dhts-chart__legend i.is-monthly { margin-left: 0.5em; background: #3f8a1f; }
+
+  @media (max-width: 991px) {
+    .dhts-give,
+    .dhts-lms,
+    .dhts-chat,
+    .dhts-shot { display: none; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .dhts-slide { transition: opacity 900ms ease; }
+
+    /* The cards rise in just after the Loreto screenshot fades up, the
+       chart a beat behind the form, and its bars grow from the baseline. */
+    .dhts-card,
+    .dhts-phone,
+    .dhts-chat,
+    .dhts-shot {
+      transform: translateY(1.5em);
+      transition: opacity 500ms ease, transform 700ms var(--pl-ease-out-quart), visibility 0s linear 700ms;
+    }
+    .dhts.is-give .dhts-give .dhts-card,
+    .dhts.is-lms .dhts-phone,
+    .dhts.is-chat .dhts-chat,
+    .dhts.is-shot .dhts-shot {
+      transform: none;
+      transition: opacity 500ms ease 500ms, transform 700ms var(--pl-ease-out-quart) 500ms, visibility 0s;
+    }
+    .dhts.is-give .dhts-give .dhts-chart { transition-delay: 700ms, 700ms, 0s; }
+    .dhts-chart__bars > span { transform: scaleY(0); transition: transform 700ms var(--pl-ease-out-quart); }
+    .dhts.is-give .dhts-give .dhts-chart__bars > span { transform: none; }
+    .dhts.is-give .dhts-give .dhts-chart__bars > span:nth-child(n) { transition-delay: calc(900ms + var(--i, 0) * 60ms); }
+
+    /* Scroll drift, on a wrapper so it never fights the slide-in transform
+       on the device. --dhts-p runs from 1 (block entering at the bottom)
+       to -1 (leaving at the top), set by the script. x is 0 or less: the
+       tablet only ever moves back towards the margin, never at the text. */
+    .dhts-drift {
+      transform:
+        translate3d(calc((var(--dhts-p, 0) - 1) * 36px), calc(var(--dhts-p, 0) * 40px), 0)
+        rotate(calc(var(--dhts-p, 0) * -1.5deg));
+      transform-origin: 0 50%;
+      will-change: transform;
+    }
+
+    /* The hidden state only exists once the script has marked the block as
+       waiting, so without JavaScript nothing is ever hidden. */
+    .dhts.is-wait .dhts-device {
+      transform: translateX(-70%) rotate(-4deg);
+    }
+    .dhts.is-wait .dhts-bar { opacity: 0; }
+    .dhts.is-in .dhts-device {
+      transition: transform 1400ms var(--pl-ease-out-quart);
+    }
+    .dhts.is-in .dhts-bar {
+      transition: opacity 600ms ease 900ms;
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-tablet-slideshow]').forEach((root) => {
+    // How far the column sits in from its panel's left edge, so the tablet
+    // can bleed exactly to that edge at any width.
+    const panel = root.closest<HTMLElement>('.pl-panel');
+    const measure = () => {
+      if (!panel) return;
+      const edge = root.getBoundingClientRect().left - panel.getBoundingClientRect().left;
+      root.style.setProperty('--dhts-edge', `${Math.max(0, edge)}px`);
+    };
+    measure();
+    if (panel && 'ResizeObserver' in window) new ResizeObserver(measure).observe(panel);
+
+    const motionOk = window.matchMedia('(prefers-reduced-motion: no-preference)');
+    if (!motionOk.matches || !('IntersectionObserver' in window)) return;
+
+    // Scroll drift. rAF-throttled, and only listening while the block is on
+    // screen. Same pattern as the How we work photo on /video-production/.
+    let ticking = false;
+    const drift = () => {
+      ticking = false;
+      const r = root.getBoundingClientRect();
+      const vh = window.innerHeight || 1;
+      const p = (r.top + r.height / 2 - vh / 2) / (vh / 2 + r.height / 2);
+      root.style.setProperty('--dhts-p', Math.max(-1, Math.min(1, p)).toFixed(3));
+    };
+    const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(drift); } };
+    new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { window.addEventListener('scroll', onScroll, { passive: true }); drift(); }
+      else window.removeEventListener('scroll', onScroll);
+    }).observe(root);
+    drift();
+
+    const slides = [...root.querySelectorAll<HTMLImageElement>('.dhts-slide')];
+    const nameOut = root.querySelector<HTMLElement>('[data-name-out]')!;
+    const creditOut = root.querySelector<HTMLElement>('[data-credit-out]')!;
+    const shot = root.querySelector<HTMLImageElement>('[data-shot]');
+    const chat = root.querySelector<HTMLElement>('.dhts-chat');
+    const chatType = root.querySelector<HTMLElement>('[data-chat-type]');
+    const pause = root.querySelector<HTMLButtonElement>('[data-pause]')!;
+    const pauseLabel = root.querySelector<HTMLElement>('[data-pause-label]')!;
+    const device = root.querySelector<HTMLElement>('.dhts-device')!;
+
+    let current = 0;
+    let timer = 0;
+    let userPaused = false;
+    let inView = false;
+    let arrived = false;
+
+    const show = (n: number) => {
+      slides[current].classList.remove('is-active');
+      slides[current].setAttribute('aria-hidden', 'true');
+      current = n;
+      slides[current].classList.add('is-active');
+      slides[current].removeAttribute('aria-hidden');
+      nameOut.textContent = slides[current].dataset.name ?? '';
+      const partner = slides[current].dataset.partner;
+      creditOut.textContent = partner ? `Built with ${partner}` : 'Built by us';
+      root.classList.toggle('is-give', 'give' in slides[current].dataset);
+      root.classList.toggle('is-lms', 'lms' in slides[current].dataset);
+      root.classList.toggle('is-chat', 'chat' in slides[current].dataset);
+      if ('chat' in slides[current].dataset) chatRun(); else chatReset();
+      const shotSrc = slides[current].dataset.phoneShot;
+      root.classList.toggle('is-shot', Boolean(shotSrc));
+      if (shotSrc && shot) {
+        if (shot.getAttribute('src') !== shotSrc) shot.setAttribute('src', shotSrc);
+        shot.style.objectPosition = slides[current].dataset.phoneFocus ?? 'center top';
+      }
+    };
+
+    // Four seconds a site, seven on Loreto so the donation cards can be read.
+    const carries = (d: DOMStringMap) => 'give' in d || 'lms' in d || 'chat' in d || 'phoneShot' in d;
+    const hold = () => (carries(slides[current].dataset) ? 7000 : 4000);
+    /* The Western Rheumatology slide carries a live thread: the patient
+       types a second question, then the assistant starts composing. It
+       runs once each time the slide comes round, never loops, and stops
+       the moment the slide changes or the slideshow is paused, so there
+       is no moving content behind a paused control (WCAG 2.2.2). */
+    const QUESTION = 'Is there parking at Bon Secours?';
+    let chatTimers: number[] = [];
+    const chatStop = () => {
+      chatTimers.forEach((t) => window.clearTimeout(t));
+      chatTimers = [];
+      chat?.classList.remove('is-typing', 'is-replying');
+    };
+    const chatReset = () => {
+      chatStop();
+      if (chatType) chatType.textContent = '';
+    };
+    const chatRun = () => {
+      if (!chat || !chatType) return;
+      chatReset();
+      if (!motionOk.matches) {
+        // Reduced motion: the question is simply there, nothing blinks.
+        chatType.textContent = QUESTION;
+        chat.classList.add('is-replying');
+        return;
+      }
+      chat.classList.add('is-typing');
+      const speed = 45;
+      for (let i = 1; i <= QUESTION.length; i += 1) {
+        chatTimers.push(window.setTimeout(() => { chatType.textContent = QUESTION.slice(0, i); }, 600 + i * speed));
+      }
+      const typed = 600 + QUESTION.length * speed;
+      chatTimers.push(window.setTimeout(() => {
+        chat.classList.remove('is-typing');
+        chat.classList.add('is-replying');
+      }, typed + 400));
+    };
+
+    const stop = () => { window.clearTimeout(timer); timer = 0; chatStop(); };
+    const start = () => {
+      if (timer || userPaused || !inView || !arrived || !motionOk.matches) return;
+      const tick = () => { show((current + 1) % slides.length); timer = window.setTimeout(tick, hold()); };
+      timer = window.setTimeout(tick, hold());
+    };
+
+    pause.addEventListener('click', () => {
+      userPaused = !userPaused;
+      pause.setAttribute('data-paused', String(userPaused));
+      pauseLabel.textContent = userPaused ? 'Play slideshow' : 'Pause slideshow';
+      if (userPaused) stop(); else start();
+    });
+
+    // If someone turns reduced motion on mid-visit, everything stops.
+    motionOk.addEventListener('change', () => {
+      if (!motionOk.matches) { stop(); root.classList.remove('is-wait'); pause.hidden = true; }
+    });
+
+    // Slide in once, then start the slideshow when the tablet has landed.
+    // Two triggers for the arrival, whichever fires first, so the tablet is
+    // never left off screen (the lesson from VideoFacade, 19 September 2026).
+    root.classList.add('is-wait');
+    let entered = false;
+    const enter = () => {
+      if (entered) return;
+      entered = true;
+      window.removeEventListener('scroll', check);
+      root.classList.add('is-in');
+      root.classList.remove('is-wait');
+      const land = () => { arrived = true; pause.hidden = false; start(); };
+      device.addEventListener('transitionend', land, { once: true });
+      window.setTimeout(() => { if (!arrived) land(); }, 1600);
+    };
+    const check = () => {
+      const r = root.getBoundingClientRect();
+      if (r.top < window.innerHeight * 0.8 && r.bottom > 0) enter();
+    };
+    window.addEventListener('scroll', check, { passive: true });
+
+    // Also runs the slideshow only while the block is on screen.
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        inView = entry.isIntersecting;
+        if (inView) { enter(); start(); } else stop();
+      },
+      { threshold: 0.3 },
+    );
+    io.observe(root);
+    check();
+  });
+</script>

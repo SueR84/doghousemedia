@@ -1,19 +1,17 @@
 ---
 title: "Networking website for University"
 client: "UCD"
-service: "Closed network website"
-shortDescription: "How we built and manage a networking site for the UCD Aspire Programme"
-websiteLink: "https://www.aspireprogramme.ie/"
-projectVideo: ""
-projectImage: "https://doghousemedia.ie/wp-content/uploads/2022/03/Aspire-pi2.png"
-projectGallery: []
-projectType:
-  - "Membership"
-  - "Web Development"
+year: 2022
 craft: "web"
-status: "publish"
+summary: "How we built and manage a networking site for the UCD Aspire Programme"
+cover: "/work/aspire-pi2.jpg"
+# No liveUrl: aspireprogramme.ie no longer resolves (22 September 2026),
+# so the card shows without a link rather than pointing at a dead site.
+services:
+  - "Closed network website"
+order: 15
+draft: false
 ---
-
 Our remit
 
  	Development of a website for students in the UCD Aspire Network

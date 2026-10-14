@@ -1,0 +1,347 @@
+---
+/**
+ * A sample audit checklist that works its way down the list. Accessibility
+ * audits page, "What an audit is" (22 September 2026).
+ *
+ * Illustrative, not a real client's audit: the header says "Sample audit".
+ * Each row is a WCAG 2.2 success criterion. As the highlight reaches a row
+ * it is checked, ticked, and given one of the four outcomes the page sells
+ * as the triage: passes, we fix it, your content team fixes it, or it sits
+ * with a third-party supplier. The tally in the footer counts them up.
+ *
+ * Motion: one row every 0.9 seconds, a three second hold on the finished
+ * list, then it starts again. It loops past five seconds, so WCAG 2.2.2
+ * applies and there is a visible pause button. It only runs while on
+ * screen. Under prefers-reduced-motion, or with JavaScript off, the list is
+ * shown finished and still, and the pause button never appears.
+ *
+ * Accessibility: the card is one image to assistive tech, with a label
+ * that says what it shows. The rows are hidden from the accessibility tree
+ * so a screen reader is not read a list that keeps changing. The pause
+ * button sits outside the image so it stays reachable.
+ */
+type Outcome = 'pass' | 'us' | 'content' | 'supplier';
+
+const rows: { sc: string; name: string; outcome: Outcome }[] = [
+  { sc: '2.1.1', name: 'Keyboard access', outcome: 'pass' },
+  { sc: '2.4.7', name: 'Visible focus', outcome: 'us' },
+  { sc: '1.4.3', name: 'Colour contrast', outcome: 'us' },
+  { sc: '1.1.1', name: 'Image alt text', outcome: 'content' },
+  { sc: '1.3.1', name: 'Headings and structure', outcome: 'pass' },
+  { sc: '3.3.2', name: 'Form labels and errors', outcome: 'pass' },
+  { sc: '1.2.2', name: 'Video captions', outcome: 'content' },
+  { sc: '2.5.8', name: 'Target size', outcome: 'pass' },
+  { sc: '4.1.2', name: 'Embedded booking widget', outcome: 'supplier' },
+];
+
+const labels: Record<Outcome, string> = {
+  pass: 'Passes',
+  us: 'We fix',
+  content: 'Content team',
+  supplier: 'Supplier',
+};
+
+const count = (o: Outcome) => rows.filter((r) => r.outcome === o).length;
+---
+
+<div class="aach" data-audit-checklist>
+  <div
+    class="aach-card"
+    role="img"
+    aria-label="Illustration of a sample audit: nine WCAG 2.2 checks, from keyboard access to an embedded booking widget, each marked as passing, fixed by us, fixed by your content team, or with a third-party supplier."
+  >
+    <div class="aach-head" aria-hidden="true">
+      <span class="aach-head__title">Sample audit</span>
+      <span class="aach-head__std">WCAG 2.2 AA</span>
+    </div>
+    <div class="aach-progress" aria-hidden="true"><span data-progress></span></div>
+
+    <ol class="aach-list" aria-hidden="true" data-list>
+      <li class="aach-cursor" data-cursor></li>
+      {rows.map((r) => (
+        <li class="aach-row is-done" data-outcome={r.outcome}>
+          <span class="aach-box"><svg viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-7" /></svg></span>
+          <span class="aach-sc">{r.sc}</span>
+          <span class="aach-name">{r.name}</span>
+          <span class={`aach-chip is-${r.outcome}`}>{labels[r.outcome]}</span>
+        </li>
+      ))}
+    </ol>
+
+    <div class="aach-tally" aria-hidden="true">
+      {(['pass', 'us', 'content', 'supplier'] as Outcome[]).map((o) => (
+        <span class="aach-tally__item">
+          <i class={`is-${o}`}></i>{labels[o]} <b data-tally={o} data-total={count(o)}>{count(o)}</b>
+        </span>
+      ))}
+    </div>
+  </div>
+
+  <button class="pl-pause aach-pause" type="button" data-pause hidden data-paused="false">
+    <span class="pl-pause__icon" aria-hidden="true"></span>
+    <span class="sr-only" data-pause-label>Pause checklist animation</span>
+  </button>
+</div>
+
+<style>
+  .aach {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--pl-s-sm);
+    width: 100%;
+    max-width: 30rem;
+  }
+  .aach-card { width: 100%; }
+
+  .aach-card {
+    display: grid;
+    gap: var(--pl-s-md);
+    padding: var(--pl-s-lg);
+    border: 1px solid var(--pl-border);
+    border-radius: var(--pl-r-card, 1rem);
+    background-color: var(--pl-secondary);
+  }
+
+  .aach-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--pl-s-sm);
+  }
+  .aach-head__title { font-weight: var(--pl-fw-medium); }
+  .aach-head__std {
+    font-family: var(--font-mono);
+    font-size: var(--pl-xs);
+    letter-spacing: 0.12em;
+    color: var(--pl-accent-web);
+  }
+
+  .aach-progress {
+    height: 4px;
+    border-radius: 2px;
+    background-color: rgb(15 20 23 / 0.08);
+    overflow: clip;
+  }
+  .aach-progress span {
+    display: block;
+    width: var(--aach-p, 100%);
+    height: 100%;
+    background-color: var(--pl-accent-web);
+  }
+
+  .aach-list {
+    position: relative;
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* The highlight that works down the list. Positioned by the script. */
+  .aach-cursor {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: var(--aach-row-h, 2.75rem);
+    border-radius: 0.5rem;
+    border-left: 3px solid var(--pl-accent-web);
+    background-color: var(--pl-primary);
+    opacity: 0;
+    transform: translateY(var(--aach-y, 0));
+    pointer-events: none;
+  }
+  .aach.is-running .aach-cursor { opacity: 1; }
+
+  .aach-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.125rem 2.75rem 1fr auto;
+    align-items: center;
+    gap: var(--pl-s-sm);
+    min-height: 2.75rem;
+    padding-inline: 0.75rem;
+    border-bottom: 1px solid var(--pl-border);
+    font-size: var(--pl-sm);
+  }
+  .aach-row:last-child { border-bottom: 0; }
+
+  .aach-box {
+    display: grid;
+    place-items: center;
+    width: 1.125rem;
+    height: 1.125rem;
+    border: 1.5px solid rgb(15 20 23 / 0.35);
+    border-radius: 0.3rem;
+  }
+  .aach-box svg { width: 100%; height: 100%; }
+  .aach-box path {
+    fill: none;
+    stroke: var(--pl-primary);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 16;
+    stroke-dashoffset: 16;
+  }
+  .aach-row.is-done .aach-box { border-color: var(--color-ink); background-color: var(--color-ink); }
+  .aach-row.is-done .aach-box path { stroke-dashoffset: 0; }
+
+  /* Checking: the box pulses while the row is under test. */
+  .aach-row.is-checking .aach-box { border-color: var(--pl-accent-web); }
+
+  .aach-sc {
+    font-family: var(--font-mono);
+    font-size: var(--pl-xs);
+    color: var(--pl-text-muted, #5a6166);
+  }
+  .aach-name { min-width: 0; }
+
+  /* Outcome chips. Red text sits on cream only (about 5.8:1). */
+  .aach-chip {
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+    font-size: var(--pl-xs);
+    font-weight: var(--pl-fw-medium);
+    white-space: nowrap;
+    opacity: 0;
+  }
+  .aach-row.is-done .aach-chip { opacity: 1; }
+  .aach-chip.is-pass { background-color: rgb(44 110 127 / 0.12); color: var(--color-teal); }
+  .aach-chip.is-us { background-color: var(--color-ink); color: var(--color-cream); }
+  .aach-chip.is-content { background-color: var(--color-cream); color: var(--color-red); outline: 1px solid rgb(189 28 48 / 0.35); outline-offset: -1px; }
+  .aach-chip.is-supplier { background-color: rgb(15 20 23 / 0.07); color: #3d4449; }
+
+  .aach-tally {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    padding-top: var(--pl-s-sm);
+    border-top: 1px solid var(--pl-border);
+    font-size: var(--pl-xs);
+  }
+  .aach-tally__item { display: inline-flex; align-items: center; gap: 0.4rem; }
+  .aach-tally__item i { width: 0.6rem; height: 0.6rem; border-radius: 50%; }
+  .aach-tally__item i.is-pass { background-color: var(--color-teal); }
+  .aach-tally__item i.is-us { background-color: var(--color-ink); }
+  .aach-tally__item i.is-content { background-color: var(--color-red); }
+  .aach-tally__item i.is-supplier { background-color: #8a9094; }
+
+  /* Icon only, just under the card's right corner, as on the other
+     looping pieces. */
+  .aach-pause {
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+  }
+  @media (max-width: 599px) {
+    .aach-card { padding: var(--pl-s-md); }
+    .aach-row { grid-template-columns: 1.125rem 1fr auto; }
+    .aach-sc { display: none; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .aach-cursor { transition: transform 450ms var(--pl-ease-out-quart), opacity 300ms ease; }
+    .aach-progress span { transition: width 450ms var(--pl-ease-out-quart); }
+    .aach-box { transition: background-color 200ms ease, border-color 200ms ease; }
+    .aach-box path { transition: stroke-dashoffset 300ms ease 100ms; }
+    .aach-chip { transition: opacity 300ms ease 150ms; }
+    .aach-row.is-checking .aach-box { animation: aach-pulse 600ms ease-in-out infinite; }
+  }
+  @keyframes aach-pulse {
+    50% { outline: 4px solid rgb(44 110 127 / 0.18); }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-audit-checklist]').forEach((root) => {
+    const motionOk = window.matchMedia('(prefers-reduced-motion: no-preference)');
+    if (!motionOk.matches || !('IntersectionObserver' in window)) return;
+
+    const rows = [...root.querySelectorAll<HTMLElement>('.aach-row')];
+    const cursor = root.querySelector<HTMLElement>('[data-cursor]')!;
+    const progress = root.querySelector<HTMLElement>('[data-progress]')!.parentElement!;
+    const tallies = [...root.querySelectorAll<HTMLElement>('[data-tally]')];
+    const pause = root.querySelector<HTMLButtonElement>('[data-pause]')!;
+    const pauseLabel = root.querySelector<HTMLElement>('[data-pause-label]')!;
+
+    const STEP = 900;
+    const HOLD = 3000;
+    let i = -1;
+    let timer = 0;
+    let inView = false;
+    let userPaused = false;
+
+    const setTally = () => {
+      tallies.forEach((t) => {
+        const o = t.dataset.tally!;
+        t.textContent = String(rows.filter((r) => r.classList.contains('is-done') && r.dataset.outcome === o).length);
+      });
+      const done = rows.filter((r) => r.classList.contains('is-done')).length;
+      progress.style.setProperty('--aach-p', `${(done / rows.length) * 100}%`);
+    };
+
+    const reset = () => {
+      rows.forEach((r) => r.classList.remove('is-done', 'is-checking'));
+      i = -1;
+      setTally();
+    };
+
+    const moveCursor = (row: HTMLElement) => {
+      cursor.style.setProperty('--aach-row-h', `${row.offsetHeight}px`);
+      cursor.style.setProperty('--aach-y', `${row.offsetTop}px`);
+    };
+
+    const tick = () => {
+      // Finish the row under the cursor, then move on.
+      if (i >= 0) {
+        rows[i].classList.remove('is-checking');
+        rows[i].classList.add('is-done');
+        setTally();
+      }
+      i += 1;
+      if (i >= rows.length) {
+        root.classList.remove('is-running');
+        timer = window.setTimeout(() => { reset(); root.classList.add('is-running'); tick(); }, HOLD);
+        return;
+      }
+      rows[i].classList.add('is-checking');
+      moveCursor(rows[i]);
+      timer = window.setTimeout(tick, STEP);
+    };
+
+    const stop = () => { window.clearTimeout(timer); timer = 0; };
+    const start = () => {
+      if (timer || userPaused || !inView || !motionOk.matches) return;
+      root.classList.add('is-running');
+      // Resume where it left off; a fresh start begins from an empty list.
+      if (i < 0 || i >= rows.length) reset();
+      timer = window.setTimeout(tick, i < 0 ? 400 : STEP);
+    };
+
+    pause.addEventListener('click', () => {
+      userPaused = !userPaused;
+      pause.setAttribute('data-paused', String(userPaused));
+      pauseLabel.textContent = userPaused ? 'Play checklist animation' : 'Pause checklist animation';
+      if (userPaused) stop(); else start();
+    });
+
+    // Turning reduced motion on mid-visit: stop, and show the finished list.
+    motionOk.addEventListener('change', () => {
+      if (motionOk.matches) return;
+      stop();
+      rows.forEach((r) => { r.classList.remove('is-checking'); r.classList.add('is-done'); });
+      setTally();
+      root.classList.remove('is-running');
+      pause.hidden = true;
+    });
+
+    pause.hidden = false;
+    new IntersectionObserver(([e]) => {
+      inView = e.isIntersecting;
+      if (inView) start(); else stop();
+    }, { threshold: 0.3 }).observe(root);
+  });
+</script>

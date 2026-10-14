@@ -1,0 +1,62 @@
+---
+/**
+ * The film a case study is about: still and play button only until clicked,
+ * then it opens in the modal over the page rather than replacing the still.
+ * Caption underneath in the same style as the film credit on the video page.
+ *
+ * A component rather than markup in the MDX, because a <style> block inside
+ * MDX is parsed as JSX and its first brace ends the build.
+ *
+ * CLAUDE.md: every embedded film needs written captions, not auto-generated.
+ * That is on the film at Vimeo, not here.
+ */
+import VideoFacade from '../sections/VideoFacade.astro';
+
+interface Props {
+  vimeoId: string;
+  hash?: string;
+  title: string;
+  poster: string;
+  caption: string;
+  /** Running time, as mm:ss. Rendered with a machine-readable duration. */
+  time?: string;
+  duration?: string;
+}
+const { vimeoId, hash, title, poster, caption, time, duration } = Astro.props;
+---
+
+<section class="pl-panel">
+  <div class="pl-gutter pl-pad-sm">
+    <div class="pl-container is-md">
+      <figure class="cs-film">
+        <div class="pl-media is-wide">
+          <VideoFacade vimeoId={vimeoId} hash={hash} title={title} poster={poster} mode="dialog" />
+        </div>
+        <figcaption class="cs-film__caption">
+          <span>{caption}</span>
+          {time && (
+            <>
+              <span aria-hidden="true">/</span>
+              <span><span class="sr-only">Running time </span><time datetime={duration}>{time}</time></span>
+            </>
+          )}
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cs-film { margin: 0; }
+  .cs-film__caption {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: var(--pl-xs);
+    letter-spacing: var(--pl-tr-caps);
+    text-transform: uppercase;
+    color: var(--pl-text-meta);
+  }
+</style>

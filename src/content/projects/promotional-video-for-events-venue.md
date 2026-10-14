@@ -1,18 +1,16 @@
 ---
 title: "Promotional video for Events Venue"
 client: "Cloughjordan House"
-service: "Social media promos"
-shortDescription: "We created an engaging series of online promos for web and social"
-websiteLink: ""
-projectVideo: "https://vimeo.com/636246643"
-projectImage: ""
-projectGallery: []
-projectType:
-  - "Video Production"
+year: 2024
 craft: "video"
-status: "publish"
+cover: "/work/vimeo-promotional-video-for-events-venue.jpg"
+summary: "We created an engaging series of online promos for web and social"
+video: "636246643"
+services:
+  - "Social media promos"
+order: 3
+draft: false
 ---
-
 How do you pick a wedding venue when you live in another country and can't get home? Or do some in depth research on a location for your event in the middle of a pandemic?
 
 Covid has forced businesses to re-evaluate how they reach their customers, leading us all to adapt to a new norm. And this will mean in many cases that there's no going back. We've come now to expect that our favourite boutique will continue to accept online orders, that our local take-away will deliver at the touch of a button, and that when it comes to researching activities and events we can do so from the comfort of a chair at home.

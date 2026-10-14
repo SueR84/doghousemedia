@@ -1,0 +1,17 @@
+---
+interface Props { items: { q: string; a: string }[]; multi?: boolean }
+const { items, multi = false } = Astro.props;
+---
+<div class="pl-accordion" data-accordion-multi={multi ? '' : undefined}>
+  {items.map((item) => (
+    <div class="pl-accordion__item">
+      <button class="pl-accordion__question u-xl" type="button">
+        <span>{item.q}</span>
+        <svg class="pl-accordion__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+      </button>
+      <div class="pl-accordion__answer"><div>{item.a}</div></div>
+    </div>
+  ))}
+</div>

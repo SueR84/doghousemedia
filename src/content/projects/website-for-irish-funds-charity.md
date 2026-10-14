@@ -1,45 +1,43 @@
 ---
-title: "Website for Irish Fund's Charity"
+title: "Website and CRM for basis.point"
 client: "basis.point"
-service: "Web Development, Design"
-shortDescription: "We have been with basis.point since the start of their journey in 2014. In 2021 a complete redesign of the site was needed, and it was the perfect time to get the site working with their CRM."
-websiteLink: "https://www.basispoint.ie"
-projectVideo: ""
-projectImage: "https://doghousemedia.ie/wp-content/uploads/2023/01/basispoint-pi-7.png"
-projectGallery:
-  - "https://doghousemedia.ie/wp-content/uploads/2023/01/basispoint-pi-2.jpg"
-  - "https://doghousemedia.ie/wp-content/uploads/2023/01/basispoint-pi-12.jpg"
-  - "https://doghousemedia.ie/wp-content/uploads/2023/01/basispoint-pi-5.jpg"
-projectType:
-  - "Web Development"
+year: 2023
 craft: "web"
-status: "publish"
+summary: "A rebuilt site for the Irish funds industry's charity, with sign-ups running straight into their CRM."
+cover: "/work/basispoint-pi-7.jpg"
+liveUrl: "https://www.basispoint.ie"
+services:
+  - "Web Development"
+  - "Design"
+capabilities: []
+gallery:
+  - "/work/basispoint-pi-2.jpg"
+  - "/work/basispoint-pi-12.jpg"
+  - "/work/basispoint-pi-5.jpg"
+order: 2
+caseStudy: true
+draft: false
 ---
 
-We have been with basis.point since the start of their journey in 2014. The Charity was set up by the Funds Industry following the crash in 2007. In 2021 a complete redesign of the site was needed, and it was the perfect time to get the site working more seamlessly with their CRM.
+## The problem
 
-We led the redesign and redevelopment, our remit included
+basis.point is the Irish funds industry's charity, set up after the 2007 crash to fund education and opportunity for people who would not otherwise get it. We have worked with them since they started in 2014. By 2021 the site was working against them. It read as corporate rather than charitable, it put the industry in front of the people the money reaches, and it was slow. Patrons and volunteers who wanted to sign up were filling in forms that landed nowhere useful, so every new sign-up was re-typed into the CRM by hand.
 
- 	A reworking of layout and content from the ground up
+## What we made
 
- 	Improve Page load speed
+We rebuilt the site around the beneficiaries rather than the industry, so the first thing a visitor meets is who the money helps. Sign-up forms now write directly into their CRM, which took the re-typing out of the process entirely. We moved the site to better hosting and cut the page load times.
 
- 	Provide a more user-friendly CMS interface
+The part that mattered most was the back end. basis.point post their own news, galleries and event details now, without ringing us for a paragraph change.
 
- 	Improve navigation and layout
+## The result
 
-Our process to execute this project
+<!-- TODO: Edel's testimonial goes here. CLAUDE.md lists it as one of the three
+     quotes in hand, but the text is not in the repo yet. Drop it in as the
+     `quote` frontmatter field (text, name, role) and the layout will render it.
 
-We looked at design first and foremost - the current site looked a little stale and too corporate, we wanted to move away from this and put the charity beneficiaries front and center. The website needed to quickly get across it's message and make it easy for Patrons and new volunteers to sign on
+     If there is a figure worth stating, page load before and after, or sign-ups
+     per month before and after, add it to `metrics` in the frontmatter. A number
+     here is worth more than another paragraph. If there is no number, this
+     section is fine as the quote alone. -->
 
- 	Moved the site to a improved Cloud Hosting platform
-
- 	Employed a bespoke WordPress design
-
- 	Integrated online signup forms with the client's CRM
-
- 	Provided training and an easy to use CMS interface - basis.point can now update the website themselves, posting News updates, galleries and Event details with ease.
-
- 	Ongoing training and support
-
-‍
+Nine years on we still look after the site, which for a small charity with no in-house technical team is the point of the exercise.

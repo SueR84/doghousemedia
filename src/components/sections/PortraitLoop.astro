@@ -1,0 +1,262 @@
+---
+/**
+ * A vertical (9:16) Vimeo film playing a short muted loop inside a
+ * landscape box. Built for the Guinness Storehouse case study card, whose
+ * film is a portrait social cut.
+ *
+ * Layout, set by `fit`:
+ *   - 'cover' (default): the film fills the box edge to edge. Scaled, never
+ *     stretched, so a portrait film in a landscape box is cropped top and
+ *     bottom: in a 1 : 0.72 card about 40% of the height survives. `focusY`
+ *     picks which band that is, 0 the top, 50 the middle, 100 the bottom.
+ *   - 'frame': the film sits whole in a rounded 9:16 frame, with a blurred
+ *     copy of the poster filling the sides. Tried first for Guinness on
+ *     18 September 2026 and judged too small in a three-up card.
+ *
+ * Loop: plays `length` seconds from `start`, then jumps back, using Vimeo's
+ * postMessage API (the same channel Hero.astro uses for pause). The segment
+ * lives in the embed rather than in an exported clip, so changing which
+ * five seconds play is a prop change, not a re-export.
+ *
+ * Accessibility, per CLAUDE.md:
+ *   - Muted, no essential audio, the player is untabbable and hidden from
+ *     assistive tech. The poster carries the alt text.
+ *   - It loops past five seconds, so WCAG 2.2.2 applies: a visible pause
+ *     button, keyboard reachable, announcing its state through a label that changes
+ *     between Pause and Play.
+ *   - Under prefers-reduced-motion no iframe mounts at all, and the poster
+ *     is all that ever paints. Same with JavaScript off.
+ *   - Captions: the film has no speech in the loop, but the full film still
+ *     needs written captions wherever it is embedded with sound.
+ *
+ * Weight: nothing third-party loads until the card is near the viewport,
+ * and playback pauses while it is scrolled out of view.
+ *
+ * Must not be a direct child img/video of .pl-media, whose cover rules
+ * would catch the posters. The root div is the child instead.
+ */
+interface Props {
+  vimeoId: string;
+  /** Unlisted films need their hash. */
+  hash?: string;
+  /** Names the film, for the iframe title. */
+  title: string;
+  /** Portrait still. Shown before playback and as the whole reduced-motion view. */
+  poster: string;
+  posterAlt: string;
+  /** Seconds into the film where the loop starts. */
+  start?: number;
+  /** Seconds the loop runs before jumping back. */
+  length?: number;
+  /** 'cover' fills the box and crops; 'frame' shows the whole film in a 9:16 frame. */
+  fit?: 'cover' | 'frame';
+  /** For cover: which part of the height stays in view, 0 (top) to 100 (bottom). */
+  focusY?: number;
+}
+
+const {
+  vimeoId, hash, title, poster, posterAlt, start = 0, length = 5, fit = 'cover', focusY = 50,
+} = Astro.props;
+
+const params = new URLSearchParams({
+  background: '1',
+  autoplay: '1',
+  muted: '1',
+  loop: '1',
+  autopause: '0',
+  dnt: '1',
+});
+if (hash) params.set('h', hash);
+const src = `https://player.vimeo.com/video/${vimeoId}?${params}#t=${start}s`;
+---
+
+<div
+  class:list={['dhpl', `is-${fit}`]}
+  style={`--dhpl-focus:${focusY}%`}
+  data-portrait-loop
+  data-src={src}
+  data-title={title}
+  data-start={start}
+  data-length={length}
+>
+  {fit === 'frame' && <img class="dhpl-fill" src={poster} alt="" aria-hidden="true" loading="lazy" decoding="async" />}
+  <div class="dhpl-frame">
+    <img class="dhpl-poster" src={poster} alt={posterAlt} width="640" height="1138" loading="lazy" decoding="async" />
+    <div class="dhpl-slot" data-slot></div>
+  </div>
+  <button class="pl-pause dhpl-pause" type="button" data-pause hidden data-paused="false">
+    <span class="pl-pause__icon" aria-hidden="true"></span>
+    <span class="sr-only" data-pause-label>Pause video</span>
+  </button>
+</div>
+
+<style>
+  .dhpl {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    overflow: clip;
+    background-color: var(--color-ink);
+  }
+
+  /* The sides: the same still, blurred and darkened so it reads as
+     atmosphere, and scaled so the blur has no soft edges. */
+  .dhpl-fill {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(22px) brightness(0.45) saturate(1.1);
+    transform: scale(1.2);
+  }
+
+  .dhpl-frame {
+    position: relative;
+    height: 88%;
+    aspect-ratio: 9 / 16;
+    overflow: clip;
+    border-radius: var(--pl-r-media);
+    background-color: #000;
+    outline: 1px solid rgb(243 246 248 / 0.14);
+  }
+
+  /* Cover: the frame is the whole box, and the film inside it is sized to
+     the box width at its true 9:16, then slid up or down so the focus band
+     sits in view. Same geometry for the poster, so the reduced-motion still
+     crops exactly as the moving film does. */
+  .dhpl.is-cover .dhpl-frame {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    aspect-ratio: auto;
+    border-radius: 0;
+    outline: 0;
+  }
+  .dhpl.is-cover .dhpl-poster { object-position: 50% var(--dhpl-focus, 50%); }
+  .dhpl.is-cover .dhpl-slot :global(iframe) {
+    inset: auto 0 auto 0;
+    top: var(--dhpl-focus, 50%);
+    height: auto;
+    aspect-ratio: 9 / 16;
+    transform: translateY(calc(-1 * var(--dhpl-focus, 50%))) scale(1.02);
+  }
+
+  .dhpl-poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity var(--pl-dur-slow, 600ms) var(--pl-ease-out-quart);
+  }
+  .dhpl.is-playing .dhpl-poster { opacity: 0; }
+
+  .dhpl-slot { position: absolute; inset: 0; }
+  /* Global: the iframe is created in the script, so it never carries the
+     scoping attribute. The 1.02 scale hides Vimeo's hairline letterbox,
+     same trick as the hero and PhoneVideo. */
+  .dhpl-slot :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    transform: scale(1.02);
+    pointer-events: none;
+  }
+
+  /* Icon only: a labelled pill covers too much of a small card. The label
+     is still there for screen readers, and 2.25rem clears the 24px target
+     minimum in WCAG 2.5.8 with room to spare. */
+  .dhpl-pause {
+    position: absolute;
+    right: var(--pl-s-sm);
+    bottom: var(--pl-s-sm);
+    z-index: 2;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    background: rgb(15 20 23 / 0.8);
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-portrait-loop]').forEach((root) => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!('IntersectionObserver' in window)) return;
+
+    const slot = root.querySelector<HTMLElement>('[data-slot]')!;
+    const pause = root.querySelector<HTMLButtonElement>('[data-pause]')!;
+    const label = root.querySelector<HTMLElement>('[data-pause-label]')!;
+    const start = Number(root.dataset.start ?? 0);
+    const end = start + Number(root.dataset.length ?? 5);
+
+    let frame: HTMLIFrameElement | null = null;
+    let userPaused = false;
+    let inView = false;
+
+    const send = (method: string, value?: unknown) =>
+      frame?.contentWindow?.postMessage(
+        JSON.stringify(value === undefined ? { method } : { method, value }),
+        'https://player.vimeo.com',
+      );
+
+    // Vimeo's player talks back on the same channel. Once it is ready, ask
+    // for time updates and hold playback inside the start..end window.
+    // Registering 'timeupdate' is answered with 'playProgress' events (the
+    // player's older name for the same thing), so both are handled.
+    window.addEventListener('message', (e) => {
+      if (e.origin !== 'https://player.vimeo.com' || e.source !== frame?.contentWindow) return;
+      let msg: { event?: string; data?: { seconds?: number } };
+      try { msg = typeof e.data === 'string' ? JSON.parse(e.data) : e.data; } catch { return; }
+
+      if (msg.event === 'ready') {
+        send('addEventListener', 'timeupdate');
+        send('setCurrentTime', start);
+        if (userPaused || !inView) send('pause');
+      }
+      if (msg.event === 'timeupdate' || msg.event === 'playProgress') {
+        const t = msg.data?.seconds ?? 0;
+        if (t >= end || t < start - 0.25) send('setCurrentTime', start);
+      }
+    });
+
+    const mount = () => {
+      frame = document.createElement('iframe');
+      frame.src = root.dataset.src!;
+      frame.title = `${root.dataset.title ?? 'Film'}, background loop`;
+      frame.allow = 'autoplay; fullscreen; picture-in-picture';
+      frame.setAttribute('tabindex', '-1');
+      frame.setAttribute('aria-hidden', 'true');
+      // The control appears with the player, so it never shows while there
+      // is nothing to pause.
+      frame.addEventListener('load', () => {
+        root.classList.add('is-playing');
+        pause.hidden = false;
+      }, { once: true });
+      slot.replaceChildren(frame);
+    };
+
+    pause.addEventListener('click', () => {
+      userPaused = !userPaused;
+      send(userPaused ? 'pause' : 'play');
+      pause.setAttribute('data-paused', String(userPaused));
+      label.textContent = userPaused ? 'Play video' : 'Pause video';
+    });
+
+    // Mount when the card comes near the viewport; afterwards, pause while
+    // it is off screen so a hidden player is not spending anyone's data.
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        inView = entry.isIntersecting;
+        if (inView && !frame) mount();
+        else if (frame && !userPaused) send(inView ? 'play' : 'pause');
+      },
+      { rootMargin: '200px 0px' },
+    );
+    io.observe(root);
+  });
+</script>

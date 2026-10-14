@@ -1,0 +1,73 @@
+---
+/**
+ * Site layout.
+ *
+ * This is the Pipely design system promoted out of the /pipely fork and made
+ * the real site shell. Everything it loads is namespaced: CSS under `.pipely`,
+ * classes under `pl-`, tokens under `--pl-`.
+ *
+ * The old Fabrica-derived layout is `Base.astro` and is being retired page by
+ * page. Do not import both.
+ */
+import '../styles/pipely/index.css';
+
+import BaseHead from '../components/BaseHead.astro';
+import Nav from '../components/pipely/Nav.astro';
+import Footer from '../components/pipely/Footer.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  noindex?: boolean;
+}
+
+const { title, description, image, noindex = false } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en-IE">
+  <head>
+    <BaseHead title={title} description={description} image={image} noindex={noindex} />
+    {/* Scroll reveals hide their elements until JavaScript brings them in.
+        This marks the document so that state only applies where JS is
+        actually running, rather than leaving a blank page if it is not. */}
+    <script is:inline>document.documentElement.classList.add('js');</script>
+  </head>
+
+  <body class="pipely">
+    <a class="pl-skip" href="#main">Skip to content</a>
+
+    <Nav />
+
+    <div class="pl-page">
+      <div class="pl-shell">
+        <main id="main" class="pl-sections"><slot /></main>
+        <Footer />
+      </div>
+    </div>
+
+    <script>
+      import '../scripts/pipely/motion';
+    </script>
+
+    <style is:global>
+      /* Skip link. Required by WCAG 2.2 AA and not part of the fork's CSS. */
+      .pipely .pl-skip {
+        position: absolute;
+        left: var(--pl-s-md, 1rem);
+        top: var(--pl-s-md, 1rem);
+        z-index: 200;
+        padding: 0.75rem 1.25rem;
+        border-radius: 999px;
+        background: var(--color-ink, #0f1417);
+        color: var(--color-cream, #f3f6f8);
+        font-size: 0.875rem;
+        text-decoration: none;
+        transform: translateY(-200%);
+        transition: transform 150ms ease-out;
+      }
+      .pipely .pl-skip:focus-visible { transform: translateY(0); }
+    </style>
+  </body>
+</html>

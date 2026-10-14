@@ -1,424 +1,327 @@
 ---
-import { getCollection } from "astro:content";
-import Layout from "../layouts/Layout.astro";
-import Nav from "../components/Nav.astro";
-import Mark from "../components/Mark.astro";
-import Footer from "../components/Footer.astro";
+/**
+ * Homepage.
+ *
+ * Eight sections. Order revised 11 September 2026: the client logo strip
+ * moved up to sit directly under the hero video, ahead of MESSAGING-PLAN
+ * §5's original placement below the first service block. AI is still not
+ * on this page at all, it lives inside /web-development/.
+ */
+import { getCollection } from 'astro:content';
+import Site from '../layouts/Site.astro';
+import Button from '../components/pipely/Button.astro';
+import Hero from '../components/pipely/Hero.astro';
+import Marquee from '../components/pipely/Marquee.astro';
+import PillarBlock from '../components/sections/PillarBlock.astro';
+import IpadFrame from '../components/sections/IpadFrame.astro';
+import StillsMotion from '../components/sections/StillsMotion.astro';
+import SlmCollage from '../components/sections/SlmCollage.astro';
+import StartProject from '../components/pipely/StartProject.astro';
 
+// Real quotes only. Placeholders are filtered at the schema level so a
+// stand-in cannot reach production.
+const testimonials = (await getCollection('testimonials', (t) => !t.data.placeholder)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+const testimonial = testimonials[0];
+
+// Alt text is the organisation's name and nothing else. These logos are
+// evidence, not decoration, so none of them take alt="".
 const clients = [
-  "Boston Scientific",
-  "Amgen",
-  "UCD",
-  "Irish Research Council",
-  "Coroflo",
-  "Real Nation",
+  { file: 'guinness-storehouse', name: 'Guinness Storehouse' },
+  { file: 'boston-scientific', name: 'Boston Scientific' },
+  { file: 'amgen', name: 'Amgen' },
+  { file: 'coroflo', name: 'Coroflo' },
+  // Cappagh and Custodian added 19 September 2026: PNGs on white, cropped
+  // from the square files supplied down to the logo plus a small margin.
+  { file: 'national-orthopaedic-hospital-cappagh', name: 'National Orthopaedic Hospital Cappagh', ext: 'png', w: 100 },
+  { file: 'real-nation', name: 'Real Nation' },
+  { file: 'ucd', name: 'University College Dublin' },
+  // Supplied 19 September 2026 as dynamic-logo.jpg, a stacked mark and
+  // wordmark on white. Kept apart from Custodian in the order. Cropped to the logo and saved at 240px tall.
+  { file: 'dynamic', name: 'Dynamic', ext: 'png', w: 70 },
+  { file: 'lifestyle-sports', name: 'Lifestyle Sports' },
+  // Kept apart from Real Nation and Dynamic in the order.
+  { file: 'custodian', name: 'Custodian', ext: 'png', w: 196 },
+  // Supplied 19 September 2026 as Basispoint_Tag_rgb.png, transparent and
+  // already cropped, so used as is.
+  { file: 'basis-point', name: 'basis.point', ext: 'png', w: 149 },
+  // From the old site's media library (RedCross-Logo.jpg, 2022), added 19
+  // September 2026. JPG on white rather than a transparent WebP like the rest.
+  { file: 'irish-red-cross', name: 'Irish Red Cross', ext: 'jpg', w: 256 },
 ];
 
-const allProjects = await getCollection("projects", ({ data }) => data.status === "publish");
+// TODO before launch: both of these need their own case study page at
+// /work/<slug>/, and Boston Scientific needs one line on what the film was
+// for. Until then the cards link to the work index and the missing line
+// renders the placeholder warning rather than quietly shipping empty.
+//
+// TODO before launch: both cards need a thumbnail. .pl-media.is-case is
+// 1 : 0.72, so supply landscape, about 1200 x 864. Set `thumb` on the entry
+// and the card renders it above the tag; without it the card is text only.
+//
+// Guinness Storehouse was here until 12 September 2026, swapped out for
+// Boston Scientific per MESSAGING-PLAN §137. Its case study is still owed.
+//
+// The Boston Scientific thumbnail is the title card of the docuseries
+// episode at vimeo.com/1225926198, pulled from Vimeo's own thumbnail. The
+// film is public and embeddable with no hash, so the card could link or
+// embed it rather than pointing at the work index.
+// A featured card must never promise a case study that is not there. Since
+// MESSAGING-PLAN section 8, a page exists only where `caseStudy` is true AND
+// the project is not a draft, which is exactly the filter in
+// work/[...slug].astro's getStaticPaths. Keep the two in step: not-draft alone
+// is no longer enough, most projects are thumbnails with no page at all.
+// Resolve against the collection and fall back to the work index with a label
+// that is actually true.
+const liveCaseStudies = new Set(
+  (await getCollection('projects', ({ data }) => data.caseStudy && !data.draft)).map((p) => p.id),
+);
+const caseStudy = (slug: string) =>
+  liveCaseStudies.has(slug)
+    ? { href: `/work/${slug}/`, label: 'Read the case study' }
+    : { href: '/work/', label: 'See the work' };
 
-// Scroll-reactive marquee — two drifting rows of project thumbnails
-const withImages = allProjects.filter((p) => p.data.projectImage);
-const mqHalf = Math.ceil(withImages.length / 2);
-const rowA = withImages.slice(0, mqHalf);
-const rowB = withImages.slice(mqHalf);
+type Thumb = {
+  src: string;
+  alt: string;
+  /** Wraps the screenshot in a device mockup instead of showing it flat. */
+  device?: 'ipad';
+  /** Four stills that slide through once, recreating a film's opening. `src` is the resting still. */
+  motion?: [string, string, string, string];
+  /** A layered collage component that moves on scroll, instead of an image. */
+  collage?: 'slm';
+  /** Ground colour behind a portrait device, which does not fill the box. */
+  ground?: string;
+};
+
+const featured = [
+  {
+    client: 'Boston Scientific',
+    craft: 'Video',
+    craftClass: 'is-film',
+    // CLAUDE.md: name the client, never the "EMEA preferred supplier" line.
+    // TODO: confirm this line. Everything in it is verifiable from the film
+    // itself (episode one, docuseries, Boston Scientific) but what the
+    // series was actually FOR is still missing and is the interesting part.
+    line: 'An eight-part education series on pulsed field ablation, filmed at the Mater Private in Dublin.',
+    thumb: {
+      src: '/work/featured/boston/bs-end.webp',
+      alt: 'Opening titles from the Boston Scientific docuseries: clinical staff inside chevron shapes, the Boston Scientific EDUCARE logo, then a gloved hand holding a catheter in theatre.',
+      // The opening four seconds of the film, rebuilt from four stills.
+      motion: [
+        '/work/featured/boston/bs-a.webp',
+        '/work/featured/boston/bs-b.webp',
+        '/work/featured/boston/bs-c.webp',
+        '/work/featured/boston/bs-end.webp',
+      ],
+    } as Thumb | null,
+    slug: 'boston-scientific-docuseries',
+  },
+  {
+    client: 'Someone Like Me (National Disability Authority)',
+    craft: 'Web',
+    craftClass: 'is-web',
+    // The project is named in the heading now, so the line no longer repeats
+    // it. WCAG 2.1 AA is correct for this site and must not become 2.2:
+    // 2.2 is Real Nation's own site. See CLAUDE.md.
+    // Always credit Real Nation, who designed and ran the project.
+    line: 'Built in English and Irish with human translation review, and tested to WCAG 2.1 AA. In partnership with Real Nation, who designed and ran the project.',
+    thumb: {
+      src: '/work/featured/someone-like-me.webp',
+      collage: 'slm',
+      alt: 'The Someone Like Me Art Awards site in English and Irish, shown across two browser windows and a phone.',
+    } as Thumb | null,
+    slug: 'someone-like-me',
+  },
+].map((f) => ({ ...f, ...caseStudy(f.slug) }));
+
 ---
 
-<Layout>
-  <Nav />
+<Site
+  title="Doghouse Media"
+  description="An independent video and web studio in Dublin. Films and websites for organisations with something difficult to explain."
+>
+  {/* ---------- 1. Hero ---------- */}
+  <Hero
+    heading="Video and digital production that informs and inspires."
+    lead="We're a female led, Dublin studio specialising in video production and web development for corporate and medtech clients. We also work with charities and public sector organisations."
+    primary={{ label: 'See the work', href: '/work/' }}
+  />
 
-  <!-- Hero -->
-  <header class="hero">
-    <div class="wrap">
-      <div class="eyebrow">Web + Video · Dublin</div>
-      <h1>
-        <span class="w" style="animation-delay:.2s">We build </span><span
-          class="w"
-          style="animation-delay:.3s"><span class="punch blue">websites</span></span
-        ><span class="w" style="animation-delay:.4s"> and shoot </span><span
-          class="w"
-          style="animation-delay:.5s"><span class="punch punch-2 red">film</span></span
-        ><span class="w" style="animation-delay:.6s"> that get good brands noticed.</span>
-      </h1>
-      <p class="hero-sub">
-        An independent, female-owned studio. Two crafts, one roof — from MedTech to
-        charity to the brands you'd recognise.
-      </p>
-      <div class="hero-actions">
-        <a href="#work" class="btn btn-primary">See the work</a>
-        <a href="#contact" class="btn btn-ghost">Talk to us</a>
+  {/* ---------- 2. Client logos ----------
+      Moved up 11 September 2026 to sit directly under the hero video,
+      ahead of the first service block. */}
+  <section class="pl-panel" aria-labelledby="clients-heading">
+    <div class="pl-gutter pl-pad-sm">
+      <div class="pl-container is-md">
+        <p class="u-eyebrow" id="clients-heading" data-reveal>Organisations we've worked with</p>
+      </div>
+      <div class="pl-gap-sm"></div>
+      <div class="pl-container is-md">
+        <Marquee speed={34}>
+          {clients.map((c) => (
+            <img
+              src={`/clients/${c.file}.${'ext' in c ? c.ext : 'webp'}`}
+              alt={c.name}
+              width={'w' in c ? c.w : 140}
+              height="48"
+              loading="lazy"
+              style="height:2.5rem;width:auto;opacity:.55"
+            />
+          ))}
+        </Marquee>
       </div>
     </div>
-    <Mark animated={true} class="hero-mark" />
-  </header>
+  </section>
 
-  <!-- Trust ticker -->
-  <section class="trust">
-    <div class="wrap">
-      <div class="trust-label">Trusted by</div>
-      <div class="marquee">
-        <div class="marquee-track">
-          {
-            [0, 1].map(() => (
-              <div class="marquee-item">
-                {clients.map((c) => (
-                  <>
-                    <span>{c}</span>
-                    <i class="dot" />
-                  </>
-                ))}
+  {/* ---------- 3. Video Production ---------- */}
+  <PillarBlock
+    eyebrow="Video Production"
+    heading="Video production."
+    headingLine2="Real stories, expertly told."
+    lead="From the people behind a business to the science behind a breakthrough, we create films for medtech, corporate and charity clients."
+    video={{
+      vimeoId: '1218490086',
+      title: "Artybaker Summer '26",
+      behind: { vimeoId: '1218491115', title: "Hawker Summer '26" },
+    }}
+    cta={{ label: 'See the video work', href: '/video-production/' }}
+    tone="film"
+    surface="secondary"
+    blob
+  />
+
+  {/* ---------- 4. Web Development ---------- */}
+  <PillarBlock
+    eyebrow="Web Development"
+    heading="Websites that sell, teach and take bookings."
+    lead="We build learning platforms, online shops, booking systems, donation platforms and bilingual sites in English and Irish. Accessibility is part of every build, and your own team can update the site without coming back to us."
+    tablet
+    cta={{ label: 'More about web development', href: '/web-development/' }}
+    tone="web"
+    reverse
+  />
+
+  {/* ---------- 5. Two featured case studies ----------
+      Steel tint (24 September 2026): the work band is the one place the
+      fourth surface appears on this page, so the two white cards in it sit
+      up. The hand-picked grey that was here is gone; the palette went cool
+      instead. The graph paper moved here from the video block on the same
+      day: it belongs behind the cards rather than behind a pillar, and
+      leaving the two pillars plain keeps it the exception. */}
+  <section class="pl-panel is-tint pl-graph" aria-labelledby="featured-heading">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div class="pl-row is-between is-top">
+          <div class="pl-stack pl-stack-sm">
+            <p class="u-eyebrow" data-reveal>Selected work</p>
+            <h2 class="u-h2 u-max-26" id="featured-heading" data-reveal>Recent work</h2>
+          </div>
+          <div data-reveal><Button href="/work/" variant="ghost">All work</Button></div>
+        </div>
+
+        <div class="pl-gap-lg"></div>
+
+        {/* is-stretch: both cards take the height of the taller one, and the
+            link is pushed to the foot of each so the two line up however long
+            the line above it runs. */}
+        <div class="pl-grid-2 is-stretch" data-reveal-stagger="120">
+          {featured.map((f) => (
+            <article class="pl-card is-tight" data-reveal>
+              {f.thumb && (
+                <div class="pl-media is-case">
+                  {f.thumb.collage === 'slm'
+                    ? <SlmCollage alt={f.thumb.alt} />
+                    : f.thumb.motion
+                    ? <StillsMotion stills={f.thumb.motion} alt={f.thumb.alt} />
+                    : f.thumb.device === 'ipad'
+                    ? <IpadFrame src={f.thumb.src} alt={f.thumb.alt} ground={f.thumb.ground} />
+                    : <img src={f.thumb.src} alt={f.thumb.alt} loading="lazy" decoding="async" />}
+                </div>
+              )}
+              <span class:list={['pl-tag', f.craftClass, 'u-xs']}>{f.craft}</span>
+              <div class="pl-stack pl-stack-sm">
+                <h3 class="u-xl u-medium">{f.client}</h3>
+                {f.line
+                  ? <p class="u-muted">{f.line}</p>
+                  : <p class="u-muted" data-placeholder>PLACEHOLDER, not for publication. One line needed on what this film was for.</p>}
               </div>
-            ))
-          }
+              <a class="pl-link" href={f.href} style="margin-top:auto">{f.label}</a>
+            </article>
+          ))}
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Services / rooms -->
-  <section class="rooms" id="services">
-    <div class="wrap">
-      <div class="kicker">What we do</div>
-
-      <div class="room flip room-band reveal" id="video">
-        <div class="room-text">
-          <span class="room-tag">Video · Production</span>
-          <h3>Film that earns attention</h3>
-          <p class="room-body">
-            From strategy to final grade. Brand films, event coverage, and the short,
-            sharp promos that stop the scroll. Full crew or a nimble two-person unit,
-            whatever the job needs.
-          </p>
-          <a href="/media-production/" class="room-link">Explore video →</a>
+  {/* ---------- 6. Testimonial ----------
+      One quote, or nothing. An empty slot is better than a fake one. */}
+  {testimonial && (
+    <section class="pl-panel" aria-label="Client testimonial">
+      <div class="pl-gutter pl-pad-md">
+        <div class="pl-container is-md">
+          <blockquote class="pl-quote" data-reveal>
+            <p class="u-h3 u-balance u-max-33">{testimonial.data.quote}</p>
+            <footer class="u-sm u-muted" style="margin-top:1.5rem">
+              {testimonial.data.name}, {testimonial.data.company}
+            </footer>
+          </blockquote>
         </div>
-        <div class="room-visual video"></div>
       </div>
+    </section>
+  )}
 
-      <div class="room reveal" id="web">
-        <div class="room-text">
-          <span class="room-tag blue">Web · Development</span>
-          <h3>Sites built to last, and to be found</h3>
-          <p class="room-body">
-            Considered, fast, accessible websites on WordPress or modern static builds.
-            Plus the care plans that keep them secure, quick and climbing the rankings
-            long after launch.
-          </p>
-          <a href="/web-development/" class="room-link">Explore web →</a>
-        </div>
-        <div class="room-visual web-mock" aria-hidden="true">
-          <div class="bm-bar">
-            <span class="bm-dot"></span><span class="bm-dot"></span><span class="bm-dot"></span>
-            <span class="bm-url">doghousemedia.ie</span>
+  {/* ---------- 7. Who we are ---------- */}
+  <section class="pl-panel is-secondary" aria-labelledby="studio-heading">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div class="pl-grid-2 is-wide">
+          <div class="pl-stack pl-stack-md" data-reveal>
+            <p class="u-eyebrow">The studio</p>
+            <h2 class="u-h2" style="max-width:38.5rem" id="studio-heading">A female-owned studio specialising in media production and digital solutions.</h2>
           </div>
-          <div class="bm-body">
-            <div class="bm-score">
-              <svg viewBox="0 0 36 36" class="bm-ring">
-                <circle cx="18" cy="18" r="16" class="bm-ring-bg"></circle>
-                <circle cx="18" cy="18" r="16" class="bm-ring-fg"></circle>
-              </svg>
-              <span class="bm-num">100</span>
-            </div>
-            <ul class="bm-metrics">
-              <li>Performance</li>
-              <li>Accessibility</li>
-              <li>SEO</li>
-            </ul>
+          <div class="pl-stack pl-stack-md" data-reveal>
+            <p class="u-lg u-muted u-max-33">
+              Founded in Dublin in 2011, Doghouse Media is small enough to keep things personal but experienced
+              enough to handle more complex projects. You’ll always deal directly with Emma Walkin or Susan Ryan,
+              from the first conversation through to delivery.
+            </p>
+            <div class="pl-btn-group"><Button href="/about/" variant="ghost">About the studio</Button></div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Work grid -->
-  <section class="work" id="work">
-    <div class="wrap">
-      <div class="work-head reveal">
-        <h2>A few we're proud of</h2>
-        <a href="/work/">All work →</a>
-      </div>
-    </div>
-
-    <!-- Scroll-reactive carousel -->
-    <div class="home-marquee" id="reel" aria-label="Project reel">
-      <div class="mq-row" data-dir="1">
-        <div class="mq-track">
-          {
-            [0, 1, 2].map(() =>
-              rowA.map((p) => (
-                <a href={`/work/${p.id}/`} class="mq-tile" aria-label={p.data.title}>
-                  <img src={p.data.projectImage} alt={p.data.title} loading="lazy" />
-                </a>
-              ))
-            )
-          }
-        </div>
-      </div>
-      <div class="mq-row" data-dir="-1">
-        <div class="mq-track">
-          {
-            [0, 1, 2].map(() =>
-              rowB.map((p) => (
-                <a href={`/work/${p.id}/`} class="mq-tile" aria-label={p.data.title}>
-                  <img src={p.data.projectImage} alt={p.data.title} loading="lazy" />
-                </a>
-              ))
-            )
-          }
+  {/* ---------- 8. Contact band ---------- */}
+  <section class="pl-panel is-inverse" aria-labelledby="contact-heading">
+    <div class="pl-gutter pl-pad-lg">
+      <div class="pl-container is-md u-center">
+        <div data-reveal-stagger="100">
+          <h2
+            class="u-h2 u-balance"
+            id="contact-heading"
+            data-reveal
+            style="color:var(--pl-text-inverse);margin-inline:auto;max-width:30rem"
+          >
+            Tell us what you're working on.
+          </h2>
+          <div class="pl-gap-sm"></div>
+          <p class="u-lg" data-reveal style="color:var(--pl-text-on-dark);margin-inline:auto;max-width:33rem">
+            Send us a few lines about the project and we'll let you know if it's something we can help with.
+          </p>
+          <div class="pl-gap-sm"></div>
+          <div class="pl-btn-group" data-reveal style="justify-content:center">
+            <Button href="/contact/" variant="on-dark" data-start-project>Tell us about your project</Button>
+          </div>
+          <div class="pl-gap-sm"></div>
+          <p class="u-sm" data-reveal style="color:var(--pl-text-on-dark)">
+            <a href="mailto:hello@doghousemedia.ie">hello@doghousemedia.ie</a>
+          </p>
         </div>
       </div>
     </div>
   </section>
-
-  <!-- CTA band -->
-  <section class="wrap cta-wrap" id="about">
-    <div class="cta reveal">
-      <div class="cta-inner">
-        <h2>Got something you want to <span class="red">get off the ground?</span></h2>
-        <p>Tell us the idea. We'll tell you straight whether we're the right studio for it.</p>
-        <a href="mailto:susan@doghousemedia.ie" class="btn btn-cream">Start a project</a>
-      </div>
-    </div>
-  </section>
-
-  <Footer />
-</Layout>
-
-<style>
-  /* Web room — browser-window performance mockup */
-  .web-mock {
-    background: #fff !important;
-    display: flex !important;
-    flex-direction: column;
-    padding: 0 !important;
-    overflow: hidden;
-  }
-  .web-mock .bm-bar {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--line);
-    background: var(--cream);
-  }
-  .web-mock .bm-dot {
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background: var(--line);
-  }
-  .web-mock .bm-url {
-    margin-left: 10px;
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.04em;
-    color: var(--gray);
-  }
-  .web-mock .bm-body {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 28px;
-    padding: 24px;
-  }
-  .web-mock .bm-score {
-    position: relative;
-    width: 104px;
-    height: 104px;
-    flex: none;
-  }
-  .web-mock .bm-ring {
-    width: 100%;
-    height: 100%;
-    transform: rotate(-90deg);
-  }
-  .web-mock .bm-ring-bg {
-    fill: none;
-    stroke: var(--line);
-    stroke-width: 3;
-  }
-  .web-mock .bm-ring-fg {
-    fill: none;
-    stroke: var(--teal);
-    stroke-width: 3;
-    stroke-linecap: round;
-    stroke-dasharray: 100.5 100.5;
-    stroke-dashoffset: 100.5;
-    animation: bm-fill 1.6s var(--ease-rise) forwards;
-  }
-  @keyframes bm-fill {
-    to { stroke-dashoffset: 0; }
-  }
-  .web-mock .bm-num {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--disp);
-    font-weight: 800;
-    font-size: 30px;
-    letter-spacing: -0.03em;
-    color: var(--teal);
-  }
-  .web-mock .bm-metrics {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  .web-mock .bm-metrics li {
-    position: relative;
-    padding-left: 24px;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--ink);
-  }
-  .web-mock .bm-metrics li::before {
-    content: "✓";
-    position: absolute;
-    left: 0;
-    top: -1px;
-    width: 17px;
-    height: 17px;
-    border-radius: 50%;
-    background: var(--teal);
-    color: #fff;
-    font-size: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .web-mock .bm-ring-fg { animation: none; stroke-dashoffset: 0; }
-  }
-
-  .home-marquee {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    padding: 40px 0 8px;
-    overflow: hidden;
-  }
-  .home-marquee .mq-row {
-    overflow: hidden;
-  }
-  .home-marquee .mq-track {
-    display: flex;
-    gap: 14px;
-    width: max-content;
-    will-change: transform;
-  }
-  .home-marquee .mq-tile {
-    flex: none;
-    width: 360px;
-    height: 228px;
-    border-radius: 16px;
-    overflow: hidden;
-    border: 1px solid var(--line);
-    background: var(--steel-tint);
-    display: block;
-  }
-  .home-marquee .mq-tile img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.5s var(--ease-rise);
-  }
-  .home-marquee .mq-tile:hover img {
-    transform: scale(1.05);
-  }
-  @media (max-width: 700px) {
-    .home-marquee .mq-tile {
-      width: 248px;
-      height: 158px;
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .home-marquee .mq-track {
-      will-change: auto;
-    }
-  }
-</style>
-
-<script>
-  // Scroll-reactive marquee
-  (function () {
-    const reduce =
-      window.matchMedia &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) return;
-
-    const section = document.getElementById("reel");
-    if (!section) return;
-
-    const rows = Array.from(
-      section.querySelectorAll<HTMLElement>(".mq-row")
-    ).map((row) => ({
-      track: row.querySelector<HTMLElement>(".mq-track")!,
-      dir: Number(row.dataset.dir) || 1,
-      loop: 0,
-    }));
-
-    function measure() {
-      rows.forEach((r) => {
-        r.loop = r.track.scrollWidth / 3;
-      });
-    }
-    measure();
-    window.addEventListener("resize", measure);
-
-    function update() {
-      const rect = section.getBoundingClientRect();
-      const offset = (window.innerHeight - rect.top) * 0.18;
-      rows.forEach((r) => {
-        if (!r.loop) return;
-        const x = (((r.dir * offset) % r.loop) + r.loop) % r.loop;
-        r.track.style.transform = `translate3d(${
-          r.dir > 0 ? x - r.loop : -x
-        }px,0,0)`;
-      });
-    }
-
-    let ticking = false;
-    function onScroll() {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        update();
-        ticking = false;
-      });
-    }
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-  })();
-</script>
-
-<script>
-  (function () {
-    const els = document.querySelectorAll<HTMLElement>(".reveal");
-    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches)
-      return;
-    els.forEach((el) => el.classList.add("armed"));
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add("in");
-            io.unobserve(e.target);
-          }
-        });
-      },
-      { threshold: 0.12, rootMargin: "0px 0px -6% 0px" }
-    );
-    els.forEach((el) => io.observe(el));
-    setTimeout(() => {
-      els.forEach((el) => {
-        if (!el.classList.contains("in")) el.classList.add("in");
-      });
-    }, 1200);
-  })();
-</script>
+  <StartProject />
+</Site>

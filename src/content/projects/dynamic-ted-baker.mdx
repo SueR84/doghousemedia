@@ -1,0 +1,115 @@
+---
+title: "Dynamic: retail installation films for Ted Baker"
+client: "Dynamic"
+# TODO: confirm the year. The films were uploaded to Vimeo on 26 June 2024.
+year: 2024
+craft: "video"
+# No cover: it is a video case study and the film carries the top of the page.
+# thumb feeds the Work grid and the video production page.
+thumb: "/work/dynamic/card-photos-2.jpg"
+summary: "A series of technical films showing shop installers how each stage of a Ted Baker store installation is done, filmed over several days for Dynamic."
+video: "968763421"
+services:
+  - "Video Production"
+  - "Editing"
+order: 3
+caseStudy: true
+feature: true
+# Built 6 October 2026 from Sue's notes and the three films in Vimeo,
+# Library / 009 Dynamic. Awaiting her sign-off on the copy.
+draft: false
+---
+
+import CaseFacts from '../../components/casestudy/CaseFacts.astro';
+import CaseStep from '../../components/casestudy/CaseStep.astro';
+import CaseFilm from '../../components/casestudy/CaseFilm.astro';
+import CaseFilmGrid from '../../components/casestudy/CaseFilmGrid.astro';
+import CaseGallery from '../../components/casestudy/CaseGallery.astro';
+
+{/* Films, all in Vimeo, Library / 009 Dynamic. Description on each:
+    "Part of Retail Installation series - Dynamic / Ted Baker".
+
+      968763421  Menswear Free-standing Fixtures  2:49  public, embeds without a hash
+      968762947  Signage Installation             6:17  needs hash 86cfe6e7e1
+      968762771  Finishing works - Reporting      2:07  public. Opens on a title card
+                                                        ("12. Finishing works / Reporting"),
+                                                        so the series has at least twelve
+                                                        parts. Only these three are in
+                                                        the Library.
+
+    TODO before launch:
+      - client paragraph is based on Dynamic's own site (drglobal.com/portfolio/
+        ted-baker/, checked 6 October 2026), where Sue pointed us for an example
+        of what they do. That project was not ours. Confirm the wording with Sue.
+      - the shoot location (Dynamic's Retail Academy, Dublin) is from Sue,
+        6 October 2026.
+      - confirm the year. Sue confirmed 6 October 2026 that the series has more
+        films than the three in Vimeo, so the copy says "more films than the
+        three shown here" and gives no number. Add the number if she supplies it.
+      - the films carry Dynamic's own on-screen step captions. Written
+        captions (subtitles) still need adding at Vimeo.
+      - the Finishing works poster is the Vimeo title card. Set a frame from
+        the film and re-save finishing-works.jpg.
+      - no client quote yet. */}
+
+<section class="pl-panel is-inverse">
+  <div class="pl-gutter pl-pad-sm">
+    <div class="pl-container is-md">
+      <CaseFacts
+        items={[
+          { label: 'Client', value: 'Dynamic' },
+          { label: 'Retailer', value: 'Ted Baker' },
+          { label: 'What we did', value: 'Filming and editing' },
+          { label: 'Made for', value: 'Shop installers' },
+        ]}
+      />
+    </div>
+  </div>
+</section>
+
+<CaseFilm
+  vimeoId="968763421"
+  title="Menswear free-standing fixtures, from the Dynamic retail installation series"
+  poster="/work/dynamic/menswear-fixtures.jpg"
+  caption="Menswear free-standing fixtures"
+  time="2:49"
+  duration="PT2M49S"
+/>
+
+<CaseStep n="01" label="The brief" title="Dynamic and Ted Baker" surface="secondary">
+  Dynamic is a retail design and construction management firm that designs and builds stores
+  around the world, including stores for Ted Baker. Fitting out a store involves many trades
+  working to the same plans, so Dynamic wanted a series of films that shows the shop
+  installers, step by step, how each part of an installation is done.
+</CaseStep>
+
+<CaseStep n="02" label="What we made" title="A technical shoot over several days">
+  The shoot ran over several days at Dynamic's Retail Academy in Dublin and was highly
+  technical. We followed the installation as it was built and filmed the detail of each stage,
+  from free-standing fixtures and signage to transformers, wiring and the finishing works. The series runs to more films than the three
+  shown here, one for each stage, with on-screen text naming every step. We planned the
+  filming so an installer can see exactly what is being done and in what order.
+
+  <CaseFilmGrid
+    cols={2}
+    films={[
+      { vimeoId: '968762947', hash: '86cfe6e7e1', title: 'Signage installation, from the Dynamic retail installation series', poster: '/work/dynamic/signage-installation.jpg', caption: 'Signage installation', time: '6:17', duration: 'PT6M17S' },
+      { vimeoId: '968762771', title: 'Finishing works and reporting, from the Dynamic retail installation series', poster: '/work/dynamic/finishing-works.jpg', caption: 'Finishing works and reporting', time: '2:07', duration: 'PT2M7S' },
+    ]}
+  />
+
+  <CaseGallery
+    cols={2}
+    items={[
+      { src: '/work/dynamic/installer-lettering.webp', alt: 'An installer fixing brass Ted Baker letters to a patterned wall panel, with a pencil behind his ear.', caption: 'Fixing the lettering to the wall' },
+      { src: '/work/dynamic/backlit-sign.webp', alt: 'Backlit brass Ted Baker London lettering on a stone-effect wall.', caption: 'Backlit lettering' },
+      { src: '/work/dynamic/brass-lettering.webp', alt: 'Brass Ted Baker London lettering on a cream wall.', caption: 'Brass lettering' },
+      { src: '/work/dynamic/finished-wall.webp', alt: 'A finished display wall with Ted Baker London lettering above a shelf of framed prints.', caption: 'A finished display wall' },
+    ]}
+  />
+</CaseStep>
+
+<CaseStep n="03" label="Where they are used" title="Used by the shop installers" surface="tint">
+  The films are used by the shop installers who carry out the work, as a reference for how
+  each stage is done.
+</CaseStep>

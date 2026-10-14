@@ -1,0 +1,253 @@
+/* Step-by-step enquiry modal. Shared by StartProject (homepage and
+   elsewhere) and AuditRequest (accessibility audits). Moved out of
+   StartProject.astro on 22 September 2026 so both load the same styles. */
+  .pipely .sp-modal {
+    border: none;
+    border-radius: var(--pl-r-panel);
+    padding: 0;
+    margin: auto;
+    width: min(620px, calc(100vw - 32px));
+    max-height: calc(100dvh - 48px);
+    background: var(--pl-secondary);
+    color: var(--pl-text);
+    overflow: hidden;
+  }
+  .pipely .sp-modal::backdrop {
+    background: rgb(15 20 23 / 0.55);
+    backdrop-filter: blur(3px);
+  }
+  .pipely .sp-modal[open] { animation: sp-pop 0.22s cubic-bezier(0.2, 0.7, 0.3, 1); }
+  @keyframes sp-pop {
+    from { opacity: 0; transform: translateY(8px) scale(0.985); }
+    to { opacity: 1; transform: none; }
+  }
+  .pipely .sp-shell {
+    position: relative;
+    padding: 40px;
+    max-height: calc(100dvh - 48px);
+    overflow-y: auto;
+  }
+
+  .pipely .sp-close {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    border: none;
+    background: transparent;
+    font-size: 28px;
+    line-height: 1;
+    color: var(--pl-text-muted);
+    cursor: pointer;
+    padding: 4px;
+    transition: color 0.15s;
+  }
+  .pipely .sp-close:hover { color: var(--color-red); }
+
+  /* Stops short of the close button rather than running underneath it. */
+  .pipely .sp-progress { display: flex; gap: 8px; margin-bottom: 28px; margin-right: 32px; }
+  .pipely .sp-step-dot {
+    height: 4px;
+    flex: 1;
+    border-radius: var(--pl-r-pill);
+    background: var(--pl-border);
+    transition: background 0.25s;
+  }
+  .pipely .sp-step-dot.active { background: var(--color-ink); }
+  .pipely .sp-step-dot.done { background: var(--color-red); }
+
+  /* Red on cream is about 5.8:1, so it passes as small text. */
+  .pipely .sp-kicker {
+    display: block;
+    margin-bottom: 10px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-red);
+  }
+  .pipely .sp-title {
+    font-family: var(--font-display);
+    font-weight: var(--pl-fw-regular);
+    font-size: clamp(22px, 3.5vw, 30px);
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+  /* Focus lands on the heading only so the step is announced. It is not a
+     control, so it gets no ring. */
+  .pipely .sp-title:focus { outline: none; }
+  .pipely .sp-sub {
+    margin-top: 10px;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--pl-text-muted);
+  }
+
+  /* Interest choice */
+  .pipely .sp-choice-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 28px;
+  }
+  .pipely .sp-choice {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+    padding: 24px;
+    border-radius: var(--pl-r-media);
+    border: 1.5px solid var(--pl-border);
+    background: var(--pl-primary);
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    transition: border-color 0.18s, transform 0.18s;
+  }
+  .pipely .sp-choice.is-wide { grid-column: 1 / -1; }
+  .pipely .sp-choice:hover { border-color: var(--color-ink); transform: translateY(-2px); }
+  .pipely .sp-choice-tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--pl-text-muted);
+  }
+  .pipely .sp-choice-tag.is-film { color: var(--pl-accent-film); }
+  .pipely .sp-choice-tag.is-web { color: var(--pl-accent-web); }
+  .pipely .sp-choice-name {
+    font-family: var(--font-display);
+    font-weight: var(--pl-fw-medium);
+    font-size: 18px;
+    letter-spacing: -0.02em;
+  }
+  .pipely .sp-choice-desc {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--pl-text-muted);
+  }
+
+  /* Fields */
+  .pipely .sp-field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-top: 18px;
+    flex: 1;
+  }
+  .pipely .sp-row { display: flex; gap: 16px; }
+  .pipely .sp-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--pl-text-muted);
+  }
+  .pipely .sp-field input,
+  .pipely .sp-field textarea {
+    width: 100%;
+    padding: 11px 13px;
+    border: 1.5px solid var(--pl-border-strong);
+    border-radius: 8px;
+    background: var(--pl-primary);
+    color: var(--pl-text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    transition: border-color 0.15s;
+  }
+  .pipely .sp-field textarea { resize: vertical; line-height: 1.5; }
+  .pipely .sp-field input:focus-visible,
+  .pipely .sp-field textarea:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+    border-color: var(--color-ink);
+  }
+  .pipely .sp-field input[aria-invalid='true'] { border-color: var(--color-red); }
+
+  /* Timeline chips. Real radios, styled as the original's pills, so they
+     are one keyboard stop with arrow-key selection and announce as a group. */
+  .pipely .sp-fieldset { margin-top: 24px; padding: 0; border: 0; }
+  .pipely .sp-fieldset legend { padding: 0; }
+  .pipely .sp-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+  .pipely .sp-chip { position: relative; }
+  .pipely .sp-chip input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+  .pipely .sp-chip span {
+    display: inline-block;
+    padding: 10px 18px;
+    border: 1.5px solid var(--pl-border-strong);
+    border-radius: var(--pl-r-pill);
+    background: var(--pl-primary);
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+  .pipely .sp-chip:hover span { border-color: var(--color-ink); }
+  .pipely .sp-chip input:checked + span { background: var(--color-ink); border-color: var(--color-ink); color: var(--color-cream); }
+  .pipely .sp-chip input:focus-visible + span { outline: 2px solid var(--color-ink); outline-offset: 2px; }
+
+  /* Nav */
+  .pipely .sp-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 32px;
+  }
+  .pipely .sp-back {
+    padding: 8px 4px;
+    border: none;
+    background: transparent;
+    color: var(--pl-text-muted);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+  .pipely .sp-back:hover { color: var(--pl-text); }
+  .pipely .sp-advance { margin-left: auto; }
+  .pipely .sp-advance:disabled { opacity: 0.4; cursor: not-allowed; }
+  /* .pl-btn sets display:inline-flex, which would beat the hidden attribute. */
+  .pipely .sp-nav [hidden],
+  .pipely .sp-nav[hidden],
+  .pipely .sp-panel[hidden],
+  .pipely .sp-progress[hidden] { display: none !important; }
+
+  .pipely .sp-error {
+    margin-top: 14px;
+    color: var(--color-red);
+    font-size: 13px;
+  }
+  .pipely .sp-error:empty { display: none; }
+
+  /* Success */
+  .pipely .sp-success { text-align: center; padding: 20px 0; }
+  .pipely .sp-check {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: var(--color-red);
+    color: var(--color-cream);
+    font-size: 32px;
+  }
+  .pipely .sp-success .pl-btn { margin-top: 24px; }
+
+  .pipely .sp-pot { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+  @media (max-width: 560px) {
+    .pipely .sp-shell { padding: 28px 22px; }
+    .pipely .sp-choice-grid { grid-template-columns: 1fr; }
+    .pipely .sp-row { flex-direction: column; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pipely .sp-modal[open] { animation: none; }
+    .pipely .sp-choice:hover { transform: none; }
+  }
+
+  html.has-modal { overflow: hidden; }

@@ -1,0 +1,77 @@
+---
+/**
+ * Several films from one project, side by side. Each is a still and a play
+ * button until clicked, then opens in the modal, same as CaseFilm. Added
+ * 5 October 2026 for Coroflo, where the project is a set of films rather
+ * than one.
+ *
+ * Landscape films only. The posters are 16:9 and VideoFacade assumes it.
+ *
+ * CLAUDE.md: every embedded film needs written captions, not auto-generated.
+ * That is on the film at Vimeo, not here.
+ */
+import VideoFacade from '../sections/VideoFacade.astro';
+
+interface Film {
+  vimeoId: string;
+  hash?: string;
+  title: string;
+  poster: string;
+  caption: string;
+  /** Running time as m:ss, plus the ISO duration for the <time> element. */
+  time?: string;
+  duration?: string;
+}
+interface Props {
+  films: Film[];
+  cols?: 2 | 3;
+}
+const { films, cols = 3 } = Astro.props;
+---
+
+<ul class="cs-films" role="list" style={`--cs-cols:${cols}`} data-reveal-stagger="80">
+  {films.map((f) => (
+    <li data-reveal>
+      <figure class="cs-films__item">
+        <div class="pl-media is-wide">
+          <VideoFacade vimeoId={f.vimeoId} hash={f.hash} title={f.title} poster={f.poster} mode="dialog" />
+        </div>
+        <figcaption class="cs-films__caption">
+          <span>{f.caption}</span>
+          {f.time && (
+            <>
+              <span aria-hidden="true">/</span>
+              <span><span class="sr-only">Running time </span><time datetime={f.duration}>{f.time}</time></span>
+            </>
+          )}
+        </figcaption>
+      </figure>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .cs-films {
+    display: grid;
+    grid-template-columns: repeat(var(--cs-cols, 3), minmax(0, 1fr));
+    gap: var(--pl-s-lg) var(--pl-s-md);
+    margin: var(--pl-s-lg) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cs-films__item { margin: 0; }
+  .cs-films__caption {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: var(--pl-xs);
+    letter-spacing: var(--pl-tr-caps);
+    text-transform: uppercase;
+    color: var(--pl-text-meta);
+  }
+  @media (max-width: 767px) {
+    .cs-films { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>

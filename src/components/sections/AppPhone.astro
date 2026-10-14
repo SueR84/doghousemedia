@@ -1,0 +1,134 @@
+---
+/**
+ * A real app screenshot inside a phone, with its graph drawing itself in.
+ * Added 5 October 2026 for the Coroflo case study (the Coro app's live milk
+ * flow screen, from screenshots the client supplied).
+ *
+ * How the graph moves: two copies of the same screenshot are stacked. The
+ * bottom one has the plotted line removed and the grid rebuilt, so the
+ * chart reads as empty. The top one is the untouched screenshot, clipped to
+ * the plot area, and the clip opens from left to right. Nothing on the
+ * screen is redrawn or invented: every pixel the visitor sees is the app's.
+ *
+ * Motion: runs once each time the phone scrolls into view, 3.2 seconds, then
+ * stops on the finished graph. Under five seconds, so it needs no pause
+ * control (WCAG 2.2.2). Under prefers-reduced-motion, or without
+ * JavaScript, the finished screenshot is all that ever shows.
+ *
+ * Phone chrome matches PhoneVideo: same rail, bezel and radii, untilted.
+ */
+interface Props {
+  /** The untouched screenshot. Carries the alt text. */
+  src: string;
+  /** The same screenshot with the plotted line removed. Decorative. */
+  emptySrc: string;
+  alt: string;
+  /** The plot area as insets from each edge of the screenshot, in percent. */
+  plot: { top: number; right: number; bottom: number; left: number };
+  /** Screenshot proportions, width / height. */
+  ratio?: string;
+}
+const { src, emptySrc, alt, plot, ratio = '9 / 20' } = Astro.props;
+const style = [
+  `--ap-ratio:${ratio}`,
+  `--ap-t:${plot.top}%`,
+  `--ap-r:${plot.right}%`,
+  `--ap-b:${plot.bottom}%`,
+  `--ap-l:${plot.left}%`,
+].join(';');
+---
+
+<figure class="ap" data-app-phone style={style}>
+  <div class="ap-rail">
+    <div class="ap-body">
+      <div class="ap-screen">
+        <img class="ap-img ap-img--empty" src={emptySrc} alt="" width="720" height="1600" loading="lazy" decoding="async" />
+        <img class="ap-img ap-img--full" src={src} alt={alt} width="720" height="1600" loading="lazy" decoding="async" />
+        <span class="ap-glare" aria-hidden="true"></span>
+      </div>
+    </div>
+  </div>
+</figure>
+
+<style>
+  .ap {
+    --ap-w: clamp(12rem, 22vw, 17rem);
+    width: var(--ap-w);
+    margin: 0 auto;
+  }
+  .ap-rail {
+    padding: calc(var(--ap-w) * 0.011);
+    border-radius: calc(var(--ap-w) * 0.175);
+    background: linear-gradient(
+      114deg,
+      #9aa3a9 0%, #2b3135 11%, #6d767c 29%,
+      #202528 52%, #737c82 72%, #272c30 86%, #9aa3a9 100%
+    );
+    box-shadow:
+      0 2px 6px rgb(0 0 0 / 0.2),
+      0 20px 34px -8px rgb(0 0 0 / 0.34),
+      0 54px 86px -22px rgb(0 0 0 / 0.46);
+  }
+  .ap-body {
+    padding: calc(var(--ap-w) * 0.029);
+    border-radius: calc(var(--ap-w) * 0.164);
+    background: #050708;
+  }
+  .ap-screen {
+    position: relative;
+    aspect-ratio: var(--ap-ratio);
+    overflow: clip;
+    border-radius: calc(var(--ap-w) * 0.135);
+    background: #fff;
+  }
+  .ap-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .ap-glare {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(146deg, rgb(255 255 255 / 0.13) 0%, rgb(255 255 255 / 0.045) 15%, transparent 36%);
+  }
+
+  /* Only once the script has run, and only with motion allowed, does the
+     full screenshot get clipped. Everyone else sees the finished graph. */
+  @media (prefers-reduced-motion: no-preference) {
+    .ap.is-armed .ap-img--full {
+      clip-path: inset(var(--ap-t) calc(100% - var(--ap-l)) var(--ap-b) var(--ap-l));
+    }
+    .ap.is-armed.is-drawing .ap-img--full {
+      clip-path: inset(var(--ap-t) var(--ap-r) var(--ap-b) var(--ap-l));
+      transition: clip-path 3200ms cubic-bezier(0.45, 0, 0.55, 1);
+    }
+    /* Outside the plot the two copies are identical, so the full copy is
+       shown there all along by letting the empty copy carry it. */
+  }
+</style>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  document.querySelectorAll<HTMLElement>('[data-app-phone]').forEach((el) => {
+    if (reduce.matches || !('IntersectionObserver' in window)) return;
+    el.classList.add('is-armed');
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting && e.intersectionRatio >= 0.5) {
+            // Next frame, so the closed clip has painted before it opens.
+            requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('is-drawing')));
+          } else if (!e.isIntersecting) {
+            // Reset off screen so it draws again on the way back.
+            el.classList.remove('is-drawing');
+          }
+        }
+      },
+      { threshold: [0, 0.5] },
+    );
+    io.observe(el);
+  });
+</script>

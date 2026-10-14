@@ -1,0 +1,135 @@
+---
+title: "An award-winning course, on a platform that runs it."
+client: "Shapes of Grief"
+partner: "Branding by Kay at Patterns. We designed and built the site around it."
+year: 2023
+craft: "web"
+cover: "/work/shapes-of-grief/devices.webp"
+thumb: "/work/shapes-of-grief/home.jpg"
+summary: "Shapes of Grief teaches healthcare professionals how to support bereaved people. The course had outgrown the site it was sold from, so we moved it, and everyone on it, onto a learning platform that handles enrolment, payment, progress and certificates on its own."
+liveUrl: "https://shapesofgrief.com"
+services:
+  - "Design"
+  - "Web Development"
+  - "Learning platform"
+  - "E-commerce"
+capabilities: ["lms", "ecommerce"]
+order: 3
+caseStudy: true
+feature: true
+draft: false
+---
+
+import CaseFacts from '../../components/casestudy/CaseFacts.astro';
+import CaseStats from '../../components/casestudy/CaseStats.astro';
+import CaseStep from '../../components/casestudy/CaseStep.astro';
+import CaseFigure from '../../components/casestudy/CaseFigure.astro';
+import CaseGallery from '../../components/casestudy/CaseGallery.astro';
+
+{/* Written 25 September 2026. Everything here is either in the studio's
+    own project note (the migration, the rebrand with Kay at Patterns, and
+    the platform features) or on shapesofgrief.com today: four levels, over
+    thirty contributors, 40+ CPD points, the podcast and the Ukrainian
+    version of the course.
+
+    No client quote yet. CLAUDE.md lists the three testimonials in hand and
+    Shapes of Grief is not among them, so this case study closes on what
+    the platform does rather than on praise. Add a `quote` to the
+    frontmatter if one lands and it renders in its own panel.
+
+    The platform is named nowhere on purpose: the writing rules allow
+    WordPress, WooCommerce and Astro once each and nothing else, and the
+    benefit is the point, not the software. */}
+
+<section class="pl-panel">
+  <div class="pl-gutter pl-pad-sm">
+    <div class="pl-container is-md">
+      <CaseFacts
+        items={[
+          { label: 'Client', value: 'Shapes of Grief, Liz Gleeson' },
+          { label: 'What we did', value: 'Website design and build, learning platform, payments, migration' },
+          { label: 'Who it is for', value: 'Healthcare professionals and therapists' },
+          { label: 'Live at', value: 'shapesofgrief.com' },
+        ]}
+      />
+      <div class="pl-gap-lg"></div>
+      <CaseStats
+        items={[
+          { n: '4', label: 'Course levels' },
+          { n: '30+', label: 'Contributors' },
+          { n: '40+', label: 'CPD points' },
+          { n: '1', label: 'Move, nobody left behind' },
+        ]}
+      />
+    </div>
+  </div>
+</section>
+
+<CaseStep n="01" label="The problem" title="A serious course on a shop window." surface="secondary">
+  Shapes of Grief is an award-winning grief training programme, built by grief specialist Liz
+  Gleeson and delivered with over thirty contributors from the field. It was being sold and
+  delivered from a website builder that was never meant to teach a course: no proper
+  enrolment, no record of where anyone had got to, and certificates handled by hand.
+
+  Liz also wanted the site to look like the programme it carries, rather than a template.
+  The branding came from Kay at Patterns, and we designed and built around it.
+</CaseStep>
+
+<CaseStep n="02" label="What we built" title="Enrolment, payment and progress, in one place.">
+  We moved the whole course onto a self-hosted learning platform, and moved every existing
+  participant with it, so nobody had to sign up again or lose their place.
+
+  What it now does without anyone administering it:
+
+  <div class="pl-gap-sm"></div>
+
+  <CaseStats
+    compact
+    items={[
+      { n: '01', label: 'Enrol and pay', note: 'Registration and payment in one step, with coupons and bundles where Liz wants them.' },
+      { n: '02', label: 'Track and certify', note: 'Each learner keeps their place, and certificates issue themselves at the end of a level.' },
+      { n: '03', label: 'Follow up', note: 'Email is connected, so an unfinished sign-up is chased without a person doing it.' },
+    ]}
+  />
+
+  <CaseFigure
+    src="/work/shapes-of-grief/devices.webp"
+    alt="The Shapes of Grief site shown on a laptop, a tablet and a phone."
+    caption="The site and the course, on desktop, tablet and phone"
+    ratio="1347 / 785"
+  />
+</CaseStep>
+
+<CaseStep n="03" label="The learner" title="One lesson at a time, across four levels." surface="tint">
+  The course runs in four levels, and a learner works through lectures, interviews and
+  animations from the contributors. Each lesson marks itself complete, the next one is always
+  the obvious thing to do, and the levels build towards the certificates the programme is
+  recognised for.
+
+  It has to work on a phone. Most of the people taking it are fitting it around clinical work.
+
+  {/* Two figures rather than a gallery: the phone is portrait and the
+      homepage is landscape, and one shared crop would ruin one of them. */}
+  <div class="pl-grid-2 is-top">
+    <CaseFigure
+      src="/work/shapes-of-grief/lesson-phone.jpg"
+      alt="A lesson on a phone: Yalom on Dying, Death and Grief, marked complete, with lesson and materials tabs."
+      caption="A lesson on a phone, marked complete"
+      ratio="225 / 470"
+    />
+    <CaseFigure
+      src="/work/shapes-of-grief/home.jpg"
+      alt="The Shapes of Grief homepage, headed Grief literacy for everyone, grief training for healthcare professionals."
+      caption="The site the course is sold from"
+      ratio="1200 / 838"
+    />
+  </div>
+</CaseStep>
+
+<CaseStep n="04" label="The result" title="Still running, still growing." surface="secondary">
+  The course and every participant made the move. Liz publishes and prices it herself, adds
+  contributors as the programme grows, and runs the podcast alongside it, all from the same
+  site. There is a free Ukrainian version of the course on it too.
+
+  We still look after the site.
+</CaseStep>

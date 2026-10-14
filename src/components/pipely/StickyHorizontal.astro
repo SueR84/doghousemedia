@@ -1,0 +1,41 @@
+---
+/**
+ * Sticky horizontal scroll section.
+ * Pass panels in the default slot, one .pl-hscroll__panel each.
+ * Section height should be roughly (panels x 100vw).
+ */
+interface Props {
+  tabs?: string[];
+  /** Slugs, one per tab. A matching location.hash scrolls to that panel. */
+  slugs?: string[];
+  height?: string;
+  class?: string;
+  id?: string;
+}
+const { tabs = [], slugs = [], height = '300vw', class: cls = '', id } = Astro.props;
+---
+<section id={id} class:list={['pl-hscroll', cls]} data-hscroll style={`height:${height}`}>
+  <div class="pl-hscroll__wrap">
+    {tabs.length > 0 && (
+      <div class="pl-hscroll__head pl-gutter">
+        <div class="pl-tabs" role="tablist">
+          {tabs.map((label, i) => (
+            <button
+              class="pl-tab"
+              type="button"
+              role="tab"
+              data-hscroll-tab
+              data-slug={slugs[i]}
+              aria-selected={i === 0 ? 'true' : 'false'}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+    )}
+    <div class="pl-gutter pl-hscroll__body">
+      <div class="pl-hscroll__track"><slot /></div>
+    </div>
+  </div>
+</section>

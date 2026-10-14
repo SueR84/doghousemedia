@@ -1,22 +1,24 @@
 ---
 title: "Website for Photographer"
 client: "Nick O'Keeffe Photography"
-service: "Website, CRM integration, lead capture, SEO campaign"
-shortDescription: "Branding, Design and Development for a Photography business."
-websiteLink: "https://nickokeeffephotography.ie/"
-projectVideo: ""
-projectImage: "https://doghousemedia.ie/wp-content/uploads/2022/03/NOK-asset-3.jpg"
-projectGallery:
-  - "https://doghousemedia.ie/wp-content/uploads/2022/03/NOK-asset-15.png"
-  - "https://doghousemedia.ie/wp-content/uploads/2022/03/NOK-asset-13.jpg"
-  - "https://doghousemedia.ie/wp-content/uploads/2022/03/NOK-asset-10.jpg"
-  - "https://doghousemedia.ie/wp-content/uploads/2022/03/NOK-asset-6.jpg"
-projectType:
-  - "Web Development"
+year: 2022
 craft: "web"
-status: "publish"
+summary: "Branding, Design and Development for a Photography business."
+cover: "/work/nok-asset-3.jpg"
+liveUrl: "https://nickokeeffephotography.ie/"
+services:
+  - "Website"
+  - "CRM integration"
+  - "lead capture"
+  - "SEO campaign"
+gallery:
+  - "/work/nok-asset-15.jpg"
+  - "/work/nok-asset-13.jpg"
+  - "/work/nok-asset-10.jpg"
+  - "/work/nok-asset-6.jpg"
+order: 6
+draft: true
 ---
-
 A beautifully designed website is essential for every creative. Finding a balance between a website that generates leads and one which showcases the artist's work can be an additional challenge.
 
 With Nick's website the goal was to get it to stand out in a market saturated by over-used, bland photography templates which make every other photography site look like the next one. Standing out was essential.

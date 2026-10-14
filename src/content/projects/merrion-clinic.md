@@ -1,18 +1,18 @@
 ---
 title: "Booking platform and e-Commerce for Skincare Clinic"
 client: "Merrion Medical Aesthetics"
-service: "Shopify, CRM, Booking"
-shortDescription: "Platform consultancy, e-commerce setup"
-websiteLink: "https://www.merrion.ca"
-projectVideo: ""
-projectImage: "https://doghousemedia.ie/wp-content/uploads/2025/09/Merrion-clinic.jpg"
-projectGallery: []
-projectType:
-  - "Web Development"
+year: 2025
 craft: "web"
-status: "publish"
+summary: "Platform consultancy, e-commerce setup"
+cover: "/work/merrion-clinic.jpg"
+liveUrl: "https://www.merrion.ca"
+services:
+  - "Shopify"
+  - "CRM"
+  - "Booking"
+order: 1
+draft: false
 ---
-
 Merrion Medical Aesthetics are a busy aesthetic clinic in Toronto who also sell premium health and skincare products through their website.
 
 They engaged us to consolidate their digital stack and align the website with their operational needs. Our focus was on platform consultancy, a workable SEO strategy, and the evaluation and integration of CRM and booking software to support online appointments, automated SMS/email reminders, and a smooth client experience.

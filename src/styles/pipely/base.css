@@ -1,0 +1,98 @@
+/* PIPELY FORK — base. Everything below is scoped to .pipely so it can
+   never affect the existing pages, even if both stylesheets load. */
+
+.pipely *,
+.pipely *::before,
+.pipely *::after { box-sizing: border-box; }
+
+body.pipely {
+  margin: 0;
+  background-color: var(--pl-ground);
+  color: var(--pl-text);
+  font-family: var(--font-body);
+  font-size: var(--pl-base);
+  line-height: var(--pl-lh-body);
+  font-weight: var(--pl-fw-regular);
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Element resets are wrapped in :where() so they carry no specificity of
+   their own. A single-class component rule (.pl-hero__poster, .pl-btn)
+   should always be able to override the reset. */
+.pipely :where(img, svg, video) { display: block; max-width: 100%; }
+.pipely :where(img) { height: auto; }
+
+/* Headings sit at 500, a step up from the template's 400 (24 September
+   2026). Plus Jakarta Sans at 400 reads light at these sizes; 500 gives
+   the headings presence without tipping into a bold. */
+.pipely :where(h1, h2, h3, h4, h5, h6) {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--pl-fw-medium);
+}
+.pipely :where(p) { margin: 0; }
+.pipely :where(ul, ol) { margin: 0; padding: 0; list-style: none; }
+/* :where() keeps this at zero specificity for the element, so component
+   rules like .pl-btn and .pl-footer__link can still set their own colour. */
+.pipely :where(a) { color: inherit; text-decoration: none; }
+
+.pipely h1, .pipely .u-h1 { font-size: var(--pl-h1); line-height: var(--pl-lh-h1); letter-spacing: var(--pl-tr-h1); }
+.pipely h2, .pipely .u-h2 { font-size: var(--pl-h2); line-height: var(--pl-lh-h2); letter-spacing: var(--pl-tr-tight); }
+.pipely h3, .pipely .u-h3 { font-size: var(--pl-h3); line-height: var(--pl-lh-h3); letter-spacing: var(--pl-tr-tight); }
+.pipely h4, .pipely .u-h4 { font-size: var(--pl-h4); line-height: var(--pl-lh-h4); letter-spacing: var(--pl-tr-tight); font-family: var(--font-body); }
+
+.pipely :where(a, button, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-steel);
+  outline-offset: 2px;
+  box-shadow: var(--pl-focus-ring);
+  border-radius: var(--pl-r-button);
+}
+
+.pipely .u-3xl { font-size: var(--pl-3xl); }
+.pipely .u-xl  { font-size: var(--pl-xl); line-height: var(--pl-lh-xl); letter-spacing: var(--pl-tr-tight); }
+.pipely .u-lg  { font-size: var(--pl-lg); line-height: var(--pl-lh-xl); }
+.pipely .u-sm  { font-size: var(--pl-sm); line-height: var(--pl-lh-sm); }
+.pipely .u-xs  { font-size: var(--pl-xs); }
+
+/* Eyebrow sits above nearly every section heading in the template. */
+.pipely .u-eyebrow {
+  font-size: var(--pl-sm);
+  line-height: var(--pl-lh-sm);
+  font-weight: var(--pl-fw-medium);
+  letter-spacing: var(--pl-tr-caps);
+  text-transform: uppercase;
+  color: var(--pl-text-muted);
+}
+.pipely .u-tag { letter-spacing: var(--pl-tr-tag); text-transform: uppercase; }
+
+.pipely .u-muted   { color: var(--pl-text-muted); }
+.pipely .u-meta    { color: var(--pl-text-meta); }
+.pipely .u-inverse { color: var(--pl-text-inverse); }
+.pipely .u-film    { color: var(--pl-accent-film); }
+.pipely .u-web     { color: var(--pl-accent-web); }
+
+.pipely .u-medium   { font-weight: var(--pl-fw-medium); }
+.pipely .u-semibold { font-weight: var(--pl-fw-semi); }
+.pipely .u-bold     { font-weight: var(--pl-fw-bold); }
+
+.pipely .u-center  { text-align: center; }
+.pipely .u-balance { text-wrap: balance; }
+.pipely .u-nowrap  { white-space: nowrap; }
+
+/* Measure caps. The template controls line length with fixed widths
+   rather than ch units, so these are steps not a formula. */
+.pipely .u-max-17 { max-width: 17.75rem; }
+.pipely .u-max-26 { max-width: 26rem; }
+.pipely .u-max-29 { max-width: 29rem; }
+.pipely .u-max-31 { max-width: 31.125rem; }
+.pipely .u-max-33 { max-width: 33rem; }
+.pipely .u-max-40 { max-width: 40.375rem; }
+.pipely .u-max-50 { max-width: 50rem; }
+.pipely .u-max-70 { max-width: 70.5rem; }
+@media (max-width: 767px) { .pipely [class*='u-max-'] { max-width: none; } }
+
+.pipely .sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}

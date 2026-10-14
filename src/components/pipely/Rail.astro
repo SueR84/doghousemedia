@@ -1,0 +1,18 @@
+---
+/** Drag-to-scroll card rail. Cards size themselves in vw. */
+interface Props { arrows?: boolean; class?: string }
+const { arrows = false, class: cls = '' } = Astro.props;
+---
+<div data-rail-scope class={cls}>
+  <div class="pl-rail"><slot /></div>
+  {arrows && (
+    <div class="pl-row" style="gap:var(--pl-s-sm); padding-top:var(--pl-s-xl)">
+      <button class="pl-icon-btn" type="button" data-rail-prev aria-label="Previous">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+      </button>
+      <button class="pl-icon-btn" type="button" data-rail-next aria-label="Next">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+  )}
+</div>

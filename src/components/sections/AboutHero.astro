@@ -1,0 +1,373 @@
+---
+/**
+ * About hero graphic. A camera viewfinder that cycles through the three
+ * things we do (video, web, AI) with a Dublin location tag, the founding
+ * year and the hound mark. Dark panel, cream line work, red for film and
+ * teal for web, as in the brand.
+ *
+ * Accessibility: the picture is one image to assistive tech (role="img" plus
+ * a static alt), the moving parts are aria-hidden. It only plays while on
+ * screen and never under prefers-reduced-motion, where it rests on the
+ * first scene. A real pause button (WCAG 2.2.2) sits under the card, as on
+ * the other looping pieces.
+ *
+ * Copy in the picture is decoration only: no claims beyond Dublin and 2011.
+ */
+interface Props { alt?: string }
+const { alt = 'A camera viewfinder tagged Dublin, Ireland, established 2011, cycling through four scenes: a video frame, a website wireframe, an AI workflow and a project plan moving work from plan to delivery.' } = Astro.props;
+---
+<div class="ah" data-about-hero>
+  <div class="ah-card" role="img" aria-label={alt}>
+    <svg viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+      <rect width="500" height="400" rx="20" fill="#0f1417" />
+      <!-- faint grid -->
+      <g stroke="#f3f6f8" stroke-opacity=".05">
+        <path d="M125 0V400M250 0V400M375 0V400M0 100H500M0 200H500M0 300H500" />
+      </g>
+
+      <!-- viewfinder corners -->
+      <g stroke="#f3f6f8" stroke-opacity=".55" stroke-width="2" fill="none" stroke-linecap="round">
+        <path d="M24 52V24H52" /><path d="M448 24H476V52" />
+        <path d="M24 348V376H52" /><path d="M448 376H476V348" />
+      </g>
+
+      <!-- HUD: REC + timecode -->
+      <g font-family="'JetBrains Mono', ui-monospace, monospace" font-size="11" fill="#f3f6f8" letter-spacing=".12em">
+        <circle class="ah-rec" cx="46" cy="46" r="4" fill="#bd1c30" />
+        <text x="58" y="50" fill-opacity=".85">REC</text>
+        <text x="92" y="50" fill-opacity=".6" data-tc>00:00:00:00</text>
+
+        <g text-anchor="end" fill-opacity=".85">
+          <text class="ah-mode is-active" x="456" y="50" data-mode="0">01 VIDEO</text>
+          <text class="ah-mode" x="456" y="50" data-mode="1">02 WEB</text>
+          <text class="ah-mode" x="456" y="50" data-mode="2">03 AI</text>
+          <text class="ah-mode" x="456" y="50" data-mode="3">04 PLANNING</text>
+        </g>
+
+        <text x="44" y="352" fill-opacity=".85">DUBLIN, IE</text>
+        <text x="44" y="367" font-size="9" fill-opacity=".5">53.35° N  6.26° W</text>
+        <text x="456" y="352" text-anchor="end" fill-opacity=".85">EST. 2011</text>
+        <text x="456" y="367" text-anchor="end" font-size="9" fill-opacity=".5">FEMALE-OWNED</text>
+      </g>
+
+      <!-- hound mark, cream body for the dark ground -->
+      <svg x="219" y="338" width="62" height="38" viewBox="0 8 100 62" overflow="visible">
+        <g class="ah-dog">
+          <path d="M 14 56 C 14 36, 30 22, 48 22 L 48 14 L 56 24 L 62 14 L 64 26 C 78 30, 90 38, 96 50 L 92 54 L 96 58 C 88 64, 70 62, 56 60 C 44 64, 22 66, 14 56 Z" fill="#f3f6f8" />
+          <path class="ah-ear" d="M 48 22 L 48 14 L 56 24 L 62 14 L 64 26 Z" fill="#f3f6f8" />
+          <path d="M 22 32 C 36 24, 60 26, 70 34 L 67 42 C 56 36, 38 36, 28 42 Z" fill="#bd1c30" />
+          <path class="ah-tuft" d="M 14 36 L 6 32 L 12 40 L 4 42 Z" fill="#bd1c30" />
+          <path class="ah-teeth" d="M 56 56 L 60 52 L 64 56 L 68 52 L 72 56 L 76 52 L 80 56 L 84 52 L 88 56 L 92 52 L 94 54 L 94 58 L 56 60 Z" fill="#0f1417" />
+          <circle class="ah-nose" cx="92" cy="50" r="3" fill="#bd1c30" />
+          <circle class="ah-eye" cx="50" cy="40" r="2.5" fill="#0f1417" />
+        </g>
+      </svg>
+
+      <!-- SCENE 1: video -->
+      <g class="ah-sc is-active" data-scene="0">
+        <rect x="80" y="92" width="340" height="191" rx="6" fill="#f3f6f8" fill-opacity=".04" stroke="#f3f6f8" stroke-opacity=".6" />
+        <path stroke="#f3f6f8" stroke-opacity=".18" d="M193 92V283M307 92V283M80 156V156M80 156H420M80 219H420" />
+        <g class="ah-focus">
+          <path d="M214 160V172M214 160H226M286 160H274M286 160V172M214 214V202M214 214H226M286 214H274M286 214V202" stroke="#bd1c30" stroke-width="2" fill="none" stroke-linecap="round" />
+        </g>
+        <path d="M241 174L264 187L241 200Z" fill="#f3f6f8" />
+        <rect x="80" y="302" width="340" height="3" rx="1.5" fill="#f3f6f8" fill-opacity=".2" />
+        <rect class="ah-scrub" x="80" y="302" width="340" height="3" rx="1.5" fill="#bd1c30" />
+      </g>
+
+      <!-- SCENE 2: web -->
+      <g class="ah-sc" data-scene="1">
+        <rect x="90" y="92" width="320" height="200" rx="10" fill="#f3f6f8" fill-opacity=".04" stroke="#f3f6f8" stroke-opacity=".6" />
+        <path d="M90 118H410" stroke="#f3f6f8" stroke-opacity=".3" />
+        <g fill="#f3f6f8" fill-opacity=".5"><circle cx="106" cy="105" r="3" /><circle cx="118" cy="105" r="3" /><circle cx="130" cy="105" r="3" /></g>
+        <rect x="150" y="99" width="170" height="12" rx="6" fill="#f3f6f8" fill-opacity=".12" />
+        <rect x="106" y="134" width="170" height="14" rx="3" fill="#f3f6f8" fill-opacity=".85" />
+        <rect x="106" y="155" width="120" height="8" rx="3" fill="#f3f6f8" fill-opacity=".3" />
+        <rect x="106" y="171" width="140" height="8" rx="3" fill="#f3f6f8" fill-opacity=".3" />
+        <rect class="ah-btn" x="106" y="192" width="74" height="22" rx="11" fill="#8fc4d2" />
+        <rect x="306" y="134" width="88" height="80" rx="6" fill="#f3f6f8" fill-opacity=".1" />
+        <g fill="#f3f6f8" fill-opacity=".08">
+          <rect x="106" y="230" width="88" height="46" rx="6" /><rect x="206" y="230" width="88" height="46" rx="6" /><rect x="306" y="230" width="88" height="46" rx="6" />
+        </g>
+        <g fill="#8fc4d2" fill-opacity=".7">
+          <rect x="116" y="240" width="40" height="5" rx="2" /><rect x="216" y="240" width="40" height="5" rx="2" /><rect x="316" y="240" width="40" height="5" rx="2" />
+        </g>
+        <circle class="ah-click" cx="143" cy="203" r="14" fill="none" stroke="#8fc4d2" stroke-width="2" />
+        <path class="ah-cursor" d="M0 0L0 16L4.5 12L8 19L11 17.5L7.5 11L13 11Z" fill="#f3f6f8" stroke="#0f1417" stroke-width="1" />
+      </g>
+
+      <!-- SCENE 3: AI workflow -->
+      <g class="ah-sc" data-scene="2">
+        <g font-family="'JetBrains Mono', ui-monospace, monospace" font-size="12" text-anchor="middle" letter-spacing=".06em">
+          <g stroke="#f3f6f8" stroke-opacity=".35" stroke-width="1.5">
+            <path d="M250 141V175" /><path d="M250 225V259" /><path d="M180 200H205" /><path d="M295 200H320" />
+          </g>
+          <g class="ah-flow" stroke="#8fc4d2" stroke-width="2" fill="none" stroke-linecap="round">
+            <path d="M250 141V175" /><path d="M180 200H205" /><path d="M295 200H320" /><path d="M250 225V259" />
+          </g>
+          <g fill="#f3f6f8" fill-opacity=".05" stroke="#f3f6f8" stroke-opacity=".6">
+            <rect x="205" y="105" width="90" height="36" rx="8" />
+            <rect x="90" y="175" width="90" height="50" rx="10" />
+            <rect x="320" y="175" width="90" height="50" rx="10" />
+            <rect x="205" y="259" width="90" height="36" rx="8" />
+          </g>
+          <rect class="ah-core" x="205" y="175" width="90" height="50" rx="10" fill="#8fc4d2" fill-opacity=".12" stroke="#8fc4d2" stroke-width="1.5" />
+          <g fill="#f3f6f8">
+            <text x="250" y="127">Chat</text>
+            <text x="135" y="205">Enquiry</text>
+            <text x="250" y="205" fill="#8fc4d2">AI</text>
+            <text x="365" y="205">Reply</text>
+            <text x="250" y="281">Notify</text>
+          </g>
+        </g>
+      </g>
+
+      <!-- SCENE 4: project plan. Four lanes of work move across the board and land as delivered. -->
+      <g class="ah-sc" data-scene="3">
+        <g font-family="'JetBrains Mono', ui-monospace, monospace" font-size="8.5" text-anchor="middle" letter-spacing=".1em" fill="#f3f6f8" fill-opacity=".65">
+          <text x="117" y="110">PLAN</text>
+          <text x="206" y="110">MAKE</text>
+          <text x="295" y="110">REVIEW</text>
+          <text x="384" y="110">DELIVER</text>
+        </g>
+        <g fill="#f3f6f8" fill-opacity=".05">
+          <rect x="77" y="118" width="80" height="168" rx="8" />
+          <rect x="166" y="118" width="80" height="168" rx="8" />
+          <rect x="255" y="118" width="80" height="168" rx="8" />
+          <rect x="344" y="118" width="80" height="168" rx="8" />
+        </g>
+        <g stroke="#f3f6f8" stroke-opacity=".08">
+          <path d="M77 164H424" />
+          <path d="M77 202H424" />
+          <path d="M77 240H424" />
+        </g>
+        <g class="ah-kc" style="--i:0">
+          <rect x="83" y="130" width="68" height="30" rx="5" fill="#161d21" stroke="#f3f6f8" stroke-opacity=".45" />
+          <rect x="88" y="137" width="3" height="16" rx="1.5" fill="#bd1c30" />
+          <rect x="96" y="139" width="34" height="4" rx="2" fill="#f3f6f8" fill-opacity=".85" />
+          <rect x="96" y="148" width="22" height="3" rx="1.5" fill="#f3f6f8" fill-opacity=".4" />
+          <path class="ah-kt" d="M133 146L137 150L144 141" fill="none" stroke="#8fc4d2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+        </g>
+        <g class="ah-kc" style="--i:1">
+          <rect x="83" y="168" width="68" height="30" rx="5" fill="#161d21" stroke="#f3f6f8" stroke-opacity=".45" />
+          <rect x="88" y="175" width="3" height="16" rx="1.5" fill="#8fc4d2" />
+          <rect x="96" y="177" width="34" height="4" rx="2" fill="#f3f6f8" fill-opacity=".85" />
+          <rect x="96" y="186" width="22" height="3" rx="1.5" fill="#f3f6f8" fill-opacity=".4" />
+          <path class="ah-kt" d="M133 184L137 188L144 179" fill="none" stroke="#8fc4d2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+        </g>
+        <g class="ah-kc" style="--i:2">
+          <rect x="83" y="206" width="68" height="30" rx="5" fill="#161d21" stroke="#f3f6f8" stroke-opacity=".45" />
+          <rect x="88" y="213" width="3" height="16" rx="1.5" fill="#f3f6f8" />
+          <rect x="96" y="215" width="34" height="4" rx="2" fill="#f3f6f8" fill-opacity=".85" />
+          <rect x="96" y="224" width="22" height="3" rx="1.5" fill="#f3f6f8" fill-opacity=".4" />
+          <path class="ah-kt" d="M133 222L137 226L144 217" fill="none" stroke="#8fc4d2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+        </g>
+        <g class="ah-kc" style="--i:3">
+          <rect x="83" y="244" width="68" height="30" rx="5" fill="#161d21" stroke="#f3f6f8" stroke-opacity=".45" />
+          <rect x="88" y="251" width="3" height="16" rx="1.5" fill="#bd1c30" />
+          <rect x="96" y="253" width="34" height="4" rx="2" fill="#f3f6f8" fill-opacity=".85" />
+          <rect x="96" y="262" width="22" height="3" rx="1.5" fill="#f3f6f8" fill-opacity=".4" />
+          <path class="ah-kt" d="M133 260L137 264L144 255" fill="none" stroke="#8fc4d2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+        </g>
+        <g font-family="'JetBrains Mono', ui-monospace, monospace" font-size="8.5" letter-spacing=".1em">
+          <text x="80" y="304" fill="#f3f6f8" fill-opacity=".6">DELIVERED</text>
+          <text class="ah-signed" x="420" y="304" text-anchor="end" fill="#8fc4d2">SIGNED OFF</text>
+        </g>
+        <g>
+          <circle class="ah-kd" style="--i:0" cx="152" cy="301.5" r="4" />
+          <circle class="ah-kd" style="--i:1" cx="166" cy="301.5" r="4" />
+          <circle class="ah-kd" style="--i:2" cx="180" cy="301.5" r="4" />
+          <circle class="ah-kd" style="--i:3" cx="194" cy="301.5" r="4" />
+        </g>
+        <rect x="80" y="316" width="340" height="3" rx="1.5" fill="#f3f6f8" fill-opacity=".2" />
+        <rect class="ah-prog" x="80" y="316" width="340" height="3" rx="1.5" fill="#8fc4d2" />
+      </g>
+    </svg>
+  </div>
+
+  <button class="pl-pause ah-pause" type="button" data-pause hidden data-paused="false">
+    <span class="pl-pause__icon" aria-hidden="true"></span>
+    <span class="sr-only" data-pause-label>Pause hero animation</span>
+  </button>
+</div>
+
+<style>
+  .ah { display: flex; flex-direction: column; align-items: flex-end; gap: 0.75rem; width: 100%; max-width: 34rem; justify-self: end; }
+  .ah-card { width: 100%; line-height: 0; border-radius: 1.25rem; overflow: hidden; }
+  .ah-card svg { display: block; width: 100%; height: auto; }
+  .ah-pause { justify-content: center; width: 2.25rem; height: 2.25rem; padding: 0; }
+
+  .ah-sc { opacity: 0; transition: opacity 500ms ease; }
+  .ah-sc.is-active { opacity: 1; }
+  .ah-mode { opacity: 0; }
+  .ah-mode.is-active { opacity: 1; }
+
+  /* Everything that moves is paused until .is-running is set. */
+  .ah *, .ah-card svg * { animation-play-state: paused; }
+  .ah.is-running * { animation-play-state: running; }
+
+  .ah-rec { animation: ah-blink 1.2s steps(1) infinite; }
+  @keyframes ah-blink { 50% { opacity: 0.15; } }
+
+  .ah-focus { transform-box: fill-box; transform-origin: center; }
+  .ah-sc.is-active .ah-focus { animation: ah-focus 2s ease-in-out infinite; }
+  @keyframes ah-focus { 0%, 100% { transform: scale(1.18); opacity: 0.4; } 40%, 70% { transform: scale(1); opacity: 1; } }
+
+  .ah-scrub { transform-box: fill-box; transform-origin: left center; transform: scaleX(0); }
+  .ah-sc.is-active .ah-scrub { animation: ah-scrub 4s linear infinite; }
+  @keyframes ah-scrub { to { transform: scaleX(1); } }
+
+  .ah-cursor { transform: translate(330px, 270px); }
+  .ah-sc.is-active .ah-cursor { animation: ah-cursor 4s ease-in-out infinite; }
+  @keyframes ah-cursor {
+    0% { transform: translate(330px, 270px); }
+    45%, 70% { transform: translate(140px, 202px); }
+    100% { transform: translate(330px, 270px); }
+  }
+  .ah-click { opacity: 0; transform-box: fill-box; transform-origin: center; }
+  .ah-sc.is-active .ah-click { animation: ah-click 4s ease-out infinite; }
+  @keyframes ah-click {
+    0%, 46% { opacity: 0; transform: scale(0.4); }
+    50% { opacity: 1; transform: scale(0.6); }
+    66% { opacity: 0; transform: scale(1.6); }
+    100% { opacity: 0; }
+  }
+  .ah-sc.is-active .ah-btn { animation: ah-btn 4s ease-in-out infinite; }
+  @keyframes ah-btn { 0%, 46% { fill-opacity: 1; } 52%, 66% { fill-opacity: 0.55; } 100% { fill-opacity: 1; } }
+
+  .ah-flow path { stroke-dasharray: 5 12; }
+  .ah-sc.is-active .ah-flow path { animation: ah-flow 1s linear infinite; }
+  @keyframes ah-flow { to { stroke-dashoffset: -17; } }
+  .ah-sc.is-active .ah-core { animation: ah-core 2s ease-in-out infinite; }
+  @keyframes ah-core { 50% { fill-opacity: 0.3; } }
+
+
+  /* Project board. Four lanes cross the columns one after another, then
+     land as delivered. Plays once per visit to the scene (8s) and holds. */
+  .ah-kc { transform: translateX(0); }
+  .ah-sc.is-active .ah-kc { animation: ah-move 8s ease-in-out calc(var(--i) * 0.9s) 1 both; }
+  @keyframes ah-move {
+    0%, 10% { transform: translateX(0); }
+    20%, 28% { transform: translateX(89px); }
+    38%, 46% { transform: translateX(178px); }
+    56%, 100% { transform: translateX(267px); }
+  }
+  .ah-kt { opacity: 0; }
+  .ah-sc.is-active .ah-kt { animation: ah-ktick 8s linear calc(var(--i) * 0.9s) 1 both; }
+  @keyframes ah-ktick { 0%, 56% { opacity: 0; } 62%, 100% { opacity: 1; } }
+
+  .ah-kd { fill: #f3f6f8; fill-opacity: 0.2; }
+  .ah-sc.is-active .ah-kd { animation: ah-kdot 8s linear calc(var(--i) * 0.9s) 1 both; }
+  @keyframes ah-kdot { 0%, 56% { fill: #f3f6f8; fill-opacity: 0.2; } 62%, 100% { fill: #8fc4d2; fill-opacity: 1; } }
+
+  .ah-signed { opacity: 0; }
+  .ah-sc.is-active .ah-signed { animation: ah-signed 8s linear 2.7s 1 both; }
+  @keyframes ah-signed { 0%, 58% { opacity: 0; } 66%, 100% { opacity: 1; } }
+
+  .ah-prog { transform-box: fill-box; transform-origin: left center; transform: scaleX(0); }
+  .ah-sc.is-active .ah-prog { animation: ah-scrub 8s linear 1 forwards; }
+
+  /* The hound. Small, loose movements on different beats so it reads as
+     alive rather than looped: head bob, ear twitch, blink, jaw chomp, the
+     red tuft flicking, a pulse on the nose. */
+  .ah-dog, .ah-ear, .ah-eye, .ah-tuft, .ah-nose { transform-box: fill-box; }
+  .ah-dog { transform-origin: 50% 100%; animation: ah-bob 2.4s ease-in-out infinite; }
+  @keyframes ah-bob { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-2px) rotate(-2deg); } }
+
+  .ah-ear { transform-origin: 40% 100%; animation: ah-ear 5s ease-in-out infinite; }
+  @keyframes ah-ear { 0%, 70%, 100% { transform: rotate(0); } 74% { transform: rotate(-14deg); } 78% { transform: rotate(6deg); } 82% { transform: rotate(0); } }
+
+  .ah-eye { transform-origin: center; animation: ah-blink-eye 3.6s infinite; }
+  @keyframes ah-blink-eye { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
+
+  .ah-teeth { animation: ah-chomp 3s ease-in-out infinite; }
+  @keyframes ah-chomp { 0%, 55%, 100% { transform: translateY(0); } 62% { transform: translateY(-3px); } 70% { transform: translateY(0); } 78% { transform: translateY(-3px); } 86% { transform: translateY(0); } }
+
+  .ah-tuft { transform-origin: 100% 50%; animation: ah-tuft 1.6s ease-in-out infinite; }
+  @keyframes ah-tuft { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-16deg); } }
+
+  .ah-nose { transform-origin: center; animation: ah-nose 2s ease-in-out infinite; }
+  @keyframes ah-nose { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.5); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ah-rec, .ah-sc.is-active *, .ah-dog, .ah-dog * { animation: none !important; }
+    .ah-scrub { transform: scaleX(0.4); }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-about-hero]').forEach((root) => {
+    const motionOk = window.matchMedia('(prefers-reduced-motion: no-preference)');
+    if (!motionOk.matches || !('IntersectionObserver' in window)) return;
+
+    const scenes = [...root.querySelectorAll<SVGElement>('.ah-sc')];
+    const modes = [...root.querySelectorAll<SVGElement>('.ah-mode')];
+    const tc = root.querySelector<SVGTextElement>('[data-tc]')!;
+    const pause = root.querySelector<HTMLButtonElement>('[data-pause]')!;
+    const pauseLabel = root.querySelector<HTMLElement>('[data-pause-label]')!;
+
+    // The project board is the long one, since more happens on it.
+    const HOLDS = [4000, 4000, 4000, 9000];
+    let idx = 0;
+    let cycle = 0;
+    let clock = 0;
+    let elapsed = 0;
+    let last = 0;
+    let inView = false;
+    let userPaused = false;
+
+    const show = (n: number) => {
+      idx = n % scenes.length;
+      scenes.forEach((s, i) => s.classList.toggle('is-active', i === idx));
+      modes.forEach((m, i) => m.classList.toggle('is-active', i === idx));
+    };
+
+    const pad = (n: number, l = 2) => String(n).padStart(l, '0');
+    const draw = () => {
+      const f = Math.floor((elapsed / 1000) * 25) % 25;
+      const s = Math.floor(elapsed / 1000);
+      tc.textContent = `${pad(Math.floor(s / 3600))}:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}:${pad(f)}`;
+    };
+
+    const run = () => {
+      if (cycle || userPaused || !inView || !motionOk.matches) return;
+      root.classList.add('is-running');
+      last = performance.now();
+      clock = window.setInterval(() => {
+        const now = performance.now();
+        elapsed += now - last;
+        last = now;
+        draw();
+      }, 80);
+      const next = () => { show(idx + 1); cycle = window.setTimeout(next, HOLDS[idx] ?? 4000); };
+      cycle = window.setTimeout(next, HOLDS[idx] ?? 4000);
+    };
+    const stop = () => {
+      window.clearTimeout(cycle);
+      window.clearInterval(clock);
+      cycle = 0;
+      clock = 0;
+      root.classList.remove('is-running');
+    };
+
+    pause.hidden = false;
+    pause.addEventListener('click', () => {
+      userPaused = !userPaused;
+      pause.setAttribute('data-paused', String(userPaused));
+      pauseLabel.textContent = userPaused ? 'Play hero animation' : 'Pause hero animation';
+      if (userPaused) stop(); else run();
+    });
+
+    new IntersectionObserver((entries) => {
+      inView = entries[0].isIntersecting;
+      if (inView) run(); else stop();
+    }, { threshold: 0.3 }).observe(root);
+
+    motionOk.addEventListener('change', () => {
+      if (motionOk.matches) return;
+      stop();
+      show(0);
+      pause.hidden = true;
+    });
+  });
+</script>

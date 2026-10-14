@@ -1,0 +1,193 @@
+---
+title: "Seven professors, one shoot day."
+client: "Boston Scientific"
+year: 2026
+craft: "video"
+cover: "/work/boston-docuseries/ep1-title-card.webp"
+thumb: "/work/featured/boston-scientific-docuseries.jpg"
+summary: "Boston Scientific got seven of Europe's top electrophysiologists into the Mater Private in Dublin for a single day. We filmed all of it, then spent the next ten months turning it into an eight-part series."
+video: "1225926198"
+services:
+  - "Video Production"
+  - "Editing"
+  - "Motion graphics"
+quote:
+  text: "It's been a success with a lot of reach. From the various video projects we have done over the years, your professionalism, final product and approach has been a standout."
+  name: "Nathan Hillier"
+  role: "FARAPULSE Training Manager, EMEA, Boston Scientific"
+order: 1
+caseStudy: true
+feature: true
+draft: false
+---
+
+import CaseFacts from '../../components/casestudy/CaseFacts.astro';
+import CaseStats from '../../components/casestudy/CaseStats.astro';
+import CaseStep from '../../components/casestudy/CaseStep.astro';
+import CaseFigure from '../../components/casestudy/CaseFigure.astro';
+import CaseGallery from '../../components/casestudy/CaseGallery.astro';
+import CaseFilm from '../../components/casestudy/CaseFilm.astro';
+
+{/* Built 25 September 2026 from the design the studio supplied
+    ("Case study - Boston Scientific-html"), with its copy, its running
+    order and its thirteen frames. Layout rebuilt on the site's own panels
+    and tokens rather than the mockup's inline styles.
+
+    Two constraints from CLAUDE.md hold here: Boston Scientific is named as
+    the client and nothing claims preferred supplier status, and the quote
+    below is the testimonial the studio holds.
+
+    Still worth fixing at source: the film's Vimeo title is the raw export
+    filename, "DocuSeries Ep1 Gabor MASTER CLEAN H264.mp4", which shows in
+    the player and on the Vimeo page with Boston Scientific's name on it. */}
+
+<section class="pl-panel">
+  <div class="pl-gutter pl-pad-sm">
+    <div class="pl-container is-md">
+      <CaseFacts
+        items={[
+          { label: 'Client', value: 'Boston Scientific' },
+          { label: 'What we did', value: 'Filming, editing, motion graphics, series development' },
+          { label: 'Location', value: 'Mater Private Hospital, Dublin' },
+          { label: 'Timeline', value: 'July 2025 to May 2026' },
+        ]}
+      />
+      <div class="pl-gap-lg"></div>
+      <CaseStats
+        items={[
+          { n: '1', label: 'Shoot day' },
+          { n: '7', label: 'Professors interviewed' },
+          { n: '8', label: 'Films delivered' },
+          { n: '7', label: 'Countries' },
+        ]}
+      />
+    </div>
+  </div>
+</section>
+
+{/* Episode one, the film this case study is about. Still and play button
+    only until clicked, then it opens in the modal rather than replacing the
+    page. vimeo.com/1225926198, public, 5:04. */}
+<CaseFilm
+  vimeoId="1225926198"
+  title="Expert Insights: FARAVIEW Across Europe, episode one, the Mater Private"
+  poster="/work/featured/boston-scientific-docuseries.jpg"
+  caption="Episode one, the Mater Private, Dublin"
+  time="5:04"
+  duration="PT5M4S"
+/>
+
+<CaseStep n="01" label="The brief" title="Doctors talking to doctors." surface="secondary">
+  The idea was simple. Rather than a product film, let the physicians who use the mapping
+  software every week explain how they work. Each of the seven runs a training academy at
+  their own hospital, in seven different countries, and no two of them do things the same way.
+
+  Two teams at Boston Scientific had a stake in it. Medical education wanted a film per
+  centre, so a visiting doctor could see which academy suits them. Marketing had a 2026
+  campaign with a new look and needed the series to fit inside it. Two sets of notes on
+  every cut.
+</CaseStep>
+
+<CaseStep n="02" label="The day" title="Every hour of it used.">
+  Getting seven professors from seven hospitals into the same building is the hard bit. Once
+  they were, in July 2025, we had them until the end of the day and not a minute longer.
+  Interviews ran back to back. The panel was recorded around one table. And Gabor Széplaki,
+  our host at the Mater Private, scrubbed in for a live case with a few of the visiting
+  professors watching from the side of the lab.
+
+  Six of us on the crew. Lead aprons for the lab. No option of coming back tomorrow.
+
+  <div class="pl-gap-md"></div>
+
+  <CaseStats
+    compact
+    items={[
+      { n: '1', label: 'Three-way PFA panel', note: 'Three professors, one table. Cut first and out the door before the series.' },
+      { n: '7', label: 'Interviews', note: 'One professor at a time. Long, technical, all on the same subject.' },
+      { n: '1', label: 'Live procedure', note: 'Our host in the lab, the visitors watching him work.' },
+    ]}
+  />
+
+  <CaseGallery
+    cols={2}
+    items={[
+      {
+        src: '/work/boston-docuseries/interview-mater.webp',
+        alt: 'Professor Gabor Széplaki interviewed at the Mater Private Hospital in Dublin.',
+        caption: 'In the chair, interview at the Mater Private, July 2025',
+      },
+      {
+        src: '/work/boston-docuseries/cath-lab.webp',
+        alt: 'A physician performing a live procedure in the cath lab at the Mater Private.',
+        caption: 'In the cath lab, the live procedure, filmed the same day',
+      },
+    ]}
+  />
+</CaseStep>
+
+<CaseStep n="03" label="The edit" title="Seven different films, on purpose." surface="tint">
+  Seven long interviews about one piece of software is a trap. Cut them the same way and you
+  get the same film seven times over. So before anyone opened a timeline we read every
+  transcript and picked a lane for each professor. One on research and how the technology
+  got to where it is. One on imaging and anatomy. One on teaching doctors who come from a
+  different background. One on safety. And so on.
+
+  Boston Scientific signed off the themes before we cut a frame. That made the reviews
+  quick, because every comment was about the story, not what the story should be. The panel
+  went out first. The episodes followed one at a time between February and May 2026.
+
+  Each episode carries the name of the professor's own hospital, so watched in order it
+  plays like a tour.
+
+  <CaseGallery
+    cols={4}
+    items={[
+      { src: '/work/boston-docuseries/ep1-title-card.webp', alt: 'Title card for the Mater Private episode.', caption: 'Ep 1, The Mater Private, Dublin' },
+      { src: '/work/boston-docuseries/ep2-essen.webp', alt: 'Title card for the Alfried Krupp Hospital episode.', caption: 'Ep 2, Alfried Krupp Hospital, Essen' },
+      { src: '/work/boston-docuseries/ep3-copenhagen.webp', alt: 'Title card for the Copenhagen Heart Centre episode.', caption: 'Ep 3, Copenhagen Heart Centre' },
+      { src: '/work/boston-docuseries/ep4-graz.webp', alt: 'Title card for the Medical University Graz episode.', caption: 'Ep 4, Medical University Graz' },
+      { src: '/work/boston-docuseries/ep5-pamplona.webp', alt: 'Title card for the Clínica Universidad de Navarra episode.', caption: 'Ep 5, Clínica Universidad de Navarra, Pamplona' },
+      { src: '/work/boston-docuseries/ep6-toulouse.webp', alt: 'Title card for the Clinique Pasteur Toulouse episode.', caption: 'Ep 6, Clinique Pasteur, Toulouse' },
+      { src: '/work/boston-docuseries/ep7-brussels.webp', alt: 'Title card for the Universitair Ziekenhuis Brussel episode.', caption: 'Ep 7, Universitair Ziekenhuis Brussel' },
+      { src: '/work/boston-docuseries/panel-title-card.webp', alt: 'Title slide from the three-professor panel discussion.', caption: 'Film eight, three-professor panel discussion' },
+    ]}
+  />
+</CaseStep>
+
+<CaseStep n="04" label="Graphics" title="Their brand, their graphics, our call on screen.">
+  The brand and the graphic assets for the new campaign came from Boston Scientific. Putting
+  them on screen was our job. We animated the title cards and the name straps, kept the
+  pacing consistent from film to film, and were fairly ruthless about only using a graphic
+  where it helped.
+
+  Boston Scientific's design team have the last word on their look. Ours was making sure
+  eight films made over ten months still feel like they were cut in the same week.
+
+  <CaseFigure
+    src="/work/boston-docuseries/name-strap.webp"
+    alt="Interview frame showing the name strap from episode one."
+    caption="Name strap from episode one, Boston Scientific graphics, animated by us"
+  />
+</CaseStep>
+
+<CaseStep n="05" label="The result" title="Wrapped, approved, live." surface="secondary">
+  **Expert Insights: FARAVIEW Across Europe** is on EDUCARE, Boston Scientific's training
+  platform for clinicians, and it has travelled well. It is also not the first thing we have
+  made for them. We have been filming with Boston Scientific for a few years now.
+
+  <CaseGallery
+    cols={2}
+    items={[
+      {
+        src: '/work/boston-docuseries/bts-papworth-1.webp',
+        alt: 'Doghouse Media crew filming in a cath lab during an earlier Boston Scientific shoot.',
+        caption: 'Behind the scenes on an earlier shoot, Papworth, 2024, not from the docuseries',
+      },
+      {
+        src: '/work/boston-docuseries/bts-papworth-2.webp',
+        alt: 'A crew member photographing a physician at work during an earlier Boston Scientific shoot.',
+        caption: 'Not our first time in a cath lab',
+      },
+    ]}
+  />
+</CaseStep>

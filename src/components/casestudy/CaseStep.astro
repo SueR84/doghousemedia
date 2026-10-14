@@ -1,0 +1,67 @@
+---
+/**
+ * One numbered part of a case study: a small label, a heading, then the
+ * words and whatever the body puts after them. Alternates surface so a long
+ * case study has a rhythm rather than one continuous page.
+ */
+interface Props {
+  n: string;
+  label: string;
+  title: string;
+  /** Panel fill, matching the .pl-panel classes. */
+  surface?: 'primary' | 'secondary' | 'tint' | 'inverse';
+  id?: string;
+}
+const { n, label, title, surface = 'primary', id } = Astro.props;
+const headingId = id ?? `cs-${n}`;
+// Optional right-hand column, added 5 October 2026 for Coroflo. Anything
+// passed as slot="aside" sits beside the words; without it the step is one
+// column as before.
+const hasAside = Astro.slots.has('aside');
+---
+
+<section
+  class:list={['pl-panel', surface !== 'primary' && `is-${surface}`]}
+  aria-labelledby={headingId}
+>
+  <div class="pl-gutter pl-pad-md">
+    <div class="pl-container is-md">
+      <div class:list={[hasAside && 'pl-grid-2 is-wide cs-step__split']}>
+      <div>
+      <p class="u-eyebrow" data-reveal>{n} &middot; {label}</p>
+      <div class="pl-gap-sm"></div>
+      <h2
+        class="u-h2 u-balance"
+        id={headingId}
+        data-reveal
+        style={surface === 'inverse' ? 'max-width:34rem;color:var(--pl-text-inverse)' : 'max-width:34rem'}
+      >
+        {title}
+      </h2>
+      <div class="pl-gap-md"></div>
+      <div class="cs-step__body"><slot /></div>
+      </div>
+      {hasAside && <div class="cs-step__aside" data-reveal><slot name="aside" /></div>}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* The words sit in a readable measure; anything the body adds after them
+     (figures, grids, stat rows) takes the full container. */
+  .cs-step__body :global(p) {
+    max-width: 38rem;
+    margin-bottom: var(--pl-s-md);
+    font-size: var(--pl-lg);
+    line-height: 1.6;
+    color: var(--pl-text-muted);
+  }
+  .cs-step__body :global(p:last-child) { margin-bottom: 0; }
+  .cs-step__split { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
+  @media (max-width: 767px) {
+    .cs-step__split { grid-template-columns: minmax(0, 1fr); }
+  }
+  .cs-step__body :global(strong) { color: var(--pl-text); font-weight: var(--pl-fw-medium); }
+  :global(.pl-panel.is-inverse) .cs-step__body :global(p) { color: var(--pl-text-on-dark); }
+</style>

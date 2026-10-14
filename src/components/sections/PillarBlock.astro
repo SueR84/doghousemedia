@@ -1,0 +1,80 @@
+---
+/**
+ * Pillar block. Used twice on the homepage, once per pillar.
+ *
+ * Eyebrow, heading, one lead line, one link, and a right-hand column that is
+ * one of: three "what we deliver" lines (MESSAGING-PLAN §5, verbatim, not
+ * shortened to fit), a single vertical film in a tilted phone, the phone
+ * carousel, or the tablet slideshow. Never more than one at a time.
+ */
+import Button from '../pipely/Button.astro';
+import PhoneCarousel from './PhoneCarousel.astro';
+import PhoneVideo from './PhoneVideo.astro';
+import TabletSlideshow from './TabletSlideshow.astro';
+
+interface Props {
+  eyebrow: string;
+  heading: string;
+  /** Second line of the same h2, forced onto its own line. Still one heading to assistive tech. */
+  headingLine2?: string;
+  lead?: string;
+  points?: string[];
+  /** Replaces the points column with a portrait film in a tilted phone.
+      `behind` adds a second film in the phone sitting behind it. */
+  video?: {
+    vimeoId: string;
+    title: string;
+    behind?: { vimeoId: string; title: string };
+  };
+  /** Replaces the points column with the phone showcase carousel. */
+  carousel?: boolean;
+  /** Replaces the points column with the tablet slideshow of built sites. */
+  tablet?: boolean;
+  cta: { label: string; href: string };
+  /** `film` tints the eyebrow red, `web` teal. Non-text accent only. */
+  tone?: 'film' | 'web';
+  /** Flips the two columns so the pillars do not read as a repeat. */
+  reverse?: boolean;
+  /** Panel fill, matching the .pl-panel classes. */
+  surface?: 'primary' | 'secondary' | 'tint';
+  /** Faint graph paper and cross-hairs under the content. */
+  graph?: boolean;
+  /** A faint soft blob on the panel behind the media column. */
+  blob?: boolean;
+  id?: string;
+}
+
+const { eyebrow, heading, headingLine2, lead, points, video, carousel = false, tablet = false, cta, tone = 'film', reverse = false, surface = 'primary', graph = false, blob = false, id } = Astro.props;
+const headingId = `${(id ?? eyebrow).toLowerCase().replace(/[^a-z0-9]+/g, '-')}-heading`;
+---
+
+<section id={id} class:list={['pl-panel', surface !== 'primary' && `is-${surface}`, graph && 'pl-graph', blob && 'pl-blob']} aria-labelledby={headingId}>
+  <div class="pl-gutter pl-pad-md">
+    <div class="pl-container is-md">
+      {/* Blocks with phones (video or carousel) centre their text on the
+          phones (19 September 2026); the points variant stays top-aligned. */}
+      <div class:list={['pl-grid-2', !(carousel || video || tablet) && 'is-top', 'is-wide', video && 'pl-pillar--media', reverse && 'pl-pillar--reverse']}>
+        <div class="pl-stack pl-stack-md" data-reveal>
+          <p class:list={['u-eyebrow', tone === 'web' ? 'is-web' : 'is-film']}>{eyebrow}</p>
+          <h2 class="u-h2 u-max-40" id={headingId}>{heading}{headingLine2 && <> <span style="display:block">{headingLine2}</span></>}</h2>
+          {lead && <p class="u-lg u-muted u-max-33">{lead}</p>}
+          <div class="pl-btn-group" style="margin-top:.5rem">
+            <Button href={cta.href} variant="ghost">{cta.label}</Button>
+          </div>
+        </div>
+
+        {video ? (
+          <div data-reveal><PhoneVideo vimeoId={video.vimeoId} title={video.title} behind={video.behind} /></div>
+        ) : carousel ? (
+          <div data-reveal><PhoneCarousel /></div>
+        ) : tablet ? (
+          <TabletSlideshow />
+        ) : (
+          <ul class="pl-deliver" data-reveal-stagger="100">
+            {points?.map((p) => <li class="pl-deliver__item" data-reveal>{p}</li>)}
+          </ul>
+        )}
+      </div>
+    </div>
+  </div>
+</section>

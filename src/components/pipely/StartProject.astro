@@ -1,0 +1,357 @@
+---
+/**
+ * "Tell us about your project". Step-by-step enquiry in a modal, in place of
+ * a traditional contact form.
+ *
+ * A recreation of the original doghousemedia.ie build's StartProjectModal
+ * (../doghousemedia/src/components/StartProjectModal.astro): same shell,
+ * progress bars, kicker, two-up choice cards, footer nav and success tick.
+ * What changed:
+ *
+ *   - Questions. Three steps instead of four, built on the three fields
+ *     MESSAGING-PLAN §14 recommends (name, organisation, what you are
+ *     working on):
+ *       1. Video Production, Web Development, Digital and AI, or not sure. Choosing
+ *          moves straight on.
+ *       2. What it is, in one text box whose prompt follows the choice, plus
+ *          an optional timeline. Both can be skipped.
+ *       3. Name and email (required) and organisation.
+ *     Deliberately dropped from the original: euro budget bands (the site
+ *     publishes no prices, and an "under €2.5k" option invites the enquiries
+ *     the positioning moves away from), page counts, CMS, video length and
+ *     phone. Those are questions for the first call.
+ *   - Styling moved onto the Pipely tokens. Headings in the display face at
+ *     400, buttons are .pl-btn, film is red and web is teal (the original
+ *     had them the other way round). No shadows, per PIPELY-FORK.
+ *   - Contrast. The original's grey labels, back link and close button were
+ *     #9B9890 on cream, about 2.6:1. They are the muted text colour here.
+ *   - Accessibility. Focus moves to each new question so it is announced,
+ *     invalid fields carry aria-invalid, the error is a live alert, and
+ *     Escape is handled explicitly because the dialog's own close request
+ *     does not fire in every engine.
+ *   - Copy. No em dashes, per the writing rules.
+ *
+ * Opened by any element carrying [data-start-project]. Put that on a real
+ * link to /contact/ so the button still goes somewhere with JavaScript off.
+ *
+ * SUBMISSION. There is no form endpoint yet (CLAUDE.md launch blocker 7).
+ * Until `endpoint` is set, sending opens the visitor's email client with
+ * their answers filled in, and the success screen says so rather than
+ * claiming the enquiry has arrived. The original said "on its way" either
+ * way, which loses the lead whenever the email is never sent. Set
+ * `endpoint` to a URL that accepts a JSON POST and it sends directly.
+ */
+import '../../styles/pipely/start-project.css';
+
+const endpoint = '';
+const enquiryEmail = 'hello@doghousemedia.ie';
+---
+
+<dialog class="sp-modal" data-sp aria-labelledby="sp-title-1">
+  <div class="sp-shell">
+    <button type="button" class="sp-close" data-sp-close aria-label="Close">&times;</button>
+
+    <div class="sp-progress" data-sp-progress aria-hidden="true">
+      <span class="sp-step-dot" data-dot="1"></span>
+      <span class="sp-step-dot" data-dot="2"></span>
+      <span class="sp-step-dot" data-dot="3"></span>
+    </div>
+
+    <form class="sp-form" novalidate>
+      {/* Honeypot. Off-screen rather than display:none so bots still find it. */}
+      <div class="sp-pot" aria-hidden="true">
+        <label>Company website <input type="text" name="website_url" tabindex="-1" autocomplete="off" /></label>
+      </div>
+
+      {/* STEP 1: interest */}
+      <section class="sp-panel" data-panel="1">
+        <span class="sp-kicker">Tell us about your project</span>
+        <h2 class="sp-title" id="sp-title-1" tabindex="-1">What are you interested in?</h2>
+        <p class="sp-sub">Pick one and we'll ask the right questions.</p>
+        <div class="sp-choice-grid">
+          <button type="button" class="sp-choice" data-track="Video Production">
+            <span class="sp-choice-tag is-film">Video</span>
+            <span class="sp-choice-name">Video Production</span>
+            <span class="sp-choice-desc">Brand films, promos, event and social content.</span>
+          </button>
+          <button type="button" class="sp-choice" data-track="Web Development">
+            <span class="sp-choice-tag is-web">Web</span>
+            <span class="sp-choice-name">Web Development</span>
+            <span class="sp-choice-desc">Custom sites, redesigns, e-commerce and platforms.</span>
+          </button>
+          <button type="button" class="sp-choice" data-track="Digital and AI">
+            <span class="sp-choice-tag is-web">Digital</span>
+            <span class="sp-choice-name">Digital and AI</span>
+            <span class="sp-choice-desc">AI assistants, automation and workflows.</span>
+          </button>
+          <button type="button" class="sp-choice" data-track="Something else">
+            <span class="sp-choice-tag">Other</span>
+            <span class="sp-choice-name">Not sure yet</span>
+            <span class="sp-choice-desc">Or a bit of both.</span>
+          </button>
+        </div>
+      </section>
+
+      {/* STEP 2: about the project. Both questions optional. */}
+      <section class="sp-panel" data-panel="2" hidden>
+        <span class="sp-kicker" data-track-label>Your project</span>
+        <h2 class="sp-title" id="sp-title-2" tabindex="-1">Tell us about it.</h2>
+        <p class="sp-sub">A few lines is plenty. Skip anything you are not sure of yet.</p>
+        <label class="sp-field">
+          <span class="sp-label" data-about-label>What are you working on?</span>
+          <textarea name="about" rows="4"></textarea>
+        </label>
+        <fieldset class="sp-fieldset">
+          <legend class="sp-label">Timeline</legend>
+          <div class="sp-chips">
+            {['As soon as possible', '1 to 3 months', '3 to 6 months', 'Just exploring'].map((t) => (
+              <label class="sp-chip">
+                <input type="radio" name="timeline" value={t} />
+                <span>{t}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      </section>
+
+      {/* STEP 3: contact */}
+      <section class="sp-panel" data-panel="3" hidden>
+        <span class="sp-kicker">Almost there</span>
+        <h2 class="sp-title" id="sp-title-3" tabindex="-1">Where can we reach you?</h2>
+        <div class="sp-row">
+          <label class="sp-field">
+            <span class="sp-label">Name *</span>
+            <input type="text" name="name" autocomplete="name" required aria-describedby="sp-error" />
+          </label>
+          <label class="sp-field">
+            <span class="sp-label">Email *</span>
+            <input type="email" name="email" autocomplete="email" required aria-describedby="sp-error" />
+          </label>
+        </div>
+        <label class="sp-field">
+          <span class="sp-label">Organisation</span>
+          <input type="text" name="organisation" autocomplete="organization" />
+        </label>
+        <p class="sp-error" id="sp-error" data-sp-error role="alert"></p>
+      </section>
+
+      {/* SUCCESS */}
+      <section class="sp-panel sp-success" data-panel="done" hidden>
+        <div class="sp-check" aria-hidden="true">&check;</div>
+        <h2 class="sp-title" id="sp-title-done" tabindex="-1" data-done-title>Thanks, we're on it.</h2>
+        <p class="sp-sub" data-done-body>Your enquiry is on its way. We'll be in touch within one working day.</p>
+        <button type="button" class="pl-btn" data-sp-close>Done</button>
+      </section>
+
+      {/* Footer nav */}
+      <div class="sp-nav" data-sp-foot hidden>
+        <button type="button" class="sp-back" data-sp-back>&larr; Back</button>
+        <button type="button" class="pl-btn sp-advance" data-sp-next>Continue</button>
+        <button type="submit" class="pl-btn sp-advance" data-sp-submit>Send enquiry</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+<script define:vars={{ endpoint, enquiryEmail }}>
+  (function () {
+    const dialog = document.querySelector('[data-sp]');
+    if (!dialog) return;
+
+    const form = dialog.querySelector('.sp-form');
+    const dots = dialog.querySelectorAll('.sp-step-dot');
+    const submitBtn = dialog.querySelector('[data-sp-submit]');
+    const nextBtn = dialog.querySelector('[data-sp-next]');
+    const aboutLabel = dialog.querySelector('[data-about-label]');
+    const foot = dialog.querySelector('[data-sp-foot]');
+    const progress = dialog.querySelector('[data-sp-progress]');
+    const errorEl = dialog.querySelector('[data-sp-error]');
+    const trackLabel = dialog.querySelector('[data-track-label]');
+    const doneTitle = dialog.querySelector('[data-done-title]');
+    const doneBody = dialog.querySelector('[data-done-body]');
+    const name = form.querySelector('[name="name"]');
+    const email = form.querySelector('[name="email"]');
+
+    const data = { interest: '' };
+    let step = 1; // 1..3, then 'done'
+    let trigger = null;
+
+    function clearErrors() {
+      errorEl.textContent = '';
+      [name, email].forEach((f) => f.removeAttribute('aria-invalid'));
+    }
+
+    function render() {
+      dialog.querySelectorAll('.sp-panel').forEach((p) => (p.hidden = p.dataset.panel !== String(step)));
+      progress.hidden = step === 'done';
+      foot.hidden = step === 1 || step === 'done';
+      nextBtn.hidden = step !== 2;
+      submitBtn.hidden = step !== 3;
+
+      dots.forEach((d, i) => {
+        const n = i + 1;
+        d.classList.toggle('active', typeof step === 'number' && n === step);
+        d.classList.toggle('done', typeof step === 'number' && n < step);
+      });
+
+      // Move focus to the new question so a screen reader announces it.
+      const title = dialog.querySelector(`[data-panel="${step}"] .sp-title`);
+      dialog.setAttribute('aria-labelledby', title.id);
+      title.focus({ preventScroll: true });
+      dialog.querySelector('.sp-shell').scrollTop = 0;
+    }
+
+    function open() {
+      form.reset();
+      clearErrors();
+      step = 1;
+      document.documentElement.classList.add('has-modal');
+      dialog.showModal();
+      render();
+    }
+
+    const close = () => dialog.close();
+
+    // Open triggers. A modified click still follows the fallback link.
+    document.querySelectorAll('[data-start-project]').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        e.preventDefault();
+        trigger = btn;
+        open();
+      });
+    });
+
+    // Close triggers
+    dialog.querySelectorAll('[data-sp-close]').forEach((b) => b.addEventListener('click', close));
+    dialog.addEventListener('click', (e) => {
+      // Backdrop click: clicks outside the shell land on the dialog itself.
+      if (e.target === dialog) close();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && dialog.open) {
+        e.preventDefault();
+        close();
+      }
+    });
+    // Focus goes back to the button that opened it, explicitly, rather than
+    // relying on the browser to remember.
+    dialog.addEventListener('close', () => {
+      step = 1;
+      document.documentElement.classList.remove('has-modal');
+      if (trigger && document.contains(trigger)) trigger.focus();
+    });
+
+    // Interest choice moves straight on.
+    dialog.querySelectorAll('[data-track]').forEach((b) => {
+      b.addEventListener('click', () => {
+        data.interest = b.dataset.track;
+        trackLabel.textContent =
+          data.interest === 'Video Production' ? 'Video project'
+          : data.interest === 'Web Development' ? 'Web project'
+          : data.interest === 'Digital and AI' ? 'Digital project'
+          : 'Your project';
+        aboutLabel.textContent =
+          data.interest === 'Video Production' ? 'What is the film for, and who needs to see it?'
+          : data.interest === 'Web Development' ? 'What does the site need to do?'
+          : data.interest === 'Digital and AI' ? 'What would you like to automate, build or improve?'
+          : 'What are you working on?';
+        step = 2;
+        render();
+      });
+    });
+
+    dialog.querySelector('[data-sp-back]').addEventListener('click', () => {
+      clearErrors();
+      step -= 1;
+      render();
+    });
+
+    nextBtn.addEventListener('click', () => {
+      step = 3;
+      render();
+    });
+
+    // Enter on a timeline chip would otherwise submit the whole form from
+    // step 2. Treat it as Continue instead. Enter in the textarea is a new
+    // line, as expected, so only inputs are caught.
+    form.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && step === 2 && e.target.tagName === 'INPUT') {
+        e.preventDefault();
+        nextBtn.click();
+      }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearErrors();
+
+      const bad = [name, email].filter((f) => !f.value.trim() || !f.checkValidity());
+      if (bad.length) {
+        bad.forEach((f) => f.setAttribute('aria-invalid', 'true'));
+        errorEl.textContent = 'Please add your name and a valid email.';
+        bad[0].focus();
+        return;
+      }
+
+      const fd = new FormData(form);
+      const payload = {
+        interest: data.interest,
+        about: String(fd.get('about') || '').trim(),
+        timeline: String(fd.get('timeline') || ''),
+        name: name.value.trim(),
+        email: email.value.trim(),
+        organisation: String(fd.get('organisation') || '').trim(),
+      };
+
+      // Honeypot filled: act as if it sent, send nothing.
+      if (form.querySelector('[name="website_url"]').value) {
+        step = 'done';
+        render();
+        return;
+      }
+
+      let sent = false;
+      if (endpoint) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending';
+        try {
+          const res = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          sent = res.ok;
+        } catch (err) {
+          sent = false;
+        }
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send enquiry';
+      }
+
+      if (sent) {
+        doneTitle.textContent = "Thanks, we're on it.";
+        doneBody.textContent = "Your enquiry is on its way. We'll be in touch within one working day.";
+      } else {
+        // No endpoint, or it failed: hand off to a pre-filled email.
+        const subject = `New ${payload.interest} enquiry from ${payload.name}${payload.organisation ? `, ${payload.organisation}` : ''}`;
+        const body = [
+          `Interested in: ${payload.interest}`,
+          `Timeline: ${payload.timeline || 'Not given'}`,
+          '',
+          payload.about || '(No details given)',
+          '',
+          `Name: ${payload.name}`,
+          `Email: ${payload.email}`,
+          `Organisation: ${payload.organisation || 'Not given'}`,
+        ].join('\n');
+        window.location.href = `mailto:${enquiryEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        doneTitle.textContent = 'One last step.';
+        doneBody.textContent = `We've opened an email with your answers filled in. Press send and it reaches us. If nothing opened, write to ${enquiryEmail}.`;
+      }
+
+      step = 'done';
+      render();
+    });
+  })();
+</script>

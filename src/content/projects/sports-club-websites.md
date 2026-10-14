@@ -1,21 +1,21 @@
 ---
 title: "Sports Club websites"
 client: "PWHC, Loreto Hockey Club"
-service: "Web Development, Design"
-shortDescription: "We developed and support websites belonging to two of Ireland's most well know Hockey Clubs - Pembroke Wanderers and Loreto Hockey Club."
-websiteLink: "https://pembrokewanderers.ie/"
-projectVideo: ""
-projectImage: "https://doghousemedia.ie/wp-content/uploads/2023/01/pwhc-pi2.png"
-projectGallery:
-  - "https://doghousemedia.ie/wp-content/uploads/2023/01/pwhc-pi1.jpeg"
-  - "https://doghousemedia.ie/wp-content/uploads/2023/01/pwhc-pi3.jpeg"
-  - "https://doghousemedia.ie/wp-content/uploads/2023/01/pwhc-pi4.jpeg"
-projectType:
-  - "Web Development"
+year: 2023
 craft: "web"
-status: "publish"
+summary: "We developed and support websites belonging to two of Ireland's most well know Hockey Clubs - Pembroke Wanderers and Loreto Hockey Club."
+cover: "/work/pwhc-pi2.jpg"
+liveUrl: "https://pembrokewanderers.ie/"
+services:
+  - "Web Development"
+  - "Design"
+gallery:
+  - "/work/pwhc-pi1.jpg"
+  - "/work/pwhc-pi3.jpg"
+  - "/work/pwhc-pi4.jpg"
+order: 13
+draft: false
 ---
-
 We manage the websites of two of Ireland's most well known Hockey Clubs - Pembroke Wanderers and Loreto Hockey Club. Both websites were designed at implemented by us.
 
 When it comes to organic search there are no better performing club websites in Ireland than the Pembroke Wanderers and Loreto websites. This is no accident, there are specific reasons these websites perform so well on search

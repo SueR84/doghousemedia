@@ -1,0 +1,112 @@
+/* PIPELY FORK — layout primitives
+
+   The skeleton, four nested pieces:
+     .pl-page    top offset for the fixed nav
+      .pl-shell  page edge inset + the gap between panels
+       .pl-panel a rounded coloured section surface
+        .pl-gutter inner horizontal padding
+         .pl-container max-width and centring
+
+   Sections are rounded panels floating on a warm ground with a
+   1.25rem gap between them. That gap is the signature. */
+
+.pl-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pl-shell-gap);
+  padding-top: var(--pl-nav-offset);
+  overflow: clip;
+}
+.pl-page.is-flush { padding-top: 0; }
+
+.pl-shell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pl-shell-gap);
+  padding: var(--pl-s-lg) var(--pl-shell-pad);
+}
+.pl-shell.is-nav { padding-bottom: 0; }
+
+/* Sections inside <main> get the same panel gap as the shell. */
+.pl-sections { display: flex; flex-direction: column; gap: var(--pl-shell-gap); }
+
+.pl-panel {
+  background-color: var(--pl-primary);
+  border-radius: var(--pl-r-section);
+  overflow: clip;
+}
+.pl-panel.is-ground    { background-color: var(--pl-ground); }
+.pl-panel.is-secondary { background-color: var(--pl-secondary); }
+/* Steel tint: the fourth surface, added 24 September 2026 so a long page
+   can alternate white, off-white and tint rather than white and off-white.
+   Already in the brand palette and already used as a card fill. Ink on it
+   is 16.2:1 and brand red 5.5:1, so text and accents behave as on the
+   other light surfaces. */
+.pl-panel.is-tint      { background-color: var(--color-steel-tint); }
+.pl-panel.is-inverse   { background-color: var(--pl-inverse); color: var(--pl-text-inverse); }
+.pl-panel.is-film      { background-color: var(--pl-film); color: var(--pl-text-inverse); }
+.pl-panel.is-card-radius { border-radius: var(--pl-r-card); }
+
+.pl-gutter { padding-left: var(--pl-gutter); padding-right: var(--pl-gutter); }
+
+.pl-container { width: 100%; margin-inline: auto; }
+.pl-container.is-md { max-width: var(--pl-container-md); }
+.pl-container.is-sm { max-width: var(--pl-container-sm); }
+@media (max-width: 991px) { .pl-container.is-md { max-width: none; } }
+
+.pl-pad-sm { padding-block: var(--pl-pad-sm); }
+.pl-pad-md { padding-block: var(--pl-pad-md); }
+.pl-pad-lg { padding-block: var(--pl-pad-lg); }
+
+.pl-gap-sm { padding-top: var(--pl-gap-sm); }
+.pl-gap-md { padding-top: var(--pl-gap-md); }
+.pl-gap-lg { padding-top: var(--pl-gap-lg); }
+
+.pl-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--pl-grid-gap); align-items: center; }
+.pl-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--pl-grid-gap); }
+.pl-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--pl-grid-gap); }
+.pl-grid-2.is-top, .pl-grid-3.is-top { align-items: start; }
+.pl-grid-2.is-stretch { align-items: stretch; }
+.pl-grid-2.is-wide { gap: 3rem; }
+
+@media (max-width: 991px) {
+  .pl-grid-4 { grid-template-columns: 1fr 1fr; }
+  .pl-grid-2, .pl-grid-3, .pl-grid-4 { gap: 1rem; }
+}
+@media (max-width: 767px) {
+  .pl-grid-2, .pl-grid-3, .pl-grid-4 { grid-template-columns: 1fr; }
+}
+
+.pl-stack     { display: flex; flex-direction: column; align-items: flex-start; }
+.pl-stack-xs  { gap: var(--pl-s-xs); }
+.pl-stack-sm  { gap: var(--pl-s-sm); }
+.pl-stack-md  { gap: var(--pl-s-md); }
+.pl-stack-lg  { gap: var(--pl-s-lg); }
+.pl-stack-xl  { gap: var(--pl-s-xl); }
+.pl-stack-2xl { gap: var(--pl-s-4xl); }
+/* The template pushes a column's head and foot apart with a big gap
+   plus space-between. Very distinctive, keep it generous. */
+.pl-stack-split { display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; gap: 7.5rem; }
+@media (max-width: 767px) { .pl-stack-split { gap: 3rem; } }
+
+.pl-row { display: flex; align-items: center; gap: var(--pl-s-md); }
+/* Wraps, so a heading and its button stack rather than the button being
+   pushed out of the panel on a narrow phone (320px, 21 September 2026).
+   On wider screens there is room and nothing wraps. */
+.pl-row.is-between { justify-content: space-between; flex-wrap: wrap; }
+.pl-row.is-top { align-items: flex-start; }
+.pl-row.is-wrap { flex-wrap: wrap; }
+
+/* Fixed-ratio media boxes. Pipely sizes images with padding-top
+   percentages; aspect-ratio is cleaner and does the same job. */
+.pl-media { position: relative; width: 100%; overflow: clip; border-radius: var(--pl-r-media); background-color: var(--pl-secondary); }
+.pl-media > img, .pl-media > video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.pl-media.is-square   { aspect-ratio: 1 / 1; }
+.pl-media.is-portrait { aspect-ratio: 1 / 1.57; }
+.pl-media.is-team     { aspect-ratio: 1 / 1.125; }
+.pl-media.is-article  { aspect-ratio: 1 / 0.845; }
+.pl-media.is-service  { aspect-ratio: 1 / 0.71; }
+.pl-media.is-case     { aspect-ratio: 1 / 0.72; }
+.pl-media.is-wide     { aspect-ratio: 16 / 9; }
+.pl-media.is-reel     { aspect-ratio: 9 / 16; max-width: 26.25rem; margin-left: auto; }
+.pl-media.is-fill     { aspect-ratio: auto; height: 100%; min-height: 12rem; }

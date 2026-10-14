@@ -1,0 +1,313 @@
+---
+/**
+ * Website accessibility. MESSAGING-PLAN §7a. Merged on 10 October 2026 at
+ * Sue's request: the former /accessible-websites/ page (how accessibility
+ * shapes the build, the four stages, the Real Nation card) now opens this
+ * page, followed by the audit content. Someone Like Me was tested to WCAG
+ * 2.1 AA, this site is built to 2.2 AA. Do not conflate them.
+ *
+ * Accessibility audits. MESSAGING-PLAN §7a.
+ *
+ * The commercial engine of the accessibility positioning. No public price
+ * at launch. No scaremongering, and no "every website must now be
+ * accessible by law", which is not true and which a procurement officer
+ * will know is not true.
+ *
+ * Legal scope below was verified on 11 September 2026 against the National
+ * Disability Authority, which is the Irish monitoring body for the Web
+ * Accessibility Directive, and re-checked on 10 October 2026 against the
+ * Irish Statute Book and the EU accessibility centre:
+ *   - EAA: commenced 28 June 2025, transposed by S.I. No. 636 of 2023.
+ *     https://nda.ie/accessibility/european-accessibility-act
+ *   - WAD: S.I. No. 358 of 2020, public sector bodies.
+ *     https://nda.ie/monitoring/eu-web-accessibility-directive
+ *   - Microenterprise exemption: reg 2(1) and 5(4) of S.I. No. 636 of 2023
+ *     (under 10 staff, turnover or balance sheet of EUR 2m or less).
+ *     https://www.irishstatutebook.ie/eli/2023/si/636/made/en/print
+ *   - CCPC is the compliance authority for e-commerce and e-books (reg 4).
+ *   - WAD scope and public sector definition: reg of S.I. No. 358 of 2020.
+ *     https://www.irishstatutebook.ie/eli/2020/si/358/made/en/print
+ *   - EN 301 549 v4.1.1 (WCAG 2.2) published September 2026, NOT yet cited
+ *     in the Official Journal, so v3.2.1 (WCAG 2.1 AA) is still the legal
+ *     reference. Re-check for the citation before launch.
+ *     https://accessible-eu-centre.ec.europa.eu/content-corner/news/european-accessibility-standard-en-301-549-has-been-updated-2026-09-07_en
+ * Re-check before launch if that is more than a few months from now.
+ */
+import Site from '../layouts/Site.astro';
+import Button from '../components/pipely/Button.astro';
+import AuditChecklist from '../components/sections/AuditChecklist.astro';
+import SlmChecked from '../components/sections/SlmChecked.astro';
+import AuditRequest from '../components/pipely/AuditRequest.astro';
+
+const stages = [
+  { title: 'Navigation', text: 'A clear structure, consistent menus and headings, and every part of the site reachable by keyboard.' },
+  { title: 'Content', text: 'Plain language, link text that makes sense on its own, descriptive alt text and written captions on film.' },
+  { title: 'Design', text: 'Colour contrast that passes, readable type, visible focus and buttons large enough to tap.' },
+  { title: 'Testing', text: 'Automated scanning, then manual testing with a keyboard and a screen reader against WCAG, with the issues fixed before launch.' },
+];
+
+const included = [
+  {
+    title: 'Every template, not a sample',
+    text: 'We scan each template and page pattern across the site, so a fault that repeats is found once and fixed once, not missed because it was on page four.',
+  },
+  {
+    title: 'Testing by hand',
+    text: 'Scanners miss what only a person finds. We test with a keyboard and a screen reader, and check focus order, forms and error messages, colour contrast, video captions and anything that moves.',
+  },
+  {
+    title: 'Measured against WCAG 2.2 AA',
+    text: 'The current standard. If your obligation sits at 2.1 AA, we report against that too, so you can see where you stand on both.',
+  },
+  {
+    title: 'Findings sorted by who fixes them',
+    text: 'Every issue is marked as ours to fix, your content team’s, or a third-party supplier’s, like a booking widget or a cookie banner. You get a plan with owners, not a long list.',
+  },
+  {
+    title: 'A retest once it is fixed',
+    text: 'We check the fixes against the original findings, so you have a before and an after to show, not just a list.',
+  },
+];
+
+const followOn = [
+  {
+    title: 'Remediation by us',
+    text: 'We fix what we said we could fix: templates, code, colour, focus states and forms on the sites we build and look after. Every fix is checked against the original finding, so nothing is marked done on trust.',
+  },
+  {
+    title: 'An accessibility statement',
+    text: 'Drafted for publication and accurate to what the site actually does. It says what passes, what does not yet, and when it will be fixed, and we update it after each round of fixes.',
+  },
+  {
+    title: 'Ongoing monitoring',
+    text: 'Accessibility checks run as part of Care and Hosting, so a site that passed stays that way as pages, plugins and content change.',
+    href: '/care-and-hosting/',
+    link: 'About Care and Hosting',
+  },
+];
+
+const laws = [
+  {
+    name: 'The European Accessibility Act',
+    text: 'An EU law, in force in Ireland since 28 June 2025 as S.I. No. 636 of 2023. It covers specific services rather than every website: online shops selling to consumers, consumer banking, e-books, electronic communications, audiovisual media services, and passenger transport websites, apps and ticketing. Service providers that are microenterprises, with fewer than 10 staff and a turnover or balance sheet of €2 million or less, are exempt from the service requirements. The Competition and Consumer Protection Commission is the enforcing authority for e-commerce.',
+  },
+  {
+    name: 'The Web Accessibility Directive',
+    text: 'Covers the websites and mobile apps of Irish public sector bodies, under S.I. No. 358 of 2020. They have to meet the EU standard and publish an accessibility statement, and the National Disability Authority monitors compliance. It does not apply to private businesses.',
+  },
+  {
+    name: 'The standard behind both',
+    text: 'The EU technical standard, EN 301 549, still points to WCAG 2.1 AA as the formal test. A new version, published in September 2026, moves it to WCAG 2.2, but the EU has not yet made it the legal reference. We test to 2.2 AA, so a site that passes is ready for either.',
+  },
+];
+---
+
+<Site
+  title="Website accessibility"
+  description="Accessibility decides how we organise, write, design and test a website. We also audit existing sites against WCAG 2.2 AA and tell you what needs to change, who has to change it, and in what order."
+>
+  {/* ---------- Hero: build and audit, with the sample audit checklist ---------- */}
+  <section class="pl-panel" aria-labelledby="aa-heading">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div class="pl-grid-2 is-wide">
+        <div data-reveal-stagger="100">
+          <p class="u-eyebrow is-web" data-reveal>Website accessibility</p>
+          <div class="pl-gap-sm"></div>
+          <h1 class="u-h1 u-max-40 u-balance" id="aa-heading" data-reveal>
+            We build and audit websites against WCAG 2.2 AA.
+          </h1>
+          <div class="pl-gap-sm"></div>
+          <p class="u-lg u-muted u-max-33" data-reveal>
+            For existing sites, we tell you what needs to change, who has to change it, and in what order.
+          </p>
+          <div class="pl-gap-sm"></div>
+          <div class="pl-btn-group" data-reveal><Button href="/contact/" data-audit-request>Request an audit</Button></div>
+        </div>
+        {/* Sample audit checklist, moved up from What an audit is on 22
+            September 2026. */}
+        <div class="aa-hero-graphic" data-reveal><AuditChecklist /></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- How we build, with the Real Nation work ---------- */}
+  <section class="pl-panel" aria-labelledby="aw-heading">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div class="pl-grid-2 is-wide">
+          <div data-reveal-stagger="100">
+            <p class="u-eyebrow is-web" data-reveal>Accessibility</p>
+            <div class="pl-gap-sm"></div>
+            <h2 class="u-h2 u-max-40 u-balance" id="aw-heading" data-reveal>
+              Accessibility shapes every stage of the build.
+            </h2>
+            <div class="pl-gap-sm"></div>
+            <p class="u-lg u-muted u-max-33" data-reveal>
+              It is not a check at the end. It decides how the site is organised, written, designed and tested,
+              so it works for people using a keyboard, a screen reader, magnification or a phone in bright
+              sunlight.
+            </p>
+          </div>
+          <div class="pl-stack pl-stack-md" data-reveal>
+            <p class="u-eyebrow">Where it shows up</p>
+            <ul class="aw-steps" role="list" data-reveal-stagger="100">
+              {stages.map((s) => (
+                <li class="aw-steps__step" data-reveal>
+                  <h3 class="aw-steps__title">{s.title}</h3>
+                  <p class="u-muted">{s.text}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- Why us ----------
+      Three sentences now. The "most rigorous accessibility review" line was
+      removed at Sue's request on 10 October 2026. */}
+  <section class="pl-panel is-secondary" aria-labelledby="aa-why">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div class="pl-grid-2 is-wide">
+          <div>
+            <p class="u-eyebrow" id="aa-why" data-reveal>Why us</p>
+            <div class="pl-gap-sm"></div>
+            <p class="u-h3 u-balance" data-reveal>
+              In partnership with Real Nation, who designed and ran the project, we built the National Disability
+              Authority&rsquo;s Someone Like Me Art Awards site and worked through
+              their formal accessibility audit, issue by issue, until it passed.<br />
+              We now run the same process for other organisations.
+            </p>
+          </div>
+          <SlmChecked />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- What an audit is ---------- */}
+  <section class="pl-panel" aria-labelledby="aa-what">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div class="pl-grid-2 is-top is-wide">
+          <div class="pl-stack pl-stack-md" data-reveal>
+            <h2 class="u-h2 u-max-26" id="aa-what">What an audit is.</h2>
+            <p class="u-muted u-max-26">
+              The triage is the part clients tell us they value. Knowing what is yours to fix and what is not
+              is what turns a report into a plan.
+            </p>
+          </div>
+          <ul class="pl-service-points" data-reveal-stagger="100">
+            {included.map((i) => (
+              <li class="pl-service-points__item" data-reveal>
+                <span class="pl-service-points__title">{i.title}</span>
+                <span class="pl-service-points__text u-muted">{i.text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="pl-gap-lg"></div>
+        <h2 class="u-h2 u-max-26" id="aa-next" data-reveal>What comes after the audit.</h2>
+        <div class="pl-gap-lg"></div>
+        <div class="pl-grid-3 aa-next" data-reveal-stagger="100">
+          {followOn.map((f) => (
+            <article class="pl-card is-tight" data-reveal>
+              <div class="pl-stack pl-stack-sm">
+                <h3 class="u-xl u-medium">{f.title}</h3>
+                <p class="u-muted">{f.text}</p>
+                {f.href && <a class="pl-link" href={f.href}>{f.link}</a>}
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- The law ----------
+      Two different obligations. Conflating them is the mistake most agency
+      copy makes, and this is the one page where our authority is the whole
+      point. Say who is covered, say it accurately, let the accuracy sell. */}
+  <section class="pl-panel" aria-labelledby="aa-law">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div class="pl-grid-2 is-top is-wide">
+          <div class="pl-stack pl-stack-md" data-reveal>
+            <h2 class="u-h2 u-max-26" id="aa-law">Who the law actually covers.</h2>
+            <p class="u-muted u-max-26">
+              Two separate EU laws, both in force in Ireland and often run together in agency copy. They are not
+              the same, and neither of them says every Irish website must be accessible.
+            </p>
+          </div>
+          <ul class="pl-service-points" data-reveal-stagger="100">
+            {laws.map((l) => (
+              <li class="pl-service-points__item" data-reveal>
+                <span class="pl-service-points__title">{l.name}</span>
+                <span class="pl-service-points__text u-muted">{l.text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- Contact ----------
+      No public price at launch, consistent with Care and Hosting and with
+      killing the SEO tiers. Revisit after two or three audits. */}
+  <section class="pl-panel is-inverse">
+    <div class="pl-gutter pl-pad-lg">
+      <div class="pl-container is-md u-center">
+        <h2 class="u-h2 u-balance" data-reveal style="color:var(--pl-text-inverse);margin-inline:auto;max-width:30rem">
+          Want to know where your site stands?
+        </h2>
+        <div class="pl-gap-sm"></div>
+        <p class="u-lg" data-reveal style="color:var(--pl-text-on-dark);margin-inline:auto;max-width:33rem">
+          Send us the address. We will tell you what an audit would involve and what it would cost.
+        </p>
+        <div class="pl-gap-sm"></div>
+        <div class="pl-btn-group" data-reveal style="justify-content:center">
+          <Button href="/contact/" variant="on-dark" data-audit-request>Request an audit</Button>
+        </div>
+      </div>
+    </div>
+  </section>
+  <AuditRequest />
+</Site>
+
+<style>
+  .aw-steps {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--pl-s-xl, 2rem);
+    margin: 0;
+    padding: 0;
+  }
+  .aw-steps__step {
+    display: grid;
+    align-content: start;
+    gap: var(--pl-s-sm);
+    padding-top: var(--pl-s-md);
+    border-top: 1px solid var(--pl-border);
+  }
+  .aw-steps__title {
+    font-family: var(--font-display);
+    font-size: var(--pl-h4, 1.75rem);
+    font-weight: 400;
+    line-height: 1.15;
+  }
+  @media (max-width: 599px) {
+    .aw-steps { grid-template-columns: 1fr; }
+  }
+
+  /* Cards now sit on the white panel, so they take the grey fill. */
+  .aa-next .pl-card { background-color: var(--pl-secondary); }
+  .aa-hero-graphic { display: flex; justify-content: flex-end; }
+  @media (max-width: 767px) {
+    .aa-hero-graphic { justify-content: flex-start; }
+  }
+</style>

@@ -1,0 +1,151 @@
+---
+title: "A clinic that answers, without picking up the phone."
+client: "Western Rheumatology"
+year: 2026 # TODO: confirm the year before launch
+craft: "web"
+summary: "A rheumatology clinic in Galway where patients order repeat prescriptions online, look up the medication they are on in a library the clinic keeps in one place, and ask an assistant the practical questions they would otherwise ring reception about."
+cover: "/work/western-rheumatology-card.jpg"
+thumb: "/work/western-rheumatology/home.jpg"
+liveUrl: "https://wrh.ie/"
+services:
+  - "Web Development"
+  - "Medicines library"
+  - "AI assistant"
+capabilities: ["ai"]
+order: 3
+caseStudy: true
+feature: true
+draft: false
+---
+
+import CaseFacts from '../../components/casestudy/CaseFacts.astro';
+import CaseStats from '../../components/casestudy/CaseStats.astro';
+import CaseStep from '../../components/casestudy/CaseStep.astro';
+import CaseFigure from '../../components/casestudy/CaseFigure.astro';
+
+{/* Written 25 September 2026. Everything here is on wrh.ie today: four
+    consultant rheumatologists, two Galway locations (Blackrock Health
+    Clinic and Bon Secours Hospital), the appointment and repeat
+    prescription forms, the searchable medications library with its dosing,
+    monitoring and precautions, and the assistant with its own stated
+    limits. The assistant's disclaimer on the live site names Mistral AI,
+    which is why this page can.
+
+    MESSAGING-PLAN section 7.6: describe the outcome, stay vague on the
+    plumbing, and do not publish a map of a clinic's internal workflow.
+    Nothing below names the clinic's systems or says where the medicines
+    information is kept.
+
+    TODO before launch:
+      - the year of the build
+      - confirm with the clinic that naming the assistant's provider is
+        fine on our site as well as on theirs
+      - a quote. None of the three testimonials in hand is from Western
+        Rheumatology, so this closes on what the site does instead. Add a
+        `quote` to the frontmatter if one lands and it renders on its own.
+      - ordering a prescription through the assistant reads "coming soon"
+        on the live site. Update step 04 when it goes live. */}
+
+<section class="pl-panel">
+  <div class="pl-gutter pl-pad-sm">
+    <div class="pl-container is-md">
+      <CaseFacts
+        items={[
+          { label: 'Client', value: 'Western Rheumatology, Galway' },
+          { label: 'What we did', value: 'Website, medicines library, repeat prescription ordering, AI assistant' },
+          { label: 'Who it is for', value: 'Patients of the clinic, and the people they ring' },
+          { label: 'Live at', value: 'wrh.ie' },
+        ]}
+      />
+      <div class="pl-gap-lg"></div>
+      <CaseStats
+        items={[
+          { n: '4', label: 'Consultant rheumatologists' },
+          { n: '2', label: 'Galway locations' },
+          { n: '1', label: 'Medicines library, kept in step' },
+          { n: '0', label: 'Calls needed to reorder' },
+        ]}
+      />
+    </div>
+  </div>
+</section>
+
+<CaseStep n="01" label="The problem" title="The same questions, arriving one at a time." surface="secondary">
+  Western Rheumatology is four consultant rheumatologists working across two locations in
+  Galway. Their patients are mostly on long-term medication that has to be monitored, so the
+  clinic is asked the same practical things over and over. Where do I go. How do I get an
+  appointment. Can I reorder my prescription. What is the drug I have been put on, what dose is
+  normal, and what do I watch for.
+
+  Before the site did any of it, every one of those arrived by phone or by email, and each one
+  interrupted somebody.
+</CaseStep>
+
+<CaseStep n="02" label="What we built" title="One library, and the site keeps up with it.">
+  The medication information lives in one place the clinic controls, and the website stays in
+  step with it on its own. Nobody maintains a second copy, and no patient reads a version that
+  has been superseded.
+
+  On the site it is a library a patient can search. Each entry is tagged by condition, by drug
+  class and by how the drug is taken, and opens into what the clinic wants a patient to know:
+  what it is for, the usual dose and the range, the blood tests that go with it, and the
+  precautions around infection. Every entry prints, and every entry has a link the clinic can
+  send to one patient.
+
+  <div class="pl-gap-sm"></div>
+
+  <CaseFigure
+    src="/work/western-rheumatology/medication-entry.jpg"
+    alt="A medication entry on the Western Rheumatology site: Methotrexate, tagged DMARD and oral, with sections for about, dosing, monitoring, side effects and precautions."
+    caption="One entry, opened. The same information the clinic would give at the desk"
+    ratio="1200 / 751"
+  />
+</CaseStep>
+
+<CaseStep n="03" label="The assistant" title="Answers from the clinic's own information." surface="tint">
+  An assistant sits on every page and answers from what the clinic has written, not from the
+  open internet. Ask it where the clinic is and it comes back with the two locations, Blackrock
+  Health Clinic and Bon Secours Hospital, and asks which one you mean.
+
+  It is straight with people about what it is. It says up front that it is an AI assistant, that
+  it answers general clinic questions and helps with repeat prescription requests, and that it
+  cannot give medical advice. It tells patients that their messages go to Mistral AI to be
+  answered, asks them not to type personal medical details into it, and points them at the
+  prescription form instead. A clinic cannot afford a chat window that implies more than it is.
+
+  <div class="pl-gap-sm"></div>
+
+  <div class="pl-grid-2 is-top">
+    <CaseFigure
+      src="/work/western-rheumatology/assistant.jpg"
+      alt="The clinic assistant open on the Western Rheumatology site. A patient asks where the clinic is located, and the assistant replies asking whether they want the Blackrock Health Clinic location or the one at Bon Secours Hospital."
+      caption="The assistant, with its limits stated before the first question"
+      ratio="581 / 900"
+    />
+    <CaseFigure
+      src="/work/western-rheumatology/medications-library.jpg"
+      alt="The medications page on the Western Rheumatology site, with a search box and medication entries tagged by condition, drug class and how the drug is taken."
+      caption="The library the patient and the assistant are both reading from"
+      ratio="1200 / 751"
+    />
+  </div>
+</CaseStep>
+
+<CaseStep n="04" label="Prescriptions" title="Reordering, without ringing." surface="secondary">
+  An existing patient orders a repeat prescription from the site and gives their pharmacy at the
+  same time, so it goes where it is meant to go. The conditions the clinic sets around safe
+  prescribing, including up to date blood tests and the time it takes to prepare one, are stated
+  on the same page rather than explained again on the phone.
+
+  Ordering through the assistant itself is the next piece, and the clinic has it marked as
+  coming.
+</CaseStep>
+
+<CaseStep n="05" label="Where it stands" title="A site that absorbs the routine." surface="tint">
+  The practical traffic a specialist clinic generates now has somewhere to go that is open at
+  the hour patients think of it. Appointments and prescriptions are requested from the site,
+  medication questions are answered in the clinic's own words, and the assistant takes the ones
+  that would have been a phone call about a location or an opening time.
+
+  We still look after the site.
+</CaseStep>

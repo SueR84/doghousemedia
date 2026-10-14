@@ -1,18 +1,16 @@
 ---
 title: "National Orthopaedic Hospital - promo film"
 client: "National Orthopaedic Hospital, Dublin"
-service: "Video Production"
-shortDescription: "Patient stories and promotional film for Ireland's National Orthopaedic Hospital"
-websiteLink: ""
-projectVideo: "https://vimeo.com/967750653?share=copy"
-projectImage: ""
-projectGallery: []
-projectType:
-  - "Video Production"
+year: 2024
 craft: "video"
-status: "publish"
+cover: "/work/vimeo-promo-national-orthopaedic-hospital.jpg"
+summary: "Patient stories and promotional film for Ireland's National Orthopaedic Hospital"
+video: "967750653"
+services:
+  - "Video Production"
+order: 5
+draft: false
 ---
-
 Project Overview
 
 In 2024 we had the privilege of creating a 4-minute promotional video for the National Orthopaedic Hospital, Cappagh in Dublin. This video was showcased at their flagship fundraising event in Dublin in spring 2024, a lunch event that gathered key stakeholders and supporters.

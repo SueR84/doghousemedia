@@ -1,0 +1,332 @@
+---
+/**
+ * Phone showcase carousel. Three floating phone mockups that cycle through
+ * thirteen web projects. Dropped in from doghouse-phone-carousel-embed.html;
+ * adapted here to use the site's own type and colour tokens instead of the
+ * hardcoded hex and Inter Tight it shipped with.
+ *
+ * Display type stays the display face (--font-display), per CLAUDE.md: Inter
+ * Tight is the typeface Pipely's fork replaced, not the one to reintroduce.
+ * The embed's Google Fonts <link> is dropped for the same reason, since
+ * BaseHead already loads the site's faces.
+ *
+ * Screenshots live in public/work/carousel/ rather than inline as base64.
+ * The embed carried 1.1MB of data URIs, which would have gone into the
+ * homepage HTML uncacheable and ungzippable. As background-image URLs they
+ * are fetched only when a screen is actually painted, so the nine projects
+ * that are not on screen at first paint cost nothing until they rotate in.
+ *
+ * The film variant the embed shipped with is gone. No project has ever used
+ * craft:'film', and its renderer read p.progress and p.time, which no entry
+ * has ever defined: setting craft:'film' would have rendered a NaN-width
+ * scrub bar and the string "undefined". Film screens would need those two
+ * fields designed in, so this keeps the one path that works.
+ *
+ * The screenshots are anchored to the top of their box, not centred. The box
+ * is `cover` and its shape shifts between breakpoints, from 0.585 wide-to-tall
+ * on desktop to about 0.74 on mobile, so a 9:16 screenshot loses roughly a
+ * quarter of its height on a phone. Centring split that loss between the top
+ * and the bottom and ate into the site header, which is the part that tells
+ * you whose site it is. Anchoring to the top takes it all off the bottom.
+ *
+ * Type sizes are fractions of --phone-w rather than the embed's fixed px.
+ * At the 168px desktop phone the rendering is identical, but the embed's
+ * 12px name in the 69px content box of a 120px mobile phone wrapped seven
+ * of the twelve names and crushed the screenshot above it. The hero also
+ * carries a flex-basis floor so a wrapped name cannot take its space.
+ *
+ * Transparent background, so it inherits whatever panel it sits on. Respects
+ * prefers-reduced-motion: the float animations and the auto-advance timer
+ * are both skipped, and each phone still paints its first screen.
+ *
+ * The line-up auto-advances, so WCAG 2.2.2 Pause, Stop, Hide applies and it
+ * carries a visible pause control. prefers-reduced-motion is honoured too,
+ * but that does not satisfy 2.2.2 on its own: the criterion is about user
+ * control, not motion preference. Under reduced motion nothing advances, so
+ * the control stays hidden rather than offering to pause a still page.
+ */
+---
+
+<div class="dhpc-wrap">
+  <div class="dhpc-carousel">
+  <div class="dhpc-phone dhpc-phone--side dhpc-phone--left">
+    <div class="dhpc-tilt">
+      <div class="dhpc-bezel">
+        <div class="dhpc-notch"></div>
+        <div class="dhpc-screen-wrap"></div>
+      </div>
+    </div>
+  </div>
+  <div class="dhpc-phone dhpc-phone--center">
+    <div class="dhpc-tilt">
+      <div class="dhpc-bezel">
+        <div class="dhpc-notch"></div>
+        <div class="dhpc-screen-wrap"></div>
+      </div>
+    </div>
+  </div>
+  <div class="dhpc-phone dhpc-phone--side dhpc-phone--right">
+    <div class="dhpc-tilt">
+      <div class="dhpc-bezel">
+        <div class="dhpc-notch"></div>
+        <div class="dhpc-screen-wrap"></div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <button class="pl-pause dhpc-pause" type="button" data-carousel-pause hidden>
+    <span class="pl-pause__icon" aria-hidden="true"></span>
+    <span data-carousel-pause-label>Pause the line-up</span>
+  </button>
+</div>
+
+<style is:global>
+  /* Global, not scoped: the script below injects screen markup via
+     innerHTML at runtime, which Astro's scoped-style attribute never
+     reaches. The dhpc- prefix keeps this from colliding with anything
+     else on the page. */
+  /* The phones size from the column they sit in, not the window. The three
+     overlap to a group 2.52 phone-widths wide, so 39cqw (just under 1/2.52)
+     is the widest that still fits the column. Capped at 235px, which is 20%
+     up from the old 196px (19 September 2026). Sized from the window, the
+     group ran past its column into the text at 800 to 1199px. */
+  .dhpc-wrap { container-type: inline-size; }
+  .dhpc-carousel {
+    --phone-w: clamp(100px, 39cqw, 235px);
+    --red: var(--color-red);
+    --teal: var(--color-teal);
+    --teal-light: var(--color-teal-light);
+    --steel-tint: var(--color-steel-tint);
+    --red-tint: var(--color-red-tint);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 36px 0 44px;
+    box-sizing: border-box;
+  }
+  .dhpc-carousel * { box-sizing: border-box; }
+
+  .dhpc-phone { width: var(--phone-w); position: relative; }
+  .dhpc-phone--center { z-index: 2; }
+  .dhpc-phone--side { z-index: 1; margin: 0 calc(var(--phone-w) * -0.24); }
+  .dhpc-tilt { width: 100%; }
+  .dhpc-phone--left .dhpc-tilt { transform: rotate(-6deg) scale(.86); }
+  .dhpc-phone--right .dhpc-tilt { transform: rotate(6deg) scale(.86); }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .dhpc-phone { animation-name: dhpcFloat; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+    .dhpc-phone--left { animation-duration: 6.2s; animation-delay: -1.4s; }
+    .dhpc-phone--center { animation-duration: 5.4s; animation-delay: -2.6s; }
+    .dhpc-phone--right { animation-duration: 6.6s; animation-delay: -.7s; }
+  }
+  @keyframes dhpcFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-16px); } }
+
+  .dhpc-bezel {
+    background: var(--color-ink);
+    border-radius: calc(var(--phone-w) * .22);
+    padding: calc(var(--phone-w) * .045);
+    aspect-ratio: 9 / 19.5;
+    position: relative;
+    box-shadow:
+      0 24px 44px rgba(0, 0, 0, .35),
+      0 0 0 1px rgba(255, 255, 255, .16),
+      inset 0 1px 0 rgba(255, 255, 255, .12);
+  }
+  .dhpc-notch {
+    position: absolute;
+    top: calc(var(--phone-w) * .05);
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(var(--phone-w) * .26);
+    height: calc(var(--phone-w) * .05);
+    background: var(--color-ink);
+    border-radius: 999px;
+    z-index: 3;
+  }
+  .dhpc-screen-wrap {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: calc(var(--phone-w) * .17);
+    background: var(--steel-tint);
+  }
+  .dhpc-screen-wrap > * { position: absolute; inset: 0; opacity: 0; transform: translateY(8px); }
+  @media (prefers-reduced-motion: no-preference) {
+    .dhpc-screen-wrap > * { transition: opacity .45s cubic-bezier(.2, .7, .2, 1), transform .45s cubic-bezier(.2, .7, .2, 1); }
+  }
+  .dhpc-screen-wrap > *.is-visible { opacity: 1; transform: translateY(0); }
+  .dhpc-screen-wrap > *.is-leaving { opacity: 0; transform: translateY(-8px); }
+
+  /* web-craft screen */
+  .dhpc-screen--web { background: var(--steel-tint); display: flex; flex-direction: column; height: 100%; }
+  .dhpc-web-chrome { display: flex; align-items: center; justify-content: space-between; padding: 9% 8% 0; }
+  .dhpc-web-dot { width: 7px; height: 7px; border-radius: 2px; background: var(--color-ink); }
+  .dhpc-web-nav { display: flex; gap: 5px; }
+  .dhpc-web-nav span { width: 12px; height: 3px; border-radius: 2px; background: #b8c7cc; }
+  .dhpc-web-hero { margin: 8% 8% 0; flex: 1 0 38%; border-radius: 9px; background-color: var(--steel-tint); background-size: cover; background-position: top center; background-repeat: no-repeat; }
+  .dhpc-web-body { padding: 7% 8% 9%; }
+
+  .dhpc-tag {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: calc(var(--phone-w) * .0393);
+    font-weight: 600;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    padding: 3px 7px;
+    border-radius: 999px;
+    margin-bottom: 6px;
+  }
+  .dhpc-tag--web { background: var(--steel-tint); color: var(--teal); }
+  .dhpc-proj-name { font-family: var(--font-display); font-weight: 500; font-size: calc(var(--phone-w) * .0714); color: var(--color-ink); margin: 0 0 3px; letter-spacing: -0.01em; }
+  .dhpc-proj-line { font-family: var(--font-body); font-size: calc(var(--phone-w) * .0476); color: #6b6860; margin: 0; line-height: 1.35; }
+
+  /* Only the placement. The pill itself is .pl-pause in components.css,
+     shared with PhoneVideo.
+
+     In flow rather than absolutely positioned: the label wraps to two lines
+     on a narrow screen, and an absolute pill grew upwards into the phones.
+     The negative margin sits it inside the carousel's own 44px bottom
+     padding, so it stays clear of the phones without adding a gap. */
+  .dhpc-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .dhpc-pause {
+    margin-top: -1.75rem;
+    text-align: center;
+  }
+
+  @media (max-width: 480px) {
+    .dhpc-carousel { --phone-w: clamp(100px, 39cqw, 168px); }
+  }
+</style>
+
+<script>
+  (function () {
+    var PROJECTS = [
+      { name: 'UCD', line: 'Site build for the Smurfit Aspire programme.', image: '/work/carousel/ucd.jpg' },
+      { name: 'Coroflo', line: 'Product site for Coro, the breastfeeding monitor.', image: '/work/carousel/coroflo.jpg' },
+      { name: 'Someone Like Me', line: 'Built with Real Nation, who designed and ran the project.', image: '/work/carousel/someone-like-me.jpg' },
+      { name: 'Galway Braces', line: 'Site design and build for the Galway orthodontic practice.', image: '/work/carousel/galway-braces.jpg' },
+      { name: 'Real Nation', line: 'Campaign microsite for AIB Future Sparks.', image: '/work/carousel/real-nation.jpg' },
+      { name: 'Crownway Investments', line: 'Website build for the Dublin property investment firm.', image: '/work/carousel/crownway-investments.jpg' },
+      { name: 'Basispoint', line: 'Website build for the workplace giving platform.', image: '/work/carousel/basispoint.jpg' },
+      { name: 'Off Script Tapes', line: 'Website build for the wedding camcorder hire service.', image: '/work/carousel/off-script-tapes.jpg' },
+      { name: 'Western Rheumatology', line: 'Clinic site and appointment flow for the Galway practice.', image: '/work/carousel/western-rheumatology.jpg' },
+      { name: 'Our World Awards', line: 'Irish Aid schools awards. Built with Real Nation, who designed and ran it.', image: '/work/carousel/our-world-awards.jpg' },
+      { name: 'Jill Collins', line: 'Site for the physical and craniosacral therapy practice.', image: '/work/carousel/jill-collins.jpg' },
+      { name: 'Loreto South Sudan', line: "Website build for the girls' education charity.", image: '/work/carousel/loreto-south-sudan.jpg' },
+      { name: 'Shapes of Grief', line: 'Learning management system for the grief training programme.', image: '/work/carousel/shapes-of-grief.jpg' }
+    ];
+
+    function esc(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function renderProject(p) {
+      return (
+        '<div class="dhpc-screen dhpc-screen--web">' +
+          '<div class="dhpc-web-chrome"><span class="dhpc-web-dot"></span><span class="dhpc-web-nav"><span></span><span></span><span></span></span></div>' +
+          '<div class="dhpc-web-hero" style="background-image:url(&quot;' + esc(p.image) + '&quot;)"></div>' +
+          '<div class="dhpc-web-body">' +
+            '<span class="dhpc-tag dhpc-tag--web">web &middot; development</span>' +
+            '<p class="dhpc-proj-name">' + esc(p.name) + '</p>' +
+            '<p class="dhpc-proj-line">' + esc(p.line) + '</p>' +
+          '</div>' +
+        '</div>'
+      );
+    }
+
+    function initCarousel(wrap) {
+      var carousel = wrap.querySelector('.dhpc-carousel');
+      var phones = carousel.querySelectorAll('.dhpc-phone');
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var pause = wrap.querySelector('[data-carousel-pause]');
+      var label = wrap.querySelector('[data-carousel-pause-label]');
+      var current = [];
+      // One timer handle per phone. The embed used nested setTimeouts with no
+      // handle, which is why the line-up could not be stopped.
+      var timers = [];
+      var advance = [];
+      var playing = true;
+
+      function pickNext(phoneIdx, fromIdx) {
+        var n = PROJECTS.length;
+        var next = (fromIdx + 1) % n;
+        var guard = 0;
+        while (guard < n && current.some(function (c, i) { return i !== phoneIdx && c === next; })) {
+          next = (next + 1) % n;
+          guard++;
+        }
+        return next;
+      }
+
+      phones.forEach(function (phone, i) {
+        var idx = i % PROJECTS.length;
+        current[i] = idx;
+        var screenWrap = phone.querySelector('.dhpc-screen-wrap');
+
+        function paint() {
+          var el = document.createElement('div');
+          el.innerHTML = renderProject(PROJECTS[idx]);
+          var node = el.firstElementChild;
+          var prev = screenWrap.querySelector('.is-visible');
+          screenWrap.appendChild(node);
+          requestAnimationFrame(function () {
+            node.classList.add('is-visible');
+            if (prev) { prev.classList.remove('is-visible'); prev.classList.add('is-leaving'); }
+          });
+          if (prev) { setTimeout(function () { prev.remove(); }, 500); }
+        }
+
+        // Every phone paints its first screen whether or not it ever advances.
+        paint();
+
+        function tick() {
+          idx = pickNext(i, idx);
+          current[i] = idx;
+          paint();
+          timers[i] = setTimeout(tick, 4200 + i * 350);
+        }
+        // The staggered first delay is what keeps the three phones from
+        // turning over in unison, so it is only used on the initial start.
+        advance[i] = function (delay) { timers[i] = setTimeout(tick, delay); };
+      });
+
+      // Nothing advances under reduced motion, so there is nothing to pause
+      // and the control stays hidden rather than sitting there inert.
+      if (reduceMotion || !pause) return;
+
+      function startAll(initial) {
+        phones.forEach(function (phone, i) {
+          advance[i](initial ? 1400 + i * 900 : 4200 + i * 350);
+        });
+      }
+
+      function stopAll() {
+        timers.forEach(function (t) { clearTimeout(t); });
+        timers = [];
+      }
+
+      function setState(next) {
+        playing = next;
+        if (next) { startAll(false); } else { stopAll(); }
+        pause.setAttribute('data-paused', String(!next));
+        if (label) label.textContent = next ? 'Pause the line-up' : 'Play the line-up';
+      }
+
+      pause.addEventListener('click', function () { setState(!playing); });
+
+      pause.hidden = false;
+      pause.setAttribute('data-paused', 'false');
+      startAll(true);
+    }
+
+    Array.prototype.forEach.call(document.querySelectorAll('.dhpc-wrap'), initCarousel);
+  })();
+</script>

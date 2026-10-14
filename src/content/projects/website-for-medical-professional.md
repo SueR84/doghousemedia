@@ -1,23 +1,22 @@
 ---
 title: "Website for Medical Professional"
 client: "Dr Ronan Kavanagh"
-service: "Web Development, Design"
-shortDescription: "A website to accept payments, take appointment enquiries and provide important patient information."
-websiteLink: "https://ronankavanagh.ie/"
-projectVideo: ""
-projectImage: "https://doghousemedia.ie/wp-content/uploads/2023/01/Ronan-Kavanagh-pi2.png"
-projectGallery:
-  - "https://doghousemedia.ie/wp-content/uploads/2023/01/Ronan-Kavanagh-pi6.png"
-  - "https://doghousemedia.ie/wp-content/uploads/2023/01/Ronan-Kavanagh-pi5-scaled.jpeg"
-  - "https://doghousemedia.ie/wp-content/uploads/2023/01/Ronan-Kavanagh-pi4.png"
-  - "https://doghousemedia.ie/wp-content/uploads/2023/01/Ronan-Kavanagh-pi3-scaled.jpeg"
-projectType:
-  - "E-Commerce"
-  - "Web Development"
+year: 2023
 craft: "web"
-status: "publish"
+summary: "A website to accept payments, take appointment enquiries and provide important patient information."
+cover: "/work/ronan-kavanagh-pi2.jpg"
+liveUrl: "https://ronankavanagh.ie/"
+services:
+  - "Web Development"
+  - "Design"
+gallery:
+  - "/work/ronan-kavanagh-pi6.jpg"
+  - "/work/ronan-kavanagh-pi5-scaled.jpg"
+  - "/work/ronan-kavanagh-pi4.jpg"
+  - "/work/ronan-kavanagh-pi3-scaled.jpg"
+order: 11
+draft: true
 ---
-
 Dr Kavanagh runs a busy specialised clinic in Galway City and is a client of ours - we also run his dotmd.ie website, an annual medical conference which has grown year on year since 2014.
 
 His requirements were

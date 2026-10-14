@@ -1,23 +1,23 @@
 ---
 title: "Online shop for Beauty Salon"
 client: "Beauty by Vaiva"
-service: "Design, Web Development, E-Commerce"
-shortDescription: "All the flexibility of WordPress, combined with the rock-solid e-commerce platform Shopify"
-websiteLink: "https://beautybyvaiva.ie/"
-projectVideo: ""
-projectImage: "https://doghousemedia.ie/wp-content/uploads/2023/01/Vaiva-pi4.jpeg"
-projectGallery:
-  - "https://doghousemedia.ie/wp-content/uploads/2023/01/Vaiva-pi6.jpeg"
-  - "https://doghousemedia.ie/wp-content/uploads/2023/01/Vaiva-pi2.png"
-  - "https://doghousemedia.ie/wp-content/uploads/2023/01/Vaiva-pi5.jpeg"
-  - "https://doghousemedia.ie/wp-content/uploads/2023/01/Vaiva-pi3.png"
-projectType:
-  - "E-Commerce"
-  - "Web Development"
+year: 2023
 craft: "web"
-status: "publish"
+summary: "All the flexibility of WordPress, combined with the rock-solid e-commerce platform Shopify"
+cover: "/work/vaiva-pi4.jpg"
+liveUrl: "https://beautybyvaiva.ie/"
+services:
+  - "Design"
+  - "Web Development"
+  - "E-Commerce"
+gallery:
+  - "/work/vaiva-pi6.jpg"
+  - "/work/vaiva-pi2.jpg"
+  - "/work/vaiva-pi5.jpg"
+  - "/work/vaiva-pi3.jpg"
+order: 14
+draft: false
 ---
-
 This was a hugely rewarding project - launching the website and online shop for a boutique salon in the centre of Kilkenny. We advised the client on
 
  	Logo design, branding (through our design parnter friends at Patterns)

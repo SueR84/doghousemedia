@@ -1,16 +1,15 @@
 ---
 title: "Training videos for irish NGO"
 client: "The Irish Red Cross"
-service: "Training videos"
-shortDescription: "Series of Instructional and Training videos for irish NGO"
-websiteLink: ""
-projectVideo: "https://vimeo.com/636319848/7c7fe260ca"
-projectImage: ""
-projectGallery: []
-projectType:
-  - "Video Production"
+year: 2024
 craft: "video"
-status: "publish"
+summary: "Series of Instructional and Training videos for irish NGO"
+cover: "/work/vimeo-irish-red-cross-promotional-video.jpg"
+video: "636319848"
+videoHash: "7c7fe260ca"
+services:
+  - "Training videos"
+order: 21
+draft: false
 ---
-
 Series of Instructional and Training videos for irish NGO

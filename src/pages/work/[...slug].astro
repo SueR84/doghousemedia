@@ -1,0 +1,149 @@
+---
+/**
+ * Case study. MESSAGING-PLAN §12.
+ *
+ * The problem, what we made, and a result or a quote. Two hundred and fifty
+ * to four hundred words, plus film or images. No process narration.
+ */
+import { getCollection, render } from 'astro:content';
+import Site from '../../layouts/Site.astro';
+import Button from '../../components/pipely/Button.astro';
+import PhoneFold from '../../components/sections/PhoneFold.astro';
+
+export async function getStaticPaths() {
+  // Only case studies get a page. MESSAGING-PLAN section 8: four projects earn
+  // one by having a real testimonial or a real result behind them. Everything
+  // else is a thumbnail on the Work page that links to the film or the live
+  // site. The old site had twenty-one thin project pages; that is the thing
+  // this filter exists to prevent coming back.
+  const projects = await getCollection(
+    'projects',
+    ({ data }) => data.caseStudy && !data.draft,
+  );
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const { data } = project;
+
+const craftLabel = { web: 'Web', video: 'Video', both: 'Web and video' }[data.craft];
+const craftClass = { web: 'is-web', video: 'is-film', both: 'is-both' }[data.craft];
+---
+
+<Site title={data.title} description={data.summary} image={data.cover}>
+  <article>
+    <section class="pl-panel">
+      <div class="pl-gutter pl-pad-md">
+        <div class="pl-container is-md">
+          <div data-reveal-stagger="100">
+            <div class="pl-row is-wrap" data-reveal style="gap:.5rem">
+              <span class="u-eyebrow">{data.client}</span>
+              <span class="u-eyebrow u-nowrap">{data.year}</span>
+            </div>
+            <div class="pl-gap-sm"></div>
+            <h1 class="u-h1 u-max-40 u-balance" data-reveal>{data.title}</h1>
+            <div class="pl-gap-sm"></div>
+            <p class="u-lg u-muted u-max-33" data-reveal>{data.summary}</p>
+            <div class="pl-gap-sm"></div>
+            <div class="pl-row is-wrap" data-reveal style="gap:.5rem">
+              <span class:list={['pl-tag', craftClass, 'u-xs']}>{craftLabel}</span>
+              {data.services.map((s) => <span class="pl-tag u-xs">{s}</span>)}
+            </div>
+            {data.liveUrl && (
+              <>
+                <div class="pl-gap-sm"></div>
+                <div class="pl-btn-group" data-reveal>
+                  <Button href={data.liveUrl} variant="ghost">Visit the site</Button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* is-wide on the cover matters: .pl-media positions its image
+        absolutely, so without a ratio class the box has no height and the
+        cover collapses to a sliver (found 25 September 2026, on the first
+        case study to use a plain cover). */}
+    {data.cover && (
+      <section class="pl-panel is-secondary">
+        <div class="pl-gutter pl-pad-sm">
+          <div class="pl-container is-md">
+            {data.coverDevice === 'fold' ? (
+              <PhoneFold image={data.cover} alt={`${data.title}, on screen`} />
+            ) : (
+              <div class="pl-media is-wide" data-reveal>
+                <img src={data.cover} alt="" width="1520" height="855" loading="eager" decoding="async" />
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+    )}
+
+    {data.feature ? (
+      /* A feature case study brings its own sections and surfaces, so it
+         gets no wrapper at all. */
+      <Content />
+    ) : (
+      <section class="pl-panel">
+        <div class="pl-gutter pl-pad-md">
+          <div class="pl-container is-sm">
+            <div class="pl-prose" data-reveal><Content /></div>
+          </div>
+        </div>
+      </section>
+    )}
+
+    {data.quote && (
+      <section class="pl-panel is-secondary">
+        <div class="pl-gutter pl-pad-md">
+          <div class="pl-container is-md">
+            <blockquote class="pl-quote" data-reveal>
+              <p class="u-h3 u-balance u-max-33">{data.quote.text}</p>
+              <footer class="u-sm u-muted" style="margin-top:1.5rem">
+                {data.quote.name}{data.quote.role ? `, ${data.quote.role}` : ''}
+              </footer>
+            </blockquote>
+          </div>
+        </div>
+      </section>
+    )}
+
+    {data.gallery.length > 0 && (
+      <section class="pl-panel">
+        <div class="pl-gutter pl-pad-md">
+          <div class="pl-container is-md">
+            <div class="pl-grid-2" data-reveal-stagger="100">
+              {data.gallery.map((src) => (
+                <div class="pl-media" data-reveal>
+                  <img src={src} alt="" width="760" height="560" loading="lazy" decoding="async" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    )}
+  </article>
+
+  <section class="pl-panel is-inverse">
+    <div class="pl-gutter pl-pad-lg">
+      <div class="pl-container is-md u-center">
+        <h2 class="u-h2 u-balance" data-reveal style="color:var(--pl-text-inverse);margin-inline:auto;max-width:30rem">
+          Tell us what you are working on.
+        </h2>
+        <div class="pl-gap-sm"></div>
+        <div class="pl-btn-group" data-reveal style="justify-content:center">
+          <Button href="/contact/" variant="on-dark">Get in touch</Button>
+          <Button href="/work/" variant="ghost-cream">More work</Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</Site>
