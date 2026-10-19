@@ -16,9 +16,9 @@
  * Opened by any element carrying [data-audit-request]. Put that on a real
  * link to /contact/ so the button still works with JavaScript off.
  *
- * SUBMISSION. Same arrangement as StartProject: no endpoint yet (CLAUDE.md
- * launch blocker 7), so sending opens a pre-filled email and the success
- * screen says so. Set `endpoint` to a URL that accepts a JSON POST.
+ * SUBMISSION. Same arrangement as StartProject: JSON POST to /api/enquiry
+ * (Mailgun). If that fails, sending opens a pre-filled email and the
+ * success screen says so.
  *
  * Accessibility, as StartProject: focus moves to each new question, invalid
  * fields carry aria-invalid, errors are live alerts, Escape closes, and
@@ -26,7 +26,7 @@
  */
 import '../../styles/pipely/start-project.css';
 
-const endpoint = '';
+const endpoint = '/api/enquiry';
 const enquiryEmail = 'hello@doghousemedia.ie';
 
 const sizes = ['Under 20 pages', '20 to 100 pages', 'Over 100 pages', 'Not sure'];

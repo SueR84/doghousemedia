@@ -2,9 +2,13 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
+import vercel from '@astrojs/vercel';
 
 export default defineConfig({
   site: 'https://doghousemedia.ie',
+  // Pages stay static. The adapter is only here so src/pages/api/enquiry.ts
+  // (prerender = false) runs as a Vercel function for the enquiry forms.
+  adapter: vercel(),
   integrations: [mdx(), sitemap()],
   image: {
     // Astro's built-in sharp service. Formats are chosen per <Image /> call.

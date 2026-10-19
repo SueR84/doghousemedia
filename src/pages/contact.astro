@@ -7,11 +7,11 @@
  *
  * The form mirrors the "Tell us about your project" modal (StartProject):
  * is it video, web or digital and AI, what is it, timeline, then name,
- * email and organisation. Same questions, same submission arrangement
- * (mailto fallback until an endpoint exists). Keep the two in step.
+ * email and organisation. Same questions, same submission arrangement:
+ * JSON POST to /api/enquiry (Mailgun), falling back to a pre-filled email
+ * if that fails. Keep the two in step.
  *
  * TODO before launch:
- *   - point `action` at the real endpoint. It currently does nothing.
  *   - link the existing LeadConnector booking widget properly rather than
  *     leaving it orphaned as it is on the old site.
  * No phone number for the moment, on purpose.
@@ -20,7 +20,7 @@ import Site from '../layouts/Site.astro';
 import '../styles/pipely/start-project.css';
 
 const email = 'hello@doghousemedia.ie';
-const endpoint = '';
+const endpoint = '/api/enquiry';
 
 const interests = [
   { value: 'Video Production', tag: 'Video', cls: 'is-film', name: 'Video Production', desc: 'Brand films, promos, event and social content.' },

@@ -83,7 +83,7 @@ const liveCaseStudies = new Set(
 // same "Read the case study" link name (WCAG 2.4.4 link purpose).
 const caseStudy = (slug: string, name: string) =>
   liveCaseStudies.has(slug)
-    ? { href: `/work/${slug}/`, label: `Read the ${name} case study` }
+    ? { href: `/work/${slug}/`, label: `More about the ${name} project` }
     : { href: '/work/', label: `See the ${name} work` };
 
 type Thumb = {

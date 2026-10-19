@@ -170,7 +170,7 @@ const caseStudies = [
     image: { src: '/work/coroflo/card-logo.jpg', alt: 'The Coroflo logo beside two screens from the Coro app, showing a live milk flow graph.', fit: 'cover' },
     line: 'A series of short informational films for Coro, an Irish-made breastfeeding monitor, explaining what it does and who it is for.',
   },
-].map((c) => ({ ...c, ...caseStudyLink(c.slug, `Read the ${c.client} case study`, `See the ${c.client} work`) }));
+].map((c) => ({ ...c, ...caseStudyLink(c.slug, `More about the ${c.client} project`, `See the ${c.client} work`) }));
 
 // Selected films. 5 October 2026: nothing that already appears higher up
 // the page repeats here. That is every project in the case studies section
@@ -401,7 +401,7 @@ const steps = [
   <section class="pl-panel is-secondary" aria-labelledby="vp-cases">
     <div class="pl-gutter pl-pad-md">
       <div class="pl-container is-md">
-        <h2 class="u-h2 u-max-26" id="vp-cases" data-reveal>Case studies.</h2>
+        <h2 class="u-h2 u-max-26" id="vp-cases" data-reveal>Featured projects.</h2>
         <div class="pl-gap-lg"></div>
         <div class="pl-grid-3" data-reveal-stagger="120">
           {caseStudies.map((c) => (

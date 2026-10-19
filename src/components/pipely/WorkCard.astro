@@ -48,12 +48,16 @@ const isExternal = Boolean(href && !href.startsWith('/'));
 const lightbox = Boolean(vimeoUrl && !d.caseStudy);
 
 const linkLabel = d.caseStudy
-  ? `${d.title}, case study`
+  ? `${d.title}, project details`
   : vimeoUrl
     ? `Watch ${d.title} on Vimeo, opens in a new tab`
     : `Visit ${d.title}, opens in a new tab`;
 
 const still = d.thumb ?? d.cover;
+// A still named *-float.webp/png has a transparent edge, so the devices in it
+// can break out of their panel onto the card (19 October 2026, Shapes of
+// Grief). Its media box drops the cream fill so the card shows through.
+const isFloat = Boolean(still && /-float\.(webp|png)$/.test(still));
 const showPreview = Boolean(d.preview && still);
 
 // A film wants 16:9. A website screenshot wants the taller article crop.
@@ -79,7 +83,7 @@ const mediaRatio = 'is-wide';
     ></a>
   ) : null}
 
-  <div class:list={['pl-media', mediaRatio]}>
+  <div class:list={['pl-media', mediaRatio, { 'is-float': isFloat }]}>
     {still ? (
       <img src={still} alt="" loading="lazy" decoding="async" width="800" height="676" />
     ) : null}
@@ -116,6 +120,8 @@ const mediaRatio = 'is-wide';
 </article>
 
 <style>
+  .pl-media.is-float { background-color: transparent; }
+  .pl-media.is-float img { object-fit: contain; }
   /* The still is the resting state. The loop sits on top and fades in only
      while it is playing, so there is no flash of an empty video element. */
   .pl-work-card__preview {

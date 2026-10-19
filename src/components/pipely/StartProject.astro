@@ -34,16 +34,16 @@
  * Opened by any element carrying [data-start-project]. Put that on a real
  * link to /contact/ so the button still goes somewhere with JavaScript off.
  *
- * SUBMISSION. There is no form endpoint yet (CLAUDE.md launch blocker 7).
- * Until `endpoint` is set, sending opens the visitor's email client with
- * their answers filled in, and the success screen says so rather than
- * claiming the enquiry has arrived. The original said "on its way" either
- * way, which loses the lead whenever the email is never sent. Set
- * `endpoint` to a URL that accepts a JSON POST and it sends directly.
+ * SUBMISSION. Posts JSON to /api/enquiry (src/pages/api/enquiry.ts), which
+ * sends it to hello@ through Mailgun. If that route errors or is not
+ * configured, sending opens the visitor's email client with their answers
+ * filled in, and the success screen says so rather than claiming the
+ * enquiry has arrived. The original said "on its way" either way, which
+ * loses the lead whenever the email is never sent.
  */
 import '../../styles/pipely/start-project.css';
 
-const endpoint = '';
+const endpoint = '/api/enquiry';
 const enquiryEmail = 'hello@doghousemedia.ie';
 ---
 

@@ -5,7 +5,7 @@ year: 2022
 craft: "web"
 summary: "How we built and manage a networking site for the UCD Aspire Programme"
 cover: "/work/aspire-pi2.jpg"
-thumb: "/work/thumbs/networking-website-for-university-16x9.jpg"
+thumb: "/work/thumbs/networking-website-for-university-float.webp"
 # No liveUrl: aspireprogramme.ie no longer resolves (22 September 2026),
 # so the card shows without a link rather than pointing at a dead site.
 services:

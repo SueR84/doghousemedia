@@ -6,7 +6,7 @@ year: 2026 # TODO: confirm the year before launch
 craft: "web"
 summary: "The website for Real Nation, the behavioural change agency, built in partnership with their team and tested to WCAG 2.2 AA."
 cover: "/work/real-nation-card.jpg"
-thumb: "/work/thumbs/real-nation-16x9.jpg"
+thumb: "/work/thumbs/real-nation-float.webp"
 liveUrl: "https://realnation.ie/"
 services:
   - "Web Development"
