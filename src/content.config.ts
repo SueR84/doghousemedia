@@ -61,7 +61,7 @@ const projects = defineCollection({
     // craft value. AI is a block inside Web Development, not a pillar, so it
     // must not grow its own section on the Work page. Same for accessibility,
     // bilingual, e-commerce and LMS.
-    capabilities: z.array(z.enum(['ai', 'accessibility', 'bilingual', 'ecommerce', 'lms'])).default([]),
+    capabilities: z.array(z.enum(['ai', 'ai-bot', 'accessibility', 'bilingual', 'ecommerce', 'lms', 'shopify', 'crm', 'booking'])).default([]),
     // Short muted loop for the Work grid, three to six seconds, a few hundred
     // KB, self-hosted in /public. Not a Vimeo embed: six iframes would eat the
     // 15KB JS budget in BUILD-SPEC section 9 and set cookies. The full film

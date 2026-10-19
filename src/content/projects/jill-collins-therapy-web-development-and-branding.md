@@ -12,6 +12,7 @@ services:
   - "Booking Integration"
 order: 13
 draft: false
+capabilities: ["booking"]
 ---
 Project Overview:
 

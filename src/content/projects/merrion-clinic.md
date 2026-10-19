@@ -13,6 +13,7 @@ services:
   - "Booking"
 order: 8
 draft: false
+capabilities: ["shopify"]
 ---
 Merrion Medical Aesthetics are a busy aesthetic clinic in Toronto who also sell premium health and skincare products through their website.
 

@@ -8,7 +8,7 @@ summary: "Brand, website and online donation platform for Loreto South Sudan, wh
 # the GiveWP donation form and donations chart used on the homepage tablet.
 # The chart shows no figures: there are no public totals.
 cover: "/work/loreto-south-sudan-card.jpg"
-thumb: "/work/thumbs/loreto-rumbek-donation-platform-float.webp"
+thumb: "/work/thumbs/loreto-rumbek-donation-platform-float-v2.webp"
 liveUrl: "https://loretosouthsudan.org/"
 services:
   - "Branding"

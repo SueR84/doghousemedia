@@ -32,10 +32,14 @@ const craftClass = { web: 'is-web', video: 'is-film', both: 'is-both' }[d.craft]
 
 const capabilityLabel: Record<string, string> = {
   ai: 'AI',
+  'ai-bot': 'AI Support Bot',
   accessibility: 'Accessibility',
   bilingual: 'Bilingual',
   ecommerce: 'E-commerce',
-  lms: 'Learning platform',
+  lms: 'LMS',
+  shopify: 'Shopify',
+  crm: 'CRM Integration',
+  booking: 'Booking',
 };
 
 const vimeoUrl = d.video ? `https://vimeo.com/${d.video}${d.videoHash ? `/${d.videoHash}` : ''}` : null;

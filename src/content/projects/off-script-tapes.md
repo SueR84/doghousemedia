@@ -11,4 +11,5 @@ services:
   - "Web Development"
 order: 10
 draft: false
+capabilities: ["booking"]
 ---
