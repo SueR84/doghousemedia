@@ -13,3 +13,4 @@ npm-debug.log*
 !.vscode/extensions.json
 .idea/
 a11y-report.json
+.gstack/

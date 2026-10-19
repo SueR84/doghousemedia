@@ -845,6 +845,10 @@
 .pipely .pl-prose a { text-decoration: underline; text-underline-offset: 0.2em; }
 .pipely .pl-prose a:hover { color: var(--pl-accent-film); }
 .pipely .pl-prose img { border-radius: var(--pl-r-media); }
+.pipely .pl-prose table { width: 100%; border-collapse: collapse; font-size: var(--pl-base); }
+.pipely .pl-prose th, .pipely .pl-prose td { text-align: left; vertical-align: top; padding: 0.625rem 0.75rem 0.625rem 0; border-bottom: 1px solid var(--pl-border, rgba(15, 20, 23, 0.15)); }
+.pipely .pl-prose th { font-weight: var(--pl-fw-medium, 500); }
+.pipely .pl-prose code { font-family: var(--font-mono, monospace); font-size: 0.875em; }
 .pipely .pl-prose blockquote {
   padding-left: 1.25rem;
   border-left: 2px solid var(--color-red);
