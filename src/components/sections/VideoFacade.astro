@@ -31,9 +31,12 @@ interface Props {
   /** 'inline' swaps the still for the player in place. 'dialog' opens the
       film in a modal over the page, and the still stays put behind it. */
   mode?: 'inline' | 'dialog';
+  /** A 9:16 film. The still is portrait and the modal opens tall, sized
+      to the viewport height. Added 19 October 2026 for Guinness. */
+  portrait?: boolean;
 }
 
-const { vimeoId, hash, title, poster, label, mode = 'inline' } = Astro.props;
+const { vimeoId, hash, title, poster, label, mode = 'inline', portrait = false } = Astro.props;
 
 const params = new URLSearchParams({
   autoplay: '1',
@@ -47,10 +50,10 @@ if (hash) params.set('h', hash);
 const src = `https://player.vimeo.com/video/${vimeoId}?${params}`;
 ---
 
-<div class="dhvf" data-video-facade data-src={src} data-title={title} data-mode={mode}>
+<div class="dhvf" data-video-facade data-src={src} data-title={title} data-mode={mode} data-portrait={portrait ? '' : undefined}>
   {/* Eager, not lazy: while the box waits to unroll it is clipped to
       nothing, and a lazy image the browser cannot see never loads. */}
-  <img class="dhvf-poster" src={poster} alt="" width="1280" height="720" decoding="async" />
+  <img class="dhvf-poster" src={poster} alt="" width={portrait ? 720 : 1280} height={portrait ? 1280 : 720} decoding="async" />
   <span class="dhvf-shade" aria-hidden="true"></span>
   <button class="dhvf-play" type="button" data-play>
     <span class="dhvf-play__disc" aria-hidden="true">
@@ -171,6 +174,12 @@ const src = `https://player.vimeo.com/video/${vimeoId}?${params}`;
     border-radius: var(--pl-r-media);
     background: #000;
   }
+  /* Portrait: as wide as fits a 9:16 frame into the viewport height, with
+     room above for the close button. */
+  :global(.dhvf-modal.is-portrait) {
+    width: min(26rem, calc((100dvh - 7rem) * 9 / 16), calc(100vw - 2rem));
+  }
+  :global(.dhvf-modal.is-portrait .dhvf-modal__frame) { aspect-ratio: 9 / 16; }
   :global(.dhvf-modal__frame iframe) {
     position: absolute;
     inset: 0;
@@ -256,6 +265,7 @@ const src = `https://player.vimeo.com/video/${vimeoId}?${params}`;
         });
       }
       dlg.setAttribute('aria-label', root.dataset.title ?? 'Film');
+      dlg.classList.toggle('is-portrait', 'portrait' in root.dataset);
       const frame = makeFrame();
       dlg.querySelector('[data-slot]')!.replaceChildren(frame);
       button.setAttribute('data-dhvf-opener', '');

@@ -49,8 +49,9 @@ const formats = [
     title: 'Social and vertical content',
     shape: '3 / 4',
     text: 'Short cuts in vertical, square and landscape, planned from the same shoot as the main film.',
-    // Guinness Storehouse, the 1837 Brasserie sign. Vimeo thumbnail, hotlinked.
-    image: 'https://i.vimeocdn.com/video/2190434694-63ab3b06ff4c6437eb5bd87fb62c83e22c9d94b99b7fb291ee8200b763cae4c0-d_640',
+    // Guinness Storehouse, the 1837 Brasserie sign. Vimeo thumbnail, saved
+    // into /public on 19 October 2026 (was hotlinked).
+    image: '/work/guinness/summer-menu.jpg',
     focus: '50% 35%',
   },
   {
@@ -139,13 +140,11 @@ const caseStudies = [
     // Five seconds of "GHS Summer Menu 2026" (vimeo.com/1218488306, public,
     // portrait, 22s), looping in the card. Change `start` to pick a different
     // five seconds. The poster is Vimeo's thumbnail for the film, the 1837
-    // Brasserie sign, hotlinked from Vimeo's image CDN.
-    // TODO before launch: save the poster into /public so the card does not
-    // depend on Vimeo's CDN URL, which changes if the thumbnail is reset.
+    // Brasserie sign, saved into /public on 19 October 2026.
     loop: {
       vimeoId: '1218488306',
       title: 'Guinness Storehouse, summer menu 2026',
-      poster: 'https://i.vimeocdn.com/video/2190434694-63ab3b06ff4c6437eb5bd87fb62c83e22c9d94b99b7fb291ee8200b763cae4c0-d_640',
+      poster: '/work/guinness/summer-menu.jpg',
       posterAlt: 'The 1837 Brasserie sign inside the Guinness Storehouse, from the summer menu film.',
       start: 0,
       // Fills the card, cropping top and bottom. 50 keeps the middle band;
@@ -153,7 +152,8 @@ const caseStudies = [
       fit: 'cover',
       focusY: 50,
     },
-    line: 'Social media shorts filmed at the home of Guinness, cut for vertical and square.',
+    // Line changed 19 October 2026: all five films are vertical, none square.
+    line: 'Short vertical films for the Guinness Storehouse summer season, made for its own social channels.',
   },
   {
     // 6 October 2026: Dynamic replaces Boston Scientific here. Boston stays

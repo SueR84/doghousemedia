@@ -5,7 +5,9 @@
  * 5 October 2026 for Coroflo, where the project is a set of films rather
  * than one.
  *
- * Landscape films only. The posters are 16:9 and VideoFacade assumes it.
+ * Landscape by default. `portrait` (added 19 October 2026 for Guinness)
+ * takes 9:16 films: tall stills, a tall modal, and two to a row on a phone
+ * rather than one, so a single film does not fill the whole screen.
  *
  * CLAUDE.md: every embedded film needs written captions, not auto-generated.
  * That is on the film at Vimeo, not here.
@@ -24,17 +26,18 @@ interface Film {
 }
 interface Props {
   films: Film[];
-  cols?: 2 | 3;
+  cols?: 2 | 3 | 4 | 5;
+  portrait?: boolean;
 }
-const { films, cols = 3 } = Astro.props;
+const { films, cols = 3, portrait = false } = Astro.props;
 ---
 
-<ul class="cs-films" role="list" style={`--cs-cols:${cols}`} data-reveal-stagger="80">
+<ul class:list={['cs-films', { 'is-portrait': portrait }]} role="list" style={`--cs-cols:${cols}`} data-reveal-stagger="80">
   {films.map((f) => (
     <li data-reveal>
       <figure class="cs-films__item">
-        <div class="pl-media is-wide">
-          <VideoFacade vimeoId={f.vimeoId} hash={f.hash} title={f.title} poster={f.poster} mode="dialog" />
+        <div class:list={['pl-media', portrait ? 'cs-films__tall' : 'is-wide']}>
+          <VideoFacade vimeoId={f.vimeoId} hash={f.hash} title={f.title} poster={f.poster} mode="dialog" portrait={portrait} />
         </div>
         <figcaption class="cs-films__caption">
           <span>{f.caption}</span>
@@ -60,6 +63,11 @@ const { films, cols = 3 } = Astro.props;
     list-style: none;
   }
   .cs-films__item { margin: 0; }
+  .cs-films__tall { aspect-ratio: 9 / 16; }
+  /* The play ring is sized for a 16:9 still; in a narrow portrait tile it
+     comes down a step so it does not crowd the frame. */
+  .cs-films.is-portrait :global(.dhvf-play__disc) { width: 4rem; height: 4rem; }
+  .cs-films.is-portrait :global(.dhvf-play__disc svg) { width: 1.6rem; height: 1.6rem; }
   .cs-films__caption {
     display: flex;
     flex-wrap: wrap;
@@ -71,7 +79,11 @@ const { films, cols = 3 } = Astro.props;
     text-transform: uppercase;
     color: var(--pl-text-meta);
   }
+  @media (max-width: 1023px) {
+    .cs-films.is-portrait { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
   @media (max-width: 767px) {
     .cs-films { grid-template-columns: minmax(0, 1fr); }
+    .cs-films.is-portrait { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
 </style>

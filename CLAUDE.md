@@ -37,7 +37,7 @@ The fork has been promoted. `/pipely` no longer exists as a route.
 Grep for `data-placeholder` and `TODO`. Nothing with either may go live. Currently outstanding:
 
 1. Susan Foley's quote, verbatim. The three files in `src/content/testimonials/` are marked `placeholder: true` and are filtered out at render, so the testimonial sections render empty until a real one lands.
-2. Guinness Storehouse: what the film was for, then a case study at `/work/guinness-storehouse/`.
+2. ~~Guinness Storehouse: what the film was for, then a case study at `/work/guinness-storehouse/`.~~ Live 19 October 2026 (summer 2026 films, Thursday Night Social). Still owed: a result or a quote, and captions on the five films.
 3. Boston Scientific case study. Client name only, no supplier designation.
 4. ~~Photos of Sue and Emma at `/team/sue-ryan.jpg` and `/team/emma-walkin.jpg`.~~ In place 13 October 2026, shown as small round portraits on `/about/`; placeholder note removed.
 5. `/showreel-poster.jpg` is a title card with a green wordmark and it is the LCP image. Replace with a mid-reel frame.

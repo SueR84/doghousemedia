@@ -1,0 +1,153 @@
+---
+title: "Guinness Storehouse: summer films for Thursday Night Social"
+client: "Guinness Storehouse"
+year: 2026
+craft: "video"
+# Work grid image: three of the five films side by side on ink, composed
+# 19 October 2026 from the Vimeo thumbnails.
+thumb: "/work/thumbs/guinness-storehouse-16x9.jpg"
+summary: "Five short vertical films for the Guinness Storehouse's own social channels, made for its summer 2026 season: Thursday Night Social, the shop's summer collection and the summer menu at the 1837 Bar & Brasserie."
+services:
+  - "Video Production"
+  - "Editing"
+order: 1
+caseStudy: true
+feature: true
+# Live 19 October 2026, copy written from Sue's brief the same day. Was a
+# draft stub (guinness-storehouse.md, now in _to_delete/guinness/).
+draft: false
+---
+
+import CaseFacts from '../../components/casestudy/CaseFacts.astro';
+import CaseStep from '../../components/casestudy/CaseStep.astro';
+import CaseFilmGrid from '../../components/casestudy/CaseFilmGrid.astro';
+import CaseGallery from '../../components/casestudy/CaseGallery.astro';
+import PhoneVideo from '../../components/sections/PhoneVideo.astro';
+
+{/* Built 19 October 2026 from Sue's brief and the five films in Vimeo,
+    Library / 001 Doghouse Media / 010 Guinness Store House. All five are
+    portrait 9:16 (1280 x 2276), "embed only", and embed without a hash.
+
+      1218488853  GSH Summer Retail 2026      0:20  shop, summer collection
+      1218488306  GHS Summer Menu 2026        0:22  1837 Bar & Brasserie
+      1218491115  Hawker Summer'26            0:27  Thursday Night Social
+      1218491136  The Salty Buoy Summer'26    0:31  Thursday Night Social
+      1218490086  Artybaker Summer'26         0:26  Thursday Night Social
+
+    Rights are clear: Doghouse shot and edited this, and Sue confirmed on
+    11 September 2026 that no clearance is needed.
+
+    Posters are the Vimeo thumbnails, saved into public/work/guinness/.
+    Artybaker's Vimeo thumbnail is black (the film opens on black), so its
+    poster is a frame at 0:11 grabbed from the player.
+
+    Shoot stills are from Drive, "Guinness Storehouse 2026 Shoot" (photos
+    15, 41 and 61, taken 2 July 2026) and the crew photo from "Guiness
+    Storehouse 2026 - Team Photo" (IMG_4354, a mouse pointer painted out of
+    the mural). Added 19 October 2026 at Sue's request, saved at 1280px as
+    WebP. The atrium photo that was here is still used on /video-production/.
+    The old step 03 ("Where they ran") was folded into step 02 the same day.
+
+    Event facts are from guinness-storehouse.com/en/whats-hoppening/
+    thursday-night-social, checked 19 October 2026: every Thursday in July
+    and August from 6pm, local ticket, DJs in the Gravity Bar, food trucks
+    in the Cobble Yard, trad in Arthur's Bar.
+
+    TODO before launch:
+      - MESSAGING-PLAN section 12 wants a result or a quote. Neither is in
+        hand. A line from the Storehouse team, or a reach or views figure
+        from their channels, goes in the frontmatter `quote` or a
+        CaseStats row.
+      - captions on all five films, written not auto-generated. */}
+
+<section class="pl-panel is-inverse">
+  <div class="pl-gutter pl-pad-sm">
+    <div class="pl-container is-md">
+      <CaseFacts
+        items={[
+          { label: 'Client', value: 'Guinness Storehouse, Dublin 8' },
+          { label: 'Campaign', value: 'Summer 2026' },
+          { label: 'What we did', value: 'Filming and editing' },
+          { label: 'Made for', value: "The Storehouse's own social channels" },
+        ]}
+      />
+    </div>
+  </div>
+</section>
+
+<section class="pl-panel is-secondary" aria-label="The five films">
+  <div class="pl-gutter pl-pad-sm">
+    <div class="pl-container is-md">
+      <CaseFilmGrid
+        portrait
+        cols={5}
+        films={[
+          { vimeoId: '1218491115', title: 'Hawker, Thursday Night Social, Guinness Storehouse', poster: '/work/guinness/hawker.jpg', caption: 'Hawker', time: '0:27', duration: 'PT27S' },
+          { vimeoId: '1218491136', title: 'The Salty Buoy, Thursday Night Social, Guinness Storehouse', poster: '/work/guinness/salty-buoy.jpg', caption: 'The Salty Buoy', time: '0:31', duration: 'PT31S' },
+          { vimeoId: '1218490086', title: 'Artybaker, Thursday Night Social, Guinness Storehouse', poster: '/work/guinness/artybaker.jpg', caption: 'Artybaker', time: '0:26', duration: 'PT26S' },
+          { vimeoId: '1218488306', title: 'Summer menu at the 1837 Bar & Brasserie, Guinness Storehouse', poster: '/work/guinness/summer-menu.jpg', caption: 'Summer menu', time: '0:22', duration: 'PT22S' },
+          { vimeoId: '1218488853', title: 'Summer collection in the Guinness Storehouse shop', poster: '/work/guinness/ghs-summer-retail-2026.jpg', caption: 'Summer collection', time: '0:20', duration: 'PT20S' },
+        ]}
+      />
+    </div>
+  </div>
+</section>
+
+<CaseStep n="01" label="The client" title="The home of Guinness, open to its neighbours on a Thursday night" surface="secondary">
+  {/* Two of the Thursday Night Social films trading places, the same
+      swapping-phones graphic as /video-production/. Added 19 October 2026. */}
+  <PhoneVideo
+    slot="aside"
+    vimeoId="1218491115"
+    title="Hawker, Thursday Night Social, Guinness Storehouse"
+    poster="/work/guinness/hawker.jpg"
+    posterAlt="Chips and fried chicken from the Hawker truck, with the words Have you ever tried over the shot."
+    behind={{
+      vimeoId: '1218491136',
+      title: 'The Salty Buoy, Thursday Night Social, Guinness Storehouse',
+      poster: '/work/guinness/salty-buoy.jpg',
+    }}
+    behindStyle="clear"
+    swap={4}
+  />
+
+  The Guinness Storehouse sits at St. James's Gate in Dublin 8, in the middle of the brewery
+  where Guinness has been made since 1759. Most of the people who walk through its doors
+  are visitors to the city.
+
+  In summer 2026 it ran Thursday Night Social, an evening built for Dubliners instead. Every
+  Thursday in July and August from 6pm, a local ticket covered entry, a pint, DJ sets in the
+  Gravity Bar, food trucks in the Cobble Yard and traditional music in Arthur's Bar.
+
+  The Storehouse needed short films for its own social channels that would bring locals in
+  on a weeknight, and that would make sense with the sound off in a fast-moving feed.
+</CaseStep>
+
+<CaseStep n="02" label="What we made" title="Five short films, made for a phone screen">
+  We filmed across the Storehouse over the summer and delivered five vertical films, each
+  between 20 and 31 seconds long.
+
+  Three follow the food trucks that set up in the Cobble Yard for Thursday Night Social:
+  Hawker, The Salty Buoy and Artybaker. The other two carry the rest of the summer season:
+  the new summer collection in the Storehouse shop, and the summer menu at the 1837 Bar &
+  Brasserie.
+
+  The films lead with the food, the room and a single line of text, so each one is clear in
+  the first second, with or without sound.
+
+  They ran on the Storehouse's own social channels through July and August 2026, while
+  Thursday Night Social was on, alongside the weekly posts announcing each Thursday's DJs
+  and food trucks.
+
+  <CaseGallery
+    slot="below"
+    cols={2}
+    ratio="3 / 2"
+    items={[
+      { src: '/work/guinness/shoot-barrels.webp', alt: 'A camera operator with a stabilised rig films between stacked Guinness barrels painted with the words Roar of Raw.', caption: 'Filming among the barrels.' },
+      { src: '/work/guinness/crew.webp', alt: 'Emma with Blat and Dan from the crew, holding cameras and a stabiliser rig in front of the Guinness summer mural, with a painted harp, sun and dancing figure behind them.', caption: 'Shoot day, Emma with Blat and Dan.' },
+      { src: '/work/guinness/shoot-1837-kitchen.webp', alt: 'A chef in whites and a black apron finishes a plate on the pass in the 1837 Bar & Brasserie kitchen.', caption: 'The 1837 Bar & Brasserie kitchen.' },
+      { src: '/work/guinness/shoot-hawker.webp', alt: 'The Hawker by Hang Dai food truck in the Cobble Yard, with a brick arch and painted hoardings behind it.', caption: 'Hawker in the Cobble Yard.' },
+    ]}
+  />
+</CaseStep>
