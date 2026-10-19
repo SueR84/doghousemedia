@@ -9,7 +9,7 @@ video: "668193944"
 videoHash: "b0f7ad0181"
 services:
   - "Social media promo"
-order: 18
+order: 6
 draft: false
 ---
 To celebrate International Women's Day Lifestyle Sports held a special event at Windmill Lane with some well known figures from the irish wellness and influencer's circles.

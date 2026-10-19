@@ -7,6 +7,7 @@ summary: "Once in a while you're involved in something that really inspires. The
 services:
   - "Promo film"
 order: 20
-draft: false
+# Off the Work page at Sue's request, 19 October 2026. Replaced by Platinum Pilates.
+draft: true
 ---
 The Sunshine Sessions provide a much needed day out for Mums of sick children, the idea behind it is the brainchild of Joanne Kelly - we were delighted to be on hand to capture this little piece of wonderfulness. We were truly moved to be there to see this day and to be given the opportunity to meet these inspiring women.

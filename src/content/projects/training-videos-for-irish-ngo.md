@@ -9,7 +9,7 @@ video: "636319848"
 videoHash: "7c7fe260ca"
 services:
   - "Training videos"
-order: 21
+order: 8
 draft: false
 ---
 Series of Instructional and Training videos for irish NGO

@@ -15,7 +15,7 @@ video: "751310453"
 services:
   - "Promo film"
   - "Photography"
-order: 2
+order: 9
 draft: false
 ---
 Emma and Alan travelled to Rumbek in November 2021 with cameras and a drone. The school and the healthcare centre raise most of what they run on through the website and through supporters abroad, and almost none of those supporters had seen the place.

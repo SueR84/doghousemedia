@@ -485,12 +485,12 @@ const steps = [
     </section>
   )}
 
-  {/* ---------- Selected films ---------- */}
+  {/* ---------- More films (was "Selected films", renamed 19 October 2026) ---------- */}
   {films.length > 0 && (
     <section class="pl-panel is-secondary" aria-labelledby="vp-films">
       <div class="pl-gutter pl-pad-md">
         <div class="pl-container is-md">
-          <h2 class="u-h2 u-max-26" id="vp-films" data-reveal>Selected films.</h2>
+          <h2 class="u-h2 u-max-26" id="vp-films" data-reveal>More films.</h2>
           <div class="pl-gap-lg"></div>
           <div class="pl-grid-3" data-reveal-stagger="100">
             {films.map((p, i) => <WorkCard project={p} tint={i % 2 ? 'var(--pl-a2)' : 'var(--pl-a3)'} reveal />)}
