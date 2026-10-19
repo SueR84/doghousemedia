@@ -179,9 +179,13 @@ const laws = [
             <p class="u-h3 u-balance" data-reveal>
               In partnership with Real Nation, who designed and ran the project, we built the National Disability
               Authority&rsquo;s Someone Like Me Art Awards site and worked through
-              their formal accessibility audit, issue by issue, until it passed.<br />
-              We now run the same process for other organisations.
+              their formal accessibility audit, issue by issue, until it passed.
             </p>
+            <div class="pl-gap-sm"></div>
+            {/* 19 October 2026: replaced "We now run the same process for other
+                organisations." Opens the same audit request form as the other
+                buttons on this page (data-audit-request). */}
+            <div class="pl-btn-group" data-reveal><Button href="/contact/" data-audit-request>Audit my website</Button></div>
           </div>
           <SlmChecked />
         </div>

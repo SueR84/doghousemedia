@@ -11,7 +11,7 @@ services:
   - "Website Design"
   - "Branding"
   - "Web development"
-order: 4
+order: 9
 draft: false
 ---
 From zero visibility to #1 in the Galway market.

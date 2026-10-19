@@ -36,6 +36,7 @@ import StartProject from '../components/pipely/StartProject.astro';
 import PhoneCarousel from '../components/sections/PhoneCarousel.astro';
 import WorkShowcase from '../components/sections/WorkShowcase.astro';
 import PlatformMark from '../components/pipely/PlatformMark.astro';
+import WorkCard from '../components/pipely/WorkCard.astro';
 
 // 2. Selected work. Screens are flat captures of the live sites (21 September
 // 2026), in the landscape iPad frame that fills a case card exactly.
@@ -170,6 +171,11 @@ const steps = [
 const testimonial = (
   await getCollection('testimonials', (t) => !t.data.placeholder && /basis/i.test(t.data.company))
 )[0];
+
+// More work, in Sue's order (19 October 2026). Drafts drop out on their own.
+const moreWorkIds = ['real-nation', 'off-script-tapes', 'our-world-awards', 'orthondontist-website'];
+const moreWorkAll = await getCollection('projects', (p) => !p.data.draft && moreWorkIds.includes(p.id));
+const moreWork = moreWorkIds.map((id) => moreWorkAll.find((p) => p.id === id)).filter((p) => p !== undefined);
 ---
 
 <Site
@@ -299,6 +305,24 @@ const testimonial = (
               early and there is always a recent copy to restore from.
             </p>
           </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- 5b. More work ----------
+      Added 19 October 2026 at Sue's request: four more websites, in her
+      order, moved to sit just above Accessibility. The cards are the Work page's own, so each links to the live
+      site and the Real Nation partner credit comes with it (CLAUDE.md). */}
+  <section class="pl-panel" aria-labelledby="wd-more">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <h2 class="u-h3 u-balance" id="wd-more" data-reveal>More work</h2>
+        <div class="pl-gap-sm"></div>
+        <div class="pl-grid-4" data-reveal-stagger="100">
+          {moreWork.map((p) => (
+            <WorkCard project={p} tint="var(--pl-a2)" reveal />
+          ))}
         </div>
       </div>
     </div>

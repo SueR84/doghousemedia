@@ -16,7 +16,7 @@ gallery:
   - "/work/amw-asset-3.jpg"
   - "/work/amw-asset-4.jpg"
   - "/work/amw-asset-5.jpg"
-order: 7
+order: 12
 draft: false
 ---
 Aisling McEntee is an artist based in Dublin, Ireland. Aisling wanted a website to showcase her work, importantly she wanted to be able to access and keep the site content updated without the need for intervention from her web developer.

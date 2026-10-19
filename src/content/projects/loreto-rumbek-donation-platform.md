@@ -1,5 +1,5 @@
 ---
-title: "Loreto South Sudan website and donation platform"
+title: "Charity donation platform"
 client: "Loreto Ireland"
 year: 2023
 craft: "web"

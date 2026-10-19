@@ -11,6 +11,6 @@ liveUrl: "https://ourworldawards.ie/"
 services:
   - "Web Development"
 capabilities: ["bilingual"]
-order: 3
+order: 6
 draft: false
 ---

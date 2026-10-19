@@ -12,6 +12,6 @@ thumb: "/work/thumbs/crownway-investments-16x9.jpg"
 liveUrl: "https://crownway.vercel.app/"
 services:
   - "Web Development"
-order: 5
+order: 11
 draft: false
 ---
