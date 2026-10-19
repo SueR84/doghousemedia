@@ -3,7 +3,7 @@ title: "Guinness Storehouse"
 client: "Guinness Storehouse"
 year: 2026
 craft: "video"
-summary: "Film work for Ireland's most visited tourist attraction."
+summary: "Social media shorts filmed at the home of Guinness, cut for vertical and square."
 services:
   - "Video Production"
 capabilities: []

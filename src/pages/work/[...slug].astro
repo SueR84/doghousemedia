@@ -8,6 +8,9 @@
 import { getCollection, render } from 'astro:content';
 import Site from '../../layouts/Site.astro';
 import Button from '../../components/pipely/Button.astro';
+import CaseFacts from '../../components/casestudy/CaseFacts.astro';
+import CaseGallery from '../../components/casestudy/CaseGallery.astro';
+import CasePhone from '../../components/casestudy/CasePhone.astro';
 import PhoneFold from '../../components/sections/PhoneFold.astro';
 
 export async function getStaticPaths() {
@@ -31,50 +34,72 @@ const { Content } = await render(project);
 const { data } = project;
 
 const craftLabel = { web: 'Web', video: 'Video', both: 'Web and video' }[data.craft];
+const hasFacts = !!(data.facts && data.facts.length > 0);
 const craftClass = { web: 'is-web', video: 'is-film', both: 'is-both' }[data.craft];
 ---
 
-<Site title={data.title} description={data.summary} image={data.cover}>
+<Site title={data.title} description={data.summary} image={data.cover ?? data.thumb}>
   <article>
     <section class="pl-panel">
       <div class="pl-gutter pl-pad-md">
         <div class="pl-container is-md">
+          <div class:list={[hasFacts && 'pl-grid-2 is-wide cs-hero']}>
           <div data-reveal-stagger="100">
             <div class="pl-row is-wrap" data-reveal style="gap:.5rem">
               <span class="u-eyebrow">{data.client}</span>
               <span class="u-eyebrow u-nowrap">{data.year}</span>
             </div>
             <div class="pl-gap-sm"></div>
-            <h1 class="u-h2 u-max-40 u-balance" data-reveal>{data.title}</h1>
+            <h1 class="u-h1 u-max-40 u-balance" data-reveal>{data.title}</h1>
             <div class="pl-gap-sm"></div>
             <p class="u-lg u-muted u-max-33" data-reveal>{data.summary}</p>
-            <div class="pl-gap-sm"></div>
-            <div class="pl-row is-wrap" data-reveal style="gap:.5rem">
-              <span class:list={['pl-tag', craftClass, 'u-xs']}>{craftLabel}</span>
-              {data.services.map((s) => <span class="pl-tag u-xs">{s}</span>)}
-            </div>
+            {!hasFacts && (
+              <>
+                <div class="pl-gap-sm"></div>
+                <div class="pl-row is-wrap" data-reveal style="gap:.5rem">
+                  <span class:list={['pl-tag', craftClass, 'u-xs']}>{craftLabel}</span>
+                  {data.services.map((s) => <span class="pl-tag u-xs">{s}</span>)}
+                </div>
+              </>
+            )}
             {data.liveUrl && (
               <>
                 <div class="pl-gap-sm"></div>
                 <div class="pl-btn-group" data-reveal>
-                  <Button href={data.liveUrl} variant="ghost">Visit the site</Button>
+                  <Button href={data.liveUrl} variant="ghost">{data.liveLabel ?? 'Visit the site'}</Button>
                 </div>
               </>
             )}
+          </div>
+          {hasFacts && <CaseFacts items={data.facts} stacked />}
           </div>
         </div>
       </div>
     </section>
 
-    {data.cover && (
+    {/* is-wide on the cover matters: .pl-media positions its image
+        absolutely, so without a ratio class the box has no height and the
+        cover collapses to a sliver (found 25 September 2026, on the first
+        case study to use a plain cover). */}
+    {data.screens && data.screens.length > 0 && (
+      <section class="pl-panel is-secondary">
+        <div class="pl-gutter pl-pad-sm">
+          <div class="pl-container is-md">
+            <CaseGallery cols={data.screens.length >= 3 ? 3 : 2} ratio="16 / 10" items={data.screens} />
+          </div>
+        </div>
+      </section>
+    )}
+
+    {!data.screens && data.cover && !data.hideCover && (
       <section class="pl-panel is-secondary">
         <div class="pl-gutter pl-pad-sm">
           <div class="pl-container is-md">
             {data.coverDevice === 'fold' ? (
               <PhoneFold image={data.cover} alt={`${data.title}, on screen`} />
             ) : (
-              <div class="pl-media" data-reveal>
-                <img src={data.cover} alt="" width="1520" height="760" loading="eager" decoding="async" />
+              <div class="pl-media is-wide" data-reveal>
+                <img src={data.cover} alt="" width="1520" height="855" loading="eager" decoding="async" />
               </div>
             )}
           </div>
@@ -82,13 +107,28 @@ const craftClass = { web: 'is-web', video: 'is-film', both: 'is-both' }[data.cra
       </section>
     )}
 
-    <section class="pl-panel">
-      <div class="pl-gutter pl-pad-md">
-        <div class="pl-container is-sm">
-          <div class="pl-prose" data-reveal><Content /></div>
+    {data.feature ? (
+      /* A feature case study brings its own sections and surfaces, so it
+         gets no wrapper at all. */
+      <Content />
+    ) : (
+      <section class="pl-panel">
+        <div class="pl-gutter pl-pad-md">
+          {data.phone ? (
+            <div class="pl-container is-md">
+              <div class="cs-prose-phone">
+                <div class="pl-prose" data-reveal><Content /></div>
+                <CasePhone src={data.phone.src} alt={data.phone.alt} caption={data.phone.caption} imgWidth={data.phone.imgWidth} imgHeight={data.phone.imgHeight} />
+              </div>
+            </div>
+          ) : (
+            <div class="pl-container is-sm">
+              <div class="pl-prose" data-reveal><Content /></div>
+            </div>
+          )}
         </div>
-      </div>
-    </section>
+      </section>
+    )}
 
     {data.quote && (
       <section class="pl-panel is-secondary">
@@ -125,7 +165,7 @@ const craftClass = { web: 'is-web', video: 'is-film', both: 'is-both' }[data.cra
   <section class="pl-panel is-inverse">
     <div class="pl-gutter pl-pad-lg">
       <div class="pl-container is-md u-center">
-        <h2 class="u-h2 u-balance" data-reveal style="color:var(--pl-text-inverse);margin-inline:auto;max-width:30rem">
+        <h2 class="u-h2 u-balance" data-reveal style="color:var(--pl-text-inverse);margin-inline:auto;max-width:44rem">
           Tell us what you are working on.
         </h2>
         <div class="pl-gap-sm"></div>
@@ -137,3 +177,23 @@ const craftClass = { web: 'is-web', video: 'is-film', both: 'is-both' }[data.cra
     </div>
   </section>
 </Site>
+
+<style>
+  .cs-prose-phone {
+    display: grid;
+    gap: 3rem;
+    align-items: center;
+  }
+  @media (min-width: 52rem) {
+    .cs-prose-phone {
+      grid-template-columns: minmax(0, 34rem) auto;
+      gap: 5rem;
+      justify-content: center;
+    }
+  }
+</style>
+
+
+
+
+

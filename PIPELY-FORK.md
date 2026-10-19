@@ -33,10 +33,17 @@ One shared file changed: `astro.config.mjs` gained a sitemap filter.
 
 ## Typography
 
-Display is **Host Grotesk** (the template's own face), body is **Inter**.
-Host Grotesk is loaded in `PipelyBase.astro` only, so the existing pages carry
-no extra font request. To try a different display face, change
-`--font-display` in `styles/pipely/tokens.css` and swap the link.
+Display is **Plus Jakarta Sans** (changed 24 September 2026; the Plus
+Jakarta Display that was asked for has no verifiable licensed source, so
+this is its successor from the same foundry). The self-hosted Overused
+Grotesk file stays in `/public/fonts` and is one token away. Tried after
+Overused Grotesk, Geist, Sansation, Contrail One, Shrikhand, Source Sans 3, Righteous, Radio
+Canada Big and Parkinsans, all in place of the template's own Host
+Grotesk), body is **Inter**. The `@font-face` is at the top of
+`styles/pipely/tokens.css`. It is requested in
+`components/BaseHead.astro` alongside Inter and JetBrains Mono. To try a
+different display face, change `--font-display` in
+`styles/pipely/tokens.css` and swap the family in that request.
 
 Headings are weight 400, not bold. Size and tight tracking carry them. That is
 a large part of why the template reads calm rather than loud.

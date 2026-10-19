@@ -8,12 +8,26 @@ const projects = defineCollection({
     client: z.string(),
     year: z.number(),
     summary: z.string(),
+    // Partner credit, shown wherever the project appears. Real Nation
+    // designed and ran Someone Like Me and Our World Awards; we built them.
+    partner: z.string().optional(),
     // Which side of the studio made it. Drives the red/teal accent.
     craft: z.enum(['web', 'video', 'both']).default('web'),
+    // Facts strip shown inside the case study hero (client, what we did, where, when).
+    facts: z.array(z.object({ label: z.string(), value: z.string(), href: z.string().optional() })).optional(),
+    // A row of screenshots shown under the hero instead of the cover image.
+    // A phone screenshot shown beside the case study text.
+    phone: z.object({ src: z.string(), alt: z.string(), caption: z.string().optional(), imgWidth: z.number().optional(), imgHeight: z.number().optional() }).optional(),
+    screens: z.array(z.object({ src: z.string(), alt: z.string(), caption: z.string().optional() })).optional(),
     cover: z.string().optional(),
+    // Optional Work grid image. Falls back to cover. Lets a project keep a
+    // portrait phone capture for the device mockups and a composed
+    // landscape image for the grid.
+    thumb: z.string().optional(),
     // Shows the cover screenshot opening inside a folding-device graphic
     // instead of a flat image. Opt-in per project; see PhoneFold.astro.
     coverDevice: z.enum(['fold']).optional(),
+    hideCover: z.boolean().optional(),
     logo: z.string().optional(),
     // Vimeo id for video-craft projects.
     video: z.string().optional(),
@@ -21,6 +35,8 @@ const projects = defineCollection({
     videoHash: z.string().optional(),
     services: z.array(z.string()).default([]),
     liveUrl: z.string().url().optional(),
+    // Button text for the live site link in the case study hero. Defaults to "Visit the site".
+    liveLabel: z.string().optional(),
     metrics: z
       .array(z.object({ label: z.string(), before: z.string().optional(), after: z.string() }))
       .default([]),
@@ -32,6 +48,11 @@ const projects = defineCollection({
     // on the Work page and links out to the film or the live site instead.
     // The old site's mistake was twenty-one thin pages; do not rebuild it.
     caseStudy: z.boolean().default(false),
+    // A feature-length case study whose body lays out its own sections,
+    // added 25 September 2026 for the Boston Scientific docuseries. The
+    // page then skips its narrow prose column and lets the body's own
+    // components run the full width.
+    feature: z.boolean().default(false),
     // Cross-cutting capabilities shown as tags, deliberately NOT a third
     // craft value. AI is a block inside Web Development, not a pillar, so it
     // must not grow its own section on the Work page. Same for accessibility,
@@ -88,6 +109,8 @@ const team = defineCollection({
     company: z.string().default('Doghouse Media'),
     bio: z.string(),
     photo: z.string().optional(),
+    contact: z.string().optional(),
+    linkedin: z.string().url().optional(),
     order: z.number().default(0),
   }),
 });
@@ -127,3 +150,19 @@ const legal = defineCollection({
 });
 
 export const collections = { projects, posts, services, team, testimonials, faqs, legal };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

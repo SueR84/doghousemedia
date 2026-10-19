@@ -1,0 +1,97 @@
+---
+/**
+ * Real-looking device mockups sitting over a faint background box, breaking out
+ * past its edges. Built for Western Rheumatology (October 2026).
+ *
+ * The images are transparent cut-outs with their own frames (laptop, tablet,
+ * phone, drawn at true device proportions), so nothing is clipped by the box.
+ * The box is decoration only: the group is one image to assistive tech
+ * (role="img" + alt) and the pieces inside are aria-hidden.
+ *
+ * Tilt is fixed, never animated.
+ *
+ * layout:
+ *   laptop-phone  laptop tilted left, phone over the bottom right corner
+ *   tablet-phone  tablet tilted right, phone over the bottom left corner
+ *   laptop        laptop on its own, tilted left
+ */
+interface Props {
+  screen: string;
+  phone?: string;
+  alt: string;
+  layout?: 'laptop-phone' | 'tablet-phone' | 'laptop';
+  screenRatio?: string;
+  phoneRatio?: string;
+}
+const {
+  screen,
+  phone,
+  alt,
+  layout = 'laptop-phone',
+  screenRatio = '1800 / 1189',
+  phoneRatio = '520 / 1081',
+} = Astro.props;
+---
+
+<div class:list={['cd', `cd--${layout}`]} role="img" aria-label={alt} data-reveal>
+  <div class="cd-box" aria-hidden="true"></div>
+  <img class="cd-screen" src={screen} alt="" style={`aspect-ratio:${screenRatio}`} loading="lazy" decoding="async" aria-hidden="true" />
+  {phone && <img class="cd-phone" src={phone} alt="" style={`aspect-ratio:${phoneRatio}`} loading="lazy" decoding="async" aria-hidden="true" />}
+</div>
+
+<style>
+  .cd {
+    position: relative;
+    margin-block: 2.5rem 3rem;
+    aspect-ratio: var(--cd-box, 1 / 1);
+  }
+  .cd-box {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--pl-r-media);
+    background: rgba(38, 92, 159, 0.05);
+  }
+  .cd-screen,
+  .cd-phone {
+    position: absolute;
+    height: auto;
+    max-width: none;
+    filter: drop-shadow(0 22px 34px rgba(18, 38, 66, 0.22));
+  }
+  .cd-screen { width: var(--cd-sw); left: var(--cd-sl); top: var(--cd-st); transform: rotate(var(--cd-sr)); }
+  .cd-phone  { width: var(--cd-pw); right: var(--cd-pr); bottom: var(--cd-pb); transform: rotate(var(--cd-pt)); }
+
+  .cd--laptop-phone {
+    --cd-box: 1 / 1;
+    --cd-sw: 142%; --cd-sl: -30%; --cd-st: 10%; --cd-sr: -4deg;
+    --cd-pw: 27%; --cd-pr: -9%; --cd-pb: -15%; --cd-pt: 5deg;
+  }
+  .cd--tablet-phone {
+    --cd-box: 1 / 0.92;
+    --cd-sw: 118%; --cd-sl: auto; --cd-st: 9%; --cd-sr: 3deg;
+    --cd-pw: 28%; --cd-pb: -10%; --cd-pt: -5deg;
+  }
+  .cd--tablet-phone .cd-screen { right: -14%; left: auto; }
+  .cd--tablet-phone .cd-phone  { right: auto; left: -8%; }
+  .cd--laptop {
+    --cd-box: 1 / 0.78;
+    --cd-sw: 130%; --cd-sl: -16%; --cd-st: 9%; --cd-sr: -3deg;
+  }
+  @media (max-width: 767px) {
+    .cd { margin-inline: 1rem; }
+    .cd--laptop-phone { --cd-sw: 112%; --cd-sl: -8%; --cd-pw: 30%; --cd-pr: -4%; }
+    .cd--tablet-phone { --cd-sw: 104%; --cd-pw: 28%; }
+    .cd--tablet-phone .cd-screen { right: -6%; }
+    .cd--tablet-phone .cd-phone { left: -4%; }
+    .cd--laptop { --cd-sw: 112%; --cd-sl: -6%; }
+  }
+</style>
+
+
+
+
+
+
+
+
+

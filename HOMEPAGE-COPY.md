@@ -14,7 +14,7 @@ Full-width portfolio video behind. Muted, visible pause control, solid backing b
 
 > ### Films and websites that make complicated things clear.
 >
-> Doghouse Media is an independent video and web studio in Dublin, working since 2011.
+> Doghouse Media is an independent video and web studio in Dublin, working since 2013.
 
 Buttons: `See the work` / `Get in touch`
 
@@ -32,7 +32,7 @@ Label: `Video Production`
 
 > ## Films made in operating theatres, labs and manufacturing plants.
 >
-> Fifteen years of it. Medtech, pharma, corporate and charity.
+> Thirteen years of it. Medtech, pharma, corporate and charity.
 
 Three lines:
 
@@ -112,7 +112,7 @@ Short. Links to About.
 
 > ## An independent studio, owned and run by two people.
 >
-> Emma Walkin runs video production. Susan Ryan runs web, digital and AI. Founded in Dublin in 2011, female-owned and operated, and still the two of us you deal with directly.
+> Emma Walkin runs video production. Susan Ryan runs web, digital and AI. Founded in Dublin in 2013, female-owned and operated, and still the two of us you deal with directly.
 
 Link: `About the studio`
 
@@ -148,4 +148,4 @@ I prefer the first. The second opens with a question, and the plan rules out rhe
 | 1 | Guinness Storehouse, what the film was for | Section 5 |
 | 2 | Susan Foley quote, verbatim | Section 6 |
 | 3 | Final logo list for the strip, and correct organisation names for alt text | Section 3 |
-| 4 | Confirm "Fifteen years" reads right in section 2 given "since 2011" in the hero | Sections 1 and 2 |
+| 4 | Confirm "Thirteen years" reads right in section 2 given "since 2013" in the hero | Sections 1 and 2 |

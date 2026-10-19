@@ -4,6 +4,7 @@ client: "National Orthopaedic Hospital, Dublin"
 year: 2024
 craft: "video"
 cover: "/work/vimeo-promo-national-orthopaedic-hospital.jpg"
+thumb: "/work/thumbs/promo-national-orthopaedic-hospital-16x9.jpg"
 summary: "Patient stories and promotional film for Ireland's National Orthopaedic Hospital"
 video: "967750653"
 services:

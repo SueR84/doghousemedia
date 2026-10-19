@@ -1,0 +1,61 @@
+---
+/**
+ * Two numbered parts of a case study side by side (left and right on wide
+ * screens, stacked on narrow ones), with anything passed in the default slot
+ * running full width underneath. Added 14 October 2026 for the Boston
+ * Scientific brief and shoot day. Same type and spacing as CaseStep.
+ */
+interface Pair {
+  n: string;
+  label: string;
+  title: string;
+}
+interface Props {
+  left: Pair;
+  right: Pair;
+  surface?: 'primary' | 'secondary' | 'tint' | 'inverse';
+}
+const { left, right, surface = 'primary' } = Astro.props;
+const hasBelow = Astro.slots.has('default');
+---
+
+<section class:list={['pl-panel', surface !== 'primary' && `is-${surface}`]}>
+  <div class="pl-gutter pl-pad-md">
+    <div class="pl-container is-md">
+      <div class="pl-grid-2 is-wide is-top cs-pair__cols">
+        <div class="cs-pair__col">
+          <p class="u-eyebrow" data-reveal>{left.n} &middot; {left.label}</p>
+          <div class="pl-gap-sm"></div>
+          <h2 class="u-h2 u-balance" id={`cs-${left.n}`} data-reveal style="max-width:34rem">{left.title}</h2>
+          <div class="pl-gap-md"></div>
+          <div class="cs-pair__body"><slot name="a" /></div>
+        </div>
+        <div class="cs-pair__col">
+          <p class="u-eyebrow" data-reveal>{right.n} &middot; {right.label}</p>
+          <div class="pl-gap-sm"></div>
+          <h2 class="u-h2 u-balance" id={`cs-${right.n}`} data-reveal style="max-width:34rem">{right.title}</h2>
+          <div class="pl-gap-md"></div>
+          <div class="cs-pair__body"><slot name="b" /></div>
+        </div>
+      </div>
+      {hasBelow && (
+        <>
+          <div class="pl-gap-lg"></div>
+          <div class="cs-pair__below"><slot /></div>
+        </>
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .cs-pair__body :global(p) {
+    max-width: 38rem;
+    margin-bottom: var(--pl-s-md);
+    font-size: var(--pl-lg);
+    line-height: 1.6;
+    color: var(--pl-text-muted);
+  }
+  .cs-pair__body :global(p:last-child) { margin-bottom: 0; }
+  .cs-pair__body :global(strong) { color: var(--pl-text); font-weight: var(--pl-fw-medium); }
+</style>

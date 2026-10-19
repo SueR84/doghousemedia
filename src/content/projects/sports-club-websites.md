@@ -5,6 +5,7 @@ year: 2023
 craft: "web"
 summary: "We developed and support websites belonging to two of Ireland's most well know Hockey Clubs - Pembroke Wanderers and Loreto Hockey Club."
 cover: "/work/pwhc-pi2.jpg"
+thumb: "/work/thumbs/sports-club-websites-16x9.jpg"
 liveUrl: "https://pembrokewanderers.ie/"
 services:
   - "Web Development"

@@ -63,6 +63,24 @@ interface Props {
   behind?: Film;
   /** Degrees clockwise. Positive leans the phone to the right. */
   tilt?: number;
+  /**
+   * Scales the front film (and its poster) up inside the screen. Default
+   * 1.02 just hides Vimeo's hairline letterbox. For a film with padding
+   * baked into its 9:16 frame, set it to screen height divided by picture
+   * height, which pushes the padding off screen and crops the sides.
+   */
+  zoom?: number;
+  /**
+   * 'soft' (default): the back phone is blurred, darkened and tucked in,
+   * reading as depth of field. 'clear': nearly sharp, full colour and set
+   * further out, for when the back film is worth watching in its own right.
+   */
+  behindStyle?: 'soft' | 'clear';
+  /**
+   * Seconds between the two phones trading places. Off by default. Stops
+   * with the pause control, never runs under reduced motion.
+   */
+  swap?: number;
 }
 
 const {
@@ -75,6 +93,9 @@ const {
   posterAlt,
   behind,
   tilt = 7,
+  zoom = 1.02,
+  behindStyle = 'soft',
+  swap = 0,
 } = Astro.props;
 
 const loopSrc = (id: string) =>
@@ -83,7 +104,7 @@ const loopSrc = (id: string) =>
 const backPoster = behind?.poster ?? '/video-pillar-poster-back.jpg';
 ---
 
-<div class="dhpv" data-phone-video style={`--dhpv-tilt:${tilt}deg`}>
+<div class:list={['dhpv', { 'is-clear-back': behindStyle === 'clear' }]} data-phone-video data-swap={swap || undefined} style={`--dhpv-tilt:${tilt}deg;--dhpv-zoom:${zoom}`}>
   <div class="dhpv-stage" data-phone-parallax>
     <div class="dhpv-phone dhpv-phone--back" aria-hidden="true">
       <div class="dhpv-rail">
@@ -160,7 +181,25 @@ const backPoster = behind?.poster ?? '/video-pillar-poster-back.jpg';
     padding-block: 3.5rem 5.5rem;
   }
 
-  .dhpv-stage { position: relative; width: var(--dhpv-w); }
+  /* The two positions live here as variables, on the stage, because that is
+     where initPhoneParallax writes the shift variables they fold in. Each
+     phone reads a position; swapping (below) just hands each phone the
+     other's. Translate first so the offset is measured in the stage's own
+     axes, then rotate the phone about its new centre. */
+  .dhpv-stage {
+    position: relative;
+    width: var(--dhpv-w);
+    --dhpv-t-front:
+      translate3d(var(--dhpv-shift-front-x, 0px), var(--dhpv-shift-front, 0px), 0)
+      rotate(var(--dhpv-tilt, 7deg));
+    --dhpv-f-front: blur(0px) brightness(1) saturate(1);
+    --dhpv-t-back:
+      translate(-31%, -5.5%)
+      translate3d(var(--dhpv-shift-back-x, 0px), var(--dhpv-shift-back, 0px), 0)
+      rotate(-6deg)
+      scale(0.93);
+    --dhpv-f-back: blur(1.9px) brightness(0.72) saturate(0.8);
+  }
 
   .dhpv-phone { position: relative; width: var(--dhpv-w); }
 
@@ -170,24 +209,42 @@ const backPoster = behind?.poster ?? '/video-pillar-poster-back.jpg';
      rotation, so the pair drifts and fans apart on screen. */
   .dhpv-phone--front {
     z-index: 2;
-    transform:
-      translate3d(var(--dhpv-shift-front-x, 0px), var(--dhpv-shift-front, 0px), 0)
-      rotate(var(--dhpv-tilt, 7deg));
+    transform: var(--dhpv-t-front);
+    filter: var(--dhpv-f-front);
   }
-
-  /* Translate first so the offset is measured in the stage's own axes, then
-     rotate the phone about its new centre. */
   .dhpv-phone--back {
     position: absolute;
     top: 0;
     left: 0;
     z-index: 1;
-    transform:
-      translate(-31%, -5.5%)
+    transform: var(--dhpv-t-back);
+    filter: var(--dhpv-f-back);
+  }
+
+  /* Clear variant: out further from behind the front phone, barely any
+     blur, near-full brightness. Still a little softer and smaller than the
+     front, so the pair keeps its depth and the front film still leads. */
+  .dhpv.is-clear-back .dhpv-stage {
+    --dhpv-t-back:
+      translate(-44%, -4%)
       translate3d(var(--dhpv-shift-back-x, 0px), var(--dhpv-shift-back, 0px), 0)
-      rotate(-6deg)
-      scale(0.93);
-    filter: blur(1.9px) brightness(0.72) saturate(0.8);
+      rotate(-7deg)
+      scale(0.95);
+    --dhpv-f-back: blur(0.5px) brightness(0.95) saturate(1);
+  }
+
+  /* Swap: each phone takes the other's position and look. z-index is an
+     integer, so over the transition it flips at the halfway point, while
+     the phones are side by side, and neither cuts through the other. The
+     transition is only on while a swap runs (is-swapping), so it never
+     softens the scroll parallax, which writes these transforms every frame. */
+  .dhpv.is-swapped .dhpv-phone--front { z-index: 1; transform: var(--dhpv-t-back); filter: var(--dhpv-f-back); }
+  .dhpv.is-swapped .dhpv-phone--back { z-index: 2; transform: var(--dhpv-t-front); filter: var(--dhpv-f-front); }
+  .dhpv.is-swapping .dhpv-phone {
+    transition:
+      transform 700ms cubic-bezier(0.65, 0, 0.35, 1),
+      filter 700ms cubic-bezier(0.65, 0, 0.35, 1),
+      z-index 700ms linear;
   }
 
   /* The bright machined edge. One gradient stands in for the way a metal
@@ -243,6 +300,9 @@ const backPoster = behind?.poster ?? '/video-pillar-poster-back.jpg';
     transition: opacity var(--pl-dur-slow) var(--pl-ease-out-quart);
   }
   .dhpv.is-playing .dhpv-poster { opacity: 0; }
+  /* The poster zooms with the film, so the still and the first frame line
+     up and the reduced-motion view crops exactly as the loop does. */
+  .dhpv-phone--front .dhpv-poster { transform: scale(var(--dhpv-zoom, 1.02)); }
 
   /* A single raking reflection across the cover glass. Kept under 13% so it
      reads as glass without dulling the footage underneath. */
@@ -272,6 +332,9 @@ const backPoster = behind?.poster ?? '/video-pillar-poster-back.jpg';
     border: 0;
     transform: translate(-50%, -50%) scale(1.02);
     pointer-events: none;
+  }
+  .dhpv-phone--front .dhpv-slot :global(iframe) {
+    transform: translate(-50%, -50%) scale(var(--dhpv-zoom, 1.02));
   }
 
   .dhpv-island {
@@ -323,11 +386,31 @@ const backPoster = behind?.poster ?? '/video-pillar-poster-back.jpg';
     z-index: 4;
   }
 
+  /* Tablet: text and phones still share a row but the phone column is
+     narrow, so the clear back phone tucks back in to the soft position or
+     it runs into the text beside it. */
+  @media (min-width: 768px) and (max-width: 1099px) {
+    .dhpv.is-clear-back .dhpv-stage {
+      --dhpv-t-back:
+        translate(-20%, -4%)
+        translate3d(var(--dhpv-shift-back-x, 0px), var(--dhpv-shift-back, 0px), 0)
+        rotate(-6deg)
+        scale(0.93);
+    }
+  }
+
   @media (max-width: 767px) {
     .dhpv { --dhpv-w: min(56vw, 15rem); padding-block: 3rem 5rem; }
+    .dhpv.is-clear-back .dhpv-stage {
+      --dhpv-t-back:
+        translate(-24%, -3%)
+        translate3d(0, var(--dhpv-shift-back, 0px), 0)
+        rotate(-5deg)
+        scale(0.95);
+    }
     /* Less lean and less offset, so the pair still clears the gutters. */
-    .dhpv-phone--back {
-      transform:
+    .dhpv-stage {
+      --dhpv-t-back:
         translate(-21%, -4%)
         translate3d(0, var(--dhpv-shift-back, 0px), 0)
         rotate(-4deg)
@@ -348,6 +431,26 @@ const backPoster = behind?.poster ?? '/video-pillar-poster-back.jpg';
     const frames: HTMLIFrameElement[] = [];
     let playing = true;
 
+    // Swapping. Runs only while the films play, so the one pause control
+    // stops every moving thing in the block, which is what WCAG 2.2.2 asks
+    // of motion that starts by itself and lasts past five seconds. Reduced
+    // motion never gets this far: the early return above covers it.
+    const swapMs = Number(root.dataset.swap ?? 0) * 1000;
+    let swapTimer = 0;
+    const swapOnce = () => {
+      root.classList.add('is-swapping');
+      root.classList.toggle('is-swapped');
+      window.setTimeout(() => root.classList.remove('is-swapping'), 750);
+    };
+    const startSwap = () => {
+      if (!swapMs || swapTimer) return;
+      swapTimer = window.setInterval(swapOnce, swapMs);
+    };
+    const stopSwap = () => {
+      window.clearInterval(swapTimer);
+      swapTimer = 0;
+    };
+
     const send = (method: string) => {
       for (const f of frames) {
         f.contentWindow?.postMessage(JSON.stringify({ method }), 'https://player.vimeo.com');
@@ -357,7 +460,8 @@ const backPoster = behind?.poster ?? '/video-pillar-poster-back.jpg';
     const setState = (next: boolean) => {
       playing = next;
       send(next ? 'play' : 'pause');
-      pause?.setAttribute('aria-pressed', String(!next));
+      if (next) startSwap(); else stopSwap();
+      pause?.setAttribute('data-paused', String(!next));
       if (label) label.textContent = next ? 'Pause video' : 'Play video';
     };
 
@@ -375,7 +479,8 @@ const backPoster = behind?.poster ?? '/video-pillar-poster-back.jpg';
         // showing while there is nothing yet to pause.
         frame.addEventListener('load', () => {
           root.classList.add('is-playing');
-          if (pause?.hidden) { pause.hidden = false; pause.setAttribute('aria-pressed', 'false'); }
+          if (pause?.hidden) { pause.hidden = false; pause.setAttribute('data-paused', 'false'); }
+          if (playing) startSwap();
         }, { once: true });
         slot.replaceChildren(frame);
         frames.push(frame);

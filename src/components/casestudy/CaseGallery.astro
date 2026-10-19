@@ -1,0 +1,57 @@
+---
+/**
+ * A grid of captioned frames. Used for the eight films in the Boston
+ * Scientific docuseries, where the captions are the hospitals, so the grid
+ * reads as the running order.
+ */
+interface Props {
+  items: { src: string; alt: string; caption?: string }[];
+  cols?: 2 | 3 | 4;
+  ratio?: string;
+}
+const { items, cols = 4, ratio = '16 / 9' } = Astro.props;
+---
+
+<ul class="cs-gallery" role="list" style={`--cs-cols:${cols}`} data-reveal-stagger="70">
+  {items.map((i) => (
+    <li data-reveal>
+      <figure class="cs-gallery__item">
+        <div class="cs-gallery__media" style={`aspect-ratio:${ratio}`}>
+          <img src={i.src} alt={i.alt} loading="lazy" decoding="async" />
+        </div>
+        {i.caption && <figcaption>{i.caption}</figcaption>}
+      </figure>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .cs-gallery {
+    display: grid;
+    grid-template-columns: repeat(var(--cs-cols, 4), minmax(0, 1fr));
+    gap: var(--pl-s-lg) var(--pl-s-md);
+    margin: var(--pl-s-lg) 0 0;
+    padding: 0;
+  }
+  .cs-gallery__item { margin: 0; }
+  .cs-gallery__media {
+    overflow: clip;
+    border-radius: var(--pl-r-media);
+    background-color: var(--pl-secondary);
+  }
+  .cs-gallery__media img { width: 100%; height: 100%; object-fit: cover; }
+  .cs-gallery figcaption {
+    margin-top: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: var(--pl-xs);
+    letter-spacing: 0.06em;
+    color: var(--pl-text-meta);
+  }
+  :global(.pl-panel.is-inverse) .cs-gallery figcaption { color: var(--pl-text-on-dark); }
+  @media (max-width: 991px) {
+    .cs-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 599px) {
+    .cs-gallery { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>

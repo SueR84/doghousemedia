@@ -5,9 +5,10 @@
  * One URL. The old site split /contact and /contact-us/, which broke every
  * button on it. Everything links here.
  *
- * Three fields only: name, organisation, what you are working on. Every
- * extra field costs enquiries, and we do not need a budget dropdown to
- * decide whether to reply.
+ * The form mirrors the "Tell us about your project" modal (StartProject):
+ * is it video, web or digital and AI, what is it, timeline, then name,
+ * email and organisation. Same questions, same submission arrangement
+ * (mailto fallback until an endpoint exists). Keep the two in step.
  *
  * TODO before launch:
  *   - point `action` at the real endpoint. It currently does nothing.
@@ -16,8 +17,18 @@
  * No phone number for the moment, on purpose.
  */
 import Site from '../layouts/Site.astro';
+import '../styles/pipely/start-project.css';
 
 const email = 'hello@doghousemedia.ie';
+const endpoint = '';
+
+const interests = [
+  { value: 'Video Production', tag: 'Video', cls: 'is-film', name: 'Video Production', desc: 'Brand films, promos, event and social content.' },
+  { value: 'Web Development', tag: 'Web', cls: 'is-web', name: 'Web Development', desc: 'Custom sites, redesigns, e-commerce and platforms.' },
+  { value: 'Digital and AI', tag: 'Digital', cls: 'is-web', name: 'Digital and AI', desc: 'AI assistants, automation and workflows.' },
+  { value: 'Something else', tag: 'Other', cls: '', name: 'Not sure yet', desc: 'Or a bit of both.' },
+];
+const timelines = ['As soon as possible', '1 to 3 months', '3 to 6 months', 'Just exploring'];
 ---
 
 <Site
@@ -30,7 +41,7 @@ const email = 'hello@doghousemedia.ie';
         <div class="pl-grid-2 is-top is-wide">
           <div class="pl-stack pl-stack-md" data-reveal>
             <p class="u-eyebrow">Contact</p>
-            <h1 class="u-h2 u-max-26" id="ct-heading">Tell us what you are working on.</h1>
+            <h1 class="u-h1 u-max-26" id="ct-heading">Tell us what you are working on.</h1>
             <p class="u-lg u-muted u-max-26">
               Send us the outline and we will tell you honestly whether we are the right studio for it. We
               answer within a working day, and if it is not for us we will say so and point you somewhere
@@ -41,37 +52,72 @@ const email = 'hello@doghousemedia.ie';
             </p>
           </div>
 
-          <div class="pl-card is-tight" data-reveal>
-            <form class="pl-form" method="post" action="#" data-contact-form>
-              <div class="pl-field">
-                <label class="pl-field__label" for="name">Your name</label>
-                <input class="pl-field__input" id="name" name="name" type="text" autocomplete="name" required />
+          <div class="pl-card is-tight ct-card" data-reveal>
+            <form class="sp-form ct-form" method="post" action="#" novalidate data-contact-form>
+              <div class="sp-pot" aria-hidden="true">
+                <label>Company website <input type="text" name="website_url" tabindex="-1" autocomplete="off" /></label>
               </div>
 
-              <div class="pl-field">
-                <label class="pl-field__label" for="organisation">Organisation</label>
-                <input
-                  class="pl-field__input"
-                  id="organisation"
-                  name="organisation"
-                  type="text"
-                  autocomplete="organization"
-                  required
-                />
+              <div data-ct-fields>
+                <fieldset class="sp-fieldset ct-interest">
+                  <legend class="sp-label">What is it? *</legend>
+                  <div class="sp-choice-grid">
+                    {interests.map((i) => (
+                      <label class="sp-choice ct-choice">
+                        <input type="radio" name="interest" value={i.value} aria-describedby="ct-error" />
+                        <span class:list={['sp-choice-tag', i.cls]}>{i.tag}</span>
+                        <span class="sp-choice-name">{i.name}</span>
+                        <span class="sp-choice-desc">{i.desc}</span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+
+                <label class="sp-field">
+                  <span class="sp-label" data-about-label>What are you working on?</span>
+                  <textarea name="about" rows="4"></textarea>
+                  <span class="ct-hint">A few lines is plenty. We will ask the rest.</span>
+                </label>
+
+                <fieldset class="sp-fieldset">
+                  <legend class="sp-label">Timeline</legend>
+                  <div class="sp-chips">
+                    {timelines.map((t) => (
+                      <label class="sp-chip">
+                        <input type="radio" name="timeline" value={t} />
+                        <span>{t}</span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+
+                <div class="sp-row">
+                  <label class="sp-field">
+                    <span class="sp-label">Name *</span>
+                    <input type="text" name="name" autocomplete="name" required aria-describedby="ct-error" />
+                  </label>
+                  <label class="sp-field">
+                    <span class="sp-label">Email *</span>
+                    <input type="email" name="email" autocomplete="email" required aria-describedby="ct-error" />
+                  </label>
+                </div>
+                <label class="sp-field">
+                  <span class="sp-label">Organisation</span>
+                  <input type="text" name="organisation" autocomplete="organization" />
+                </label>
+
+                <p class="sp-error" id="ct-error" data-ct-error role="alert"></p>
+
+                <div class="sp-nav">
+                  <button type="submit" class="pl-btn sp-advance" data-ct-submit>Send enquiry</button>
+                </div>
               </div>
 
-              <div class="pl-field">
-                <label class="pl-field__label" for="email">Email</label>
-                <input class="pl-field__input" id="email" name="email" type="email" autocomplete="email" required />
+              <div class="sp-success" data-ct-done hidden>
+                <div class="sp-check" aria-hidden="true">&check;</div>
+                <h2 class="sp-title" tabindex="-1" data-ct-done-title>Thanks, we're on it.</h2>
+                <p class="sp-sub" data-ct-done-body>Your enquiry is on its way. We'll be in touch within one working day.</p>
               </div>
-
-              <div class="pl-field">
-                <label class="pl-field__label" for="project">What you are working on</label>
-                <textarea class="pl-field__input" id="project" name="project" rows="5" required></textarea>
-                <p class="pl-field__hint" id="project-hint">A few lines is plenty. We will ask the rest.</p>
-              </div>
-
-              <button class="pl-btn" type="submit">Send</button>
             </form>
           </div>
         </div>
@@ -81,30 +127,129 @@ const email = 'hello@doghousemedia.ie';
 </Site>
 
 <style is:global>
-  /* Form. Visible labels, never placeholder-as-label, and a focus ring that
-     survives on both the cream cards and the white panels. */
-  .pipely .pl-form { display: grid; gap: var(--pl-s-lg); width: 100%; }
-  .pipely .pl-field { display: grid; gap: 0.5rem; }
-  .pipely .pl-field__label {
-    font-size: var(--pl-sm);
-    font-weight: var(--pl-fw-medium);
-    letter-spacing: var(--pl-tr-tag);
-    text-transform: uppercase;
+  .pipely .ct-card { align-items: stretch; background-color: var(--pl-secondary); }
+  .pipely .ct-form { width: 100%; }
+  .pipely .ct-form .sp-fieldset:first-child { margin-top: 0; }
+  .pipely .ct-form .sp-choice-grid { margin-top: 12px; gap: 12px; }
+  .pipely .ct-choice { position: relative; padding: 18px; }
+  .pipely .ct-choice input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+  .pipely .ct-choice:has(input:checked) {
+    border-color: var(--color-ink);
+    box-shadow: inset 0 0 0 1px var(--color-ink);
   }
-  .pipely .pl-field__input {
-    width: 100%;
-    padding: 0.875rem 1rem;
-    border: 1px solid var(--pl-border-strong);
-    border-radius: 0.75rem;
-    background: var(--color-white);
-    color: inherit;
-    font: inherit;
-    font-size: var(--pl-lg);
+  .pipely .ct-choice:has(input:focus-visible) { outline: 2px solid var(--color-ink); outline-offset: 2px; }
+  .pipely .ct-hint { font-size: 13px; color: var(--pl-text-muted); }
+  .pipely .ct-form [hidden] { display: none !important; }
+  .pipely .ct-form .sp-success { padding: 12px 0; }
+  .pipely .ct-form .sp-nav { margin-top: 24px; }
+  @media (max-width: 560px) {
+    .pipely .ct-form .sp-choice-grid { grid-template-columns: 1fr; }
   }
-  .pipely .pl-field__input:focus-visible {
-    outline: 2px solid var(--color-ink);
-    outline-offset: 2px;
-  }
-  .pipely .pl-field__hint { font-size: var(--pl-sm); color: var(--pl-text-muted); }
-  .pipely textarea.pl-field__input { resize: vertical; }
 </style>
+
+<script define:vars={{ endpoint, email }}>
+  (function () {
+    const form = document.querySelector('[data-contact-form]');
+    if (!form) return;
+
+    const fields = form.querySelector('[data-ct-fields]');
+    const done = form.querySelector('[data-ct-done]');
+    const doneTitle = form.querySelector('[data-ct-done-title]');
+    const doneBody = form.querySelector('[data-ct-done-body]');
+    const errorEl = form.querySelector('[data-ct-error]');
+    const submitBtn = form.querySelector('[data-ct-submit]');
+    const aboutLabel = form.querySelector('[data-about-label]');
+    const name = form.querySelector('[name="name"]');
+    const mail = form.querySelector('[name="email"]');
+    const fieldset = form.querySelector('.ct-interest');
+
+    // The prompt follows the choice, as it does in the modal.
+    const prompts = {
+      'Video Production': 'What is the film for, and who needs to see it?',
+      'Web Development': 'What does the site need to do?',
+      'Digital and AI': 'What would you like to automate, build or improve?',
+    };
+    form.querySelectorAll('[name="interest"]').forEach((r) =>
+      r.addEventListener('change', () => {
+        aboutLabel.textContent = prompts[r.value] || 'What are you working on?';
+        errorEl.textContent = '';
+      })
+    );
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorEl.textContent = '';
+      [name, mail].forEach((f) => f.removeAttribute('aria-invalid'));
+
+      const chosen = form.querySelector('[name="interest"]:checked');
+      const bad = [name, mail].filter((f) => !f.value.trim() || !f.checkValidity());
+      if (!chosen || bad.length) {
+        bad.forEach((f) => f.setAttribute('aria-invalid', 'true'));
+        errorEl.textContent = !chosen
+          ? 'Please choose whether this is video, web or digital, and add your name and a valid email.'
+          : 'Please add your name and a valid email.';
+        (chosen ? bad[0] : form.querySelector('[name="interest"]')).focus();
+        return;
+      }
+
+      const fd = new FormData(form);
+      const payload = {
+        interest: chosen.value,
+        about: String(fd.get('about') || '').trim(),
+        timeline: String(fd.get('timeline') || ''),
+        name: name.value.trim(),
+        email: mail.value.trim(),
+        organisation: String(fd.get('organisation') || '').trim(),
+      };
+
+      function showDone() {
+        fields.hidden = true;
+        done.hidden = false;
+        doneTitle.focus({ preventScroll: true });
+      }
+
+      // Honeypot filled: act as if it sent, send nothing.
+      if (fd.get('website_url')) {
+        showDone();
+        return;
+      }
+
+      let sent = false;
+      if (endpoint) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending';
+        try {
+          const res = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          sent = res.ok;
+        } catch (err) {
+          sent = false;
+        }
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send enquiry';
+      }
+
+      if (!sent) {
+        // No endpoint, or it failed: hand off to a pre-filled email.
+        const subject = `New ${payload.interest} enquiry from ${payload.name}${payload.organisation ? `, ${payload.organisation}` : ''}`;
+        const body = [
+          `Interested in: ${payload.interest}`,
+          `Timeline: ${payload.timeline || 'Not given'}`,
+          '',
+          payload.about || '(No details given)',
+          '',
+          `Name: ${payload.name}`,
+          `Email: ${payload.email}`,
+          `Organisation: ${payload.organisation || 'Not given'}`,
+        ].join('\n');
+        window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        doneTitle.textContent = 'One last step.';
+        doneBody.textContent = `We've opened an email with your answers filled in. Press send and it reaches us. If nothing opened, write to ${email}.`;
+      }
+      showDone();
+    });
+  })();
+</script>

@@ -1,9 +1,18 @@
 ---
-/** Infinite loop strip. Children are cloned once at runtime. */
-interface Props { speed?: number; reverse?: boolean; faded?: boolean; class?: string }
-const { speed, reverse = false, faded = true, class: cls = '' } = Astro.props;
+/** Infinite loop strip. Children are cloned once at runtime.
+    The pause button satisfies WCAG 2.2.2: hover alone does not help
+    keyboard or touch users. It is hidden until JS runs and under
+    reduced motion, where the strip does not move. */
+interface Props { speed?: number; reverse?: boolean; faded?: boolean; class?: string; label?: string }
+const { speed, reverse = false, faded = true, class: cls = '', label = 'logos' } = Astro.props;
 const classes = ['pl-marquee', reverse ? 'is-reverse' : '', faded ? 'is-faded' : '', cls].filter(Boolean).join(' ');
 ---
-<div class={classes} data-marquee data-marquee-speed={speed}>
-  <div class="pl-marquee__track"><slot /></div>
+<div class="pl-marquee-wrap">
+  <div class={classes} data-marquee data-marquee-speed={speed}>
+    <div class="pl-marquee__track"><slot /></div>
+  </div>
+  <button class="pl-marquee__pause" type="button" data-marquee-pause data-label={label} hidden>
+    <span class="pl-marquee__pause-icon" aria-hidden="true"></span>
+    <span class="sr-only" data-marquee-pause-label>Pause scrolling {label}</span>
+  </button>
 </div>

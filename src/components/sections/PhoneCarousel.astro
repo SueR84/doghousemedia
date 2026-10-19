@@ -5,7 +5,7 @@
  * adapted here to use the site's own type and colour tokens instead of the
  * hardcoded hex and Inter Tight it shipped with.
  *
- * Display type stays Host Grotesk (--font-display), per CLAUDE.md: Inter
+ * Display type stays the display face (--font-display), per CLAUDE.md: Inter
  * Tight is the typeface Pipely's fork replaced, not the one to reintroduce.
  * The embed's Google Fonts <link> is dropped for the same reason, since
  * BaseHead already loads the site's faces.
@@ -86,8 +86,14 @@
      innerHTML at runtime, which Astro's scoped-style attribute never
      reaches. The dhpc- prefix keeps this from colliding with anything
      else on the page. */
+  /* The phones size from the column they sit in, not the window. The three
+     overlap to a group 2.52 phone-widths wide, so 39cqw (just under 1/2.52)
+     is the widest that still fits the column. Capped at 235px, which is 20%
+     up from the old 196px (19 September 2026). Sized from the window, the
+     group ran past its column into the text at 800 to 1199px. */
+  .dhpc-wrap { container-type: inline-size; }
   .dhpc-carousel {
-    --phone-w: clamp(104px, 21vw, 196px);
+    --phone-w: clamp(100px, 39cqw, 235px);
     --red: var(--color-red);
     --teal: var(--color-teal);
     --teal-light: var(--color-teal-light);
@@ -196,7 +202,7 @@
   }
 
   @media (max-width: 480px) {
-    .dhpc-carousel { --phone-w: clamp(86px, 26vw, 140px); }
+    .dhpc-carousel { --phone-w: clamp(100px, 39cqw, 168px); }
   }
 </style>
 
@@ -204,15 +210,15 @@
   (function () {
     var PROJECTS = [
       { name: 'UCD', line: 'Site build for the Smurfit Aspire programme.', image: '/work/carousel/ucd.jpg' },
-      { name: 'Coroflo', line: 'Product site rebuild for the wearable pump range.', image: '/work/carousel/coroflo.jpg' },
-      { name: 'Someone Like Me', line: 'Website build for the Someone Like Me Art Awards.', image: '/work/carousel/someone-like-me.jpg' },
+      { name: 'Coroflo', line: 'Product site for Coro, the breastfeeding monitor.', image: '/work/carousel/coroflo.jpg' },
+      { name: 'Someone Like Me', line: 'Built with Real Nation, who designed and ran the project.', image: '/work/carousel/someone-like-me.jpg' },
       { name: 'Galway Braces', line: 'Site design and build for the Galway orthodontic practice.', image: '/work/carousel/galway-braces.jpg' },
       { name: 'Real Nation', line: 'Campaign microsite for AIB Future Sparks.', image: '/work/carousel/real-nation.jpg' },
       { name: 'Crownway Investments', line: 'Website build for the Dublin property investment firm.', image: '/work/carousel/crownway-investments.jpg' },
       { name: 'Basispoint', line: 'Website build for the workplace giving platform.', image: '/work/carousel/basispoint.jpg' },
       { name: 'Off Script Tapes', line: 'Website build for the wedding camcorder hire service.', image: '/work/carousel/off-script-tapes.jpg' },
       { name: 'Western Rheumatology', line: 'Clinic site and appointment flow for the Galway practice.', image: '/work/carousel/western-rheumatology.jpg' },
-      { name: 'Our World Awards', line: 'Awards programme site for Irish Aid primary schools.', image: '/work/carousel/our-world-awards.jpg' },
+      { name: 'Our World Awards', line: 'Irish Aid schools awards. Built with Real Nation, who designed and ran it.', image: '/work/carousel/our-world-awards.jpg' },
       { name: 'Jill Collins', line: 'Site for the physical and craniosacral therapy practice.', image: '/work/carousel/jill-collins.jpg' },
       { name: 'Loreto South Sudan', line: "Website build for the girls' education charity.", image: '/work/carousel/loreto-south-sudan.jpg' },
       { name: 'Shapes of Grief', line: 'Learning management system for the grief training programme.', image: '/work/carousel/shapes-of-grief.jpg' }
@@ -310,14 +316,14 @@
       function setState(next) {
         playing = next;
         if (next) { startAll(false); } else { stopAll(); }
-        pause.setAttribute('aria-pressed', String(!next));
+        pause.setAttribute('data-paused', String(!next));
         if (label) label.textContent = next ? 'Pause the line-up' : 'Play the line-up';
       }
 
       pause.addEventListener('click', function () { setState(!playing); });
 
       pause.hidden = false;
-      pause.setAttribute('aria-pressed', 'false');
+      pause.setAttribute('data-paused', 'false');
       startAll(true);
     }
 

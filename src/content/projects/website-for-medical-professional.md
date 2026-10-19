@@ -5,6 +5,7 @@ year: 2023
 craft: "web"
 summary: "A website to accept payments, take appointment enquiries and provide important patient information."
 cover: "/work/ronan-kavanagh-pi2.jpg"
+thumb: "/work/thumbs/website-for-medical-professional-16x9.jpg"
 liveUrl: "https://ronankavanagh.ie/"
 services:
   - "Web Development"
@@ -15,7 +16,7 @@ gallery:
   - "/work/ronan-kavanagh-pi4.jpg"
   - "/work/ronan-kavanagh-pi3-scaled.jpg"
 order: 11
-draft: false
+draft: true
 ---
 Dr Kavanagh runs a busy specialised clinic in Galway City and is a client of ours - we also run his dotmd.ie website, an annual medical conference which has grown year on year since 2014.
 

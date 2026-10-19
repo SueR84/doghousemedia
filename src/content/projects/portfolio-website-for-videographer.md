@@ -10,7 +10,7 @@ services:
   - "Development"
   - "Lead capture"
 order: 8
-draft: false
+draft: true
 ---
 We worked with Emma at Edithouse to design and develop their new website. Working closely with Kay at Patterns.ie, Edithouse underwent a complete rebranding process, creating a new logo, color palette, and typography. From the start we aimed to set Edithouse apart from their competitors by creating a custom design for WordPress that was both modern and edgy. 
 

@@ -1,0 +1,158 @@
+---
+title: "A clinic that answers, without picking up the phone."
+client: "Western Rheumatology"
+year: 2026 # TODO: confirm the year before launch
+craft: "web"
+summary: "Our bespoke solution allows this busy two location rheumatology clinic in Galway to run their website and support channels themselves. The team publishes news and alerts, keeps a 50+ medication knowledge base in sync with the site, takes repeat prescription requests through an online form, and has an AI assistant answering the routine questions that used to arrive by phone and email."
+cover: "/work/western-rheumatology-card.jpg"
+thumb: "/work/thumbs/western-rheumatology-16x9.jpg"
+services:
+  - "Web Development"
+  - "Content management"
+  - "Medication knowledge base"
+  - "AI assistant"
+capabilities: ["ai"]
+facts:
+  - label: "Client"
+    value: "Western Rheumatology, Galway"
+  - label: "What we did"
+    value: "Website, content management, medication knowledge base, repeat prescription ordering and AI assistant"
+  - label: "Website"
+    value: "Visit the Western Rheumatology website"
+    href: "https://wrh.ie/"
+order: 3
+caseStudy: true
+hideCover: true
+feature: true
+draft: false
+---
+
+import CaseStep from '../../components/casestudy/CaseStep.astro';
+import CaseFigure from '../../components/casestudy/CaseFigure.astro';
+import ChatPhone from '../../components/sections/ChatPhone.astro';
+import CaseDevices from '../../components/casestudy/CaseDevices.astro';
+
+{/* Rewritten 16 October 2026 into the three things we built: content the team
+    runs, the medication knowledge base with prescription ordering, and the
+    assistant. Everything here is on wrh.ie today: four consultant
+    rheumatologists, two Galway locations (Blackrock Health Clinic and Bon
+    Secours Hospital), the appointment and repeat prescription forms, 50+
+    medications with dosing, monitoring and precautions, and the assistant with
+    its own stated limits. The assistant's disclaimer on the live site names
+    Mistral AI, which is why this page can.
+
+    MESSAGING-PLAN section 7.6: describe the outcome, stay vague on the
+    plumbing, and do not publish a map of a clinic's internal workflow. Nothing
+    below names the clinic's systems or says where the medication information
+    is kept.
+
+    TODO before launch:
+      - the year of the build
+      - confirm with the clinic that naming the assistant's provider is fine on
+        our site as well as on theirs
+      - confirm the GDPR wording with Sue before launch
+      - a quote. None of the three testimonials in hand is from Western
+        Rheumatology, so this closes on what the site does instead. Add a
+        `quote` to the frontmatter if one lands and it renders on its own. */}
+
+<CaseStep n="01" label="The problem" title="A site that absorbs the routine." surface="secondary">
+  Western Rheumatology is four consultant rheumatologists working across two locations in
+  Galway. Many of their patients are on long-term medication that has to be monitored, so the
+  clinic is asked the same practical things over and over. Where do I go. How do I get an
+  appointment. Can I reorder my prescription. What is the drug I have been put on, what dose is
+  normal, and what do I watch for.
+
+  The site now takes some of this load, and the practice runs the content themselves. Staff sign in to their
+  content management system and publish news posts, articles and alerts without
+  waiting for a developer. A new clinic location, a notice about appointment text messages, an
+  alert for patients: patients get one place to look for what is current.
+
+  <CaseFigure
+    slot="aside"
+    src="/work/western-rheumatology/mock-ipad-photo.jpg"
+    alt="A member of clinic staff in blue gloves holding a tablet that shows the Western Rheumatology homepage, with the assistant open in the corner."
+    ratio="2000 / 1333"
+  />
+</CaseStep>
+
+<CaseStep n="02" label="Medications" title="Medication knowledge base, and prescriptions in one place." surface="tint">
+  The clinic needed one place to keep the detail on each medication, one the practice could edit
+  themselves and the website would always match. So the practice maintains a knowledge base of
+  more than 50 medications, and the website syncs with it in real time.
+
+  <h3 class="u-h4" style="margin-bottom:var(--pl-s-sm)">Medication Database</h3>
+
+  Fields include: indication, typical dose and range, monitoring and blood tests, side effects
+  and infection precautions. Records are tagged by condition, drug class and route of
+  administration. The library is searchable, every medication is printable, and each one has a
+  unique link, so the clinic can send a patient the one entry they need.
+
+  <h3 class="u-h4" style="margin-bottom:var(--pl-s-sm)">Online Repeat Prescription Ordering</h3>
+
+  Repeat prescriptions work the same way. An existing patient orders through an online form and
+  gives their pharmacy at the same time. Requests arrive in one place instead of across phone
+  calls and emails, which keeps enquiries to the front desk down and cuts the admin time spent
+  chasing them. The conditions the clinic sets around safe prescribing, including up to date
+  blood tests, are stated on the same page.
+
+  <CaseDevices
+    slot="aside"
+    layout="tablet-phone"
+    screen="/work/western-rheumatology/mock-tablet-meds.webp"
+    screenRatio="1500 / 1072"
+    phone="/work/western-rheumatology/mock-phone-meds.webp"
+    alt="The medication knowledge base on a tablet and a phone. An entry for Amgevita is open, showing what it is for and the typical dose and range."
+  />
+</CaseStep>
+
+<CaseStep n="03" label="The assistant" title="Bespoke support assistant built around how the clinic works." surface="secondary">
+  <div slot="intro">
+
+  We built, trained, tested and maintain a bespoke chatbot solution for the clinic. An assistant
+  sits on every page and answers from the Knowledge Base it has been trained on and strict guidelines it has
+  been given.
+
+  This is a healthcare website, so accuracy and guardrails were paramount in the
+  build and testing phase. The knowledge base is a living document the clinic team can access and
+  amend as necessary, and it syncs with the bot on the site. Guardrails and instructions are
+  hard-coded in.
+
+  </div>
+
+  There is a feedback loop. Every conversation is logged, and a summary report can be sent to
+  the team for any date range. It highlights the conversations where the assistant struggled to
+  answer, identifies the gaps in the knowledge base and suggests solutions, so the team can
+  decide what to change. The assistant gets better the more it is used, which means fewer calls
+  and emails to the admin team. It also takes repeat prescription requests, starting the form
+  inside the chat. It is built to be GDPR compliant.
+
+  <h3 class="u-h4" style="margin-bottom:var(--pl-s-sm)">EU AI Act: transparency and oversight built in</h3>
+
+  Under the EU Artificial Intelligence Act (Regulation (EU) 2024/1689), this assistant is an interactive AI system subject to the transparency requirements in Article 50. It is intended to answer general clinic questions and open the repeat-prescription form. It is not intended to diagnose, triage, interpret symptoms or test results, or recommend treatment.
+
+  Patients are clearly told from the start of their first interaction that they are chatting with an AI assistant. The system is operated within a defined administrative scope, using clinic-approved information, fixed safety instructions and human review.
+
+  - **Clear AI disclosure.** Patients are told that they are interacting with AI before beginning a conversation.
+  - **Defined purpose and safeguards.** The assistant is instructed not to provide medical advice and uses separate form controls for prescription information.
+  - **Grounded in clinic-approved information.** The clinic’s knowledge base and administrative instructions are supplied to the assistant when it answers. It is instructed not to invent an answer when approved information is unavailable.
+  - **Data transparency.** Patients are told that chat messages are sent to Mistral AI to generate replies and are directed to the clinic’s privacy information.
+  - **Human oversight.** Authorised staff can review logged conversations and identify unanswered questions or inappropriate answers.
+  - **Human-led improvement.** Reports help the clinic and Doghouse Media improve the knowledge base, instructions and safeguards.
+
+  <ChatPhone
+    slot="aside"
+    alt="The clinic assistant on a phone. A patient asks where they can park, the assistant asks which location they mean, and answers for Bon Secours Hospital. The patient then asks to order a repeat prescription and the assistant starts the request form."
+  />
+
+  <div slot="below" style="display:flex;justify-content:center">
+    <img
+      src="/work/western-rheumatology/mock-laptop-admin.webp"
+      alt="The clinic's assistant admin screen on a laptop. The Conversation Log tab is open, with a form to send a summary report to the team for a chosen date range and a list of recent conversations underneath."
+      width="1800"
+      height="1084"
+      loading="lazy"
+      decoding="async"
+      style="width:min(100%,60rem);height:auto;filter:drop-shadow(0 22px 34px rgba(18,38,66,0.18))"
+    />
+  </div>
+</CaseStep>

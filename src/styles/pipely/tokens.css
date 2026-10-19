@@ -6,22 +6,28 @@
    ============================================================ */
 
 :root {
-  /* Doghouse brand palette. Same values as the main tokens.css,
-     repeated so this layer stands alone. */
+  /* Doghouse palette, cooled 24 September 2026. The warm beige stack
+     (cream #faf7f0, line #e5e1d8, gray #9b9890) is replaced by cool greys
+     of the same lightness, so every surface, border and inverse text
+     colour follows without a structural change. Ink, red, teal, steel and
+     deep teal are untouched: they were already cool.
+     NOTE: the brand pack names Cream #faf7f0 and Line #e5e1d8, so this is
+     a departure from it. The variables keep their names on purpose, so
+     reverting is three values. */
   --color-ink: #0f1417;
-  --color-cream: #faf7f0;
+  --color-cream: #f3f6f8;
   --color-white: #ffffff;
   --color-red: #bd1c30;
   --color-teal: #2c6e7f;
   --color-steel: #7395a1;
   --color-deep-teal: #15282e;
-  --color-line: #e5e1d8;
-  --color-gray: #9b9890;
+  --color-line: #e1e7ea;
+  --color-gray: #6b767d;
   --color-steel-tint: #eaf1f4;
   --color-red-tint: #fdeaed;
   --color-teal-light: #8fc4d2;
 
-  /* Surfaces: the three-step warm stack that makes the template work.
+  /* Surfaces: the three-step stack that makes the template work.
      ground = the page, primary = panels, secondary = cards in panels. */
   --pl-ground: var(--color-line);
   --pl-primary: var(--color-white);
@@ -30,7 +36,7 @@
   --pl-film: var(--color-deep-teal);
 
   /* Card fills. Pipely rotates saturated pastels; Doghouse is warm,
-     grounded and restrained, and its tint palette is only Steel tint,
+     cool, grounded and restrained, and its tint palette is only Steel tint,
      Red tint and Teal light. So the rotation stays neutral and the craft
      signal moves to the pill tags and the deep-teal film band, which is
      what the brand actually specifies those colours for. */
@@ -42,7 +48,9 @@
   --pl-text: var(--color-ink);
   --pl-text-inverse: var(--color-cream);
   --pl-text-muted: color-mix(in srgb, var(--color-ink) 62%, var(--color-cream));
-  --pl-text-meta: var(--color-gray);
+  /* #5a646a, not --color-gray (#6b767d). Gray measured 4.07:1 on the steel
+     tint and 4.35:1 on cream at 12px. This is about 5.3:1 and 5.7:1. */
+  --pl-text-meta: #5a646a;
   --pl-text-on-dark: color-mix(in srgb, var(--color-cream) 70%, transparent);
 
   --pl-border: var(--color-line);
@@ -62,9 +70,14 @@
   --pl-btn-text-hover: var(--color-cream);
   --pl-focus-ring: 0 0 0 3px rgb(115 149 161 / 0.3);
 
-  /* Display is Host Grotesk, the template's own face. Body stays Inter,
-     which both the template and the Doghouse brand pack use. */
-  --font-display: 'Host Grotesk', system-ui, -apple-system, sans-serif;
+  /* Display is Plus Jakarta Sans, headings at 500 (settled 24 September
+     2026, replacing the template's Host Grotesk). Plus Jakarta Display was
+     the family asked for, but it is on neither Google Fonts nor npm nor
+     GitHub and the only copies are mirrors with no verifiable licence, so
+     this is its maintained successor from the same foundry, under the OFL.
+     Body is Inter, labels JetBrains Mono. All three come from the single
+     request in components/BaseHead.astro. */
+  --font-display: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --font-body: 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --fw-black: 800;
@@ -190,6 +203,9 @@
 }
 @media (max-width: 479px) {
   :root {
+    /* 56px lets "organisations" in the Work page H1 run 8px past a 375px
+       screen. 48px clears it and still sits clearly above the 44px H2. */
+    --pl-h1: 3rem;
     --pl-h2: 2.75rem;
     --pl-h3: 1.75rem;
   }

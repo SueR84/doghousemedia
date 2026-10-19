@@ -146,6 +146,19 @@ function initMarquees() {
     track.append(...clones);
     track.dataset.cloned = 'true';
     if (el.dataset.marqueeSpeed) track.style.animationDuration = `${el.dataset.marqueeSpeed}s`;
+
+    // Pause control (WCAG 2.2.2). Not shown under reduced motion, where nothing moves.
+    const btn = el.parentElement?.querySelector<HTMLButtonElement>('[data-marquee-pause]');
+    if (!btn || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const label = btn.querySelector<HTMLElement>('[data-marquee-pause-label]');
+    const what = btn.dataset.label || 'logos';
+    btn.dataset.paused = 'false';
+    btn.hidden = false;
+    btn.addEventListener('click', () => {
+      const paused = el.classList.toggle('is-paused');
+      btn.dataset.paused = String(paused);
+      if (label) label.textContent = paused ? `Play scrolling ${what}` : `Pause scrolling ${what}`;
+    });
   });
 }
 
@@ -253,26 +266,18 @@ function initAccordions() {
   });
 }
 
-/* 6. Nav hides on scroll down, returns on scroll up. 1000ms outQuart. */
+/* 6. Nav. Stays with the reader the whole way down (changed 18 September
+   2026 from Pipely's hide-on-scroll-down), and turns to frosted glass once
+   the page has scrolled, so what passes behind it shows through blurred.
+   The frosting is a state, not motion, so it runs under reduced motion too. */
 function initNav() {
   const nav = document.querySelector<HTMLElement>('[data-pl-nav]');
   if (!nav) return;
-  let last = window.scrollY;
-  const THRESHOLD = 8;
-  const TOP_LOCK = 120;
+  const SCROLLED_AT = 12;
 
-  window.addEventListener(
-    'scroll',
-    () => {
-      const y = window.scrollY;
-      const delta = y - last;
-      if (Math.abs(delta) < THRESHOLD) return;
-      if (delta > 0 && y > TOP_LOCK) nav.classList.add('is-hidden');
-      else nav.classList.remove('is-hidden');
-      last = y;
-    },
-    { passive: true },
-  );
+  const sync = () => nav.classList.toggle('is-scrolled', window.scrollY > SCROLLED_AT);
+  sync();
+  window.addEventListener('scroll', sync, { passive: true });
 }
 
 /* 7. Scroll-scrubbed progress rail. */

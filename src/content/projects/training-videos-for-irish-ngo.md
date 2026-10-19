@@ -4,6 +4,7 @@ client: "The Irish Red Cross"
 year: 2024
 craft: "video"
 summary: "Series of Instructional and Training videos for irish NGO"
+cover: "/work/vimeo-irish-red-cross-promotional-video.jpg"
 video: "636319848"
 videoHash: "7c7fe260ca"
 services:

@@ -23,10 +23,13 @@ body.pipely {
 .pipely :where(img, svg, video) { display: block; max-width: 100%; }
 .pipely :where(img) { height: auto; }
 
+/* Headings sit at 500, a step up from the template's 400 (24 September
+   2026). Plus Jakarta Sans at 400 reads light at these sizes; 500 gives
+   the headings presence without tipping into a bold. */
 .pipely :where(h1, h2, h3, h4, h5, h6) {
   margin: 0;
   font-family: var(--font-display);
-  font-weight: var(--pl-fw-regular);
+  font-weight: var(--pl-fw-medium);
 }
 .pipely :where(p) { margin: 0; }
 .pipely :where(ul, ol) { margin: 0; padding: 0; list-style: none; }

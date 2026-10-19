@@ -1,0 +1,577 @@
+---
+/**
+ * The Western Rheumatology assistant, running on a phone. Added 16 October
+ * 2026.
+ *
+ * Everything said in the conversation is taken from the live assistant on
+ * wrh.ie (screenshots in /wrh, 16 October 2026): the opening line and
+ * buttons, the parking question, the clarifying question, the answer for Bon
+ * Secours Hospital, and the start of the repeat prescription form. Colours
+ * are the clinic's own. Nothing is a real patient: the two things "typed" are
+ * ordinary questions.
+ *
+ * Motion: the visitor's question is typed into the box, sent, the assistant
+ * shows its three dots and answers, twice over. It runs once when the phone
+ * scrolls into view and then stops on the finished conversation. It lasts
+ * longer than five seconds, so there is a visible Pause / Play button under
+ * the phone (WCAG 2.2.2). Under prefers-reduced-motion, without JavaScript,
+ * or when the observer is missing, the finished conversation is all that
+ * shows and the button is hidden.
+ *
+ * Accessibility (WCAG 2.2 AA, see CLAUDE.md): the phone is one image to
+ * assistive tech (role="img" + alt) and everything inside it is aria-hidden.
+ *
+ * Proportions: iPhone 16, 393 x 852 points, screen ratio 9 / 19.5. Every
+ * size inside is in "u", one point of a 390 point wide screen, so the whole
+ * thing scales with the phone.
+ */
+interface Props {
+  alt: string;
+}
+const { alt } = Astro.props;
+---
+
+<figure class="cp" data-chat-phone>
+  <div class="cp-rail" role="img" aria-label={alt}>
+    <div class="cp-body" aria-hidden="true">
+      <div class="cp-screen">
+        <div class="cp-ui">
+          <div class="cp-sb">
+            <span class="cp-time">10:46</span>
+            <span class="cp-island"></span>
+            <span class="cp-sys">
+              <svg viewBox="0 0 18 12" width="18" height="12" fill="#fff"><rect x="0" y="8" width="3" height="4" rx="0.8"/><rect x="5" y="5.5" width="3" height="6.5" rx="0.8"/><rect x="10" y="3" width="3" height="9" rx="0.8"/><rect x="15" y="0" width="3" height="12" rx="0.8"/></svg>
+              <svg viewBox="0 0 16 12" width="16" height="12" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"><path d="M1.2 4.3a9.6 9.6 0 0 1 13.6 0"/><path d="M3.6 6.9a6.2 6.2 0 0 1 8.8 0"/><circle cx="8" cy="10" r="1" fill="#fff" stroke="none"/></svg>
+              <svg viewBox="0 0 27 12" width="27" height="12"><rect x="0.6" y="0.6" width="22" height="10.8" rx="3.2" fill="none" stroke="#fff" opacity="0.5"/><rect x="2" y="2" width="19" height="8" rx="2" fill="#fff"/><rect x="24" y="4" width="1.8" height="4" rx="0.9" fill="#fff" opacity="0.5"/></svg>
+            </span>
+          </div>
+
+          <div class="cp-hd">
+            <span class="cp-av">
+              <svg viewBox="0 0 40 40"><path fill="#fff" d="M20 7c3.6 5.4 7 8.7 7 12.6a7 7 0 0 1-14 0C13 15.700 16.400 12.400 20 7Z"/><path fill="#fff" d="M13.700 24h12.600c1.200 0 1.900 1.300 1.200 2.300l-6.300 8.200c-.6.800-1.800.8-2.400 0l-6.300-8.200c-.7-1-.1-2.300 1.200-2.300Z"/></svg>
+            </span>
+            <span class="cp-title">Western Rheumatology</span>
+            <svg class="cp-chev" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 9 7 7 7-7"/></svg>
+          </div>
+
+          <div class="cp-msgs">
+            <div class="cp-thread">
+              <div class="cp-note">You are chatting with an AI assistant. It can answer general clinic questions and help with repeat prescription requests, but cannot provide medical advice.</div>
+
+              <div class="cp-card cp-card--menu">
+                <div class="cp-card__q">How can we help today?</div>
+                <span class="cp-opt">Order a repeat prescription</span>
+                <span class="cp-opt">Ask me a question</span>
+              </div>
+
+              <div class="cp-m cp-m--user" data-step="u1" data-say="where can i park?">
+                <div class="cp-bub">where can i park?</div>
+                <span class="cp-ts">10:46</span>
+              </div>
+
+              <div class="cp-m cp-m--bot" data-step="b1">
+                <div class="cp-bub">Are you looking for parking information for our <b>Blackrock Health Clinic</b> location or our <b>Bon Secours Hospital</b> location?</div>
+                <div class="cp-row"><span class="cp-mini"></span><span class="cp-ts">10:46</span></div>
+              </div>
+
+              <div class="cp-m cp-m--user" data-step="u2" data-say="Bon Secours Hospital please">
+                <div class="cp-bub">Bon Secours Hospital please</div>
+                <span class="cp-ts">10:47</span>
+              </div>
+
+              <div class="cp-m cp-m--bot" data-step="b2">
+                <div class="cp-bub">At <b>Bon Secours Hospital</b>, there is significant patient parking available. Drop-off is available at the front entrance, and wheelchairs are accessible inside.<br /><br />For directions, you can use this Google Maps link: <b><u>Bon Secours Hospital Google Map location</u></b>.</div>
+                <div class="cp-row"><span class="cp-mini"></span><span class="cp-ts">10:47</span></div>
+              </div>
+
+              <div class="cp-m cp-m--user" data-step="u3" data-say="can I order my repeat prescription?">
+                <div class="cp-bub">can I order my repeat prescription?</div>
+                <span class="cp-ts">10:48</span>
+              </div>
+
+              <div class="cp-m cp-m--bot" data-step="b3">
+                <div class="cp-bub">Are you an existing patient with Western Rheumatology?<br /><br />If so, I can help you order your repeat prescription.</div>
+                <div class="cp-row"><span class="cp-mini"></span><span class="cp-ts">10:48</span></div>
+              </div>
+
+              <div class="cp-card cp-card--form" data-step="f1">
+                <label class="cp-lbl">Full name</label>
+                <span class="cp-field"></span>
+                <label class="cp-lbl">Date of birth</label>
+                <span class="cp-field cp-field--date"><i>dd/mm/yyyy</i>
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#18212a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="cp-in">
+            <div class="cp-box">
+              <span class="cp-ph"><span class="cp-typed"></span><i class="cp-caret"></i><em class="cp-hint">Type your message</em></span>
+              <span class="cp-send"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg></span>
+            </div>
+            <div class="cp-disc">Chat messages are sent to Mistral AI to generate replies. Please do not enter personal medical details here; use the prescription form for prescription requests.</div>
+            <div class="cp-foot">Powered by Doghouse Media</div>
+            <span class="cp-home"></span>
+          </div>
+        </div>
+        <span class="cp-glare"></span>
+      </div>
+    </div>
+  </div>
+  <button class="cp-ctl" type="button" hidden>Pause animation</button>
+</figure>
+
+<style>
+  /* ---- Phone chrome: the same rail, bezel and radii as AppPhone ---- */
+  .cp {
+    --cp-w: clamp(14rem, 24vw, 19rem);
+    width: var(--cp-w);
+    margin: 0 auto;
+  }
+  .cp-rail {
+    padding: calc(var(--cp-w) * 0.011);
+    border-radius: calc(var(--cp-w) * 0.175);
+    background: linear-gradient(
+      114deg,
+      #9aa3a9 0%, #2b3135 11%, #6d767c 29%,
+      #202528 52%, #737c82 72%, #272c30 86%, #9aa3a9 100%
+    );
+    box-shadow:
+      0 2px 6px rgb(0 0 0 / 0.2),
+      0 20px 34px -8px rgb(0 0 0 / 0.34),
+      0 54px 86px -22px rgb(0 0 0 / 0.46);
+  }
+  .cp-body {
+    padding: calc(var(--cp-w) * 0.029);
+    border-radius: calc(var(--cp-w) * 0.164);
+    background: #050708;
+  }
+  .cp-screen {
+    position: relative;
+    aspect-ratio: 9 / 19.5;
+    overflow: clip;
+    border-radius: calc(var(--cp-w) * 0.135);
+    background: #fff;
+    container-type: inline-size;
+  }
+  .cp-glare {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(146deg, rgb(255 255 255 / 0.12) 0%, rgb(255 255 255 / 0.04) 15%, transparent 36%);
+  }
+
+  /* ---- Screen contents. --u is one point of a 390 point wide screen ---- */
+  .cp-ui {
+    --u: calc(100cqw / 390);
+    --navy: #153863;
+    --bot: #4279b4;
+    --user: #c2e1de;
+    --ink: #18212a;
+    --grey: #5f6b73;
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+    color: var(--ink);
+    background: #fff;
+  }
+
+  .cp-sb {
+    position: relative;
+    flex: none;
+    height: calc(var(--u) * 54);
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: calc(var(--u) * 6) calc(var(--u) * 34) 0 calc(var(--u) * 38);
+    color: #fff;
+  }
+  .cp-time { font-size: calc(var(--u) * 16); font-weight: 600; letter-spacing: -0.01em; }
+  .cp-island {
+    position: absolute;
+    top: calc(var(--u) * 11);
+    left: 50%;
+    width: calc(var(--u) * 118);
+    height: calc(var(--u) * 34);
+    border-radius: 999px;
+    background: #050505;
+    transform: translateX(-50%);
+  }
+  .cp-sys { display: flex; align-items: center; gap: calc(var(--u) * 6); }
+  .cp-sys svg { width: auto; height: calc(var(--u) * 12); display: block; }
+
+  .cp-hd {
+    flex: none;
+    height: calc(var(--u) * 66);
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    gap: calc(var(--u) * 12);
+    padding: 0 calc(var(--u) * 16);
+    color: #fff;
+  }
+  .cp-av {
+    flex: none;
+    width: calc(var(--u) * 42);
+    height: calc(var(--u) * 42);
+    border-radius: 50%;
+    background: #265c9f;
+    display: grid;
+    place-items: center;
+  }
+  .cp-av svg { width: 72%; height: 72%; }
+  .cp-title { flex: 1; font-size: calc(var(--u) * 19); font-weight: 500; letter-spacing: -0.005em; }
+  .cp-chev { width: calc(var(--u) * 24); height: calc(var(--u) * 24); }
+
+  /* Messages. Pinned to the bottom, so the newest line is always in view
+     and the top is what gets clipped, as in the real panel. */
+  .cp-msgs {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background: #f8fafb;
+  }
+  .cp-thread {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--u) * 12);
+    padding: calc(var(--u) * 14) calc(var(--u) * 14) calc(var(--u) * 14);
+    will-change: transform;
+  }
+  .cp-note {
+    margin: 0;
+    font-size: calc(var(--u) * 13);
+    line-height: 1.4;
+    color: var(--grey);
+  }
+  .cp-card {
+    background: #fff;
+    border: 1px solid #e1e6ea;
+    border-radius: calc(var(--u) * 14);
+    padding: calc(var(--u) * 16);
+  }
+  .cp-card__q { margin: 0 0 calc(var(--u) * 12); font-size: calc(var(--u) * 16); font-weight: 700; }
+  .cp-opt {
+    display: block;
+    margin-top: calc(var(--u) * 10);
+    padding: calc(var(--u) * 13) calc(var(--u) * 14);
+    border-radius: calc(var(--u) * 7);
+    background: #2b7bb9;
+    color: #fff;
+    font-size: calc(var(--u) * 15);
+    font-weight: 700;
+  }
+  .cp-lbl { display: block; margin: 0 0 calc(var(--u) * 8); font-size: calc(var(--u) * 15); font-weight: 700; }
+  .cp-field {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: calc(var(--u) * 50);
+    margin-bottom: calc(var(--u) * 16);
+    padding: 0 calc(var(--u) * 14);
+    border: 1px solid #e3e7ea;
+    border-radius: calc(var(--u) * 9);
+    background: #fcfcfc;
+    font-size: calc(var(--u) * 16);
+  }
+  .cp-field i { font-style: normal; color: var(--ink); }
+
+  .cp-m { display: flex; flex-direction: column; }
+  .cp-bub {
+    padding: calc(var(--u) * 13) calc(var(--u) * 15);
+    border-radius: calc(var(--u) * 12);
+    font-size: calc(var(--u) * 15.5);
+    line-height: 1.4;
+  }
+  .cp-bub b { font-weight: 700; }
+  .cp-ts { font-size: calc(var(--u) * 12.5); color: var(--grey); }
+  .cp-m--user { align-items: flex-end; }
+  .cp-m--user .cp-bub { max-width: 76%; background: var(--user); color: #1b2b31; }
+  .cp-m--user .cp-ts { margin-top: calc(var(--u) * 5); }
+  .cp-m--bot { align-items: flex-start; padding-left: calc(var(--u) * 42); position: relative; }
+  .cp-m--bot .cp-bub { max-width: 100%; background: var(--bot); color: #fff; }
+  .cp-row { display: flex; align-items: flex-end; margin-top: calc(var(--u) * 5); }
+  .cp-mini {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: calc(var(--u) * 30);
+    height: calc(var(--u) * 30);
+    border-radius: 50%;
+    background: #265c9f url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath fill='%23fff' d='M20 7c3.6 5.4 7 8.7 7 12.6a7 7 0 0 1-14 0C13 15.700 16.400 12.400 20 7Z'/%3E%3Cpath fill='%23fff' d='M13.700 24h12.600c1.200 0 1.900 1.300 1.200 2.300l-6.300 8.200c-.6.800-1.800.8-2.400 0l-6.300-8.200c-.7-1-.1-2.300 1.200-2.300Z'/%3E%3C/svg%3E") center / 72% no-repeat;
+  }
+
+  /* The assistant's three dots, shown only while it is "thinking". */
+  .cp-dots { padding: calc(var(--u) * 16) calc(var(--u) * 18); display: inline-flex; gap: calc(var(--u) * 5); }
+  .cp-dots i {
+    width: calc(var(--u) * 7);
+    height: calc(var(--u) * 7);
+    border-radius: 50%;
+    background: #fff;
+    opacity: 0.55;
+    animation: cp-dot 1100ms ease-in-out infinite;
+  }
+  .cp-dots i:nth-child(2) { animation-delay: 150ms; }
+  .cp-dots i:nth-child(3) { animation-delay: 300ms; }
+  @keyframes cp-dot { 30% { transform: translateY(calc(var(--u) * -4)); opacity: 1; } 60% { transform: none; opacity: 0.55; } }
+
+  /* Input, disclaimer and footer, as in the live panel. */
+  .cp-in { flex: none; background: #fff; padding: calc(var(--u) * 12) 0 0; }
+  .cp-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: calc(var(--u) * 58);
+    margin: 0 calc(var(--u) * 12);
+    padding: 0 calc(var(--u) * 6) 0 calc(var(--u) * 16);
+    border: 1px solid #dde2e6;
+    border-radius: calc(var(--u) * 29);
+  }
+  .cp-ph { font-size: calc(var(--u) * 16.5); color: #9aa1a6; white-space: nowrap; overflow: hidden; }
+  .cp-typed { color: var(--ink); }
+  .cp-hint { font-style: normal; }
+  .cp-caret { display: none; width: 1px; height: calc(var(--u) * 20); margin-left: 1px; background: var(--ink); vertical-align: calc(var(--u) * -4); }
+  .cp-send {
+    flex: none;
+    width: calc(var(--u) * 46);
+    height: calc(var(--u) * 46);
+    border-radius: 50%;
+    background: var(--navy);
+    display: grid;
+    place-items: center;
+    transition: transform 140ms ease;
+  }
+  .cp-send svg { width: calc(var(--u) * 22); height: calc(var(--u) * 22); }
+  .cp-send.is-press { transform: scale(0.88); }
+  .cp-box.is-typing .cp-hint { display: none; }
+  .cp-box.is-typing .cp-caret { display: inline-block; animation: cp-caret 900ms steps(1, end) infinite; }
+  @keyframes cp-caret { 50% { opacity: 0; } }
+  .cp-disc {
+    margin: calc(var(--u) * 10) calc(var(--u) * 14) 0;
+    font-size: calc(var(--u) * 11.5);
+    line-height: 1.4;
+    color: var(--grey);
+  }
+  .cp-foot {
+    margin: calc(var(--u) * 10) 0 0;
+    padding: calc(var(--u) * 11) 0 calc(var(--u) * 28);
+    border-top: 1px solid #e4e8eb;
+    text-align: center;
+    font-size: calc(var(--u) * 13.5);
+    color: var(--grey);
+  }
+  .cp-home {
+    position: absolute;
+    left: 50%;
+    bottom: calc(var(--u) * 8);
+    width: calc(var(--u) * 134);
+    height: calc(var(--u) * 5);
+    border-radius: 999px;
+    background: #0d1114;
+    transform: translateX(-50%);
+  }
+  .cp-in { position: relative; }
+
+  /* ---- Control ---- */
+  .cp-ctl {
+    display: block;
+    margin: calc(var(--cp-w) * 0.07) auto 0;
+    padding: 0.55rem 1rem;
+    border: 1px solid var(--pl-border, rgb(15 20 23 / 0.2));
+    border-radius: 999px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: var(--pl-xs, 0.8rem);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .cp-ctl:hover { background: rgb(15 20 23 / 0.05); }
+  .cp-ctl:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+
+  /* Armed: every step starts hidden and the script reveals it. */
+  .cp [hidden] { display: none; }
+</style>
+
+<script is:inline>
+  (function () {
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var roots = document.querySelectorAll('[data-chat-phone]');
+    if (reduce || !('IntersectionObserver' in window)) return;
+
+    roots.forEach(function (root) {
+      var thread = root.querySelector('.cp-thread');
+      var box = root.querySelector('.cp-box');
+      var typed = root.querySelector('.cp-typed');
+      var send = root.querySelector('.cp-send');
+      var ctl = root.querySelector('.cp-ctl');
+      var steps = {};
+      root.querySelectorAll('[data-step]').forEach(function (el) { steps[el.getAttribute('data-step')] = el; });
+      var paused = false;
+      var token = 0;
+      var started = false;
+      var finished = false;
+
+      function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+      // A wait that stops counting while paused and gives up if replayed.
+      async function wait(ms, my) {
+        var t = 0;
+        while (t < ms) {
+          await sleep(40);
+          if (my !== token) throw 'abort';
+          if (!paused) t += 40;
+        }
+      }
+
+      function reveal(el) {
+        var h0 = thread.offsetHeight;
+        el.style.display = '';
+        el.removeAttribute('hidden');
+        var h1 = thread.offsetHeight;
+        thread.style.transition = 'none';
+        thread.style.transform = 'translateY(' + (h1 - h0) + 'px)';
+        void thread.offsetHeight;
+        thread.style.transition = 'transform 420ms cubic-bezier(0.2, 0.7, 0.2, 1)';
+        thread.style.transform = 'none';
+        if (el.animate) el.animate([{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 320, easing: 'ease-out' });
+      }
+
+      function dots() {
+        var d = document.createElement('div');
+        d.className = 'cp-m cp-m--bot';
+        d.innerHTML = '<div class="cp-bub cp-dots"><i></i><i></i><i></i></div><div class="cp-row"><span class="cp-mini"></span></div>';
+        return d;
+      }
+
+      async function typeAndSend(text, my) {
+        box.classList.add('is-typing');
+        typed.textContent = '';
+        for (var i = 0; i < text.length; i++) {
+          typed.textContent += text.charAt(i);
+          await wait(38 + Math.random() * 36, my);
+        }
+        await wait(380, my);
+        send.classList.add('is-press');
+        await wait(150, my);
+        send.classList.remove('is-press');
+        typed.textContent = '';
+        box.classList.remove('is-typing');
+      }
+
+      async function ask(userKey, botKey, my) {
+        var u = steps[userKey];
+        await typeAndSend(u.getAttribute('data-say'), my);
+        reveal(u);
+        await wait(550, my);
+        var d = dots();
+        thread.appendChild(d);
+        reveal(d);
+        await wait(1500, my);
+        thread.removeChild(d);
+        reveal(steps[botKey]);
+        await wait(1400, my);
+      }
+
+      function reset() {
+        Object.keys(steps).forEach(function (k) { steps[k].style.display = 'none'; });
+        typed.textContent = '';
+        box.classList.remove('is-typing');
+        thread.style.transition = 'none';
+        thread.style.transform = 'none';
+      }
+
+      function setLabel() {
+        ctl.textContent = finished ? 'Replay animation' : paused ? 'Play animation' : 'Pause animation';
+      }
+
+      async function play() {
+        var my = ++token;
+        finished = false;
+        paused = false;
+        setLabel();
+        reset();
+        try {
+          await wait(900, my);
+          await ask('u1', 'b1', my);
+          await ask('u2', 'b2', my);
+          await wait(1500, my);
+          await ask('u3', 'b3', my);
+          await wait(500, my);
+          reveal(steps.f1);
+          await wait(600, my);
+        } catch (e) { return; }
+        finished = true;
+        setLabel();
+      }
+
+      root.classList.add('is-armed');
+      ctl.hidden = false;
+      reset();
+      ctl.addEventListener('click', function () {
+        if (finished) { play(); return; }
+        paused = !paused;
+        setLabel();
+      });
+
+      new IntersectionObserver(function (entries, obs) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting && e.intersectionRatio >= 0.5 && !started) {
+            started = true;
+            obs.disconnect();
+            play();
+          }
+        });
+      }, { threshold: [0, 0.5] }).observe(root);
+    });
+  })();
+</script>
+
+<script>
+  // Scroll drift: the phone rises a little faster than the page as you scroll
+  // down, so it settles slightly higher by the time you reach the end of the
+  // section. Decoration only. Off under prefers-reduced-motion and on narrow
+  // screens, where the column stacks.
+  (() => {
+    const phones = document.querySelectorAll<HTMLElement>('[data-chat-phone]');
+    if (!phones.length) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const wide = window.matchMedia('(min-width: 768px)');
+    const K = 0.14;
+    const MAX = 70;
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      phones.forEach((el) => {
+        if (reduce.matches || !wide.matches) {
+          el.style.transform = '';
+          return;
+        }
+        // Measure the parent, which does not move, so the offset does not feed back on itself.
+        const r = (el.parentElement ?? el).getBoundingClientRect();
+        const d = r.top + r.height / 2 - window.innerHeight / 2;
+        if (Math.abs(d) > window.innerHeight * 1.5) return;
+        const y = Math.max(-MAX, Math.min(MAX, d * K));
+        el.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`;
+      });
+    };
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    update();
+  })();
+</script>

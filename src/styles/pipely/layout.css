@@ -37,6 +37,12 @@
 }
 .pl-panel.is-ground    { background-color: var(--pl-ground); }
 .pl-panel.is-secondary { background-color: var(--pl-secondary); }
+/* Steel tint: the fourth surface, added 24 September 2026 so a long page
+   can alternate white, off-white and tint rather than white and off-white.
+   Already in the brand palette and already used as a card fill. Ink on it
+   is 16.2:1 and brand red 5.5:1, so text and accents behave as on the
+   other light surfaces. */
+.pl-panel.is-tint      { background-color: var(--color-steel-tint); }
 .pl-panel.is-inverse   { background-color: var(--pl-inverse); color: var(--pl-text-inverse); }
 .pl-panel.is-film      { background-color: var(--pl-film); color: var(--pl-text-inverse); }
 .pl-panel.is-card-radius { border-radius: var(--pl-r-card); }
@@ -84,7 +90,10 @@
 @media (max-width: 767px) { .pl-stack-split { gap: 3rem; } }
 
 .pl-row { display: flex; align-items: center; gap: var(--pl-s-md); }
-.pl-row.is-between { justify-content: space-between; }
+/* Wraps, so a heading and its button stack rather than the button being
+   pushed out of the panel on a narrow phone (320px, 21 September 2026).
+   On wider screens there is room and nothing wraps. */
+.pl-row.is-between { justify-content: space-between; flex-wrap: wrap; }
 .pl-row.is-top { align-items: flex-start; }
 .pl-row.is-wrap { flex-wrap: wrap; }
 

@@ -5,6 +5,7 @@ year: 2024
 craft: "web"
 summary: "Holistic Health Web Development and Branding"
 cover: "/work/jill-collins-website.jpg"
+thumb: "/work/thumbs/jill-collins-therapy-web-development-and-branding-16x9.jpg"
 liveUrl: "https://jillcollinstherapy.ie/"
 services:
   - "Website Development"

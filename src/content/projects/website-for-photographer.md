@@ -5,6 +5,7 @@ year: 2022
 craft: "web"
 summary: "Branding, Design and Development for a Photography business."
 cover: "/work/nok-asset-3.jpg"
+thumb: "/work/thumbs/website-for-photographer-16x9.jpg"
 liveUrl: "https://nickokeeffephotography.ie/"
 services:
   - "Website"
@@ -17,7 +18,7 @@ gallery:
   - "/work/nok-asset-10.jpg"
   - "/work/nok-asset-6.jpg"
 order: 6
-draft: false
+draft: true
 ---
 A beautifully designed website is essential for every creative. Finding a balance between a website that generates leads and one which showcases the artist's work can be an additional challenge.
 

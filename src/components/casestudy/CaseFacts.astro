@@ -1,0 +1,61 @@
+---
+/**
+ * The facts strip under a case study hero: client, what we did, where, when.
+ * Four short pairs on one line, wrapping to two columns on narrow screens.
+ * Built for the Boston Scientific docuseries (25 September 2026) from the
+ * design the studio supplied, and reusable by any case study.
+ */
+interface Props {
+  items: { label: string; value: string; href?: string }[];
+  /** One column, each pair on its own ruled row. For a hero's side panel. */
+  stacked?: boolean;
+}
+const { items, stacked = false } = Astro.props;
+---
+
+<dl class:list={['cs-facts', stacked && 'is-stacked']} data-reveal>
+  {items.map((i) => (
+    <div class="cs-facts__item">
+      <dt class="u-eyebrow">{i.label}</dt>
+      <dd>{i.href ? <a href={i.href}>{i.value}</a> : i.value}</dd>
+    </div>
+  ))}
+</dl>
+
+<style>
+  .cs-facts {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--pl-s-md) var(--pl-s-lg);
+    margin: 0;
+    padding-top: var(--pl-s-lg);
+    border-top: 1px solid var(--pl-border);
+  }
+  .cs-facts__item { display: grid; gap: 0.35rem; align-content: start; }
+  .cs-facts dd a { text-decoration: underline; text-underline-offset: 0.2em; text-decoration-thickness: 1px; }
+  .cs-facts dd a:hover { text-decoration-thickness: 2px; }
+  .cs-facts dd { margin: 0; font-size: var(--pl-sm); line-height: 1.5; }
+  .cs-facts.is-stacked {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    padding-top: 0;
+    border-top: 0;
+  }
+  .cs-facts.is-stacked .cs-facts__item {
+    gap: 0.4rem;
+    padding: var(--pl-s-md) 0;
+    border-top: 1px solid var(--pl-border);
+  }
+  .cs-facts.is-stacked .cs-facts__item:last-child { border-bottom: 1px solid var(--pl-border); }
+  .cs-facts.is-stacked dd { font-size: var(--pl-base, 1rem); }
+  @media (max-width: 767px) {
+    .cs-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  /* On a dark panel (Coroflo, 5 October 2026) the panel edge does the
+     separating, so the rule goes. Labels drop to the muted cream, values
+     stay full cream. */
+  :global(.pl-panel.is-inverse) .cs-facts { padding-top: 0; border-top: 0; }
+  :global(.pl-panel.is-inverse) .cs-facts dt { color: var(--pl-text-on-dark); }
+  :global(.pl-panel.is-inverse) .cs-facts dd { color: var(--pl-text-inverse); }
+</style>
+

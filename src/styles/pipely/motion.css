@@ -85,7 +85,31 @@
   will-change: transform;
 }
 .pipely .pl-marquee.is-reverse .pl-marquee__track { animation-direction: reverse; }
-.pipely .pl-marquee:hover .pl-marquee__track { animation-play-state: paused; }
+.pipely .pl-marquee:hover .pl-marquee__track,
+.pipely .pl-marquee.is-paused .pl-marquee__track { animation-play-state: paused; }
+
+/* Pause control. 2rem target, above the 24px minimum in WCAG 2.5.8. */
+.pipely .pl-marquee-wrap { display: flex; align-items: center; gap: var(--pl-s-md); }
+.pipely .pl-marquee-wrap > .pl-marquee { flex: 1 1 auto; min-width: 0; }
+.pipely .pl-marquee__pause {
+  flex: none;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2rem; height: 2rem;
+  border: 0; border-radius: 999px;
+  background: var(--color-ink); color: var(--color-cream);
+  cursor: pointer;
+}
+.pipely .pl-marquee__pause[hidden] { display: none; }
+.pipely .pl-marquee__pause:hover { background: var(--color-red); }
+.pipely .pl-marquee__pause-icon {
+  width: 0.5rem; height: 0.625rem;
+  border-left: 2px solid currentColor; border-right: 2px solid currentColor;
+}
+.pipely .pl-marquee__pause[data-paused="true"] .pl-marquee__pause-icon {
+  width: 0; height: 0; border: 0; margin-left: 0.15rem;
+  border-top: 0.3125rem solid transparent; border-bottom: 0.3125rem solid transparent;
+  border-left: 0.5rem solid currentColor;
+}
 @keyframes pl-drift { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
 .pipely .pl-marquee.is-faded {
@@ -125,8 +149,8 @@
 .pipely .pl-roll:hover > span:last-child { transform: translateY(0); }
 
 /* ---- 6. Nav hide / show ------------------------------------ */
-.pipely .pl-nav { transition: transform var(--pl-dur-slow) var(--pl-ease-out-quart); }
-.pipely .pl-nav.is-hidden { transform: translateY(-100%); }
+/* The nav no longer hides on scroll (18 September 2026). It stays put and
+   frosts instead; see .pl-nav.is-scrolled in components.css. */
 
 /* ---- 7. Scroll-scrubbed progress rail ---------------------- */
 .pipely .pl-progress { position: relative; padding-left: 2rem; }

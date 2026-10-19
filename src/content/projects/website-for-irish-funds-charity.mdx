@@ -1,0 +1,80 @@
+---
+title: "Website and CRM for basis.point"
+client: "basis.point"
+year: 2023
+craft: "web"
+summary: "A rebuilt website for the Irish funds industry's charity, with sign-up forms connected directly to their CRM."
+cover: "/work/basispoint-pi-7.jpg"
+thumb: "/work/thumbs/website-for-irish-funds-charity-16x9.jpg"
+services:
+  - "Web Development"
+  - "Design"
+capabilities: []
+facts:
+  - label: "Client"
+    value: "basis.point, the Irish funds industry's charity"
+  - label: "What we did"
+    value: "Website rebuild, sign-up forms connected to their CRM, hosting and content management"
+  - label: "Website"
+    value: "Visit the basis.point website"
+    href: "https://www.basispoint.ie"
+order: 2
+caseStudy: true
+hideCover: true
+feature: true
+draft: false
+---
+
+import CaseStep from '../../components/casestudy/CaseStep.astro';
+import CaseDevices from '../../components/casestudy/CaseDevices.astro';
+
+{/* Rebuilt 16 October 2026 in the same shape as the Western Rheumatology page.
+    The copy is unchanged from the earlier version, only split into two steps.
+    The old cover (basispoint-pi-7.jpg) was a small, grainy mockup with a
+    child's face on the screen. The new mockups are built from fresh
+    screenshots of the live site: the Events page (adults at a charity dinner)
+    and the Individual Patron registration form. No children's faces.
+
+    TODO: Edel's testimonial. CLAUDE.md lists it as one of the three quotes in
+    hand, but the text is not in the repo yet. Add it as the `quote`
+    frontmatter field (text, name, role) and the layout renders it. If there is
+    a figure worth stating, page load before and after or sign-ups per month,
+    add it to `metrics`. */}
+
+<CaseStep n="01" label="The problem" title="A website that no longer served the charity." surface="secondary">
+  basis.point is the charity of the Irish funds industry, established after the 2007 crash to fund
+  education and opportunity for people who would not otherwise have access to it. We have worked
+  with them since 2014. By 2021 the website was no longer serving them. Its tone was corporate
+  rather than charitable, it put the industry ahead of the people the funding supports, and it was
+  slow to load. Patron and volunteer sign-up forms did not feed any system, so every registration
+  had to be re-entered into the CRM by hand.
+
+  <CaseDevices
+    slot="aside"
+    layout="laptop"
+    screen="/work/basispoint/mock-laptop-events.webp"
+    screenRatio="1800 / 1189"
+    alt="The basis.point events page on a laptop, with the main navigation, a Donate button and a photo of guests at a charity dinner."
+  />
+</CaseStep>
+
+<CaseStep n="02" label="What we made" title="Sign-up forms connected directly to the CRM." surface="tint">
+  We rebuilt the website around the people the charity supports, so that visitors see who the
+  funding helps first. Sign-up forms now write directly into the CRM, which removes manual
+  re-entry entirely. We also moved the site to better hosting and reduced page load times.
+
+  The basis.point team now publish their own news, galleries and event details, without needing
+  a developer for routine changes.
+
+  We have maintained and supported the site for nine years, which suits a small charity without
+  an in-house technical team.
+
+  <CaseDevices
+    slot="aside"
+    layout="tablet-phone"
+    screen="/work/basispoint/mock-tablet-register.webp"
+    screenRatio="1500 / 1072"
+    phone="/work/basispoint/mock-phone-register.webp"
+    alt="The Individual Patron registration form on a tablet and a phone, a three step form that runs from patron details to contact details to data protection."
+  />
+</CaseStep>

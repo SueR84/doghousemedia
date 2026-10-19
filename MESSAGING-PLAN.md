@@ -19,6 +19,8 @@ That decision drives everything else: fewer pages, deeper proof, one conversion 
 
 ---
 
+
+
 ## 2. Pillars
 
 Two, in this order.
@@ -33,6 +35,7 @@ AI sits as a labelled, self-contained block inside Web Development. It is not a 
 **Care and Hosting** is a support page, not a pillar. Out of the main nav.
 
 ### Killed
+
 - **SEO Packages** page, including the public €350 to €600/month pricing. A priced SEO tier two clicks from Boston Scientific actively damages the positioning. You can still sell SEO without advertising it.
 - **Digital Services** page. The tool list (CRM, Zapier, email marketing, GDPR auditing) becomes capability sentences inside Web Development where relevant, or disappears.
 - The 21 thin project pages. Replaced by four real case studies plus a thumbnail grid.
@@ -40,29 +43,412 @@ AI sits as a labelled, self-contained block inside Web Development. It is not a 
 
 ---
 
-## 3. Register and voice rules
 
-Plain, declarative, unhurried. Say what was made and who for, and let the work carry the rest. Formal here means precise, not longer, and not corporate.
 
-**Reference sentences.** This is the target register:
+## 3. Doghouse Media: Website Copy & Tone
 
-> Video that makes complicated things clear. We've spent fifteen years making films in operating theatres, labs and manufacturing plants.
+These rules apply to all public-facing website copy for Doghouse Media, including page headings, service descriptions, case studies, calls to action and project summaries.
 
-The one line worth keeping from the old site, because it is the actual voice:
+## Overall approach
 
-> No-one can promise you a high ranking in a short period of time. If they do, run a mile.
+Doghouse Media should sound like experienced people who know what they are doing and do not need to make a performance out of it.
 
-### Rules
-- No exclamation marks anywhere on the site.
-- No rhetorical questions as headings.
-- No em dashes. Commas and full stops.
-- Irish/UK English throughout. The old site mixes "optimization" and "realise". Pick UK and hold it.
-- No adjective stacking. If a sentence works without "beautiful", "cutting-edge", "seamless" or "bespoke", cut them.
-- Concrete nouns over categories. "Operating theatres, labs and factory floors" beats "a range of sectors".
-- Never name a tool where a benefit will do. Exceptions are WordPress, WooCommerce and Astro, named once each, as explained in section 6.
-- Kill every instance of "Let's do this" and "Like what you see? We'd love to hear about your idea and help you get it off the ground." It currently appears on eight pages.
+The writing should feel natural, straightforward and assured. It should not sound like advertising copy, generic agency copy or AI-generated marketing language.
+
+The aim is not to make Doghouse *sound impressive*. Explain what we do, how we work and what we have done well enough that the reader can work that out for themselves.
+
+**Specificity is more important than polish.**
+
+When writing a first draft, imagine explaining the subject to an intelligent client in conversation. Write that first. Then edit it for the web.
+
+Do not begin by trying to "write marketing copy".
 
 ---
+
+## Core voice
+
+Doghouse is:
+
+- Experienced, but not self-important.
+- Confident, but not salesy.
+- Technical when necessary, but clear.
+- Friendly, but not overly chatty.
+- Creative, but not trying to sound creative.
+- Professional, but not corporate.
+- Direct, but not abrupt.
+- Understated rather than hyped.
+- Comfortable using ordinary language.
+
+The writing should sound like a knowledgeable person speaking normally.
+
+---
+
+## Writing principles
+
+### Lead with useful information
+
+Tell the reader what something is, what we did or why it matters.
+
+Do not make them decode a clever heading before they understand the subject.
+
+### Prefer facts to claims
+
+Use real details wherever possible:
+
+- what was built
+- what was filmed
+- who it was for
+- how it worked
+- scale
+- locations
+- number of participants
+- length of a project
+- technical challenges
+- measurable outcomes
+
+For example, saying that seven specialist clinicians were filmed in one day and the material became an eight-part educational series demonstrates capability.
+
+There is no need to then tell the reader the project was "expertly delivered".
+
+### Show expertise rather than claiming it
+
+Do not tell the reader that Doghouse is:
+
+- expert
+- innovative
+- passionate
+- highly experienced
+- results-driven
+- creative
+- meticulous
+
+Where possible, demonstrate those things through the work itself.
+
+### Use concrete language
+
+Prefer:
+
+> We build websites for organisations that need to sell, teach, take bookings or manage complex information.
+
+over:
+
+> We create high-performing digital experiences designed to deliver meaningful results.
+
+The first tells the reader something.
+
+### Write naturally
+
+Use normal sentence structures and varied sentence lengths.
+
+Contractions are fine.
+
+Occasional sentence fragments are fine when they occur naturally, but do not manufacture punchiness by breaking everything into tiny sentences.
+
+Technical language is fine when it is the most accurate language for the audience.
+
+Do not dumb down specialist work simply to make the copy sound accessible.
+
+### Keep the writing tight
+
+Remove sentences that repeat a point already made.
+
+Do not add introductory or concluding filler simply because a section feels short.
+
+A short section containing useful information is better than a longer section padded with marketing language.
+
+---
+
+# Headlines
+
+Headlines should **orient the reader, not tease them**.
+
+The reader should normally understand the subject of a page or section from its heading.
+
+Prefer descriptive headings over clever ones.
+
+For case studies, it is often useful to include:
+
+- the client
+- the project
+- the service
+- the subject
+- or the outcome
+
+Examples of the right direction:
+
+- `Boston Scientific: Electrophysiology Education Series`
+- `Web Development for Membership Organisations`
+- `Video Production for Medtech and Healthcare`
+
+These are deliberately straightforward.
+
+Do not manufacture a slogan simply because a section needs a heading.
+
+## Avoid clickbait-style headings
+
+Do not write headings such as:
+
+> Seven professors, one shoot day.
+
+This withholds the useful information simply to create a hook and sounds self-conscious.
+
+Also avoid formulas such as:
+
+> One day. Eight films. Zero second chances.
+
+> Sell. Teach. Inform.
+
+> Big ideas. Better results.
+
+> When the action happens once, preparation matters.
+
+The underlying information may be useful. State it naturally instead.
+
+A straightforward heading is preferable to a contrived one.
+
+---
+
+# Service copy
+
+Service pages should answer practical questions:
+
+- What do we do?
+- Who do we typically do it for?
+- What kinds of projects do we handle?
+- What makes our approach useful?
+- What experience do we have?
+- What does working with Doghouse involve?
+
+Do not turn every service into a brand proposition.
+
+For example, avoid:
+
+> Real stories, expertly told.
+
+It is generic, self-congratulatory and could belong to hundreds of production companies.
+
+Instead, explain the actual work and subjects we handle.
+
+Similarly, avoid vague statements such as:
+
+> Our websites look good and perform.
+
+If "perform" means generating enquiries, selling products, delivering courses, handling subscriptions or making complex information easier to use, say that.
+
+Specific functions are more convincing than broad claims.
+
+---
+
+# Case studies
+
+Case studies should be factual, interesting and understated.
+
+They should normally explain:
+
+1. What the client needed.
+2. The circumstances or challenge.
+3. What Doghouse did.
+4. Any interesting production, technical or logistical detail.
+5. What was ultimately delivered or achieved.
+
+The story should come from the facts.
+
+For example:
+
+> Boston Scientific brought seven of Europe's leading electrophysiologists to the Mater Private in Dublin for a single filming day. We captured the full programme, then spent the following ten months producing an eight-part education series.
+
+This works because the scale and complexity are evident without Doghouse telling the reader that the project was ambitious, challenging or expertly executed.
+
+Avoid narrating our own importance.
+
+---
+
+# Personality
+
+Personality should come from:
+
+- word choice
+- specificity
+- small observations
+- confidence
+- knowing when not to explain something
+- occasionally dry or understated phrasing where appropriate
+
+It should **not** come from:
+
+- gimmicky headlines
+- forced humour
+- slogans
+- excessive wordplay
+- exaggerated informality
+- trying to sound edgy
+- talking about ourselves constantly
+
+Do not force personality into every section.
+
+Some sections just need to communicate information clearly.
+
+---
+
+# Language to avoid
+
+Be highly suspicious of generic agency and AI language, including:
+
+- elevate
+- transform
+- empower
+- unlock
+- cutting-edge
+- seamless
+- seamlessly
+- bespoke solutions
+- tailored solutions
+- innovative solutions
+- digital landscape
+- meaningful impact
+- impactful
+- bring your vision to life
+- stand out from the crowd
+- more than just
+- at the heart of
+- journey
+- game-changing
+- powerful solutions
+- results-driven
+- expertly
+- beautifully
+- passionate
+- dynamic
+- exceptional
+
+This is not an absolute banned-word list. A word may occasionally be the correct word.
+
+The rule is: **do not reach for these words as substitutes for saying something specific.**
+
+---
+
+# Copywriting patterns to avoid
+
+Avoid obvious AI and advertising constructions.
+
+In particular:
+
+### Three punchy words with full stops
+
+> Build. Grow. Succeed.
+
+> Sell. Teach. Inform.
+
+Do not use this structure unless there is an unusually strong reason.
+
+### Fake contrasts
+
+Avoid:
+
+> It's not just a website. It's a digital experience.
+
+> We're not just videographers. We're storytellers.
+
+> More than a website, it's...
+
+These usually manufacture significance rather than communicate something useful.
+
+### "From X to Y"
+
+Avoid automatically framing services as:
+
+> From initial strategy to final delivery...
+
+> From the people behind a business to the science behind a breakthrough...
+
+Use this construction only where the range itself is genuinely useful information.
+
+### Rhetorical questions
+
+Avoid opening sections with manufactured questions such as:
+
+> Ready to transform your digital presence?
+
+> What if your website could do more?
+
+Ask a question only when it is genuinely the most natural way to communicate the point.
+
+### Telling the reader what to feel
+
+Avoid phrases such as:
+
+> The result? A powerful...
+
+> The challenge? Bringing together...
+
+> The best part?
+
+Do not artificially narrate the reader through the copy.
+
+### Unnecessary drama
+
+Do not turn normal project constraints into dramatic storytelling.
+
+If something was genuinely difficult or unusual, explain why using the facts.
+
+---
+
+# Calls to action
+
+Calls to action should also sound normal.
+
+Prefer simple, clear wording such as:
+
+- Talk to us about a project
+- See our work
+- View the case study
+- Get in touch
+- Tell us what you're working on
+
+Do not automatically use:
+
+- Let's create something amazing
+- Ready to get started?
+- Let's bring your vision to life
+- Start your journey
+- Transform your business
+
+---
+
+# Anti-AI check
+
+Before returning any website copy, review it and ask:
+
+1. **Could another agency use this sentence unchanged?**  
+If yes, make it more specific or remove it.
+2. **Am I making a vague claim where I could give the reader a fact instead?**  
+If yes, use the fact.
+3. **Am I trying to make Doghouse sound impressive instead of explaining what Doghouse actually did?**  
+If yes, rewrite it.
+4. **Does this contain an obvious AI or advertising phrase?**  
+If yes, replace it with normal language.
+5. **Does the writing have an artificial rhythm?**  
+Look for repeated short sentences, repeated sentence structures or excessive fragments.
+6. **Have I used adjectives where details would be stronger?**  
+Remove unnecessary adjectives.
+7. **Have I created a clever headline simply because I felt the page needed one?**  
+Replace it with something useful.
+8. **Have I introduced artificial drama, mystery or intrigue?**  
+Remove it.
+9. **Would an experienced Doghouse team member plausibly say this aloud to a client?**  
+If not, rewrite it.
+10. **Is every sentence earning its place?**  
+If removing a sentence loses nothing useful, remove it.
+
+---
+
+# Final rule
+
+Do not try to make Doghouse sound clever.
+
+**Say something worth reading instead.**
+
+
 
 ## 4. Sitemap
 
@@ -91,17 +477,21 @@ Fix the `/contact` versus `/contact-us/` split that breaks every button on the c
 
 ---
 
+
+
 ## 5. Homepage, section by section
 
 **1. Hero.** The existing portfolio video, full width, showing both web and video work. Headline and one line of copy.
 
 Draft:
+
 > **Films and websites that make complicated things clear.**
-> Doghouse Media is an independent video and web studio in Dublin. Fifteen years of work in operating theatres, labs, factory floors and boardrooms.
+> Doghouse Media is an independent video and web studio in Dublin. Thirteen years of work in operating theatres, labs, factory floors and boardrooms.
 
 Alternative:
+
 > **We make films and websites for organisations with something difficult to explain.**
-> An independent video and web studio in Dublin, working since 2011.
+> An independent video and web studio in Dublin, working since 2013.
 
 **2. Video Production block.** Three "what we deliver" lines, link to the pillar page.
 
@@ -123,15 +513,17 @@ Fix the `RN_Logo_RGB_Colour` alt text while you are at it.
 
 **6. One testimonial.** Susan Foley, Cappagh, until a corporate one lands.
 
-**7. Who we are.** Short. Independent, Dublin, since 2011, female-owned and operated, two named owners. Links to About.
+**7. Who we are.** Short. Independent, Dublin, since 2013, female-owned and operated, two named owners. Links to About.
 
 **8. Contact band.** Rewritten. Not "Let's do this".
 
 ---
 
+
+
 ## 6. Video Production page
 
-1. **Position statement.** *Video that makes complicated things clear. We've spent fifteen years making films in operating theatres, labs and manufacturing plants.*
+1. **Position statement.** *Video that makes complicated things clear. We've spent thirteen years making films in operating theatres, labs and manufacturing plants.*
 2. **Showreel**, then a grid of selected films.
 3. **What we deliver.** The three lines from the homepage, expanded to a sentence each.
 4. **Case studies.** Guinness Storehouse, Boston Scientific.
@@ -143,42 +535,35 @@ Fix the `RN_Logo_RGB_Colour` alt text while you are at it.
 
 ---
 
+
+
 ## 7. Web Development page
 
 1. **Position statement.** *Websites built to be used, updated and handed over.*
 2. **What we deliver.** Three lines, expanded.
 3. **Specialities.** Three, equal weight:
-   - **Learning platforms.** Course delivery, enrolments and certification that runs without you administering it by hand. Example: Shapes of Grief.
-   - **E-commerce and bookings.** Payments, appointments and subscriptions that work reliably, including where clinical or regulatory rules apply. Examples: Merrion Medical Aesthetics, Beauty by Vaiva.
-   - **Bilingual sites.** English and Irish delivered properly, with human translation review rather than automated output. Example: the National Disability Authority.
-
+  - **Learning platforms.** Course delivery, enrolments and certification that runs without you administering it by hand. Example: Shapes of Grief.
+  - **E-commerce and bookings.** Payments, appointments and subscriptions that work reliably, including where clinical or regulatory rules apply. Examples: Merrion Medical Aesthetics, Beauty by Vaiva.
+  - **Bilingual sites.** English and Irish delivered properly, with human translation review rather than automated output. Example: the National Disability Authority.
    Bilingual gets equal billing deliberately. Almost nobody in Ireland is claiming it credibly and it is a route into public sector work.
-
 4. **Accessibility.** A named section, not a bullet.
-
-   > We built the National Disability Authority's Someone Like Me Art Awards site, tested to WCAG 2.1 AA and delivered in English and Irish with human translation review. This website is built to WCAG 2.2 AA.
-
+  > We built the National Disability Authority's Someone Like Me Art Awards site, tested to WCAG 2.1 AA and delivered in English and Irish with human translation review. This website is built to WCAG 2.2 AA.
    Link to the accessibility statement, and to the accessibility audits page.
-
    Close the section with one line pointing at the service: *We also audit other people's sites. If you need to know where yours stands, we will tell you.*
-
 5. **Platforms.** One sentence, not a logo row:
-
-   > We build mainly in WordPress and WooCommerce, so your team can edit the site themselves. For smaller or faster-moving projects we build static sites in Astro, which means no database, very little to maintain and very little to attack.
-
+  > We build mainly in WordPress and WooCommerce, so your team can edit the site themselves. For smaller or faster-moving projects we build static sites in Astro, which means no database, very little to maintain and very little to attack.
    Do not name Beaver Builder, ACF, Cloudways or any theme. A framework name inside a benefit sentence is fine. A tool list is not.
-
 6. **AI block.** Short, self-contained, detachable. Two examples only:
-   - **Western Rheumatology.** Patients order repeat prescriptions without ringing the clinic, and the medications information on the site stays in sync automatically. Describe the outcome, stay vague on the plumbing. Do not publish a map of a clinic's internal workflow.
-   - **Edithouse**, framed openly as our own business. A support assistant trained on the business's own material, answering the questions couples ask before they enquire.
-
+  - **Western Rheumatology.** Patients order repeat prescriptions without ringing the clinic, and the medications information on the site stays in sync automatically. Describe the outcome, stay vague on the plumbing. Do not publish a map of a clinic's internal workflow.
+  - **Edithouse**, framed openly as our own business. A support assistant trained on the business's own material, answering the questions couples ask before they enquire.
    Leave the internal finance and reporting automation out.
-
 7. **Case studies.** National Disability Authority, basis.point.
 8. **Link across to Care and Hosting.**
 9. **Contact.**
 
 ---
+
+
 
 ## 7a. Accessibility audits page
 
@@ -212,6 +597,8 @@ Do not write "every website must now be accessible by law". It is not true, a pr
 
 ---
 
+
+
 ## 8. Work page
 
 Four case studies with their own pages, then a thumbnail grid.
@@ -221,6 +608,8 @@ Four case studies with their own pages, then a thumbnail grid.
 - Each thumbnail: image or still, client name, one line.
 
 ---
+
+
 
 ## 9. Care and Hosting
 
@@ -234,17 +623,21 @@ Covers: hosting, security hardening, CMS and plugin updates, uptime monitoring, 
 
 ---
 
+
+
 ## 10. About
 
 Carries the female-owned positioning with real weight, rather than buried mid-sentence in a hero subhead as it is now.
 
 - Both owners named with clear roles. Emma Walkin on video production, Susan Ryan on web, digital and AI. A large organisation wants to know who is accountable.
-- **Founded 2011.** Fifteen years. The current site says "since 2013", which is wrong. Use 2011 everywhere, state it once.
+- **Founded 2013.** Thirteen years. Changed from 2011 by Sue on 14 October 2026. Use 2013 everywhere, state it once.
 - Photos of both of you. A two-person studio selling to companies with procurement departments needs faces on the page. An About page with no people is the clearest tell that a studio is smaller than it looks.
 - Independent, female-owned and operated, Dublin.
 - Twenty years in IT before the studio. That is a credibility asset for technical and regulated buyers, not a footnote.
 
 ---
+
+
 
 ## 11. Blog: three posts at launch
 
@@ -266,6 +659,8 @@ The generic SEO article is dropped. It is the most written-about subject on the 
 
 ---
 
+
+
 ## 12. Case study briefs
 
 Four at launch. Each one gets: the problem, what you made, and a result or a quote. Two hundred and fifty to four hundred words, plus film or images. No process narration.
@@ -278,9 +673,11 @@ Four at launch. Each one gets: the problem, what you made, and a result or a quo
 
 **basis.point** (web, charity/funds). Testimonial from Edel.
 
-**Western Rheumatology** is the strongest candidate for a fifth once the others are live. Sign-off is in place. Website, medications knowledge base sync, chat assistant and repeat prescription ordering. For launch it appears in the AI block and as a thumbnail.
+**Western Rheumatology** (web, clinic, AI). Sign-off is in place. Website, medications knowledge base sync, chat assistant and repeat prescription ordering. Written up as a full case study on 25 September 2026 at `/work/western-rheumatology/`, so it now appears in the AI block, as a thumbnail and as a case study. No testimonial from the clinic yet, so the page closes on what the site does.
 
 ---
+
+
 
 ## 13. Accessibility requirements for the build
 
@@ -294,26 +691,32 @@ The moment the NDA claim goes on the site, your own site is the first thing anyo
 
 ---
 
+
+
 ## 14. Open items and critical path
 
 Copy can be drafted without any of these. The site cannot launch without them.
 
-| # | Item | Status |
-|---|---|---|
-| 1 | Boston Scientific "EMEA preferred supplier" line | **Dropped.** Revisit only if written permission is obtained |
-| 2 | Western Rheumatology naming and detail | **Signed off** |
-| 3 | Guinness Storehouse footage and naming | **Clear.** Shot and edited in-house, footage is yours |
-| 4 | Third testimonial, plus one from a corporate client | **In progress.** Placeholders used in draft, must be clearly marked and never published live |
-| 5 | Photos of Sue and Emma | **Being assembled** |
-| 6 | Founding year | **Resolved: 2011** |
-| 7 | Contact form fields | Form built. Recommend three fields only: name, organisation, what you are working on |
-| 8 | Blog nav label | Open |
-| 9 | Accessibility audit pricing, and whether a "from" figure appears | Open, no price at launch |
-| 10 | EAA and Web Accessibility Directive scope wording, checked before publishing | Open |
+
+| #   | Item                                                                         | Status                                                                                       |
+| --- | ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| 1   | Boston Scientific "EMEA preferred supplier" line                             | **Dropped.** Revisit only if written permission is obtained                                  |
+| 2   | Western Rheumatology naming and detail                                       | **Signed off**                                                                               |
+| 3   | Guinness Storehouse footage and naming                                       | **Clear.** Shot and edited in-house, footage is yours                                        |
+| 4   | Third testimonial, plus one from a corporate client                          | **In progress.** Placeholders used in draft, must be clearly marked and never published live |
+| 5   | Photos of Sue and Emma                                                       | **Being assembled**                                                                          |
+| 6   | Founding year                                                                | **Resolved: 2013**                                                                           |
+| 7   | Contact form fields                                                          | Form built. Recommend three fields only: name, organisation, what you are working on         |
+| 8   | Blog nav label                                                               | Open                                                                                         |
+| 9   | Accessibility audit pricing, and whether a "from" figure appears             | Open, no price at launch                                                                     |
+| 10  | EAA and Web Accessibility Directive scope wording, checked before publishing | Open                                                                                         |
+
 
 **Contact page:** form as the primary route, `hello@doghousemedia.ie` visible, and the existing LeadConnector booking widget linked properly rather than orphaned as it is now. No phone number for the moment.
 
 ---
+
+
 
 ## 15. What changes most from the current site
 
@@ -328,3 +731,36 @@ For reference when reviewing drafts.
 - Accessibility goes from nowhere on the site to a named plank with the best possible proof behind it.
 - Public SEO pricing disappears, replaced by a productised accessibility audit service with a legal driver behind it.
 - A mailto link becomes a working conversion path.
+
+---
+
+
+
+## 16. Work page structure, settled 15 September 2026
+
+Section 8 said four case studies plus a thumbnail grid. This is how that was built.
+
+**A** `caseStudy` **flag in the frontmatter is what earns a page.** `work/[...slug].astro` builds a page only where `caseStudy: true` and the project is not a draft. Everything else in the collection is a thumbnail and nothing more. The old site's twenty-one thin project pages were rebuilt wholesale during the migration; this filter is what stops that shipping.
+
+**Every thumbnail has a destination, and none of them is a thin page.** In order: a case study goes to `/work/<slug>/`; a film with no case study plays in a lightbox on the page rather than handing the visitor to vimeo.com mid-visit; a website with no case study opens the client's live site; anything with none of the three renders without a link rather than as a dead card.
+
+**Two sections, not a filter row.** The Work page runs Film, then Websites. A filter makes the two disciplines peers you choose between, which undoes the decision that video leads. Two labelled sections let film sit first and read bigger, they are linkable, and they need no JavaScript and no live region announcing "showing 6 of 24".
+
+**A** `craft: both` **project appears once, under Film,** carrying the "Web + video" tag. Showing it twice is worse than showing it once.
+
+**Film cards get a 16:9 frame; websites keep the taller screenshot crop.** One ratio for both makes one of them look wrong.
+
+**Film thumbnails may carry a short muted preview loop**, three to six seconds, self-hosted, a few hundred KB. Still frame by default. Plays on hover and on keyboard focus. Never under `prefers-reduced-motion`, never on touch, and not fetched at all until it plays. Not a Vimeo embed: six iframes would eat the JS budget and set cookies.
+
+`capabilities` **is a tag field, deliberately not a craft value.** It takes `ai`, `accessibility`, `bilingual`, `ecommerce`, `lms`. AI is a block inside Web Development, not a pillar, so it must not grow its own section on the Work page and contradict the decision that it may be spun out. Western Rheumatology is `craft: web`, `capabilities: [ai]`.
+
+**Case study structure**, unchanged from section 12: the problem, what we made, and a result or a quote. Two hundred and fifty to four hundred words. No process narration, so no bulleted list of what was done and no "we then scripted and storyboarded". The old basis.point copy was rewritten to this shape; it is the model for the rest.
+
+### Still open on the Work page
+
+- Seventeen thumbnails live against a target of twelve to fifteen. Two or three to cut on quality.
+- Zero film previews set, so the hover loop does nothing until the clips exist.
+- Guinness Storehouse and Boston Scientific are both drafts waiting on three paragraphs each.
+- basis.point is live but its result section is waiting on Edel's quote.
+- All three testimonials are still placeholders in the repo and are filtered at render, so those sections render empty.
+

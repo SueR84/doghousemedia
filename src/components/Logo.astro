@@ -98,9 +98,11 @@ const showWordmark = variant !== 'mark';
   }
 
   .logo__word {
-    font-family: var(--font-display);
-    font-weight: var(--fw-black);
-    letter-spacing: -0.04em;
+    /* Brand lockup: Inter Tight 800, -0.045em. Loaded for these glyphs only
+       in BaseHead; headings stay in the site display face. */
+    font-family: 'Inter Tight', var(--font-display), system-ui, sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.045em;
     color: var(--logo-body);
     white-space: nowrap;
   }
@@ -121,7 +123,7 @@ const showWordmark = variant !== 'mark';
   }
 
   .logo--nav {
-    font-size: 19px;
+    font-size: 24px;
   }
 
   .logo--hero {

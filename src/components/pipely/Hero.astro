@@ -34,7 +34,7 @@ const {
   poster = '/showreel-poster.jpg',
   posterWebp = '/showreel-poster.webp',
   heading = 'Films and websites that make complicated things clear.',
-  lead = 'Doghouse Media is an independent video and web studio in Dublin, working since 2011.',
+  lead = 'Doghouse Media is an independent video and web studio in Dublin, working since 2013.',
   chips = [],
   count,
   proof,
@@ -49,7 +49,7 @@ const ambientSrc = `https://player.vimeo.com/video/${vimeoId}?background=1&autop
   <div class="pl-hero__gutter" style="padding-top:var(--pl-pad-md)">
     <div class="pl-container is-md">
       <div class="pl-grid-2 is-top pl-hero__row" data-reveal-stagger="100">
-        <h1 class="u-h2 u-balance" data-reveal>{heading}</h1>
+        <h1 class="u-h1 u-balance" data-reveal>{heading}</h1>
 
         <div class="pl-hero__aside" data-reveal>
           <p class="u-lg pl-hero__lead">{lead}</p>
@@ -127,7 +127,7 @@ const ambientSrc = `https://player.vimeo.com/video/${vimeoId}?background=1&autop
       playing = next;
       send(next ? 'play' : 'pause');
       hero.classList.toggle('is-paused', !next);
-      if (pause) pause.setAttribute('aria-pressed', String(!next));
+      if (pause) pause.setAttribute('data-paused', String(!next));
       if (label) label.textContent = next ? 'Pause background video' : 'Play background video';
     };
 
@@ -141,7 +141,7 @@ const ambientSrc = `https://player.vimeo.com/video/${vimeoId}?background=1&autop
       frame.addEventListener('load', () => {
         hero.classList.add('is-playing');
         // The control only appears once there is something to pause.
-        if (pause) { pause.hidden = false; pause.setAttribute('aria-pressed', 'false'); }
+        if (pause) { pause.hidden = false; pause.setAttribute('data-paused', 'false'); }
       }, { once: true });
       slot.replaceChildren(frame);
     };

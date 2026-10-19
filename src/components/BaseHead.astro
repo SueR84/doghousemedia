@@ -4,9 +4,6 @@ interface Props {
   description: string;
   image?: string;
   noindex?: boolean;
-  /** `host-grotesk` is the live site's display face. `inter-tight` is the
-   *  retired Fabrica build's, kept only while those pages are migrated. */
-  display?: 'host-grotesk' | 'inter-tight';
 }
 
 const {
@@ -14,15 +11,16 @@ const {
   description,
   image = '/og-default.jpg',
   noindex = false,
-  display = 'inter-tight',
 } = Astro.props;
 
-// Host Grotesk carries the display sizes at weight 400. Inter is the body
-// face, JetBrains Mono the labels. See PIPELY-FORK.md.
+// Three faces, one request: Plus Jakarta Sans for headings, Inter for body
+// text, JetBrains Mono for the small uppercase labels. The old switch
+// between this and the retired Fabrica build's Inter Tight went on
+// 24 September 2026, with the Fabrica pages.
 const fontHref =
-  display === 'host-grotesk'
-    ? 'https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@300..800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap'
-    : 'https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap';
+  'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300..800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap';
+const logoFontHref =
+  'https://fonts.googleapis.com/css2?family=Inter+Tight:wght@800&text=Doghouse%20Media&display=swap';
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(image, Astro.site);
@@ -37,6 +35,7 @@ const fullTitle = title === 'Doghouse Media' ? title : `${title} | Doghouse Medi
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href={fontHref} />
+<link rel="stylesheet" href={logoFontHref} />
 
 <title>{fullTitle}</title>
 <meta name="description" content={description} />

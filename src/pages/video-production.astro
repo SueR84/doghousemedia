@@ -13,8 +13,174 @@ import { getCollection } from 'astro:content';
 import Site from '../layouts/Site.astro';
 import Button from '../components/pipely/Button.astro';
 import WorkCard from '../components/pipely/WorkCard.astro';
+import PortraitLoop from '../components/sections/PortraitLoop.astro';
+import PhoneVideo from '../components/sections/PhoneVideo.astro';
+import VideoFacade from '../components/sections/VideoFacade.astro';
 
+
+// "What we make": the formats, as image tiles. Modelled on a reference the
+// studio liked (19 September 2026), but limited to formats the site's own
+// films and projects show. Animation, AI production, e-learning and strategy
+// were in the reference and are deliberately left out until confirmed.
+// Images are decorative (alt=""): each tile's heading says what it is.
+const formats = [
+  {
+    title: 'Brand and corporate films',
+    shape: '4 / 3',
+    text: 'Company stories, campaigns and the people behind them, made for the screens your audience actually uses.',
+    // An Post shoot: one interview cut three ways, 9:16, 16:9 and 1:1,
+    // with the set-up shot (boom mic, light stand) as the wide. Swapped
+    // with the Social tile's image on 6 October 2026, shapes swapped too
+    // because the Guinness thumbnail below is a vertical frame (640x1138).
+    image: '/work/formats/social-an-post-formats.jpg',
+    focus: '50% 50%',
+  },
+  {
+    title: 'Medical and technical films',
+    shape: '4 / 3',
+    text: 'Procedures, devices and processes filmed clearly enough for training, education and sales.',
+    // In theatre on the Boston Scientific shoot: gloved hands with a
+    // catheter over surgical drapes. Interim until a frame of a surgeon at
+    // work is supplied.
+    image: '/work/featured/boston/bs-end.webp',
+    focus: '38% 55%',
+  },
+  {
+    title: 'Social and vertical content',
+    shape: '3 / 4',
+    text: 'Short cuts in vertical, square and landscape, planned from the same shoot as the main film.',
+    // Guinness Storehouse, the 1837 Brasserie sign. Vimeo thumbnail, hotlinked.
+    image: 'https://i.vimeocdn.com/video/2190434694-63ab3b06ff4c6437eb5bd87fb62c83e22c9d94b99b7fb291ee8200b763cae4c0-d_640',
+    focus: '50% 35%',
+  },
+  {
+    title: 'Aerial and drone',
+    shape: '3 / 4',
+    text: 'Buildings, estates and landscapes from the air, cut into the main film or used on their own.',
+    // Adare Manor drone film. Vimeo thumbnail, hotlinked.
+    image: 'https://i.vimeocdn.com/video/2202567383-50217f521d32fa78e11c54eba99e4d7e9929d1032a497d89b1eab21a3877e123-d_640',
+    focus: '50% 50%',
+  },
+  {
+    title: 'Photography',
+    shape: '1 / 1',
+    text: 'Stills from the same shoot for your website, press and social channels, without booking a second crew.',
+    image: '/work/rumbek-pi2.jpg',
+    focus: '60% 40%',
+  },
+  {
+    title: 'Event coverage',
+    shape: '4 / 3',
+    text: 'Conferences, launches and live events, captured as they happen, with highlights cut for sharing afterwards.',
+    // Lifestyle Sports Women's Studio: the panel discussion on stage, from
+    // the live event film. Screen grab supplied 19 September 2026. The
+    // square crop keeps the middle, so the film's burned-in logo (bottom
+    // left) and side ticker (right) fall outside the tile.
+    image: '/work/formats/event-lifestyle-sports-panel.jpg',
+    focus: '55% 60%',
+  },
+];
+// TODO before launch: save the two hotlinked Vimeo thumbnails above into
+// /public so the tiles do not depend on Vimeo's CDN URLs.
+
+// Getting started, bottom of the page before the contact band. Modelled on
+// a reference the studio liked (19 September 2026). Distinct from "How we
+// work" above, which is the production process; this is the enquiry to
+// proposal. Cost is named only as part of a private proposal: no prices are
+// published anywhere on the site (CLAUDE.md).
+const startSteps = [
+  {
+    n: '01',
+    title: 'Get in touch',
+    text: 'Use the enquiry form to tell us what the film is for, where it will be seen and roughly when you need it. A rough outline is enough.',
+  },
+  {
+    n: '02',
+    title: 'Discovery call',
+    text: 'A call with Emma or Susan to talk through the brief, answer your questions and work out what the shoot involves.',
+  },
+  {
+    n: '03',
+    title: 'Full proposal',
+    text: 'A written proposal setting out the approach, timeline and cost, with examples of similar work we have made.',
+  },
+];
+
+// A case study link must never point at a page that is not there. A page
+// exists only where caseStudy is true and the project is not a draft (the
+// filter in work/[...slug].astro). Until then a link falls back to the work
+// index with a label that is true, and switches to the case study by itself
+// when the draft is published.
+const liveCaseStudies = new Set(
+  (await getCollection('projects', (p) => p.data.caseStudy && !p.data.draft)).map((p) => p.id),
+);
+const caseStudyLink = (slug: string, label = 'Read the case study', fallbackLabel = 'See the work') =>
+  liveCaseStudies.has(slug) ? { href: `/work/${slug}/`, label } : { href: '/work/', label: fallbackLabel };
+
+// Keeps its label either way (25 September 2026), so it reads as a line
+// about the client rather than a generic link. Until the Boston case study
+// is written it points at the work index; it switches to /work/boston-
+// scientific-docuseries/ by itself once that draft is published.
+const bostonCta = caseStudyLink(
+  'boston-scientific-docuseries',
+  'Delivering for Boston Scientific',
+  'Delivering for Boston Scientific',
+);
+
+// Case studies section. Guinness Storehouse, Coroflo and Dynamic (Ted Baker),
+// the three video case studies (6 October 2026). Boston Scientific moved out
+// of this list: its film is in the technical shoots section above, with the
+// "Delivering for Boston Scientific" button.
+const caseStudies = [
+  {
+    slug: 'guinness-storehouse',
+    client: 'Guinness Storehouse',
+    image: { src: '/work/guinness-storehouse-logo.webp', alt: 'Guinness Storehouse logo', fit: 'contain' },
+    // Five seconds of "GHS Summer Menu 2026" (vimeo.com/1218488306, public,
+    // portrait, 22s), looping in the card. Change `start` to pick a different
+    // five seconds. The poster is Vimeo's thumbnail for the film, the 1837
+    // Brasserie sign, hotlinked from Vimeo's image CDN.
+    // TODO before launch: save the poster into /public so the card does not
+    // depend on Vimeo's CDN URL, which changes if the thumbnail is reset.
+    loop: {
+      vimeoId: '1218488306',
+      title: 'Guinness Storehouse, summer menu 2026',
+      poster: 'https://i.vimeocdn.com/video/2190434694-63ab3b06ff4c6437eb5bd87fb62c83e22c9d94b99b7fb291ee8200b763cae4c0-d_640',
+      posterAlt: 'The 1837 Brasserie sign inside the Guinness Storehouse, from the summer menu film.',
+      start: 0,
+      // Fills the card, cropping top and bottom. 50 keeps the middle band;
+      // lower shows more of the top, higher more of the bottom.
+      fit: 'cover',
+      focusY: 50,
+    },
+    line: 'Social media shorts filmed at the home of Guinness, cut for vertical and square.',
+  },
+  {
+    // 6 October 2026: Dynamic replaces Boston Scientific here. Boston stays
+    // on the page in the technical shoots section above, linked from the
+    // "Delivering for Boston Scientific" button.
+    slug: 'dynamic-ted-baker',
+    client: 'Dynamic',
+    image: { src: '/work/dynamic/card-photos-2.jpg', alt: 'The Dynamic and Ted Baker logos above three photos from the shoot: backlit Ted Baker lettering, an installer fixing the letters to a wall, and a finished display wall with framed prints on a shelf.', fit: 'cover' },
+    line: 'A series of technical films for Ted Baker store installations, filmed over several days and made for the shop installers.',
+  },
+  {
+    slug: 'coroflo-film',
+    client: 'Coroflo',
+    image: { src: '/work/coroflo/card-logo.jpg', alt: 'The Coroflo logo beside two screens from the Coro app, showing a live milk flow graph.', fit: 'cover' },
+    line: 'A series of short informational films for Coro, an Irish-made breastfeeding monitor, explaining what it does and who it is for.',
+  },
+].map((c) => ({ ...c, ...caseStudyLink(c.slug, `Read the ${c.client} case study`, `See the ${c.client} work`) }));
+
+// Selected films. 5 October 2026: nothing that already appears higher up
+// the page repeats here. That is every project in the case studies section
+// above (Boston Scientific's film in the technical shoots section is one of
+// them). Derived from the list, so changing the case studies
+// changes this too. The Sunshine Session is left out at Sue's request.
+const onPageAlready = new Set(caseStudies.map((c) => c.slug));
+const leftOut = new Set(['charity-work-giving-a-little-back', 'boston-scientific-docuseries']);
 const films = (await getCollection('projects', (p) => !p.data.draft && p.data.craft !== 'web'))
+  .filter((p) => !onPageAlready.has(p.id) && !leftOut.has(p.id))
   .sort((a, b) => a.data.order - b.data.order || b.data.year - a.data.year)
   .slice(0, 6);
 
@@ -23,127 +189,242 @@ const testimonials = (await getCollection('testimonials', (t) => !t.data.placeho
 );
 const testimonial = testimonials[0];
 
-const deliver = [
-  {
-    title: 'Films people without the background can follow',
-    text: 'A device, a trial, a manufacturing process or a service, explained so that the person watching does not need your training to understand why it matters.',
-  },
-  {
-    title: "A shoot day that produces a campaign, not a video",
-    text: 'One day on site gives you the main film, short cuts for social in landscape, square and vertical, and stills. Planned that way from the brief, not salvaged afterwards.',
-  },
-  {
-    title: 'Work that clears review first time',
-    text: 'Legal, medical and compliance review is part of the schedule rather than a surprise at the end, so approval does not send the edit back to the start.',
-  },
-];
-
+// How we work: four production steps, each with a line icon in a ring.
+// Wording adapted 19 September 2026 from copy the studio supplied, brought
+// into the site's rules: Dublin not Melbourne, no em dashes, no "magic",
+// "like a glove" or "stunning", sentence-case headings. Captions and
+// delivery formats are named because the old version of this section
+// promised both. Icons are decorative; each step's heading carries the
+// meaning.
 const steps = [
-  { n: '01', title: 'Brief and concept', text: 'What the film has to do, who it is for, and where it will be seen. Agreed before anyone books a camera.' },
-  { n: '02', title: 'Shoot', text: 'A small crew, usually one or two of us, so nobody has to perform for a room.' },
-  { n: '03', title: 'Edit and review', text: 'Cut, graded and subtitled here. You see it, you comment, we cut again.' },
-  { n: '04', title: 'Delivery and formats', text: 'Every version you need in one delivery, captioned, named sensibly and ready to upload.' },
+  {
+    title: 'Initial consultation',
+    text: 'A call to work out what the film is for, who will watch it and where it will be shown. The idea comes out of that.',
+    icon: 'M4 6.5h16v9H9l-5 4v-13z',
+  },
+  {
+    title: 'Pre-production',
+    text: 'Scripting, locations, casting and shot planning, all agreed with you before the shoot.',
+    icon: 'M6 4h12v16H6zM9 8h6M9 12h6M9 16h3',
+  },
+  {
+    title: 'Filming',
+    text: 'The crew is sized to the job, from a single interview to a multi-camera day. We work around your people and your schedule.',
+    icon: 'M3 8h12v9H3zM15 11l6-3v9l-6-3',
+  },
+  {
+    title: 'Post-production',
+    text: 'Editing, sound, graphics and written captions, with review rounds built in. Delivered in the formats and ratios you need.',
+    icon: 'M3 5h18v14H3zM3 9h18M3 15h18M7 5v4M7 15v4M12 5v4M12 15v4M17 5v4M17 15v4',
+  },
 ];
 ---
 
 <Site
   title="Video Production"
-  description="Corporate and medical film from an independent Dublin studio. Fifteen years of work in operating theatres, labs and manufacturing plants."
+  description="Corporate and brand films, medical procedure filming and live events, from an independent Dublin studio working since 2013."
 >
-  {/* ---------- Position statement ---------- */}
+  {/* ---------- 1. Opening statement ----------
+      Revised page order, 18 September 2026: opening, types of production,
+      technical shoots, case studies, brief to finished film, testimonial,
+      selected films, enquiry. Supersedes MESSAGING-PLAN §6. The showreel
+      was dropped from this page because the homepage hero already plays
+      it; the Boston Scientific film in section 4 is the first thing to
+      watch here.
+      What we do, who for, and the range in one breath: corporate and brand
+      films, medical procedures, live events.
+      Right-hand side: the two-phone film from the homepage Video Production
+      block, dropped in 18 September 2026 to fill the empty half of the
+      panel, with Coroflo's film in the front phone. Same text/media
+      split as PillarBlock: text two thirds, phones one third. */}
   <section class="pl-panel" aria-labelledby="vp-heading">
     <div class="pl-gutter pl-pad-md">
       <div class="pl-container is-md">
+        <div class="pl-grid-2 is-wide pl-pillar--media">
         <div data-reveal-stagger="100">
           <p class="u-eyebrow is-film" data-reveal>Video Production</p>
           <div class="pl-gap-sm"></div>
-          <h1 class="u-h2 u-max-40 u-balance" id="vp-heading" data-reveal>
-            Video that makes complicated things clear.
+          <h1 class="u-h1 u-max-40 u-balance" id="vp-heading" data-reveal>
+            Corporate, medtech, branding and educational.
           </h1>
           <div class="pl-gap-sm"></div>
           <p class="u-lg u-muted u-max-33" data-reveal>
-            We have spent fifteen years making films in operating theatres, labs and manufacturing plants.
+            From medical procedures to live events, we film in environments where timing, preparation and
+            technical knowledge matter. We bring together a crew tailored to each production, working closely
+            with your team to capture the detail and tell the story.
           </p>
         </div>
+        <div data-reveal>
+          {/* Front: Guinness Storehouse, "GSH Summer Retail 2026"
+              (vimeo.com/1218488853, embed only, portrait 9:16, 20s, full
+              bleed). Swapped in for Coroflo's "Coro: Our Story" on 6 October
+              2026 at Sue's request, using one of the Guinness shorts not used
+              elsewhere on the site. Full bleed, so the zoom drops back to the
+              standard 1.02. Poster saved into /public.
+              Behind: Adare Manor drone film (vimeo.com/1228166251,
+              public, portrait, 40s, full bleed), set to the 'clear' style so it
+              reads as a second film rather than depth of field.
+              TODO before launch: the Adare poster is still hotlinked from
+              Vimeo's image CDN. Save it into /public. */}
+          <PhoneVideo
+            vimeoId="1218488853"
+            title="Guinness Storehouse, summer retail 2026"
+            poster="/work/guinness/ghs-summer-retail-2026.jpg"
+            posterAlt="Inside the Guinness Storehouse shop, with the words New Summer Collection over the shot."
+            behind={{
+              vimeoId: '1228166251',
+              title: 'Adare Manor, drone',
+              poster: 'https://i.vimeocdn.com/video/2202567383-50217f521d32fa78e11c54eba99e4d7e9929d1032a497d89b1eab21a3877e123-d_640',
+            }}
+            behindStyle="clear"
+            zoom={1.02}
+            swap={4}
+          />
+        </div>
+        </div>
       </div>
     </div>
   </section>
 
-  {/* ---------- Showreel ---------- */}
-  <section class="pl-panel is-secondary" aria-label="Showreel">
-    <div class="pl-gutter pl-pad-sm">
-      <div class="pl-container is-md">
-        <div class="pl-media is-video" data-reveal>
-          <iframe
-            src="https://player.vimeo.com/video/1218412491?dnt=1&title=0&byline=0&portrait=0"
-            title="Doghouse Media showreel"
-            allow="fullscreen; picture-in-picture"
-            loading="lazy"
-          ></iframe>
-        </div>
-        <p class="u-sm u-muted" style="margin-top:1rem" data-placeholder>
-          PLACEHOLDER, not for publication. Captions must be on this film before launch, and not auto-generated.
-        </p>
-      </div>
-    </div>
-  </section>
 
-  {/* ---------- Selected films ---------- */}
-  {films.length > 0 && (
-    <section class="pl-panel" aria-labelledby="vp-films">
-      <div class="pl-gutter pl-pad-md">
-        <div class="pl-container is-md">
-          <h2 class="u-h2 u-max-26" id="vp-films" data-reveal>Selected films.</h2>
-          <div class="pl-gap-lg"></div>
-          <div class="pl-grid-3" data-reveal-stagger="100">
-            {films.map((p, i) => <WorkCard project={p} tint={i % 2 ? 'var(--pl-a2)' : 'var(--pl-a3)'} reveal />)}
-          </div>
-        </div>
-      </div>
-    </section>
-  )}
 
-  {/* ---------- What we deliver ---------- */}
-  <section class="pl-panel is-secondary" aria-labelledby="vp-deliver">
+  {/* ---------- 2. What we make ----------
+      Replaced the four-card "production specialisms" section on 19
+      September 2026; the tiles cover the same ground more visually.
+      Laid out as masonry with level bottoms (19 September 2026): cards of
+      different heights, the words on the card below each photo, and every
+      column finishing level. Replaced text laid on the photo, whose dark
+      fade bled into the image.
+      Image tiles, one per format. Text sits at the top of each tile on an
+      ink gradient that is at least 70% where the words are, so cream text
+      stays above 4.5:1 over any photo, however pale. */}
+  {/* ---------- What we make ----------
+      Three across on an ink panel (24 September 2026). Tried before this:
+      a masonry of white cards, which read as the same object as every
+      other grid on the site, a contact sheet on the film band, and
+      alternating rows bleeding off the page edge. The dark ground is what
+      separates it from the white grids now, so the tiles themselves stay
+      plain: photo, number, name, one line. */}
+  <section class="pl-panel is-inverse" aria-labelledby="vp-formats">
     <div class="pl-gutter pl-pad-md">
       <div class="pl-container is-md">
-        <div class="pl-grid-2 is-top is-wide">
-          <div class="pl-stack pl-stack-md" data-reveal>
-            <p class="u-eyebrow is-film">What we deliver</p>
-            <h2 class="u-h2 u-max-26" id="vp-deliver">Three things, every time.</h2>
+        <div data-reveal-stagger="100">
+          <h2 class="u-h2 u-balance" style="max-width:40rem;color:var(--pl-text-inverse)" id="vp-formats" data-reveal>
+            What we make
+          </h2>
+        </div>
+        <div class="pl-gap-lg"></div>
+
+        <ol class="vp-tiles" role="list" data-reveal-stagger="80">
+          {formats.map((f, i) => (
+            <li class="vp-tile" data-reveal>
+              <div class="vp-tile__media">
+                <img src={f.image} alt="" loading="lazy" decoding="async" style={`object-position:${f.focus}`} />
+              </div>
+              <span class="vp-tile__n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <h3 class="vp-tile__title">{f.title}</h3>
+              <p class="vp-tile__line">{f.text}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- 3. Experience on technical shoots ----------
+      The practical questions a buyer hesitates to ask: how filming fits
+      around a procedure or event, who coordinates, what happens when
+      timings change. Paired with the Boston Scientific docuseries, which
+      was filmed in theatre.
+      TODO before launch: captions on this film, written not auto-generated
+      (CLAUDE.md). Do not add the "EMEA preferred supplier" line anywhere. */}
+  <section class="pl-panel" aria-labelledby="vp-technical">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div class="pl-grid-2 is-wide">
+          <div class="pl-stack pl-stack-md" data-reveal-stagger="100">
+            <h2 class="u-h2 u-balance" id="vp-technical" data-reveal>
+              When the action happens once, preparation matters.
+            </h2>
+            <div class="pl-stack pl-stack-sm u-muted" data-reveal>
+              <p class="u-lg" style="color:var(--pl-text)">
+                Medical procedures and live events follow their own course. Our job is to understand what’s
+                coming, know which details matter and be ready to capture them.
+              </p>
+              <p>
+                Before filming, we work through the procedure or running order with your team. We establish
+                the key moments, the available space and any restrictions, then plan the camera positions,
+                sound and crew around them.
+              </p>
+              <p>
+                In clinical settings, we take our lead from the medical team and work within the requirements
+                of the environment. At events, we coordinate with organisers and technical teams, adapting our
+                coverage as timings change.
+              </p>
+            </div>
+            <div class="pl-btn-group" data-reveal>
+              <Button href={bostonCta.href} variant="ghost">{bostonCta.label}</Button>
+            </div>
           </div>
-          <ul class="pl-service-points" data-reveal-stagger="100">
-            {deliver.map((d) => (
-              <li class="pl-service-points__item" data-reveal>
-                <span class="pl-service-points__title">{d.title}</span>
-                <span class="pl-service-points__text u-muted">{d.text}</span>
-              </li>
-            ))}
-          </ul>
+          <figure class="vp-film" style="margin:0">
+            {/* Still and play button only until clicked; no Vimeo chrome
+                before then. Unrolls into view from the bottom. The running
+                time is on the caption plate below, so not repeated here.
+                Runs off the panel's right edge and opens in a modal
+                (25 September 2026). */}
+            <div class="pl-media is-video vp-film__media">
+              <VideoFacade
+                vimeoId="1225926198"
+                title="Boston Scientific docuseries, episode one"
+                poster="/work/featured/boston-scientific-docuseries.jpg"
+                mode="dialog"
+              />
+            </div>
+            <figcaption class="vp-caption">
+              <span class="vp-caption__client">
+                <span class="vp-caption__label">Client</span>
+                <span class="vp-caption__name">Boston Scientific</span>
+              </span>
+              <span class="vp-caption__meta">
+                <span>Docuseries, episode one</span>
+                <span class="vp-caption__dot" aria-hidden="true">/</span>
+                <span class="vp-caption__time"><span class="sr-only">Running time </span><time datetime="PT5M4S">5:04</time></span>
+              </span>
+            </figcaption>
+          </figure>
         </div>
       </div>
     </div>
   </section>
 
-  {/* ---------- Case studies ----------
-      Guinness Storehouse and Boston Scientific, per the plan. Both need
-      their own pages writing before this links anywhere real. */}
-  <section class="pl-panel" aria-labelledby="vp-cases">
+  {/* ---------- Case studies ---------- */}
+  <section class="pl-panel is-secondary" aria-labelledby="vp-cases">
     <div class="pl-gutter pl-pad-md">
       <div class="pl-container is-md">
         <h2 class="u-h2 u-max-26" id="vp-cases" data-reveal>Case studies.</h2>
         <div class="pl-gap-lg"></div>
-        <div class="pl-grid-2" data-reveal-stagger="120">
-          {['Guinness Storehouse', 'Boston Scientific'].map((client) => (
+        <div class="pl-grid-3" data-reveal-stagger="120">
+          {caseStudies.map((c) => (
             <article class="pl-card is-tight" data-reveal>
+              {'loop' in c && c.loop
+                ? (
+                  <div class="pl-media is-case">
+                    <PortraitLoop {...c.loop} />
+                  </div>
+                )
+                : (
+                  <div class:list={['pl-media', 'is-case', { 'vp-case-contain': c.image.fit === 'contain' }]}>
+                    <img src={c.image.src} alt={c.image.alt} loading="lazy" decoding="async" />
+                  </div>
+                )}
               <span class="pl-tag is-film u-xs">Video</span>
               <div class="pl-stack pl-stack-sm">
-                <h3 class="u-xl u-medium">{client}</h3>
-                <p class="u-muted" data-placeholder>
-                  PLACEHOLDER, not for publication. Case study to be written, 250 to 400 words.
-                </p>
+                <h3 class="u-xl u-medium">{c.client}</h3>
+                {c.line
+                  ? <p class="u-muted">{c.line}</p>
+                  : <p class="u-muted" data-placeholder>PLACEHOLDER, not for publication. One line needed on what this film was for.</p>}
               </div>
-              <a class="pl-link" href="/work/">See the work</a>
+              <a class="pl-link" href={c.href} style="margin-top:auto">{c.label}</a>
             </article>
           ))}
         </div>
@@ -152,25 +433,39 @@ const steps = [
   </section>
 
   {/* ---------- How we work ----------
-      After the case studies on purpose. The work convinces, then process
-      reassures that we are not improvising. */}
-  <section class="pl-panel is-secondary" aria-labelledby="vp-how">
-    <div class="pl-gutter pl-pad-md">
-      <div class="pl-container is-md">
-        <h2 class="u-h2 u-max-26" id="vp-how" data-reveal>How we work.</h2>
-        <div class="pl-gap-lg"></div>
-        <ol class="pl-steps" data-reveal-stagger="100">
-          {steps.map((s) => (
-            <li class="pl-steps__item" data-reveal>
-              <span class="u-eyebrow">{s.n}</span>
-              <span class="pl-stack pl-stack-xs">
-                <span class="u-xl u-medium">{s.title}</span>
-                <span class="u-muted">{s.text}</span>
-              </span>
-            </li>
-          ))}
-        </ol>
+      Dark panel: a behind-the-scenes photo filling the left half, and the
+      four production steps in a two by two grid on the right. Modelled on
+      a reference the studio supplied (19 September 2026). Placed after the
+      case studies on purpose: the work convinces first, then the process
+      reassures. */}
+  <section class="pl-panel is-inverse vp-how" aria-labelledby="vp-how">
+    {/* Guinness Storehouse shoot: an operator on a rigged camera with a
+        field monitor, in the Storehouse's steel atrium. Supplied 19
+        September 2026 as a PNG and converted to WebP (1400px, 66 KB).
+        Framed at 57% so the operator's face and the field monitor both hold the tall
+        crop. Decorative: the section is about the steps, not the photo. */}
+    <div class="vp-how__photo" data-parallax>
+      <img src="/work/formats/crew-guinness-storehouse.webp" alt="" loading="lazy" decoding="async" style="object-position:57% 50%" />
+    </div>
+    <div class="vp-how__body">
+      <div data-reveal-stagger="100">
+        <h2 class="vp-how__heading" id="vp-how" data-reveal>How a production runs</h2>
       </div>
+      <ol class="vp-how__steps" role="list" data-reveal-stagger="100">
+        {steps.map((st) => (
+          <li class="vp-how__step" data-reveal>
+            <span class="vp-how__ring" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d={st.icon} fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+            <div class="vp-how__text">
+              <h3 class="vp-how__title">{st.title}</h3>
+              <p>{st.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
     </div>
   </section>
 
@@ -190,11 +485,51 @@ const steps = [
     </section>
   )}
 
+  {/* ---------- Selected films ---------- */}
+  {films.length > 0 && (
+    <section class="pl-panel is-secondary" aria-labelledby="vp-films">
+      <div class="pl-gutter pl-pad-md">
+        <div class="pl-container is-md">
+          <h2 class="u-h2 u-max-26" id="vp-films" data-reveal>Selected films.</h2>
+          <div class="pl-gap-lg"></div>
+          <div class="pl-grid-3" data-reveal-stagger="100">
+            {films.map((p, i) => <WorkCard project={p} tint={i % 2 ? 'var(--pl-a2)' : 'var(--pl-a3)'} reveal />)}
+          </div>
+        </div>
+      </div>
+    </section>
+  )}
+
+  {/* ---------- Getting started ---------- */}
+  <section class="pl-panel" aria-labelledby="vp-start">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div data-reveal-stagger="100">
+          <p class="u-eyebrow" data-reveal>Working with us</p>
+          <div class="pl-gap-sm"></div>
+          <h2 class="vp-start__heading" id="vp-start" data-reveal>
+            Getting started
+          </h2>
+        </div>
+        <div class="pl-gap-lg"></div>
+        <ol class="vp-start" role="list" data-reveal-stagger="100">
+          {startSteps.map((st) => (
+            <li class="vp-start__step" data-reveal>
+              <span class="vp-start__n" aria-hidden="true">{st.n}</span>
+              <h3 class="vp-start__title">{st.title}</h3>
+              <p class="u-muted">{st.text}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
   {/* ---------- Contact ---------- */}
   <section class="pl-panel is-inverse">
     <div class="pl-gutter pl-pad-lg">
       <div class="pl-container is-md u-center">
-        <h2 class="u-h2 u-balance" data-reveal style="color:var(--pl-text-inverse);margin-inline:auto;max-width:30rem">
+        <h2 class="u-h2 u-balance" data-reveal style="color:var(--pl-text-inverse);margin-inline:auto;max-width:44rem">
           Have a film to make?
         </h2>
         <div class="pl-gap-sm"></div>
@@ -209,3 +544,296 @@ const steps = [
     </div>
   </section>
 </Site>
+
+<style>
+  /* Caption plate under the Boston Scientific film. Sits on the video like
+     a caption line, not a plate (25 September 2026): no fill, no rule and
+     no red border, client name in the display face on the left,
+     format and running time in mono on the right. The cream plate with the
+     red border read as a card, which fought the film bleeding off the
+     panel edge above it. */
+  .vp-caption {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.25rem var(--pl-s-md);
+    margin-top: var(--pl-s-md);
+  }
+  .vp-caption__client { display: flex; align-items: baseline; gap: 0.5rem; }
+  .vp-caption__label {
+    font-family: var(--font-mono);
+    font-size: var(--pl-xs);
+    letter-spacing: var(--pl-tr-caps);
+    text-transform: uppercase;
+    color: var(--pl-text-meta);
+  }
+  .vp-caption__name {
+    font-family: var(--font-display);
+    font-size: var(--pl-xl);
+    font-weight: var(--pl-fw-medium);
+    letter-spacing: var(--pl-tr-tight);
+    color: var(--pl-text);
+  }
+  .vp-caption__meta {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: var(--pl-xs);
+    letter-spacing: var(--pl-tr-caps);
+    text-transform: uppercase;
+    color: var(--pl-text-meta);
+  }
+  .vp-caption__time { font-variant-numeric: tabular-nums; }
+  .vp-caption__dot { opacity: 0.5; }
+
+  /* A logo standing in for a still: shown whole on cream, not cropped. */
+  .vp-case-contain { background-color: var(--pl-secondary); }
+  .vp-case-contain img { object-fit: contain; padding: 12%; }
+
+  /* The Boston film runs off the panel's right edge, so it is wider than
+     its column (25 September 2026). --vp-bleed is the distance from the
+     container to the panel edge: the gutter, plus whatever the centred
+     container leaves either side above its max width. The panel clips.
+     Its caption stays inside the container. */
+  .vp-film__media {
+    --vp-bleed: calc(var(--pl-gutter) + max(0px, (100vw - 2.5rem - 2 * var(--pl-gutter) - 80rem) / 2));
+    border-radius: var(--pl-r-media) 0 0 var(--pl-r-media);
+  }
+  @media (min-width: 768px) {
+    /* width: auto matters: .pl-media sets width: 100%, and a 100%-wide box
+       ignores a negative margin instead of growing into it. */
+    .vp-film__media { width: auto; margin-right: calc(-1 * var(--vp-bleed)); }
+  }
+
+  /* What we make: three tiles across on ink (24 September 2026, after a
+     white masonry, a contact sheet on the film band and alternating
+     bleed rows). The dark ground does the separating from the site's
+     other grids, so the tiles carry no fill or border of their own. */
+  .vp-tiles {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    /* Wider gaps than the site's usual grid, 25 September 2026: on ink,
+       with no card fills, the tiles need the air to read as separate.
+       Set in rem rather than the spacing tokens, whose top step is only
+       2rem and is too tight for a six-tile grid. */
+    gap: 4.5rem 3rem;
+    margin: 0;
+    padding: 0;
+  }
+  .vp-tile { display: grid; align-content: start; gap: var(--pl-s-xs); }
+  .vp-tile__media {
+    aspect-ratio: 4 / 3;
+    margin-bottom: var(--pl-s-sm);
+    overflow: clip;
+    border-radius: var(--pl-r-media);
+    background-color: #000;
+    outline: 1px solid rgb(243 246 248 / 0.12);
+    outline-offset: -1px;
+  }
+  .vp-tile__media img { width: 100%; height: 100%; object-fit: cover; }
+  .vp-tile__n {
+    font-family: var(--font-mono);
+    font-size: var(--pl-xs);
+    letter-spacing: 0.14em;
+    color: var(--pl-text-on-dark);
+  }
+  .vp-tile__title {
+    /* Display face at h3, up from --pl-xl (24 September 2026): the tile
+       names were reading as captions rather than headings. */
+    font-family: var(--font-display);
+    font-size: var(--pl-h3);
+    font-weight: var(--pl-fw-medium);
+    line-height: 1.12;
+    letter-spacing: var(--pl-tr-tight);
+    color: var(--pl-text-inverse);
+  }
+  .vp-tile__line {
+    font-size: var(--pl-sm);
+    line-height: 1.6;
+    color: var(--pl-text-on-dark);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .vp-tile__media img { transition: transform 700ms var(--pl-ease-out-quart); }
+    .vp-tile:hover .vp-tile__media img { transform: scale(1.05); }
+  }
+
+  @media (max-width: 991px) {
+    .vp-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3.5rem 2rem; }
+    .vp-tile__title { font-size: var(--pl-h4); }
+  }
+  @media (max-width: 599px) {
+    .vp-tiles { grid-template-columns: 1fr; gap: 3rem; }
+  }
+
+  /* Getting started. Matched to the reference the studio supplied
+     (19 September 2026): one big heading on a single line, a quiet grey
+     label and numbers, a light rule over each column, heavier step titles,
+     larger and airier body text, wide gutters. The heading keeps the
+     display face at 400, per the brand: size carries it, not weight. */
+  .vp-start__heading {
+    font-family: var(--font-display);
+    font-size: var(--pl-h1);
+    font-weight: var(--pl-fw-regular);
+    line-height: 1.05;
+    letter-spacing: var(--pl-tr-h1);
+  }
+  .vp-start {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--pl-s-5xl);
+  }
+  .vp-start__step {
+    display: grid;
+    align-content: start;
+    gap: var(--pl-s-md);
+    padding-top: var(--pl-s-2xl);
+    border-top: 2px solid var(--pl-border);
+  }
+  .vp-start__n {
+    font-size: var(--pl-sm);
+    font-weight: var(--pl-fw-medium);
+    letter-spacing: var(--pl-tr-caps);
+    color: var(--pl-text-muted);
+  }
+  .vp-start__title {
+    font-family: var(--font-display);
+    font-size: var(--pl-h3);
+    font-weight: var(--pl-fw-medium);
+    line-height: 1.15;
+    letter-spacing: var(--pl-tr-tight);
+  }
+  .vp-start__step p {
+    font-size: var(--pl-lg);
+    line-height: 1.75;
+  }
+  @media (max-width: 991px) {
+    .vp-start { grid-template-columns: 1fr; gap: var(--pl-s-3xl); }
+  }
+
+  /* How we work: dark panel, photo left, steps right. */
+  .vp-how {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: stretch;
+  }
+  .vp-how__photo { position: relative; min-height: 32rem; }
+  .vp-how__photo img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 45% 50%;
+  }
+  .vp-how__body {
+    display: grid;
+    align-content: center;
+    gap: var(--pl-s-4xl);
+    padding: var(--pl-pad-md) var(--pl-gutter);
+  }
+  .vp-how__heading {
+    font-family: var(--font-display);
+    font-size: var(--pl-h3);
+    font-weight: var(--pl-fw-regular);
+    line-height: 1.15;
+    letter-spacing: var(--pl-tr-tight);
+    color: var(--pl-text-inverse);
+  }
+  .vp-how__intro {
+    margin-top: var(--pl-s-md);
+    max-width: 38rem;
+    font-size: var(--pl-lg);
+    line-height: 1.6;
+    color: rgb(243 246 248 / 0.82);
+  }
+  .vp-how__steps {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--pl-s-3xl) var(--pl-s-2xl);
+  }
+  .vp-how__step {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--pl-s-lg);
+    align-items: start;
+  }
+  /* Icon disc: a soft cream tint on the dark panel with a cream line icon,
+     no border. The same treatment as the pause pills and the film band's
+     tags, so it reads as part of the site. A red outlined ring was tried
+     first (19 September 2026) and was the only outlined, coloured shape on
+     the site, so it stood apart. */
+  .vp-how__ring {
+    display: grid;
+    place-items: center;
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 50%;
+    background-color: rgb(243 246 248 / 0.08);
+    color: var(--color-cream);
+  }
+  .vp-how__ring svg { width: 1.75rem; height: 1.75rem; }
+  .vp-how__text { display: grid; gap: var(--pl-s-xs); }
+  .vp-how__title {
+    font-family: var(--font-display);
+    font-size: var(--pl-xl);
+    font-weight: var(--pl-fw-medium);
+    color: var(--pl-text-inverse);
+  }
+  .vp-how__text p { line-height: 1.6; color: var(--pl-text-on-dark); }
+
+  @media (max-width: 1199px) {
+    .vp-how__steps { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 991px) {
+    .vp-how { grid-template-columns: 1fr; }
+    .vp-how__photo { min-height: 0; aspect-ratio: 16 / 9; }
+  }
+  @media (max-width: 599px) {
+    .vp-how__ring { width: 3.5rem; height: 3.5rem; }
+    .vp-how__ring svg { width: 1.375rem; height: 1.375rem; }
+  }
+
+  /* Scroll parallax on the How we work photo. The image is 16% taller than
+     its frame, so shifting it up to 8% either way never shows an edge. The
+     script writes --vp-shift from -1 to 1 as the section crosses the screen.
+     Only with motion allowed; otherwise the photo sits still and fits. */
+  @media (prefers-reduced-motion: no-preference) {
+    .vp-how__photo[data-parallax] img {
+      inset: -8% 0;
+      height: 116%;
+      transform: translate3d(0, calc(var(--vp-shift, 0) * 6%), 0);
+      will-change: transform;
+    }
+  }
+</style>
+
+<script>
+  // Parallax for the How we work photo: as the section crosses the screen,
+  // the photo drifts a little against the scroll. rAF-throttled, and only
+  // listening while the section is on screen. Nothing runs under reduced
+  // motion; the CSS falls back to a still, fitted photo.
+  const box = document.querySelector<HTMLElement>('[data-parallax]');
+  if (box && window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      const r = box.getBoundingClientRect();
+      const vh = window.innerHeight || 1;
+      // 1 when the box's top is at the bottom of the screen, -1 when its
+      // bottom is at the top.
+      const progress = (r.top + r.height / 2 - vh / 2) / (vh / 2 + r.height / 2);
+      box.style.setProperty('--vp-shift', String(Math.max(-1, Math.min(1, progress))));
+    };
+    const onScroll = () => {
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    };
+    new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { window.addEventListener('scroll', onScroll, { passive: true }); update(); }
+      else window.removeEventListener('scroll', onScroll);
+    }).observe(box);
+    update();
+  }
+</script>

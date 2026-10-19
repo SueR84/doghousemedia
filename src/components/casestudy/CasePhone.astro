@@ -1,0 +1,125 @@
+---
+/**
+ * A still screenshot in a plain phone frame, for sitting beside case study
+ * text. Same rail, bezel and radii as AppPhone, without the animation.
+ */
+interface Props {
+  src: string;
+  alt: string;
+  caption?: string;
+  /** Screen proportions, width / height. */
+  ratio?: string;
+  /** Natural size of the image. When it is taller than the screen, it
+      scrolls up inside the phone as the page scrolls. */
+  imgWidth?: number;
+  imgHeight?: number;
+}
+const { src, alt, caption, ratio = '585 / 1286', imgWidth = 585, imgHeight = 1286 } = Astro.props;
+---
+
+<figure class="cp" data-reveal data-phone-scroll style={`--cp-ratio:${ratio}`}>
+  <div class="cp-rail">
+    <div class="cp-body">
+      <div class="cp-screen">
+        <img src={src} alt={alt} width={imgWidth} height={imgHeight} loading="lazy" decoding="async" />
+        <span class="cp-glare" aria-hidden="true"></span>
+      </div>
+    </div>
+  </div>
+  {caption && <figcaption class="u-sm u-muted">{caption}</figcaption>}
+</figure>
+
+<style>
+  .cp {
+    --cp-w: clamp(12rem, 20vw, 15rem);
+    width: var(--cp-w);
+    margin: 0 auto;
+  }
+  .cp-rail {
+    padding: calc(var(--cp-w) * 0.011);
+    border-radius: calc(var(--cp-w) * 0.175);
+    background: linear-gradient(114deg, #9aa3a9 0%, #2b3135 11%, #6d767c 29%, #202528 52%, #737c82 72%, #272c30 86%, #9aa3a9 100%);
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.2), 0 20px 34px -8px rgb(0 0 0 / 0.34), 0 54px 86px -22px rgb(0 0 0 / 0.46);
+  }
+  .cp-body {
+    padding: calc(var(--cp-w) * 0.029);
+    border-radius: calc(var(--cp-w) * 0.164);
+    background: #050708;
+  }
+  .cp-screen {
+    position: relative;
+    aspect-ratio: var(--cp-ratio);
+    overflow: clip;
+    border-radius: calc(var(--cp-w) * 0.135);
+    background: #fff;
+  }
+  .cp-screen img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    display: block;
+    transform: translate3d(0, var(--cp-y, 0px), 0);
+    transition: transform 160ms linear;
+    will-change: transform;
+  }
+  .cp-glare {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(146deg, rgb(255 255 255 / 0.13) 0%, rgb(255 255 255 / 0.045) 15%, transparent 36%);
+  }
+  figcaption {
+    margin-top: 1.25rem;
+    text-align: center;
+  }
+
+  /* A slow rise on scroll: 1.8 seconds and a longer travel than the site's
+     usual 700ms reveal. Same hooks as every other data-reveal element, so
+     reduced motion and no-JavaScript still show it straight away. */
+  :global(.js .pipely .cp[data-reveal]) {
+    transition-duration: 1800ms;
+  }
+  :global(.js .pipely .cp[data-reveal]:not(.is-in)) {
+    transform: translateY(70px);
+  }
+</style>
+
+<script is:inline>
+  /* The screenshot is a tall strip of the live homepage. As the phone moves
+     up the viewport, the strip moves up inside the screen, so the page
+     appears to scroll with the visitor. It is driven by the visitor's own
+     scrolling and never moves on its own, so it needs no pause control.
+     With reduced motion, or without JavaScript, the top of the page shows. */
+  (function () {
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches) return;
+    var figs = document.querySelectorAll('[data-phone-scroll]');
+    figs.forEach(function (fig) {
+      var screen = fig.querySelector('.cp-screen');
+      var img = fig.querySelector('.cp-screen img');
+      if (!screen || !img) return;
+      var ticking = false;
+      function update() {
+        ticking = false;
+        var max = img.offsetHeight - screen.clientHeight;
+        if (max <= 0) return;
+        var vh = window.innerHeight;
+        var r = screen.getBoundingClientRect();
+        // 0 as the phone starts to enter at the bottom, 1 as it leaves at the top.
+        var p = (vh * 0.95 - r.top) / (vh * 0.95 + r.height - vh * 0.05);
+        p = Math.min(1, Math.max(0, p));
+        img.style.transform = 'translate3d(0,' + (-p * max).toFixed(1) + 'px,0)';
+      }
+      function request() {
+        if (!ticking) { ticking = true; requestAnimationFrame(update); }
+      }
+      window.addEventListener('scroll', request, { passive: true });
+      window.addEventListener('resize', request);
+      img.addEventListener('load', request);
+      update();
+    });
+  })();
+</script>
+

@@ -14,6 +14,9 @@ import Hero from '../components/pipely/Hero.astro';
 import Marquee from '../components/pipely/Marquee.astro';
 import PillarBlock from '../components/sections/PillarBlock.astro';
 import IpadFrame from '../components/sections/IpadFrame.astro';
+import StillsMotion from '../components/sections/StillsMotion.astro';
+import SlmCollage from '../components/sections/SlmCollage.astro';
+import StartProject from '../components/pipely/StartProject.astro';
 
 // Real quotes only. Placeholders are filtered at the schema level so a
 // stand-in cannot reach production.
@@ -29,9 +32,23 @@ const clients = [
   { file: 'boston-scientific', name: 'Boston Scientific' },
   { file: 'amgen', name: 'Amgen' },
   { file: 'coroflo', name: 'Coroflo' },
+  // Cappagh and Custodian added 19 September 2026: PNGs on white, cropped
+  // from the square files supplied down to the logo plus a small margin.
+  { file: 'national-orthopaedic-hospital-cappagh', name: 'National Orthopaedic Hospital Cappagh', ext: 'png', w: 100 },
   { file: 'real-nation', name: 'Real Nation' },
   { file: 'ucd', name: 'University College Dublin' },
+  // Supplied 19 September 2026 as dynamic-logo.jpg, a stacked mark and
+  // wordmark on white. Kept apart from Custodian in the order. Cropped to the logo and saved at 240px tall.
+  { file: 'dynamic', name: 'Dynamic', ext: 'png', w: 70 },
   { file: 'lifestyle-sports', name: 'Lifestyle Sports' },
+  // Kept apart from Real Nation and Dynamic in the order.
+  { file: 'custodian', name: 'Custodian', ext: 'png', w: 196 },
+  // Supplied 19 September 2026 as Basispoint_Tag_rgb.png, transparent and
+  // already cropped, so used as is.
+  { file: 'basis-point', name: 'basis.point', ext: 'png', w: 149 },
+  // From the old site's media library (RedCross-Logo.jpg, 2022), added 19
+  // September 2026. JPG on white rather than a transparent WebP like the rest.
+  { file: 'irish-red-cross', name: 'Irish Red Cross', ext: 'jpg', w: 256 },
 ];
 
 // TODO before launch: both of these need their own case study page at
@@ -60,16 +77,22 @@ const clients = [
 const liveCaseStudies = new Set(
   (await getCollection('projects', ({ data }) => data.caseStudy && !data.draft)).map((p) => p.id),
 );
-const caseStudy = (slug: string) =>
+// The link text names the project, so two cards on one page never share the
+// same "Read the case study" link name (WCAG 2.4.4 link purpose).
+const caseStudy = (slug: string, name: string) =>
   liveCaseStudies.has(slug)
-    ? { href: `/work/${slug}/`, label: 'Read the case study' }
-    : { href: '/work/', label: 'See the work' };
+    ? { href: `/work/${slug}/`, label: `Read the ${name} case study` }
+    : { href: '/work/', label: `See the ${name} work` };
 
 type Thumb = {
   src: string;
   alt: string;
   /** Wraps the screenshot in a device mockup instead of showing it flat. */
   device?: 'ipad';
+  /** Four stills that slide through once, recreating a film's opening. `src` is the resting still. */
+  motion?: [string, string, string, string];
+  /** A layered collage component that moves on scroll, instead of an image. */
+  collage?: 'slm';
   /** Ground colour behind a portrait device, which does not fill the box. */
   ground?: string;
 };
@@ -83,10 +106,17 @@ const featured = [
     // TODO: confirm this line. Everything in it is verifiable from the film
     // itself (episode one, docuseries, Boston Scientific) but what the
     // series was actually FOR is still missing and is the interesting part.
-    line: 'Episode one of a docuseries, made for the medtech manufacturer.',
+    line: 'An eight-part education series on pulsed field ablation, filmed at the Mater Private in Dublin.',
     thumb: {
-      src: '/work/featured/boston-scientific-docuseries.jpg',
-      alt: 'Title card from the Boston Scientific docuseries, showing surgical staff in a clinical setting.',
+      src: '/work/featured/boston/bs-end.webp',
+      alt: 'Opening titles from the Boston Scientific docuseries: clinical staff inside chevron shapes, the Boston Scientific EDUCARE logo, then a gloved hand holding a catheter in theatre.',
+      // The opening four seconds of the film, rebuilt from four stills.
+      motion: [
+        '/work/featured/boston/bs-a.webp',
+        '/work/featured/boston/bs-b.webp',
+        '/work/featured/boston/bs-c.webp',
+        '/work/featured/boston/bs-end.webp',
+      ],
     } as Thumb | null,
     slug: 'boston-scientific-docuseries',
   },
@@ -97,20 +127,16 @@ const featured = [
     // The project is named in the heading now, so the line no longer repeats
     // it. WCAG 2.1 AA is correct for this site and must not become 2.2:
     // 2.2 is Real Nation's own site. See CLAUDE.md.
-    line: 'Built in English and Irish with human translation review, and tested to WCAG 2.1 AA.',
-    // INTERIM: this is the phone capture from the carousel, standing in so the
-    // mockup can be judged. It is a mobile layout shown at tablet width. A
-    // real iPad capture of someonelikemeartawards.ie replaces it.
+    // Always credit Real Nation, who designed and ran the project.
+    line: 'Built in English and Irish, with the Irish text reviewed, and tested to WCAG 2.1 AA. In partnership with Real Nation, who designed and ran the project.',
     thumb: {
-      src: '/work/carousel/someone-like-me.jpg',
-      alt: 'The Someone Like Me Art Awards site shown on a tablet.',
-      device: 'ipad',
-      ground: 'var(--color-steel-tint)',
+      src: '/work/featured/someone-like-me.webp',
+      collage: 'slm',
+      alt: 'The Someone Like Me Art Awards site in English and Irish, shown across two browser windows and a phone.',
     } as Thumb | null,
-    // No project file for this one yet, so the card correctly falls back.
-    slug: 'someone-like-me-art-awards',
+    slug: 'someone-like-me',
   },
-].map((f) => ({ ...f, ...caseStudy(f.slug) }));
+].map((f) => ({ ...f, ...caseStudy(f.slug, f.slug === 'someone-like-me' ? 'Someone Like Me' : f.client) }));
 
 ---
 
@@ -120,8 +146,8 @@ const featured = [
 >
   {/* ---------- 1. Hero ---------- */}
   <Hero
-    heading="Films and websites that make complicated things clear."
-    lead="Doghouse Media is an independent video and web studio in Dublin, working since 2011."
+    heading="Video and digital production that informs and inspires."
+    lead="We're a female led, Dublin studio specialising in video production and web development for corporate and medtech clients. We also work with charities and public sector organisations."
     primary={{ label: 'See the work', href: '/work/' }}
   />
 
@@ -131,16 +157,16 @@ const featured = [
   <section class="pl-panel" aria-labelledby="clients-heading">
     <div class="pl-gutter pl-pad-sm">
       <div class="pl-container is-md">
-        <p class="u-eyebrow" id="clients-heading" data-reveal>Organisations we work with</p>
+        <p class="u-eyebrow" id="clients-heading" data-reveal>Organisations we've worked with</p>
       </div>
       <div class="pl-gap-sm"></div>
       <div class="pl-container is-md">
         <Marquee speed={34}>
           {clients.map((c) => (
             <img
-              src={`/clients/${c.file}.webp`}
+              src={`/clients/${c.file}.${'ext' in c ? c.ext : 'webp'}`}
               alt={c.name}
-              width="140"
+              width={'w' in c ? c.w : 140}
               height="48"
               loading="lazy"
               style="height:2.5rem;width:auto;opacity:.55"
@@ -154,8 +180,9 @@ const featured = [
   {/* ---------- 3. Video Production ---------- */}
   <PillarBlock
     eyebrow="Video Production"
-    heading="Captivating media production that moves and excites."
-    lead="Medtech, pharma, corporate and charity work, filmed on site rather than staged in a studio."
+    heading="Video production."
+    headingLine2="Real stories, expertly told."
+    lead="From the people behind a business to the science behind a breakthrough, we create films for medtech, corporate and charity clients."
     video={{
       vimeoId: '1218490086',
       title: "Artybaker Summer '26",
@@ -163,42 +190,54 @@ const featured = [
     }}
     cta={{ label: 'See the video work', href: '/video-production/' }}
     tone="film"
+    surface="secondary"
+    blob
   />
 
   {/* ---------- 4. Web Development ---------- */}
   <PillarBlock
     eyebrow="Web Development"
-    heading="Built so your team can run it long after we leave."
-    lead="Learning platforms, e-commerce and bookings, and bilingual sites in English and Irish, tested to WCAG 2.2 AA."
-    carousel
-    cta={{ label: 'See the web work', href: '/web-development/' }}
+    heading="Websites that sell, teach and take bookings."
+    lead="We build learning platforms, online shops, booking systems, donation platforms and bilingual sites in English and Irish. Accessibility is part of every build, and your own team can update the site without coming back to us."
+    tablet
+    cta={{ label: 'More about web development', href: '/web-development/' }}
     tone="web"
     reverse
   />
 
-  {/* ---------- 5. Two featured case studies ---------- */}
-  <section class="pl-panel is-secondary" aria-labelledby="featured-heading">
+  {/* ---------- 5. Two featured case studies ----------
+      Steel tint (24 September 2026): the work band is the one place the
+      fourth surface appears on this page, so the two white cards in it sit
+      up. The hand-picked grey that was here is gone; the palette went cool
+      instead. The graph paper moved here from the video block on the same
+      day: it belongs behind the cards rather than behind a pillar, and
+      leaving the two pillars plain keeps it the exception. */}
+  <section class="pl-panel is-tint pl-graph" aria-labelledby="featured-heading">
     <div class="pl-gutter pl-pad-md">
       <div class="pl-container is-md">
         <div class="pl-row is-between is-top">
           <div class="pl-stack pl-stack-sm">
             <p class="u-eyebrow" data-reveal>Selected work</p>
-            <h2 class="u-h2 u-max-26" id="featured-heading" data-reveal>Two recent ones.</h2>
+            <h2 class="u-h2 u-max-26" id="featured-heading" data-reveal>Recent work</h2>
           </div>
           <div data-reveal><Button href="/work/" variant="ghost">All work</Button></div>
         </div>
 
         <div class="pl-gap-lg"></div>
 
-        {/* is-top, not the default centre: the two cards are different
-            heights whenever one has a thumbnail and the other does not, and
-            centring leaves the shorter one floating mid-row. */}
-        <div class="pl-grid-2 is-top" data-reveal-stagger="120">
+        {/* is-stretch: both cards take the height of the taller one, and the
+            link is pushed to the foot of each so the two line up however long
+            the line above it runs. */}
+        <div class="pl-grid-2 is-stretch" data-reveal-stagger="120">
           {featured.map((f) => (
             <article class="pl-card is-tight" data-reveal>
               {f.thumb && (
                 <div class="pl-media is-case">
-                  {f.thumb.device === 'ipad'
+                  {f.thumb.collage === 'slm'
+                    ? <SlmCollage alt={f.thumb.alt} />
+                    : f.thumb.motion
+                    ? <StillsMotion stills={f.thumb.motion} alt={f.thumb.alt} />
+                    : f.thumb.device === 'ipad'
                     ? <IpadFrame src={f.thumb.src} alt={f.thumb.alt} ground={f.thumb.ground} />
                     : <img src={f.thumb.src} alt={f.thumb.alt} loading="lazy" decoding="async" />}
                 </div>
@@ -210,7 +249,7 @@ const featured = [
                   ? <p class="u-muted">{f.line}</p>
                   : <p class="u-muted" data-placeholder>PLACEHOLDER, not for publication. One line needed on what this film was for.</p>}
               </div>
-              <a class="pl-link" href={f.href}>{f.label}</a>
+              <a class="pl-link" href={f.href} style="margin-top:auto">{f.label}</a>
             </article>
           ))}
         </div>
@@ -239,15 +278,16 @@ const featured = [
   <section class="pl-panel is-secondary" aria-labelledby="studio-heading">
     <div class="pl-gutter pl-pad-md">
       <div class="pl-container is-md">
-        <div class="pl-grid-2 is-top is-wide">
+        <div class="pl-grid-2 is-wide">
           <div class="pl-stack pl-stack-md" data-reveal>
             <p class="u-eyebrow">The studio</p>
-            <h2 class="u-h2 u-max-26" id="studio-heading">An independent studio, owned and run by two people.</h2>
+            <h2 class="u-h2" style="max-width:38.5rem" id="studio-heading">A female-owned studio specialising in media production and digital solutions.</h2>
           </div>
           <div class="pl-stack pl-stack-md" data-reveal>
             <p class="u-lg u-muted u-max-33">
-              Emma Walkin runs video production. Susan Ryan runs web, digital and AI. Founded in Dublin in
-              2011, female-owned and operated, and still the two of us you deal with directly.
+              Founded in Dublin in 2013, Doghouse Media is small enough to keep things personal but experienced
+              enough to handle more complex projects. You’ll always deal directly with Emma Walkin or Susan Ryan,
+              from the first conversation through to delivery.
             </p>
             <div class="pl-btn-group"><Button href="/about/" variant="ghost">About the studio</Button></div>
           </div>
@@ -265,17 +305,17 @@ const featured = [
             class="u-h2 u-balance"
             id="contact-heading"
             data-reveal
-            style="color:var(--pl-text-inverse);margin-inline:auto;max-width:30rem"
+            style="color:var(--pl-text-inverse);margin-inline:auto;max-width:40rem"
           >
-            Tell us what you are working on.
+            Tell us what you're working on.
           </h2>
           <div class="pl-gap-sm"></div>
           <p class="u-lg" data-reveal style="color:var(--pl-text-on-dark);margin-inline:auto;max-width:33rem">
-            Send us the outline and we will tell you honestly whether we are the right studio for it.
+            Send us a few lines about the project and we'll let you know if it's something we can help with.
           </p>
           <div class="pl-gap-sm"></div>
           <div class="pl-btn-group" data-reveal style="justify-content:center">
-            <Button href="/contact/" variant="on-dark">Get in touch</Button>
+            <Button href="/contact/" variant="on-dark" data-start-project>Tell us about your project</Button>
           </div>
           <div class="pl-gap-sm"></div>
           <p class="u-sm" data-reveal style="color:var(--pl-text-on-dark)">
@@ -285,4 +325,6 @@ const featured = [
       </div>
     </div>
   </section>
+  <StartProject />
 </Site>
+

@@ -1,0 +1,60 @@
+---
+/**
+ * Blog index. MESSAGING-PLAN §11.
+ *
+ * The blog exists because content serves the positioning, not for SEO
+ * volume. Three posts at launch, each one something only we could write.
+ *
+ * Open: whether this is labelled Blog, Writing or Notes in the nav. Blog is
+ * plainest, so it is Blog until Sue says otherwise.
+ */
+import { getCollection } from 'astro:content';
+import Site from '../../layouts/Site.astro';
+
+const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+
+const fmt = new Intl.DateTimeFormat('en-IE', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<Site title="Blog" description="Notes on accessibility, video and building for the web, from Doghouse Media in Dublin.">
+  <section class="pl-panel" aria-labelledby="bl-heading">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <p class="u-eyebrow" data-reveal>Blog</p>
+        <div class="pl-gap-sm"></div>
+        <h1 class="u-h1 u-max-40 u-balance" id="bl-heading" data-reveal>
+          Things we have actually done, written up.
+        </h1>
+      </div>
+    </div>
+  </section>
+
+  <section class="pl-panel is-secondary" aria-label="Posts">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        {posts.length > 0 ? (
+          <div class="pl-grid-3" data-reveal-stagger="100">
+            {posts.map((post, i) => (
+              <article class:list={['pl-card', 'is-tight', i % 2 ? 'is-a3' : 'is-a2']} data-reveal>
+                {post.data.cover && (
+                  <div class="pl-media is-article pl-reveal-media">
+                    <img src={post.data.cover} alt="" loading="lazy" width="800" height="500" decoding="async" />
+                  </div>
+                )}
+                <div class="pl-stack pl-stack-sm">
+                  <p class="u-eyebrow"><time datetime={post.data.date.toISOString()}>{fmt.format(post.data.date)}</time></p>
+                  <h2 class="u-xl u-medium"><a href={`/blog/${post.id}/`}>{post.data.title}</a></h2>
+                  <p class="u-muted">{post.data.excerpt}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <p class="u-lg u-muted">Nothing published yet.</p>
+        )}
+      </div>
+    </div>
+  </section>
+</Site>

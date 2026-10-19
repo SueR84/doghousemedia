@@ -5,6 +5,7 @@ year: 2025
 craft: "web"
 summary: "Platform consultancy, e-commerce setup"
 cover: "/work/merrion-clinic.jpg"
+thumb: "/work/thumbs/merrion-clinic-16x9.jpg"
 liveUrl: "https://www.merrion.ca"
 services:
   - "Shopify"

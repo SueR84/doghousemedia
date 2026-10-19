@@ -5,6 +5,7 @@ year: 2026
 craft: "web"
 summary: "Strategic Branding, Digital Transformation, and Market-Leading SEO"
 cover: "/work/orthondontist-website-design.jpg"
+thumb: "/work/thumbs/orthondontist-website-16x9.jpg"
 liveUrl: "https://galwaybraces.com/"
 services:
   - "Website Design"

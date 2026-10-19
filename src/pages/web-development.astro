@@ -1,270 +1,655 @@
 ---
 /**
- * Web Development. Pillar 2. MESSAGING-PLAN §7.
+ * Web Development. Pillar 2. MESSAGING-PLAN §7, restructured 21 September
+ * 2026 around a brief from the studio:
  *
- * Bilingual gets equal billing with learning platforms and e-commerce on
- * purpose. Almost nobody in Ireland claims it credibly and it is a route
- * into public sector work.
+ *   1. Opening: web design and development together, the whole experience,
+ *      plus the one thing most web agencies cannot offer, the films and
+ *      photography made by the same team.
+ *   2. What we build: four groups, who each helps and what it enables.
+ *   3. Selected work: the job each site had to do.
+ *   4. How we work: four steps, where feedback fits, who leads, handover.
+ *   5. Support after launch, with the platforms paragraph.
+ *   6. Accessibility: how it shapes navigation, content, design and
+ *      testing, with Someone Like Me as the evidence.
+ *   7. AI (section only, no page yet; replaced Integrations on 9 October
+ *      2026). Integrations: connected systems that cut repetitive admin. AI sits
+ *      inside this story, introduced where it explains the solution. This
+ *      replaces the old detachable AI block.
+ *   8. Testimonial (renders only once a real one is in) and contact.
  *
- * The AI block is deliberately self-contained. If the AI work spins out to
- * its own brand, that one section and its entry in `aiExamples` lift out
- * without touching anything else on this page.
+ * Facts used here are the ones the case studies substantiate. Get the
+ * accessibility levels right: Someone Like Me was tested to WCAG 2.1 AA,
+ * this site is built to 2.2 AA. Do not conflate them. basis.point's CRM
+ * link is for sign-ups (patrons and volunteers), not donations.
+ *
+ * Someone Like Me and Our World Awards are always credited as built in
+ * partnership with Real Nation, who designed and ran the projects.
+ *
+ * WordPress, WooCommerce and Astro appear once each, in the platforms
+ * paragraph, and nowhere else on the page, the meta description included.
  */
+import { getCollection } from 'astro:content';
 import Site from '../layouts/Site.astro';
 import Button from '../components/pipely/Button.astro';
+import StartProject from '../components/pipely/StartProject.astro';
+import PhoneCarousel from '../components/sections/PhoneCarousel.astro';
+import WorkShowcase from '../components/sections/WorkShowcase.astro';
+import PlatformMark from '../components/pipely/PlatformMark.astro';
 
-const deliver = [
+// 2. Selected work. Screens are flat captures of the live sites (21 September
+// 2026), in the landscape iPad frame that fills a case card exactly.
+const work = [
   {
-    title: 'A site your own team can update',
-    text: 'Editing a paragraph, swapping an image or adding a page is something your people do themselves, without ringing us and without breaking the layout.',
+    client: 'Someone Like Me Art Awards',
+    owner: 'National Disability Authority',
+    image: '/work/tablet/someonelikeme.jpg',
+    alt: 'The Someone Like Me Art Awards homepage, with English and Gaeilge switches in the header.',
+    job: 'An accessible awards website in English and Irish, getting primary schools across the country signed up and taking part.',
+    partner: 'Built in partnership with Real Nation.',
+    result: 'Tested against WCAG 2.1 AA, with every failure fixed before launch.',
+    short: 'Built with Real Nation. A dual-language educational and awards website for primary schools in Ireland.',
+    href: '/work/someone-like-me/',
+    label: 'Read the Someone Like Me case study',
   },
   {
-    title: 'Accessibility, GDPR and performance handled up front',
-    text: 'Built in from the start rather than retrofitted when procurement, legal or a funder asks the question.',
+    client: 'basis.point',
+    owner: 'The Irish funds industry’s charity',
+    image: '/work/tablet/basispoint.jpg',
+    alt: 'The basis.point homepage, headed Empowering young futures.',
+    job: 'A charity website that leads with the people it helps, with sign-up forms that feed straight into the charity’s CRM.',
+    result: 'Nobody re-types sign-ups by hand any more, and the team publish their own news and events.',
+    short: 'A charity set up by the funds industry in Ireland. We’ve been involved since its inception in 2014.',
+    href: '/work/website-for-irish-funds-charity/',
+    label: 'Read the basis.point case study',
   },
   {
-    title: 'Bookings, payments, donations and memberships that work',
-    text: 'Money and scheduling are part of the build, not a plugin bolted on at the end and left to drift.',
+    client: 'Shapes of Grief',
+    owner: 'Grief training and podcast',
+    image: '/work/tablet/shapesofgrief.jpg',
+    alt: 'The Shapes of Grief homepage, offering grief training for healthcare professionals.',
+    job: 'A learning platform for an award-winning grief training course, with enrolment, payment, lessons and certificates in one place.',
+    result: 'The whole course and every participant moved across from the old platform.',
+    short: 'A learning platform for grief specialists and healthcare practitioners, a full LMS with enrolment, lessons and certificates in one place.',
+    href: 'https://shapesofgrief.com',
+    label: 'Visit shapesofgrief.com',
+    external: true,
   },
-];
-
-const specialities = [
-  {
-    title: 'Learning platforms',
-    text: 'Course delivery, enrolments and certification that runs without you administering it by hand.',
-    example: 'Shapes of Grief',
-  },
-  {
-    title: 'E-commerce and bookings',
-    text: 'Payments, appointments and subscriptions that work reliably, including where clinical or regulatory rules apply.',
-    example: 'Merrion Medical Aesthetics, Beauty by Vaiva',
-  },
-  {
-    title: 'Bilingual sites',
-    text: 'English and Irish delivered properly, with human translation review rather than automated output.',
-    example: 'National Disability Authority',
-  },
-];
-
-// Two examples only. Outcomes, not plumbing. Do not publish a map of a
-// clinic's internal workflow, and leave the internal finance and reporting
-// automation out entirely.
-const aiExamples = [
   {
     client: 'Western Rheumatology',
-    text: 'Patients order repeat prescriptions without ringing the clinic, and the medications information on the site stays in sync automatically.',
-  },
-  {
-    client: 'Edithouse, our own business',
-    text: 'A support assistant trained on the business’s own material, answering the questions couples ask before they enquire.',
+    owner: 'Rheumatology clinic, Galway',
+    image: '/work/tablet/wrh-chat.jpg',
+    alt: 'The Western Rheumatology homepage with the clinic assistant open.',
+    job: 'A clinic website that answers patients\u2019 questions and takes repeat prescription orders, so fewer of them need to ring the practice.',
+    result: 'Medication information on the site stays in step with the clinic\u2019s own records.',
+    short: 'A clinic website that answers patient questions and takes repeat prescription orders.',
+    href: '/work/western-rheumatology/',
+    label: 'Read the Western Rheumatology case study',
   },
 ];
+
+// 3. What we build. Who it helps, what it enables, and real examples.
+const builds = [
+  {
+    title: 'Websites for businesses and organisations',
+    icon: 'website' as const,
+    who: 'Companies, charities, clinics, clubs and public bodies.',
+    text: 'A clear, well-organised site that explains what you do, reaches the people you need to reach and is simple for your own team to keep up to date.',
+    examples: 'Galway Braces, Oakfire Adventures, Pembroke Wanderers',
+  },
+  {
+    title: 'Learning platforms',
+    icon: 'learning' as const,
+    who: 'Trainers, course providers and professional bodies.',
+    text: 'Online courses with enrolment, payment, progress tracking and certificates, running without someone administering every step by hand.',
+    examples: 'Shapes of Grief',
+  },
+  {
+    title: 'E-commerce, bookings and donations',
+    icon: 'commerce' as const,
+    who: 'Shops, clinics, venues and charities.',
+    text: 'Payments, appointments, subscriptions and one-off or monthly donations that work reliably, including where clinical or regulatory rules apply.',
+    examples: 'Loreto South Sudan',
+  },
+  {
+    title: 'Bilingual websites',
+    icon: 'bilingual' as const,
+    who: 'Public bodies, schools and organisations working in Irish.',
+    text: 'English and Irish sites, with the Irish text reviewed.',
+    examples: 'Someone Like Me Art Awards and Our World Awards, both built in partnership with Real Nation, who designed and ran the projects',
+  },
+];
+
+// 4. Accessibility, stage by stage.
+// 5. Integrations. REMOVED from the page 9 October 2026 at Sue's request; the
+// content is kept here in case it is reused in an AI section. Outcomes, not plumbing. Do not publish a map of a
+// clinic's internal workflow, and leave the studio's internal finance and
+// reporting automation out entirely. Edithouse, the studio's own business (not to be
+// publicised as ours, per Sue 9 October 2026), was in the old AI block; it may fold into Western Rheumatology later.
+const integrations = [
+  {
+    client: 'basis.point',
+    text: 'Patron and volunteer sign-ups go straight from the website into the charity’s CRM.',
+  },
+  {
+    client: 'Shapes of Grief',
+    text: 'Buying a course enrols the student, opens the lessons and connects them to the email programme, with nobody processing it by hand.',
+  },
+  {
+    client: 'Western Rheumatology',
+    text: 'Patients order repeat prescriptions online instead of ringing the clinic, and the medications information on the site stays in sync automatically. An AI assistant, working from the clinic’s own information, answers common questions.',
+  },
+];
+
+// 6. How we work.
+const steps = [
+  {
+    n: '01',
+    title: 'Understand',
+    text: 'We learn how your organisation works, who the site is for and what it has to do. From here to launch you deal directly with Emma or Susan.',
+  },
+  {
+    n: '02',
+    title: 'Plan the structure and content',
+    text: 'We map the pages and shape the content with you, and agree the structure before any design starts. This is your first sign-off.',
+  },
+  {
+    n: '03',
+    title: 'Design and develop',
+    text: 'You review the design, then comment on the site as it is built. Search visibility, mobile layouts and page speed are part of the build, not extras.',
+  },
+  {
+    n: '04',
+    title: 'Test, launch and hand over',
+    text: 'We test across devices, with a keyboard and a screen reader, then launch. Your team is trained to manage the site, and we stay on hand afterwards.',
+  },
+];
+
+// 8. A web client's quote, once a real one is in. basis.point (Edel) is in
+// hand but not yet in the repo. Placeholders never render.
+const testimonial = (
+  await getCollection('testimonials', (t) => !t.data.placeholder && /basis/i.test(t.data.company))
+)[0];
 ---
 
 <Site
-  title="Web Development"
-  description="Accessible, bilingual and maintainable websites from an independent Dublin studio. WordPress, WooCommerce and Astro."
+  title="Web Design and Development"
+  description="Web design and development from an independent Dublin studio. Accessible, bilingual where needed, and built around how your organisation works."
 >
-  {/* ---------- Position statement ---------- */}
+  {/* ---------- 1. Opening ---------- */}
   <section class="pl-panel" aria-labelledby="wd-heading">
     <div class="pl-gutter pl-pad-md">
       <div class="pl-container is-md">
+        <div class="pl-grid-2 is-wide">
+          <div data-reveal-stagger="100">
+            <p class="u-eyebrow is-web" data-reveal>Web design and development</p>
+            <div class="pl-gap-sm"></div>
+            <h1 class="u-h1 u-max-40 u-balance" id="wd-heading" data-reveal>
+              Websites designed and built around your organisation.
+            </h1>
+            <div class="pl-gap-sm"></div>
+            <p class="u-lg u-muted u-max-33" data-reveal>
+              Considered design, clear content and the functionality your organisation actually needs,
+              planned and built together as one piece of work.
+            </p>
+            <div class="pl-gap-sm"></div>
+            <div class="pl-btn-group" data-reveal>
+              <Button href="/contact/" data-start-project>Tell us about your project</Button>
+            </div>
+          </div>
+          <div data-reveal><PhoneCarousel /></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- 2. What we build ---------- */}
+  <section class="pl-panel" aria-labelledby="wd-build">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
         <div data-reveal-stagger="100">
-          <p class="u-eyebrow is-web" data-reveal>Web Development</p>
+          <p class="u-eyebrow is-web" data-reveal>What we build</p>
           <div class="pl-gap-sm"></div>
-          <h1 class="u-h2 u-max-40 u-balance" id="wd-heading" data-reveal>
-            Websites built to be used, updated and handed over.
-          </h1>
-          <div class="pl-gap-sm"></div>
-          <p class="u-lg u-muted u-max-33" data-reveal>
-            Accessible, bilingual where it needs to be, and still working in year three.
-          </p>
+          <h2 class="u-h2 u-balance" style="max-width:38rem" id="wd-build" data-reveal>
+            Platforms for the way you work.
+          </h2>
         </div>
-      </div>
-    </div>
-  </section>
-
-  {/* ---------- What we deliver ---------- */}
-  <section class="pl-panel is-secondary" aria-labelledby="wd-deliver">
-    <div class="pl-gutter pl-pad-md">
-      <div class="pl-container is-md">
-        <div class="pl-grid-2 is-top is-wide">
-          <div class="pl-stack pl-stack-md" data-reveal>
-            <p class="u-eyebrow is-web">What we deliver</p>
-            <h2 class="u-h2 u-max-26" id="wd-deliver">Three things, every time.</h2>
-          </div>
-          <ul class="pl-service-points" data-reveal-stagger="100">
-            {deliver.map((d) => (
-              <li class="pl-service-points__item" data-reveal>
-                <span class="pl-service-points__title">{d.title}</span>
-                <span class="pl-service-points__text u-muted">{d.text}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  {/* ---------- Specialities ---------- */}
-  <section class="pl-panel" aria-labelledby="wd-spec">
-    <div class="pl-gutter pl-pad-md">
-      <div class="pl-container is-md">
-        <h2 class="u-h2 u-max-26" id="wd-spec" data-reveal>Three things we do more than anyone else.</h2>
         <div class="pl-gap-lg"></div>
-        <div class="pl-grid-3" data-reveal-stagger="100">
-          {specialities.map((s) => (
-            <article class="pl-card is-tight" data-reveal>
-              <div class="pl-stack pl-stack-sm">
-                <h3 class="u-xl u-medium">{s.title}</h3>
-                <p class="u-muted">{s.text}</p>
-              </div>
-              <p class="u-sm u-muted"><span class="u-eyebrow">Example</span> {s.example}</p>
-            </article>
+        <ul class="wd-build" role="list" data-reveal-stagger="100">
+          {builds.map((b) => (
+            <li class="wd-build__item" data-reveal>
+              <span class="wd-build__icon"><PlatformMark name={b.icon} /></span>
+              <h3 class="wd-build__title">{b.title}</h3>
+              <p class="wd-build__who">{b.who}</p>
+              <p class="u-muted">{b.text}</p>
+              <p class="wd-build__examples u-sm"><span class="u-eyebrow">Examples</span> {b.examples}</p>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
     </div>
   </section>
 
-  {/* ---------- Accessibility ----------
-      A named section, not a bullet. The NDA claim is the strongest proof on
-      the site. Get the level right: that build was tested to 2.1 AA. This
-      site is built to 2.2 AA. Do not conflate them. */}
-  <section class="pl-panel is-secondary" aria-labelledby="wd-a11y">
+  {/* ---------- 3. Selected work ---------- */}
+  <WorkShowcase
+    eyebrow="Selected work"
+    heading="Recent websites"
+    headingId="wd-work"
+    intro="Four recent projects, and what each website was built to do."
+    items={work}
+    allHref="/work/"
+    allLabel="See all case studies"
+  />
+
+  {/* ---------- 4. How we work ---------- */}
+  <section class="pl-panel" aria-labelledby="wd-how">
     <div class="pl-gutter pl-pad-md">
       <div class="pl-container is-md">
-        <div class="pl-grid-2 is-top is-wide">
-          <div class="pl-stack pl-stack-md" data-reveal>
-            <p class="u-eyebrow is-web">Accessibility</p>
-            <h2 class="u-h2 u-max-26" id="wd-a11y">We build sites that pass.</h2>
-          </div>
-          <div class="pl-stack pl-stack-md" data-reveal>
-            <p class="u-lg u-max-33">
-              We built the National Disability Authority&rsquo;s Someone Like Me Art Awards site, tested to
-              WCAG 2.1 AA and delivered in English and Irish with human translation review. This website is
-              built to WCAG 2.2 AA.
-            </p>
-            <p class="u-muted u-max-33">
-              We also audit other people&rsquo;s sites. If you need to know where yours stands, we will tell you.
-            </p>
-            <div class="pl-btn-group">
-              <Button href="/accessibility-audits/" variant="ghost">Accessibility audits</Button>
-            </div>
-            <p class="u-sm u-muted">
-              <a class="pl-link" href="/accessibility/">Our accessibility statement</a>
-            </p>
-          </div>
+        <div data-reveal-stagger="100">
+          <p class="u-eyebrow is-web" data-reveal>How we work</p>
+          <div class="pl-gap-sm"></div>
+          <h2 class="u-h2 u-balance" style="max-width:38rem" id="wd-how" data-reveal>
+            From the first conversation to a site your team can run.
+          </h2>
         </div>
-      </div>
-    </div>
-  </section>
-
-  {/* ---------- Platforms ----------
-      One sentence, not a logo row. WordPress, WooCommerce and Astro are the
-      only tool names permitted anywhere on the site, once each, inside a
-      benefit sentence. Do not add a theme, a builder or a host. */}
-  <section class="pl-panel" aria-labelledby="wd-platforms">
-    <div class="pl-gutter pl-pad-md">
-      <div class="pl-container is-sm">
-        <h2 class="u-h3 u-balance" id="wd-platforms" data-reveal>
-          We build mainly in WordPress and WooCommerce, so your team can edit the site themselves. For smaller
-          or faster-moving projects we build static sites in Astro, which means no database, very little to
-          maintain and very little to attack.
-        </h2>
-      </div>
-    </div>
-  </section>
-
-  {/* ---------- AI block ----------
-      DETACHABLE. Self-contained by design. Outcomes only, no plumbing. */}
-  <section class="pl-panel is-film" aria-labelledby="wd-ai">
-    <div class="pl-gutter pl-pad-md">
-      <div class="pl-container is-md">
-        <div class="pl-grid-2 is-top is-wide">
-          <div class="pl-stack pl-stack-md" data-reveal>
-            <p class="u-eyebrow u-inverse">AI</p>
-            <h2 class="u-h2 u-max-26" id="wd-ai" style="color:var(--pl-text-inverse)">
-              Work the website can do instead of a person.
-            </h2>
-            <p class="u-lg u-max-26" style="color:var(--pl-text-on-dark)">
-              Not a chatbot bolted to the corner of a page. Specific jobs, taken off someone&rsquo;s desk.
-            </p>
-          </div>
-          <ul class="pl-service-points" data-reveal-stagger="100">
-            {aiExamples.map((a) => (
-              <li class="pl-service-points__item" data-reveal>
-                <span class="pl-service-points__title" style="color:var(--pl-text-inverse)">{a.client}</span>
-                <span class="pl-service-points__text" style="color:var(--pl-text-on-dark)">{a.text}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  {/* ---------- Case studies ---------- */}
-  <section class="pl-panel" aria-labelledby="wd-cases">
-    <div class="pl-gutter pl-pad-md">
-      <div class="pl-container is-md">
-        <h2 class="u-h2 u-max-26" id="wd-cases" data-reveal>Case studies.</h2>
         <div class="pl-gap-lg"></div>
-        <div class="pl-grid-2" data-reveal-stagger="120">
-          <article class="pl-card is-tight" data-reveal>
-            <span class="pl-tag is-web u-xs">Web</span>
-            <div class="pl-stack pl-stack-sm">
-              <h3 class="u-xl u-medium">National Disability Authority</h3>
-              <p class="u-muted">
-                The Someone Like Me Art Awards site, built in English and Irish with human translation review,
-                and tested to WCAG 2.1 AA.
-              </p>
-            </div>
-            <a class="pl-link" href="/work/someone-like-me/">Read the case study</a>
-          </article>
-          <article class="pl-card is-tight" data-reveal>
-            <span class="pl-tag is-web u-xs">Web</span>
-            <div class="pl-stack pl-stack-sm">
-              <h3 class="u-xl u-medium">basis.point</h3>
-              <p class="u-muted">
-                A rebuilt site for the Irish funds industry&rsquo;s charity, with donations and the CRM working
-                together rather than side by side.
-              </p>
-            </div>
-            <a class="pl-link" href="/work/website-for-irish-funds-charity/">Read the case study</a>
-          </article>
-        </div>
+        <ol class="wd-steps" role="list" data-reveal-stagger="100">
+          {steps.map((st) => (
+            <li class="wd-steps__step" data-reveal>
+              <span class="wd-steps__n" aria-hidden="true">{st.n}</span>
+              <h3 class="wd-steps__title">{st.title}</h3>
+              <p class="u-muted">{st.text}</p>
+            </li>
+          ))}
+        </ol>
       </div>
     </div>
   </section>
 
-  {/* ---------- Care and Hosting ---------- */}
+  {/* ---------- 5. Support after launch ---------- */}
   <section class="pl-panel is-secondary" aria-labelledby="wd-care">
     <div class="pl-gutter pl-pad-md">
       <div class="pl-container is-md">
-        <div class="pl-row is-between is-wrap">
-          <div class="pl-stack pl-stack-sm" data-reveal>
-            <h2 class="u-h3 u-max-33" id="wd-care">Someone is still responsible in year three.</h2>
-            <p class="u-muted u-max-33">Hosting, security, updates, backups and the person who answers when it breaks.</p>
+        <div class="pl-grid-2 is-top is-wide">
+          <div class="pl-stack pl-stack-md" data-reveal>
+            <p class="u-eyebrow is-web">After launch</p>
+            <h2 class="u-h2 u-balance" id="wd-care">We look after the site once it is live.</h2>
+            <p class="u-muted u-max-33">
+              Hosting, security, updates, backups, uptime and performance monitoring, ongoing accessibility
+              checks, bug fixes, and content updates for the times your team would rather hand them over. One
+              arrangement, with a named person who answers.
+            </p>
+            <div class="pl-btn-group">
+              <Button href="/care-and-hosting/" variant="ghost">Care and hosting</Button>
+            </div>
           </div>
-          <div data-reveal><Button href="/care-and-hosting/" variant="ghost">Care and hosting</Button></div>
+          {/* Platforms. One paragraph, not a logo row. The only place on
+              the page the three platform names appear. */}
+          <div class="pl-stack pl-stack-md" data-reveal>
+            <h3 class="u-h3 u-balance">Built on platforms your team can manage.</h3>
+            <p class="u-muted u-max-33">
+              We build mainly in WordPress and WooCommerce, so your team can edit the site themselves. For smaller
+              or faster-moving projects we build static sites in Astro, which means no database, very little to
+              maintain and very little to attack.
+            </p>
+            <h3 class="u-h3 u-balance">Secure from the start, and kept that way.</h3>
+            <p class="u-muted u-max-33">
+              Security is part of the build, not an add-on. We harden every site before launch, keep the CMS,
+              plugins and server up to date, take regular backups and monitor uptime, so a problem is spotted
+              early and there is always a recent copy to restore from.
+            </p>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  {/* ---------- Contact ---------- */}
-  <section class="pl-panel is-inverse">
-    <div class="pl-gutter pl-pad-lg">
-      <div class="pl-container is-md u-center">
-        <h2 class="u-h2 u-balance" data-reveal style="color:var(--pl-text-inverse);margin-inline:auto;max-width:30rem">
-          Have a site to build, or one that needs rescuing?
-        </h2>
-        <div class="pl-gap-sm"></div>
-        <div class="pl-btn-group" data-reveal style="justify-content:center">
-          <Button href="/contact/" variant="on-dark">Get in touch</Button>
+  {/* ---------- 6. Accessibility ----------
+      Heading and approach on the left, the evidence on the right. The four
+      stages live on /accessibility-audits/ (Website accessibility). */}
+  <section class="pl-panel is-film wd-a11y" aria-labelledby="wd-a11y">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <div class="pl-grid-2 is-wide">
+          <div class="pl-stack pl-stack-md" data-reveal>
+            <p class="u-eyebrow is-web">Accessibility</p>
+            <h2 class="u-h2 u-balance" id="wd-a11y">Accessibility shapes every stage of the build.</h2>
+            <p class="u-lg u-muted u-max-33">
+              It is not a check at the end. It decides how the site is organised, written, designed and tested,
+              so it works for people using a keyboard, a screen reader, magnification or a phone in bright
+              sunlight.
+            </p>
+          </div>
+          <div class="wd-proof" data-reveal>
+            <svg class="wd-a11y__icon" width="52" height="52" viewBox="0 0 64 64" fill="none" aria-hidden="true" focusable="false">
+              <rect x="6" y="10" width="52" height="38" rx="5" />
+              <path d="M26 55 H38 M32 48 V55" />
+              <rect x="12" y="25" width="30" height="8" rx="2" fill="currentColor" fill-opacity="0.28" stroke="none" />
+              <path d="M14 18 H36" />
+              <path d="M14 29 H38" />
+              <path d="M14 39 H30" />
+              <path d="M47 24 V34" />
+            </svg>
+            <p class="u-eyebrow">Our work with Real Nation</p>
+            <p class="u-lg">
+              Real Nation are an agency specialising in WCAG 2.2 AA compliant digital materials, with full
+              alignment to the European Accessibility Act. They designed the National Disability Authority’s
+              Someone Like Me Art Awards, and we built the website with them.
+            </p>
+            <div class="wd-proof__foot">
+              <Button href="/accessibility-audits/" variant="on-dark">Accessibility Audits</Button>
+              <a class="pl-link" href="/work/someone-like-me/">Read the Someone Like Me case study</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </section>
+
+  {/* ---------- 7. AI ----------
+      Section only, no page yet (9 October 2026). Replaces the Integrations
+      section. Copy agreed with Sue the same day. One example, Western
+      Rheumatology; the other integrations already show in Selected work.
+      No button until there is an AI page to link to. */}
+  <section class="pl-panel is-ground wd-ai" aria-labelledby="wd-ai" data-wd-ai>
+    
+    
+    <div class="pl-gutter pl-pad-lg wd-ai__body">
+      <div class="pl-container is-md wd-ai__wrap">
+        <div class="pl-grid-2 is-top is-wide">
+          <div class="pl-stack pl-stack-md" data-reveal>
+            <p class="u-eyebrow is-web">AI</p>
+            <h2 class="u-h2 u-balance" id="wd-ai">
+              AI assistants and automation for your website.
+            </h2>
+            <p class="u-lg u-max-33" style="color:var(--pl-text)">
+              We add AI where it saves your team time. That means an assistant that answers common questions
+              from your own information, and automation that moves information between your website and the
+              systems you already use, so nobody re-types it.
+            </p>
+          </div>
+          <div class="wd-map" data-reveal>
+            <svg class="wd-ai__map" viewBox="0 -165 822 745" fill="none" aria-hidden="true" focusable="false"><g class="wd-ai__lines" fill="none" stroke-linecap="round" stroke-linejoin="round"><path class="wd-ai__link" d="M112 56 L210 56" /><path class="wd-ai__pulse" pathLength="100" d="M112 56 L210 56" style="animation-delay:0.6s" /><path class="wd-ai__link" d="M282 56 L380 56" /><path class="wd-ai__pulse" pathLength="100" d="M282 56 L380 56" style="animation-delay:2.2s" /><path class="wd-ai__link" d="M452 56 L550 56" /><path class="wd-ai__pulse" pathLength="100" d="M452 56 L550 56" style="animation-delay:3.8s" /><path class="wd-ai__link" d="M112 206 L210 206" /><path class="wd-ai__pulse" pathLength="100" d="M112 206 L210 206" style="animation-delay:1.3s" /><path class="wd-ai__link" d="M282 206 L380 206" /><path class="wd-ai__pulse" pathLength="100" d="M282 206 L380 206" style="animation-delay:2.9s" /><path class="wd-ai__link" d="M112 356 L210 356" /><path class="wd-ai__pulse" pathLength="100" d="M112 356 L210 356" style="animation-delay:1.9s" /><path class="wd-ai__link" d="M282 356 L380 356" /><path class="wd-ai__pulse" pathLength="100" d="M282 356 L380 356" style="animation-delay:3.5s" /><path class="wd-ai__link" d="M452 356 L550 356" /><path class="wd-ai__pulse" pathLength="100" d="M452 356 L550 356" style="animation-delay:5.1s" /><path class="wd-ai__link" d="M622 42 H664 C690 42 690 56 712 56 H720" /><path class="wd-ai__pulse" pathLength="100" d="M622 42 H664 C690 42 690 56 712 56 H720" style="animation-delay:5.4s" /><path class="wd-ai__link" d="M622 70 H640 Q652 70 652 82 V194 Q652 206 664 206 H720" /><path class="wd-ai__pulse" pathLength="100" d="M622 70 H640 Q652 70 652 82 V194 Q652 206 664 206 H720" style="animation-delay:6.0s" /><path class="wd-ai__link" d="M416 -38 V20" /><path class="wd-ai__pulse" pathLength="100" d="M416 -38 V20" style="animation-delay:2.0s" /><path class="wd-ai__link" d="M622 356 H640 Q652 356 652 368 V479 Q652 491 664 491 H720" /><path class="wd-ai__pulse" pathLength="100" d="M622 356 H640 Q652 356 652 368 V479 Q652 491 664 491 H720" style="animation-delay:6.8s" /></g><g class="wd-ai__node" style="--d:0.3s"><g transform="translate(-40 -84)"><path class="wd-ai__bolt" d="M54 124 L46 142 H53 L50 156 L60 136 H53 Z" /></g><rect class="wd-ai__card" x="40" y="20" width="72" height="72" rx="14" /><g transform="translate(-40 -84)"><g fill="none" stroke="#2C6E7F" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="116" cy="129" r="5" /><circle cx="104" cy="149" r="5" /><circle cx="128" cy="149" r="5" /><path d="M113 134 L106 144 M109 149 H123 M119 134 L125 144" /></g></g><g class="wd-ai__tick"><circle cx="110" cy="90" r="9" fill="#2C6E7F" /><path d="M106 90 L109 93.5 L114.5 87" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" /></g><circle class="wd-ai__port" cx="112" cy="56" r="6" /><text class="wd-ai__label" x="76" y="117" text-anchor="middle">New enquiry</text><text class="wd-ai__sub" x="76" y="137" text-anchor="middle">webhook: trigger</text></g><g class="wd-ai__node" style="--d:1.9s"><rect class="wd-ai__card" x="210" y="20" width="72" height="72" rx="14" /><g transform="translate(-60 -84)"><g fill="none" stroke="#2C6E7F" stroke-width="3.6" stroke-linecap="round"><circle cx="303" cy="145" r="8" /><path d="M309 139 L315 131" /><path d="M303 137 V128" /></g><circle cx="316" cy="129" r="4.5" fill="#2C6E7F" /><circle cx="303" cy="126" r="3" fill="#2C6E7F" /></g><g class="wd-ai__tick"><circle cx="280" cy="90" r="9" fill="#2C6E7F" /><path d="M276 90 L279 93.5 L284.5 87" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" /></g><circle class="wd-ai__port" cx="282" cy="56" r="6" /><rect class="wd-ai__inport" x="206" y="49" width="8" height="14" rx="1.5" /><text class="wd-ai__label" x="246" y="117" text-anchor="middle">HubSpot</text><text class="wd-ai__sub" x="246" y="137" text-anchor="middle">create: contact</text></g><g class="wd-ai__node" style="--d:3.5s"><rect class="wd-ai__card" x="380" y="20" width="72" height="72" rx="14" /><g transform="translate(-80 -84)"><path d="M496.4 137.0 L498.4 123.2 M497.8 137.6 L503.4 130.5 M498.8 138.9 L509.9 134.4 M499.0 140.4 L506.9 141.5 M498.4 141.8 L509.4 150.5 M497.1 142.8 L500.5 151.1 M495.6 143.0 L493.8 155.8 M494.2 142.4 L489.2 148.7 M493.2 141.1 L482.1 145.6 M493.0 139.6 L484.1 138.3 M493.6 138.2 L482.6 129.5 M494.9 137.2 L491.9 129.8 " fill="none" stroke="#2C6E7F" stroke-width="4.2" stroke-linecap="round" /></g><g class="wd-ai__tick"><circle cx="450" cy="90" r="9" fill="#2C6E7F" /><path d="M446 90 L449 93.5 L454.5 87" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" /></g><circle class="wd-ai__port" cx="452" cy="56" r="6" /><rect class="wd-ai__inport" x="376" y="49" width="8" height="14" rx="1.5" /><rect class="wd-ai__inport" x="409" y="16" width="14" height="8" rx="1.5" /><text class="wd-ai__label" x="416" y="117" text-anchor="middle">Claude</text><text class="wd-ai__sub" x="416" y="137" text-anchor="middle">classify: lead</text></g><g class="wd-ai__node" style="--d:5.1s"><rect class="wd-ai__card" x="550" y="20" width="72" height="72" rx="14" /><g transform="translate(-100 -84)"><g fill="#2C6E7F"><rect x="683.5" y="125" width="5" height="32" rx="2" /><path d="M672 128 H695 L701 133 L695 138 H672 Z" /><path d="M700 142 H677 L671 147 L677 152 H700 Z" /></g></g><g class="wd-ai__tick"><circle cx="620" cy="90" r="9" fill="#2C6E7F" /><path d="M616 90 L619 93.5 L624.5 87" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" /></g><circle class="wd-ai__port" cx="622" cy="42" r="6" /><circle class="wd-ai__port" cx="622" cy="70" r="6" /><rect class="wd-ai__inport" x="546" y="49" width="8" height="14" rx="1.5" /><text class="wd-ai__label" x="586" y="117" text-anchor="middle">Qualified?</text></g><g class="wd-ai__node" style="--d:6.7s"><rect class="wd-ai__card" x="720" y="20" width="72" height="72" rx="14" /><g transform="translate(-330 -84)"><g fill="#2C6E7F"><circle cx="1077" cy="144" r="8" /><circle cx="1087" cy="137" r="10" /><circle cx="1097" cy="144" r="8" /><rect x="1077" y="144" width="20" height="8" /></g></g><g class="wd-ai__tick"><circle cx="790" cy="90" r="9" fill="#2C6E7F" /><path d="M786 90 L789 93.5 L794.5 87" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" /></g><circle class="wd-ai__port" cx="792" cy="56" r="6" /><rect class="wd-ai__inport" x="716" y="49" width="8" height="14" rx="1.5" /><text class="wd-ai__label" x="756" y="117" text-anchor="middle">Salesforce</text><text class="wd-ai__sub" x="756" y="137" text-anchor="middle">update: lead</text></g><g class="wd-ai__node" style="--d:1.0s"><g transform="translate(-40 66)"><path class="wd-ai__bolt" d="M54 124 L46 142 H53 L50 156 L60 136 H53 Z" /></g><rect class="wd-ai__card" x="40" y="170" width="72" height="72" rx="14" /><circle cx="76" cy="208" r="14" fill="none" stroke="#2C6E7F" stroke-width="3.2" /><path d="M76 200 V208 L82 212" fill="none" stroke="#2C6E7F" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" /><g class="wd-ai__tick"><circle cx="110" cy="240" r="9" fill="#2C6E7F" /><path d="M106 240 L109 243.5 L114.5 237" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" /></g><circle class="wd-ai__port" cx="112" cy="206" r="6" /><text class="wd-ai__label" x="76" y="267" text-anchor="middle">Every Monday</text><text class="wd-ai__sub" x="76" y="287" text-anchor="middle">schedule: trigger</text></g><g class="wd-ai__node" style="--d:2.6s"><rect class="wd-ai__card" x="210" y="170" width="72" height="72" rx="14" /><g transform="translate(-250 66)"><path d="M484 135 H508 L506 157 H486 Z" fill="#2C6E7F" stroke="#2C6E7F" stroke-width="2" stroke-linejoin="round" /><path d="M490 135 C490 123 502 123 502 135" fill="none" stroke="#2C6E7F" stroke-width="3" stroke-linecap="round" /><path d="M499.5 142.5 C499.5 140 492.5 140 492.5 144.2 C492.5 147.3 499.5 146.4 499.5 150 C499.5 153.5 492.5 153.5 492.5 151" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" /></g><g class="wd-ai__tick"><circle cx="280" cy="240" r="9" fill="#2C6E7F" /><path d="M276 240 L279 243.5 L284.5 237" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" /></g><circle class="wd-ai__port" cx="282" cy="206" r="6" /><rect class="wd-ai__inport" x="206" y="199" width="8" height="14" rx="1.5" /><text class="wd-ai__label" x="246" y="267" text-anchor="middle">Shopify</text><text class="wd-ai__sub" x="246" y="287" text-anchor="middle">get: orders</text></g><g class="wd-ai__node" style="--d:4.2s"><rect class="wd-ai__card" x="380" y="170" width="72" height="72" rx="14" /><g transform="translate(-460 66)"><g fill="none" stroke="#2C6E7F" stroke-width="3" stroke-linecap="round"><path d="M867 142 H877" /><path d="M877 142 L884 133" /><path d="M877 142 L884 151" /></g><g fill="#2C6E7F"><circle cx="866" cy="142" r="4.6" /><circle cx="877" cy="142" r="4.2" /><circle cx="886" cy="132" r="4.2" /><circle cx="886" cy="152" r="4.2" /></g></g><g class="wd-ai__tick"><circle cx="450" cy="240" r="9" fill="#2C6E7F" /><path d="M446 240 L449 243.5 L454.5 237" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" /></g><circle class="wd-ai__port" cx="452" cy="206" r="6" /><rect class="wd-ai__inport" x="376" y="199" width="8" height="14" rx="1.5" /><text class="wd-ai__label" x="416" y="267" text-anchor="middle">n8n</text><text class="wd-ai__sub" x="416" y="287" text-anchor="middle">run: workflow</text></g><g class="wd-ai__node" style="--d:7.3s"><rect class="wd-ai__card" x="720" y="170" width="72" height="72" rx="14" /><g transform="translate(-140 66)"><g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"><path d="M882 152 V131" stroke="#2C6E7F" /><path d="M910 152 V131" stroke="#2C6E7F" /><path d="M882 131 L896 143 L910 131" stroke="#2C6E7F" /></g></g><g class="wd-ai__tick"><circle cx="790" cy="240" r="9" fill="#2C6E7F" /><path d="M786 240 L789 243.5 L794.5 237" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" /></g><circle class="wd-ai__port" cx="792" cy="206" r="6" /><rect class="wd-ai__inport" x="716" y="199" width="8" height="14" rx="1.5" /><text class="wd-ai__label" x="756" y="267" text-anchor="middle">Gmail</text><text class="wd-ai__sub" x="756" y="287" text-anchor="middle">send: reply</text></g><g class="wd-ai__node" style="--d:1.6s"><g transform="translate(-40 216)"><path class="wd-ai__bolt" d="M54 124 L46 142 H53 L50 156 L60 136 H53 Z" /></g><rect class="wd-ai__card" x="40" y="320" width="72" height="72" rx="14" /><g transform="translate(-610 216)"><mask id="wd-xero-mask" maskUnits="userSpaceOnUse" x="663.0" y="135.79" width="46" height="12.42"><image href="data:image/png;base64,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" x="663.0" y="135.79" width="46" height="12.42" /></mask><rect x="663.0" y="135.79" width="46" height="12.42" fill="#2C6E7F" mask="url(#wd-xero-mask)" /></g><g class="wd-ai__tick"><circle cx="110" cy="390" r="9" fill="#2C6E7F" /><path d="M106 390 L109 393.5 L114.5 387" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" /></g><circle class="wd-ai__port" cx="112" cy="356" r="6" /><text class="wd-ai__label" x="76" y="417" text-anchor="middle">Xero</text><text class="wd-ai__sub" x="76" y="437" text-anchor="middle">invoice: trigger</text></g><g class="wd-ai__node" style="--d:3.2s"><rect class="wd-ai__card" x="210" y="320" width="72" height="72" rx="14" /><g transform="translate(130 216)"><g transform="translate(99.3 124.2) scale(0.145)" fill="#2C6E7F"><path d="M173.62,115.76c1.79-0.21,3.5-0.22,5.07,0c0.91-2.09,1.07-5.69,0.25-9.61c-1.22-5.83-2.87-9.36-6.27-8.81 c-3.41,0.55-3.53,4.77-2.31,10.6C171.04,111.22,172.26,114.02,173.62,115.76z"/><path d="M144.37,120.37c2.44,1.07,3.94,1.78,4.52,1.16c0.38-0.39,0.26-1.12-0.32-2.07c-1.2-1.96-3.68-3.96-6.3-5.07 c-5.37-2.31-11.77-1.54-16.71,2.01c-1.63,1.19-3.18,2.85-2.96,3.85c0.07,0.33,0.32,0.57,0.89,0.65 c1.34,0.15,6.04-2.22,11.45-2.55C138.77,118.11,141.93,119.3,144.37,120.37z"/><path d="M139.47,123.17c-3.17,0.5-4.93,1.55-6.05,2.52c-0.96,0.84-1.55,1.77-1.55,2.42c0,0.31,0.14,0.49,0.24,0.58 c0.14,0.13,0.32,0.2,0.52,0.2c0.72,0,2.32-0.64,2.32-0.64c4.42-1.58,7.33-1.39,10.22-1.06c1.6,0.18,2.35,0.28,2.7-0.27 c0.1-0.16,0.23-0.5-0.09-1.01C147.05,124.69,143.84,122.65,139.47,123.17z"/><path d="M163.74,133.44c2.16,1.06,4.53,0.64,5.3-0.93c0.77-1.57-0.35-3.7-2.5-4.76c-2.16-1.06-4.53-0.64-5.3,0.93 C160.46,130.25,161.59,132.38,163.74,133.44z"/><path d="M177.6,121.33c-1.75-0.03-3.2,1.89-3.24,4.29c-0.04,2.4,1.35,4.37,3.1,4.4c1.75,0.03,3.2-1.89,3.24-4.29 C180.74,123.33,179.35,121.36,177.6,121.33z"/><path d="M59.98,164.63c-0.44-0.55-1.15-0.38-1.84-0.22c-0.48,0.11-1.03,0.24-1.63,0.23c-1.29-0.02-2.38-0.58-2.99-1.52 c-0.8-1.22-0.75-3.05,0.13-5.14c0.12-0.28,0.26-0.59,0.41-0.94c1.4-3.15,3.76-8.42,1.12-13.45c-1.99-3.78-5.23-6.14-9.12-6.63 c-3.74-0.47-7.59,0.91-10.04,3.62c-3.87,4.27-4.48,10.09-3.73,12.14c0.27,0.75,0.7,0.96,1.02,1c0.66,0.09,1.63-0.39,2.24-2.03 c0.04-0.12,0.1-0.3,0.17-0.53c0.27-0.87,0.78-2.49,1.61-3.78c1-1.56,2.56-2.64,4.39-3.03c1.86-0.4,3.77-0.04,5.36,1 c2.71,1.78,3.76,5.1,2.6,8.27c-0.6,1.64-1.57,4.78-1.36,7.36c0.43,5.22,3.64,7.31,6.53,7.54c2.8,0.11,4.76-1.47,5.26-2.62 C60.39,165.22,60.14,164.81,59.98,164.63z"/><path d="M221.78,155.09c-0.11-0.38-0.8-2.92-1.76-5.98c-0.96-3.06-1.94-5.22-1.94-5.22c3.83-5.74,3.9-10.87,3.39-13.77 c-0.54-3.6-2.04-6.67-5.07-9.84c-3.02-3.17-9.2-6.42-17.89-8.86c-0.99-0.28-4.27-1.18-4.56-1.27 c-0.02-0.19-0.24-10.74-0.44-15.28c-0.14-3.28-0.43-8.39-2.01-13.43c-1.89-6.82-5.19-12.78-9.3-16.6 c11.35-11.76,18.43-24.72,18.42-35.84c-0.03-21.38-26.29-27.85-58.65-14.45c-0.03,0.01-6.81,2.89-6.86,2.91 c-0.03-0.03-12.39-12.16-12.58-12.32C85.65-27.04-29.7,101.18,7.18,132.32l8.06,6.83c-2.09,5.42-2.91,11.62-2.24,18.29 c0.86,8.57,5.28,16.79,12.45,23.13c6.8,6.03,15.74,9.84,24.42,9.83c14.35,33.07,47.14,53.36,85.59,54.5 c41.24,1.23,75.86-18.13,90.37-52.89c0.95-2.44,4.98-13.43,4.98-23.14C230.81,159.13,225.3,155.09,221.78,155.09z M53.04,181.12 c-1.25,0.21-2.53,0.3-3.82,0.27c-12.46-0.33-25.91-11.55-27.25-24.85c-1.48-14.7,6.03-26.01,19.33-28.7 c1.59-0.32,3.51-0.51,5.58-0.4c7.45,0.41,18.43,6.13,20.94,22.36C70.05,164.18,66.52,178.82,53.04,181.12z M39.13,119.05 c-8.28,1.61-15.58,6.3-20.04,12.78c-2.67-2.22-7.64-6.53-8.51-8.21c-7.12-13.53,7.77-39.83,18.18-54.68 c25.72-36.7,66-64.49,84.65-59.45c3.03,0.86,13.07,12.5,13.07,12.5s-18.64,10.34-35.93,24.76 C67.27,64.69,49.67,90.76,39.13,119.05z M169.88,175.62c0.27-0.11,0.46-0.42,0.43-0.73c-0.04-0.38-0.38-0.65-0.75-0.61 c0,0-19.51,2.89-37.95-3.86c2.01-6.53,7.35-4.17,15.42-3.52c14.55,0.87,27.58-1.26,37.22-4.02c8.35-2.4,19.31-7.12,27.83-13.84 c2.87,6.31,3.89,13.25,3.89,13.25s2.22-0.4,4.08,0.75c1.76,1.08,3.04,3.33,2.16,9.13c-1.79,10.85-6.4,19.66-14.15,27.76 c-4.72,5.08-10.45,9.5-17,12.71c-3.48,1.83-7.19,3.41-11.1,4.69c-29.22,9.54-59.13-0.95-68.77-23.48 c-0.77-1.69-1.42-3.47-1.93-5.32c-4.11-14.85-0.62-32.66,10.28-43.88c0,0,0,0,0-0.01c0.67-0.71,1.36-1.55,1.36-2.61 c0-0.89-0.56-1.82-1.05-2.48c-3.81-5.53-17.03-14.96-14.38-33.21c1.9-13.11,13.37-22.34,24.06-21.79 c0.9,0.05,1.81,0.1,2.71,0.16c4.63,0.27,8.67,0.87,12.49,1.03c6.38,0.28,12.12-0.65,18.92-6.32c2.29-1.91,4.13-3.57,7.24-4.09 c0.33-0.06,1.14-0.35,2.77-0.27c1.66,0.09,3.24,0.54,4.66,1.49c5.45,3.63,6.22,12.41,6.5,18.83c0.16,3.67,0.6,12.54,0.76,15.09 c0.35,5.82,1.88,6.65,4.97,7.67c1.74,0.57,3.36,1,5.74,1.67c7.21,2.03,11.49,4.08,14.19,6.72c1.61,1.65,2.36,3.4,2.59,5.07 c0.85,6.2-4.82,13.87-19.82,20.83c-16.4,7.61-36.3,9.54-50.05,8.01c-1.05-0.12-4.8-0.54-4.82-0.54 c-11-1.48-17.27,12.73-10.67,22.47c4.25,6.28,15.84,10.36,27.43,10.36c26.58,0,47.01-11.35,54.61-21.15 c0.23-0.29,0.25-0.33,0.61-0.87c0.37-0.56,0.07-0.87-0.4-0.56c-6.21,4.25-33.79,21.11-63.28,16.04c0,0-3.58-0.59-6.86-1.86 c-2.6-1.01-8.04-3.51-8.7-9.1C154.89,182.58,169.88,175.62,169.88,175.62z M132.17,171.17 C132.17,171.17,132.18,171.17,132.17,171.17c0.01,0.01,0.01,0.01,0.01,0.02C132.18,171.18,132.18,171.17,132.17,171.17z M86.63,68.79c9.14-10.57,20.4-19.75,30.48-24.91c0.35-0.18,0.72,0.2,0.53,0.54c-0.8,1.45-2.34,4.55-2.83,6.91 c-0.08,0.37,0.32,0.64,0.63,0.43c6.27-4.28,17.19-8.86,26.76-9.45c0.41-0.03,0.61,0.5,0.28,0.75c-1.46,1.12-3.05,2.66-4.21,4.22 c-0.2,0.27-0.01,0.65,0.32,0.65c6.72,0.05,16.2,2.4,22.37,5.86c0.42,0.23,0.12,1.04-0.35,0.94c-9.34-2.14-24.64-3.77-40.53,0.11 c-14.18,3.46-25.01,8.8-32.91,14.55C86.79,69.69,86.31,69.17,86.63,68.79z"/></g></g><g class="wd-ai__tick"><circle cx="280" cy="390" r="9" fill="#2C6E7F" /><path d="M276 390 L279 393.5 L284.5 387" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" /></g><circle class="wd-ai__port" cx="282" cy="356" r="6" /><rect class="wd-ai__inport" x="206" y="349" width="8" height="14" rx="1.5" /><text class="wd-ai__label" x="246" y="417" text-anchor="middle">Mailchimp</text><text class="wd-ai__sub" x="246" y="437" text-anchor="middle">add: subscriber</text></g><g class="wd-ai__node" style="--d:4.8s"><rect class="wd-ai__card" x="380" y="320" width="72" height="72" rx="14" /><g transform="translate(110 216)"><path d="M294 126 H310 L318 134 V156 A2 2 0 0 1 316 158 H296 A2 2 0 0 1 294 156 Z" fill="#2C6E7F" /><path d="M310 126 V134 H318 Z" fill="#2C6E7F" fill-opacity="0.45" /><g fill="#fff"><rect x="299" y="141" width="6" height="4" rx="0.8" /><rect x="307" y="141" width="6" height="4" rx="0.8" /><rect x="299" y="148" width="6" height="4" rx="0.8" /><rect x="307" y="148" width="6" height="4" rx="0.8" /></g></g><g class="wd-ai__tick"><circle cx="450" cy="390" r="9" fill="#2C6E7F" /><path d="M446 390 L449 393.5 L454.5 387" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" /></g><circle class="wd-ai__port" cx="452" cy="356" r="6" /><rect class="wd-ai__inport" x="376" y="349" width="8" height="14" rx="1.5" /><text class="wd-ai__label" x="416" y="417" text-anchor="middle">Google Sheets</text><text class="wd-ai__sub" x="416" y="437" text-anchor="middle">append: row</text></g><g class="wd-ai__node" style="--d:6.4s"><rect class="wd-ai__card" x="550" y="320" width="72" height="72" rx="14" /><g transform="translate(-480 216)"><path d="M1052 141 L1080 128 L1071 156 L1065 146 Z" fill="#2C6E7F" stroke="#2C6E7F" stroke-width="2" stroke-linejoin="round" /><path d="M1065 146 L1075 136" stroke="#fff" stroke-width="2" stroke-linecap="round" /></g><g class="wd-ai__tick"><circle cx="620" cy="390" r="9" fill="#2C6E7F" /><path d="M616 390 L619 393.5 L624.5 387" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" /></g><circle class="wd-ai__port" cx="622" cy="356" r="6" /><rect class="wd-ai__inport" x="546" y="349" width="8" height="14" rx="1.5" /><text class="wd-ai__label" x="586" y="417" text-anchor="middle">Send Reports</text><text class="wd-ai__sub" x="586" y="437" text-anchor="middle">email: summary</text></g><g class="wd-ai__node" style="--d:1.2s"><g transform="translate(300 -214)"><path class="wd-ai__bolt" d="M54 124 L46 142 H53 L50 156 L60 136 H53 Z" /></g><rect class="wd-ai__card" x="380" y="-110" width="72" height="72" rx="14" /><g fill="none" stroke="#2C6E7F" stroke-width="3.4" stroke-linejoin="round" stroke-linecap="round"><path d="M396 -90 H436 V-68 H422 L412 -58 V-68 H396 Z" /></g><g fill="#2C6E7F"><circle cx="406" cy="-79" r="2.4" /><circle cx="416" cy="-79" r="2.4" /><circle cx="426" cy="-79" r="2.4" /></g><g class="wd-ai__tick"><circle cx="450" cy="-40" r="9" fill="#2C6E7F" /><path d="M446 -40 L449 -36.5 L454.5 -43" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" /></g><circle class="wd-ai__port" cx="416" cy="-38" r="6" /><text class="wd-ai__label" x="416" y="-140" text-anchor="middle">Chat message</text><text class="wd-ai__sub" x="416" y="-120" text-anchor="middle">assistant: trigger</text></g><g class="wd-ai__node" style="--d:8.1s"><rect class="wd-ai__card" x="720" y="455" width="72" height="72" rx="14" /><g fill="#2C6E7F"><path d="M744 503 H768 C766 499 765 496 765 489 C765 482 761 477 756 477 C751 477 747 482 747 489 C747 496 746 499 744 503 Z" /><circle cx="756" cy="509" r="3.4" /><circle cx="756" cy="474" r="2.6" /></g><g class="wd-ai__tick"><circle cx="790" cy="525" r="9" fill="#2C6E7F" /><path d="M786 525 L789 528.5 L794.5 522" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" /></g><circle class="wd-ai__port" cx="792" cy="491" r="6" /><rect class="wd-ai__inport" x="716" y="484" width="8" height="14" rx="1.5" /><text class="wd-ai__label" x="756" y="552" text-anchor="middle">Notify team</text><text class="wd-ai__sub" x="756" y="572" text-anchor="middle">send: alert</text></g></svg>
+            <button class="pl-pause wd-ai__pause" type="button" data-wd-pause hidden data-paused="false">
+              <span class="pl-pause__icon" aria-hidden="true"></span>
+              <span class="sr-only" data-wd-pause-label>Pause diagram animation</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- 8. Testimonial, then contact ---------- */}
+  {testimonial && (
+    <section class="pl-panel" aria-label="Client testimonial">
+      <div class="pl-gutter pl-pad-md">
+        <div class="pl-container is-md">
+          <blockquote class="pl-quote" data-reveal>
+            <p class="u-h3 u-balance u-max-33">{testimonial.data.quote}</p>
+            <footer class="u-sm u-muted" style="margin-top:1.5rem">
+              {testimonial.data.name}, {testimonial.data.company}
+            </footer>
+          </blockquote>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="pl-panel is-inverse" aria-labelledby="wd-contact">
+    <div class="pl-gutter pl-pad-lg">
+      <div class="pl-container is-md u-center">
+        <h2 class="u-h2 u-balance" id="wd-contact" data-reveal style="color:var(--pl-text-inverse);margin-inline:auto;max-width:44rem">
+          Planning a new website, or improving the one you have?
+        </h2>
+        <div class="pl-gap-sm"></div>
+        <p class="u-lg" data-reveal style="color:var(--pl-text-on-dark);margin-inline:auto;max-width:33rem">
+          Tell us what the site needs to do, or where your current one falls short. We will talk it through and
+          suggest a sensible next step.
+        </p>
+        <div class="pl-gap-sm"></div>
+        <div class="pl-btn-group" data-reveal style="justify-content:center">
+          <Button href="/contact/" variant="on-dark" data-start-project>Tell us about your project</Button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <StartProject />
 </Site>
+
+<style>
+  /* Selected work: the result line sits under a hairline, so the job and
+     the outcome read as two things. */
+
+  /* What we build: two by two, each group under a rule, like the service
+     points elsewhere but with room for who it is for. */
+  .wd-build {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--pl-s-2xl, 3rem) var(--pl-s-3xl, 4rem);
+    margin: 0;
+    padding: 0;
+  }
+  .wd-build__item {
+    display: grid;
+    align-content: start;
+    gap: var(--pl-s-sm);
+    padding-top: var(--pl-s-lg);
+    border-top: 1px solid var(--pl-border);
+  }
+  .wd-build__icon {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .wd-build__title {
+    font-family: var(--font-display);
+    font-size: var(--pl-h4, 1.75rem);
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+  .wd-build__who { font-weight: var(--pl-fw-medium); }
+  .wd-build__examples .u-eyebrow { margin-right: 0.5rem; }
+  @media (max-width: 767px) {
+    .wd-build { grid-template-columns: 1fr; }
+  }
+
+  /* The evidence plate in the accessibility section: a white card on the
+     cream panel, the one place the section names a specific project. */
+  .wd-proof {
+    display: grid;
+    justify-items: start;
+    gap: var(--pl-s-md);
+    padding: var(--pl-s-xl, 2rem);
+    border-radius: var(--pl-r-card, 1rem);
+    background-color: var(--pl-primary);
+  }
+
+  /* Accessibility: dark green panel (the deep teal), light copy on the left,
+     the Real Nation card on the right is an outlined box with light text. */
+  .wd-a11y__icon {
+    display: block;
+    color: var(--color-teal-light);
+    stroke: var(--color-teal-light);
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .wd-a11y .pl-stack .u-eyebrow { color: var(--color-teal-light); }
+  .wd-a11y .pl-stack .u-muted { color: color-mix(in srgb, var(--color-cream) 78%, transparent); }
+  .wd-a11y .wd-proof {
+    position: relative;
+    background-color: transparent;
+    border: 1px solid var(--pl-border-inverse);
+    color: var(--pl-text-inverse);
+  }
+  .wd-a11y .wd-proof .u-eyebrow { color: var(--color-teal-light); }
+  .wd-a11y .wd-proof .pl-link { color: var(--pl-text-inverse); }
+  .wd-a11y .wd-proof__foot { border-top-color: var(--pl-border-inverse); }
+
+  .wd-proof__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--pl-s-md) var(--pl-s-lg);
+    width: 100%;
+    margin-top: var(--pl-s-sm);
+    padding-top: var(--pl-s-md);
+    border-top: 1px solid var(--pl-border);
+  }
+
+  /* How we work: four numbered steps, matched to Getting started on the
+     video page. */
+  .wd-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--pl-s-xl, 2rem);
+    margin: 0;
+    padding: 0;
+  }
+  .wd-steps__step {
+    display: grid;
+    align-content: start;
+    gap: var(--pl-s-sm);
+    padding-top: var(--pl-s-md);
+    border-top: 1px solid var(--pl-border);
+  }
+  .wd-steps__n {
+    font-family: var(--font-mono);
+    font-size: var(--pl-sm);
+    letter-spacing: 0.1em;
+    color: var(--pl-accent-web);
+  }
+  .wd-steps__title {
+    font-family: var(--font-display);
+    font-size: var(--pl-h4, 1.75rem);
+    font-weight: 400;
+    line-height: 1.15;
+  }
+  @media (max-width: 1199px) {
+    .wd-steps { grid-template-columns: repeat(2, 1fr); row-gap: var(--pl-s-2xl, 3rem); }
+  }
+  @media (max-width: 599px) {
+    .wd-steps { grid-template-columns: 1fr; }
+  }
+
+  /* AI section: faint workflow diagram behind the left side. */
+  .wd-ai { position: relative; overflow: clip; isolation: isolate; clip-path: inset(0); }
+  .wd-ai__body { position: relative; z-index: 1; }
+
+  /* Rest state is the finished state; the run below plays from the start into it. */
+  .wd-ai__card { transition: none; }
+  .wd-ai__node .wd-ai__card { stroke: var(--color-teal); stroke-width: 2.6; }
+
+  /* Workflow map in the right column: three flows on one canvas, with the
+     Qualified? branch splitting to Salesforce and Gmail. It runs once when the
+     section scrolls into view, then rests with every step ticked. */
+  .wd-map { align-self: center; }
+  .wd-ai__map { display: block; width: 100%; height: auto; color: var(--color-teal); }
+  .wd-ai__map .wd-ai__label { font-size: 19px; }
+  .wd-ai__map .wd-ai__sub { font-size: 15.5px; }
+
+  /* n8n-style canvas: white node cards with simplified app glyphs, grey
+     links, round ports, and a signal that runs along each link. The glyphs are
+     simple stand-ins in each tool's colours, not the official logos. */
+  .wd-ai__link { stroke: #7e8a93; stroke-width: 2.2; fill: none; }
+  .wd-ai__card { fill: var(--pl-primary); stroke: #7e8a93; stroke-width: 2.2; }
+  .wd-ai__port { fill: #7e8a93; stroke: none; }
+  .wd-ai__inport { fill: #7e8a93; stroke: none; }
+  .wd-ai__plusmark { stroke: #7e8a93; stroke-width: 2.2; fill: none; }
+  .wd-ai__bolt { fill: #2C6E7F; stroke: none; }
+  .wd-ai__branch { display: none; }
+  .wd-ai__label { font-family: 'Inter', system-ui, sans-serif; font-size: 17px; font-weight: 500; fill: var(--color-ink); }
+  .wd-ai__sub { font-family: 'Inter', system-ui, sans-serif; font-size: 13.5px; fill: #5d6b75; }
+  .wd-ai__branch { font-family: 'Inter', system-ui, sans-serif; font-size: 12.5px; fill: #5d6b75; }
+  .wd-ai__node { transform-box: fill-box; transform-origin: center; }
+  .wd-ai__pulse {
+    stroke: var(--color-teal);
+    stroke-width: 4.6;
+    stroke-dasharray: 9 91;
+    stroke-dashoffset: 9;
+    opacity: 0;
+    fill: none;
+  }
+
+  /* One run of about ten seconds when the section first scrolls into view.
+     That is over the five seconds WCAG 2.2.2 allows without a control, so a
+     pause button appears while it runs (and goes once it has finished). A
+     signal travels each link, and the nodes pop in as it reaches them. JS adds
+     is-armed, then is-on on first view. Nothing moves under
+     prefers-reduced-motion. */
+  .wd-ai.is-on .wd-ai__pulse { animation: wd-ai-run 1.4s linear 1 backwards; }
+  .wd-ai.is-on .wd-ai__node .wd-ai__card { animation: wd-ai-lit 1s ease-out 1 backwards; animation-delay: var(--d); }
+  .wd-ai.is-on .wd-ai__tick { transform-box: fill-box; transform-origin: center; animation: wd-ai-tick 0.8s cubic-bezier(0.3, 1.6, 0.5, 1) 1 backwards; animation-delay: calc(var(--d) + 0.55s); }
+  /* App icons start faded and come to full strength when the run reaches their step. */
+  .wd-ai.is-armed:not(.is-on) .wd-ai__node > :not(.wd-ai__card):not(.wd-ai__tick):not(.wd-ai__port):not(.wd-ai__inport):not(.wd-ai__label):not(.wd-ai__sub):not(.wd-ai__branch):not(.wd-ai__plusmark) { opacity: 0.3; }
+  .wd-ai.is-on .wd-ai__node > :not(.wd-ai__card):not(.wd-ai__tick):not(.wd-ai__port):not(.wd-ai__inport):not(.wd-ai__label):not(.wd-ai__sub):not(.wd-ai__branch):not(.wd-ai__plusmark) { animation: wd-ai-icon 0.7s ease-out 1 backwards; animation-delay: var(--d); }
+
+  .wd-ai.is-paused * { animation-play-state: paused !important; }
+  .wd-ai__pause[hidden] { display: none; }
+  .wd-ai__pause { display: flex; justify-content: center; width: 2.25rem; height: 2.25rem; padding: 0; margin: 0.75rem 0 0 auto; }
+
+  @keyframes wd-ai-run {
+    0% { opacity: 1; stroke-dashoffset: 9; }
+    100% { opacity: 1; stroke-dashoffset: -100; }
+  }
+  @keyframes wd-ai-lit {
+    0% { stroke: #7e8a93; stroke-width: 2.2; }
+    100% { stroke: var(--color-teal); stroke-width: 2.6; }
+  }
+  @keyframes wd-ai-icon {
+    0% { opacity: 0.3; }
+    100% { opacity: 1; }
+  }
+  @keyframes wd-ai-tick {
+    0% { opacity: 0; transform: scale(0.3); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+</style>
+
+<script>
+  // AI section diagram: one run of about ten seconds when the section first
+  // comes into view. Does not run at all under prefers-reduced-motion.
+  const ai = document.querySelector<HTMLElement>('[data-wd-ai]');
+  if (ai && 'IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    ai.classList.add('is-armed');
+    const io = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) {
+        ai.classList.add('is-on');
+        io.disconnect();
+        startControl();
+      }
+    }, { threshold: 0.3 });
+    io.observe(ai);
+
+    // Pause control while the run is playing (WCAG 2.2.2). It goes away once
+    // the last node has finished, since nothing is moving after that.
+    const pauseBtn = ai.querySelector<HTMLButtonElement>('[data-wd-pause]');
+    const pauseLabel = ai.querySelector<HTMLElement>('[data-wd-pause-label]');
+    const ticks = ai.querySelectorAll<SVGElement>('.wd-ai__tick');
+    const startControl = () => {
+      if (!pauseBtn || !pauseLabel) return;
+      pauseBtn.hidden = false;
+      pauseBtn.addEventListener('click', () => {
+        const paused = ai.classList.toggle('is-paused');
+        pauseBtn.setAttribute('data-paused', String(paused));
+        pauseLabel.textContent = paused ? 'Play diagram animation' : 'Pause diagram animation';
+      });
+      ticks[ticks.length - 1]?.addEventListener('animationend', () => { pauseBtn.hidden = true; });
+    };
+  }
+
+  // "What we build" marks: play their short flick once when each card first
+  // scrolls into view (they also play on hover and focus).
+  const buildItems = document.querySelectorAll<HTMLElement>('.wd-build__item');
+  if (buildItems.length && 'IntersectionObserver' in window) {
+    const bio = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add('is-in'); bio.unobserve(e.target); }
+      });
+    }, { threshold: 0.7 });
+    buildItems.forEach((el) => bio.observe(el));
+  }
+</script>

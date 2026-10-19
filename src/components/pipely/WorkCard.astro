@@ -4,9 +4,18 @@
  *
  * Destination, in order:
  *   caseStudy  -> /work/<slug>/           a page we wrote
- *   video      -> the film on Vimeo       no page, but the film is the point
+ *   video      -> the film, in a lightbox no page, but the film is the point
  *   liveUrl    -> the client's live site  no page, but the site is the point
  *   none       -> no link at all          rather than a dead card
+ *
+ * A film with no case study plays in place rather than handing the visitor
+ * to vimeo.com mid-visit. The href stays the real Vimeo page so the card
+ * still works with JavaScript off, and cmd-click still opens a tab; the
+ * script below takes the plain click and opens the dialog instead.
+ *
+ * CLAUDE.md requires captions on every embedded film, not auto-generated.
+ * That obligation now covers each film reachable from this grid, not just
+ * the two embedded on pages.
  *
  * Film cards show a still by default and play a short muted loop on hover or
  * keyboard focus. Never under prefers-reduced-motion, never on touch, and the
@@ -34,17 +43,22 @@ const vimeoUrl = d.video ? `https://vimeo.com/${d.video}${d.videoHash ? `/${d.vi
 const href = d.caseStudy ? `/work/${project.id}/` : (vimeoUrl ?? d.liveUrl ?? null);
 const isExternal = Boolean(href && !href.startsWith('/'));
 
+// Films without a page of their own open in the lightbox. Case study films
+// stay on their case study page, where the writing is the point.
+const lightbox = Boolean(vimeoUrl && !d.caseStudy);
+
 const linkLabel = d.caseStudy
   ? `${d.title}, case study`
   : vimeoUrl
     ? `Watch ${d.title} on Vimeo, opens in a new tab`
     : `Visit ${d.title}, opens in a new tab`;
 
-const showPreview = Boolean(d.preview && d.cover);
+const still = d.thumb ?? d.cover;
+const showPreview = Boolean(d.preview && still);
 
 // A film wants 16:9. A website screenshot wants the taller article crop.
 // Putting both in one ratio makes one of them look wrong.
-const mediaRatio = d.craft === 'web' ? 'is-article' : 'is-wide';
+const mediaRatio = 'is-wide';
 ---
 <article
   class:list={['pl-work-card', 'pl-hover-scale', 'pl-hover-zoom', { 'is-static': !href }]}
@@ -59,19 +73,22 @@ const mediaRatio = d.craft === 'web' ? 'is-article' : 'is-wide';
       aria-label={linkLabel}
       target={isExternal ? '_blank' : undefined}
       rel={isExternal ? 'noopener noreferrer' : undefined}
+      data-vimeo={lightbox ? d.video : undefined}
+      data-vimeo-hash={lightbox && d.videoHash ? d.videoHash : undefined}
+      data-vimeo-title={lightbox ? d.title : undefined}
     ></a>
   ) : null}
 
   <div class:list={['pl-media', mediaRatio]}>
-    {d.cover ? (
-      <img src={d.cover} alt="" loading="lazy" decoding="async" width="800" height="676" />
+    {still ? (
+      <img src={still} alt="" loading="lazy" decoding="async" width="800" height="676" />
     ) : null}
     {showPreview ? (
       <video
         class="pl-work-card__preview"
         data-preview
         src={d.preview}
-        poster={d.cover}
+        poster={still}
         muted
         loop
         playsinline
@@ -88,6 +105,7 @@ const mediaRatio = d.craft === 'web' ? 'is-article' : 'is-wide';
       <span class="u-eyebrow u-nowrap">{d.year}</span>
     </div>
     <h3 class="u-xl u-medium">{d.title}</h3>
+    {d.partner && <p class="u-sm u-muted">{d.partner}</p>}
     <div class="pl-row is-wrap" style="gap:.375rem;margin-top:.5rem">
       <span class:list={['pl-tag', craftClass, 'u-xs']}>{craftLabel}</span>
       {d.capabilities.map((c) => (
@@ -145,4 +163,117 @@ const mediaRatio = d.craft === 'web' ? 'is-article' : 'is-wide';
     card.addEventListener('focusout', stop);
     motionOk.addEventListener('change', () => { if (!allowed()) stop(); });
   });
+
+  // ---- Vimeo lightbox -------------------------------------------------
+  // Films with no case study page used to send the visitor to vimeo.com,
+  // which hands them to someone else's site halfway through the work grid.
+  // They now play in place.
+  //
+  // Native <dialog> does the work that hand-rolled modals get wrong: focus
+  // trap, the background made inert, and focus returned to the card that
+  // opened it. Escape is handled below rather than left to the UA, because
+  // the close request does not fire in every engine. The dialog shell is
+  // built once and costs nothing to keep around; the
+  // iframe is what stays lazy, so the grid still loads with no third-party
+  // request until someone asks to watch something.
+  const triggers = document.querySelectorAll<HTMLAnchorElement>('a[data-vimeo]');
+
+  if (triggers.length) {
+    const dialog = document.createElement('dialog');
+    dialog.className = 'pl-lightbox';
+    dialog.innerHTML =
+      '<div class="pl-lightbox__inner">' +
+        '<button type="button" class="pl-lightbox__close" data-close>' +
+          '<span class="sr-only">Close video</span>' +
+          '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+            '<path d="M5 5 19 19M19 5 5 19" fill="none" stroke="currentColor" ' +
+            'stroke-width="2" stroke-linecap="round" />' +
+          '</svg>' +
+        '</button>' +
+        '<div class="pl-lightbox__frame" data-frame></div>' +
+      '</div>';
+
+    const frame = dialog.querySelector<HTMLElement>('[data-frame]')!;
+
+    dialog.querySelector('[data-close]')!.addEventListener('click', () => dialog.close());
+
+    // The inner panel is the dialog's only child, so a click that lands on
+    // the dialog itself came from the backdrop around the film.
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+
+    // Escape is handled here rather than left to the dialog's own close
+    // request, which not every engine fires. It cannot reach us while focus
+    // sits inside the Vimeo iframe, but Tab still cycles back out to the
+    // close button, so there is no keyboard trap either way.
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && dialog.open) {
+        e.preventDefault();
+        dialog.close();
+      }
+    });
+
+    // One close path for Escape, the button and the backdrop alike. Removing
+    // the iframe stops playback and drops the connection, rather than leaving
+    // a paused Vimeo player in the DOM.
+    dialog.addEventListener('close', () => {
+      frame.innerHTML = '';
+      document.documentElement.classList.remove('has-lightbox');
+    });
+
+    document.body.appendChild(dialog);
+
+    const open = (link: HTMLAnchorElement) => {
+      const params = new URLSearchParams({
+        dnt: '1',
+        title: '0',
+        byline: '0',
+        portrait: '0',
+        autoplay: '1',
+      });
+      // Unlisted films need their hash passed as ?h=.
+      if (link.dataset.vimeoHash) params.set('h', link.dataset.vimeoHash);
+
+      const title = link.dataset.vimeoTitle ?? 'Film';
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://player.vimeo.com/video/${link.dataset.vimeo}?${params}`;
+      iframe.title = title;
+      iframe.allow = 'autoplay; fullscreen; picture-in-picture';
+      iframe.setAttribute('allowfullscreen', '');
+
+      frame.replaceChildren(iframe);
+      dialog.setAttribute('aria-label', title);
+
+      // Opening from a card does not fire pointerleave, so the hover loop
+      // behind the dialog would otherwise keep running under the backdrop.
+      document.querySelectorAll<HTMLVideoElement>('[data-preview]').forEach((v) => {
+        v.classList.remove('is-playing');
+        v.pause();
+      });
+
+      document.documentElement.classList.add('has-lightbox');
+      dialog.showModal();
+    };
+
+    triggers.forEach((link) => {
+      // The link was rendered for the no-JS case, where it leaves for
+      // vimeo.com. We are about to keep the visitor here, so the new-tab
+      // promise in the label and the target both come back off.
+      link.removeAttribute('target');
+      link.removeAttribute('rel');
+      link.setAttribute('aria-haspopup', 'dialog');
+      if (link.dataset.vimeoTitle) {
+        link.setAttribute('aria-label', `Watch ${link.dataset.vimeoTitle}`);
+      }
+
+      link.addEventListener('click', (e) => {
+        // A modified click asked for a new tab. Let it have one.
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+        e.preventDefault();
+        open(link);
+      });
+    });
+  }
 </script>
+

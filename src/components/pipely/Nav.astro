@@ -4,14 +4,17 @@ import Button from './Button.astro';
 
 const path = Astro.url.pathname;
 
-// Six items, per MESSAGING-PLAN §4. Two pillars, not three crafts.
+// Four items while Work and Articles are out of the nav (six per MESSAGING-PLAN §4). Two pillars, not three crafts.
 // AI is a block inside Web Development, it is not a nav item.
 // Care and Hosting is footer-only, deliberately.
 const links = [
-  { label: 'Work', href: '/work/' },
+  // Work removed from the nav 10 October 2026 at Sue's request. It stays in the footer.
+  // { label: 'Work', href: '/work/' },
   { label: 'Video', href: '/video-production/' },
   { label: 'Web', href: '/web-development/' },
-  { label: 'Articles', href: '/blog/' },
+  // Articles unpublished 10 October 2026 at Sue's request. To bring it back:
+  // restore src/pages/_blog to src/pages/blog and add this link again.
+  // { label: 'Articles', href: '/blog/' },
   { label: 'About', href: '/about/' },
   { label: 'Contact', href: '/contact/' },
 ];

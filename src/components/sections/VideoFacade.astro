@@ -1,0 +1,311 @@
+---
+/**
+ * A film that shows no Vimeo chrome until someone asks to watch it.
+ *
+ * Before play: a still and one play button. Nothing from Vimeo loads, so no
+ * title bar, no menu, no third-party request and no cookie.
+ * On play: the still is swapped for the Vimeo player, which starts with
+ * sound. Its controls stay, because pause and captions have to be
+ * reachable (WCAG 2.2 AA, and captions are required on every film).
+ *
+ * Motion, all off under prefers-reduced-motion:
+ *   - Unroll: as the box scrolls into view it reveals from the bottom edge
+ *     upwards, a clip-path wipe. With JavaScript off it is simply there.
+ *   - Hover: the still drifts and zooms slowly, and the play button grows
+ *     and turns red, the brand's button hover.
+ *
+ * Accessibility: the play control is a real button whose accessible name
+ * begins with its visible label and then names the film, and focus moves
+ * into the player once it loads, so a keyboard user carries straight on.
+ */
+interface Props {
+  vimeoId: string;
+  /** Unlisted films need their hash. */
+  hash?: string;
+  /** Names the film. Used in the button label and the iframe title. */
+  title: string;
+  /** 16:9 still. */
+  poster: string;
+  /** Optional visible label under the button. None by default. */
+  label?: string;
+  /** 'inline' swaps the still for the player in place. 'dialog' opens the
+      film in a modal over the page, and the still stays put behind it. */
+  mode?: 'inline' | 'dialog';
+}
+
+const { vimeoId, hash, title, poster, label, mode = 'inline' } = Astro.props;
+
+const params = new URLSearchParams({
+  autoplay: '1',
+  dnt: '1',
+  title: '0',
+  byline: '0',
+  portrait: '0',
+  pip: '0',
+});
+if (hash) params.set('h', hash);
+const src = `https://player.vimeo.com/video/${vimeoId}?${params}`;
+---
+
+<div class="dhvf" data-video-facade data-src={src} data-title={title} data-mode={mode}>
+  {/* Eager, not lazy: while the box waits to unroll it is clipped to
+      nothing, and a lazy image the browser cannot see never loads. */}
+  <img class="dhvf-poster" src={poster} alt="" width="1280" height="720" decoding="async" />
+  <span class="dhvf-shade" aria-hidden="true"></span>
+  <button class="dhvf-play" type="button" data-play>
+    <span class="dhvf-play__disc" aria-hidden="true">
+      <svg viewBox="0 0 24 24" focusable="false">
+        <path d="M9 6.5v11l9-5.5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" />
+      </svg>
+    </span>
+    {/* With a visible label, it starts the accessible name so voice control
+        users can say what they see (WCAG 2.5.3). Without one, the button is
+        named "Play" plus the film. */}
+    {label
+      ? <><span class="dhvf-play__label">{label}</span><span class="sr-only">: {title}</span></>
+      : <span class="sr-only">Play {title}</span>}
+  </button>
+</div>
+
+<style>
+  .dhvf {
+    position: absolute;
+    inset: 0;
+    overflow: clip;
+    background-color: var(--color-ink);
+  }
+
+  .dhvf-poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Ink at 46% over the whole still, lightened from 62% on 19 September
+     2026 once the text label went. 46% is the floor for the cream ring to
+     keep 3:1 (WCAG 1.4.11, non-text) over the whitest part of a pale still
+     like Boston's. Any visible label would need 62% again for 4.5:1.
+     Lifts further on hover so the footage comes forward. */
+  .dhvf-shade {
+    position: absolute;
+    inset: 0;
+    background-color: rgb(15 20 23 / 0.46);
+    pointer-events: none;
+    transition: background-color 600ms var(--pl-ease-out-quart);
+  }
+  .dhvf:hover .dhvf-shade { background-color: rgb(15 20 23 / 0.34); }
+
+  /* The whole box is the click target; the disc is the visible part. */
+  .dhvf-play {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--pl-s-md);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+  .dhvf-play:focus-visible { outline: none; }
+  .dhvf-play:focus-visible .dhvf-play__disc { outline: 3px solid var(--color-cream); outline-offset: 4px; }
+
+  /* An outlined ring, not a filled disc: thin cream line, outline triangle. */
+  .dhvf-play__disc {
+    display: grid;
+    place-items: center;
+    width: 5.5rem;
+    height: 5.5rem;
+    border: 2px solid var(--color-cream);
+    border-radius: 50%;
+    color: var(--color-cream);
+    transition:
+      transform 500ms var(--pl-ease-out-quart),
+      background-color 250ms ease,
+      border-color 250ms ease;
+  }
+  .dhvf-play__disc svg { width: 2.25rem; height: 2.25rem; margin-left: 0.2rem; }
+
+  .dhvf-play__label {
+    font-family: var(--font-mono);
+    font-size: var(--pl-sm);
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    color: var(--color-cream);
+  }
+
+  /* Hover and keyboard focus: the ring fills with brand red. Cream on red
+     is about 5.9:1. */
+  .dhvf:hover .dhvf-play__disc,
+  .dhvf-play:focus-visible .dhvf-play__disc { background-color: var(--color-red); border-color: var(--color-red); }
+
+  /* Global: the player is created in the script, so it never carries the
+     scoping attribute. */
+  .dhvf :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  /* The modal. Global: the dialog is created in the script and appended to
+     the body, so it never carries the scoping attribute. */
+  :global(.dhvf-modal) {
+    width: min(1100px, calc(100vw - 2rem));
+    padding: 0;
+    border: 0;
+    border-radius: var(--pl-r-media);
+    background: transparent;
+    overflow: visible;
+  }
+  :global(.dhvf-modal)::backdrop { background: rgb(15 20 23 / 0.82); }
+  :global(.dhvf-modal__frame) {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: clip;
+    border-radius: var(--pl-r-media);
+    background: #000;
+  }
+  :global(.dhvf-modal__frame iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  :global(.dhvf-modal__close) {
+    position: absolute;
+    top: -3rem;
+    right: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 0;
+    border-radius: 50%;
+    background: var(--color-cream);
+    color: var(--color-ink);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  :global(.dhvf-modal__close:hover) { background: var(--color-red); color: var(--color-cream); }
+  @media (max-width: 599px) {
+    :global(.dhvf-modal__close) { top: -2.75rem; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .dhvf-poster { transition: transform 1200ms var(--pl-ease-out-quart); }
+    .dhvf:hover .dhvf-poster { transform: scale(1.06) translate(-1%, -1%); }
+    .dhvf:hover .dhvf-play__disc,
+    .dhvf-play:focus-visible .dhvf-play__disc { transform: scale(1.12); }
+
+    /* Unroll. The hidden state only applies once the script has marked the
+       box as waiting, so without JavaScript nothing is ever hidden. The
+       wipe runs on the rounded .pl-media wrapper, which is the ancestor
+       the script tags. */
+    :global(.pl-media.is-unroll-wait) { clip-path: inset(100% 0 0 0 round var(--pl-r-media)); }
+    :global(.pl-media.is-unroll) {
+      clip-path: inset(0 0 0 0 round var(--pl-r-media));
+      transition: clip-path 1100ms var(--pl-ease-out-quart);
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-video-facade]').forEach((root) => {
+    const button = root.querySelector<HTMLButtonElement>('[data-play]')!;
+
+    const makeFrame = () => {
+      const frame = document.createElement('iframe');
+      frame.src = root.dataset.src!;
+      frame.title = root.dataset.title ?? 'Film';
+      frame.allow = 'autoplay; fullscreen; picture-in-picture';
+      frame.setAttribute('allowfullscreen', '');
+      return frame;
+    };
+
+    // One dialog per page, built on first use. Closing empties it, which
+    // stops the film: a paused Vimeo iframe left in the DOM keeps its
+    // connection open. Escape is handled explicitly, because a dialog's
+    // own cancel event does not fire in every engine (same reason as
+    // StartProject).
+    const openDialog = () => {
+      let dlg = document.querySelector<HTMLDialogElement>('#dhvf-modal');
+      if (!dlg) {
+        dlg = document.createElement('dialog');
+        dlg.id = 'dhvf-modal';
+        dlg.className = 'dhvf-modal';
+        dlg.innerHTML =
+          '<button type="button" class="dhvf-modal__close" data-close aria-label="Close film">&times;</button>' +
+          '<div class="dhvf-modal__frame" data-slot></div>';
+        document.body.append(dlg);
+        dlg.querySelector('[data-close]')!.addEventListener('click', () => dlg!.close());
+        dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg!.close(); });
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && dlg!.open) { e.preventDefault(); dlg!.close(); }
+        });
+        dlg.addEventListener('close', () => {
+          dlg!.querySelector('[data-slot]')!.replaceChildren();
+          document.documentElement.classList.remove('has-modal');
+          const opener = document.querySelector<HTMLElement>('[data-dhvf-opener]');
+          if (opener) { opener.removeAttribute('data-dhvf-opener'); opener.focus(); }
+        });
+      }
+      dlg.setAttribute('aria-label', root.dataset.title ?? 'Film');
+      const frame = makeFrame();
+      dlg.querySelector('[data-slot]')!.replaceChildren(frame);
+      button.setAttribute('data-dhvf-opener', '');
+      document.documentElement.classList.add('has-modal');
+      dlg.showModal();
+      frame.addEventListener('load', () => frame.focus(), { once: true });
+    };
+
+    button.addEventListener('click', () => {
+      if (root.dataset.mode === 'dialog') { openDialog(); return; }
+      // Inline: the still, the wash and the button all go, and from here it
+      // is Vimeo's player with its own controls.
+      const frame = makeFrame();
+      frame.addEventListener('load', () => frame.focus(), { once: true });
+      root.replaceChildren(frame);
+    });
+
+    // Unroll into view, bottom edge upwards, once. The observer watches the
+    // box's parent, not the box: while waiting the box is clipped to
+    // nothing, and a fully clipped element can read as never intersecting,
+    // which left the film hidden for good (found 19 September 2026).
+    const box = root.closest<HTMLElement>('.pl-media');
+    const watch = box?.parentElement;
+    if (!box || !watch || !window.matchMedia('(prefers-reduced-motion: no-preference)').matches) return;
+    if (!('IntersectionObserver' in window)) return;
+    box.classList.add('is-unroll-wait');
+
+    // Two triggers, whichever fires first: the observer, and a plain
+    // position check on scroll and on load. The film must never be left
+    // hidden because one mechanism did not fire.
+    let done = false;
+    const reveal = () => {
+      if (done) return;
+      done = true;
+      io.disconnect();
+      window.removeEventListener('scroll', check);
+      box.classList.add('is-unroll');
+      box.classList.remove('is-unroll-wait');
+    };
+    const check = () => {
+      const r = watch.getBoundingClientRect();
+      const visible = Math.min(r.bottom, window.innerHeight) - Math.max(r.top, 0);
+      if (visible > r.height * 0.25) reveal();
+    };
+    const io = new IntersectionObserver(
+      (entries) => { if (entries.some((e) => e.isIntersecting)) reveal(); },
+      { threshold: 0.25 },
+    );
+    io.observe(watch);
+    window.addEventListener('scroll', check, { passive: true });
+    check();
+  });
+</script>

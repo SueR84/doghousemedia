@@ -1,0 +1,55 @@
+---
+/**
+ * A row of figures with a word under each: 1 shoot day, 7 professors, and
+ * so on. The numbers are the case study's evidence, so they carry the
+ * display face at heading size. An optional line under a figure explains it.
+ */
+interface Props {
+  items: { n: string; label: string; note?: string }[];
+  /** Tighter type, for a row inside a section rather than under a hero. */
+  compact?: boolean;
+}
+const { items, compact = false } = Astro.props;
+---
+
+<ul class:list={['cs-stats', compact && 'is-compact']} role="list" data-reveal-stagger="80">
+  {items.map((i) => (
+    <li class="cs-stats__item" data-reveal>
+      <span class="cs-stats__n">{i.n}</span>
+      <span class="cs-stats__label">{i.label}</span>
+      {i.note && <span class="cs-stats__note u-muted">{i.note}</span>}
+    </li>
+  ))}
+</ul>
+
+<style>
+  .cs-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--pl-s-lg);
+    margin: 0;
+    padding: 0;
+  }
+  .cs-stats.is-compact { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .cs-stats__item {
+    display: grid;
+    gap: 0.25rem;
+    align-content: start;
+    padding-top: var(--pl-s-sm);
+    border-top: 1px solid var(--pl-border);
+  }
+  .cs-stats__n {
+    font-family: var(--font-display);
+    font-size: var(--pl-h2);
+    font-weight: var(--pl-fw-medium);
+    line-height: 1;
+    letter-spacing: var(--pl-tr-tight);
+  }
+  .cs-stats.is-compact .cs-stats__n { font-size: var(--pl-h3); }
+  .cs-stats__label { font-size: var(--pl-sm); font-weight: var(--pl-fw-medium); }
+  .cs-stats__note { font-size: var(--pl-sm); line-height: 1.55; }
+  @media (max-width: 767px) {
+    .cs-stats,
+    .cs-stats.is-compact { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+</style>

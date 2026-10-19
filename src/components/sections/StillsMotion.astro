@@ -1,0 +1,133 @@
+---
+/**
+ * A short motion thumbnail built from stills rather than a video file.
+ * Recreates the opening of a film by sliding frame grabs across the box,
+ * so the card moves without loading a video. Loops every six seconds.
+ *
+ * Accessibility (WCAG 2.2 AA, see CLAUDE.md):
+ *   - It loops, so 2.2.2 Pause, Stop, Hide applies: there is a visible
+ *     pause/play button, reachable by keyboard, in the corner of the box.
+ *   - It only runs while on screen, and stops for good once paused.
+ *   - Under prefers-reduced-motion, and with JavaScript off, it shows the
+ *     final still, nothing moves and the button is not shown.
+ *   - The stills are decorative layers. One alt text, on the final still,
+ *     describes the whole thing.
+ *
+ * Stills must be four, in order. The last one is the resting frame.
+ */
+interface Props { stills: [string, string, string, string]; alt: string }
+const { stills, alt } = Astro.props;
+const [a, b, c, d] = stills;
+---
+<div class="sm" data-stills-motion>
+  <img class="sm-l sm-a" src={a} alt="" loading="lazy" decoding="async" aria-hidden="true" />
+  <img class="sm-l sm-b" src={b} alt="" loading="lazy" decoding="async" aria-hidden="true" />
+  <img class="sm-l sm-c" src={c} alt="" loading="lazy" decoding="async" aria-hidden="true" />
+  <img class="sm-l sm-d" src={d} alt={alt} loading="lazy" decoding="async" />
+  <button class="sm-toggle" type="button" aria-label="Pause animation" hidden>
+    <svg class="sm-i-pause" viewBox="0 0 16 16" aria-hidden="true"><rect x="3.5" y="3" width="3" height="10" rx="1"/><rect x="9.5" y="3" width="3" height="10" rx="1"/></svg>
+    <svg class="sm-i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.2v9.6a.8.8 0 0 0 1.2.7l7.4-4.8a.8.8 0 0 0 0-1.4L6.2 2.5A.8.8 0 0 0 5 3.2z"/></svg>
+  </button>
+</div>
+
+<style>
+  .sm { position: absolute; inset: 0; overflow: clip; background: #fff; }
+  .sm-l {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; will-change: transform, opacity;
+    backface-visibility: hidden;
+  }
+  /* Resting state: the final still only. */
+  .sm-a, .sm-b, .sm-c { opacity: 0; }
+
+  .sm-toggle {
+    position: absolute; right: .75rem; bottom: .75rem; z-index: 2;
+    width: 2.75rem; height: 2.75rem; border: 0; border-radius: 50%;
+    display: grid; place-items: center; cursor: pointer;
+    background: rgb(15 20 23 / .78); color: var(--color-cream);
+  }
+  .sm-toggle svg { width: 1rem; height: 1rem; fill: currentColor; }
+  .sm-toggle:hover { background: rgb(15 20 23 / .92); }
+  .sm-toggle:focus-visible { outline: 3px solid var(--color-cream); outline-offset: 2px; box-shadow: 0 0 0 5px #0F1417; }
+  .sm-i-play { display: none; }
+  .sm.is-paused .sm-i-play { display: block; }
+  .sm.is-paused .sm-i-pause { display: none; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .sm.is-running .sm-l {
+      animation-duration: 6s;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+    }
+    .sm.is-running .sm-a { animation-name: sm-a; }
+    .sm.is-running .sm-b { animation-name: sm-b; }
+    .sm.is-running .sm-c { animation-name: sm-c; }
+    .sm.is-running .sm-d { animation-name: sm-d; }
+    .sm.is-paused .sm-l, .sm.is-offscreen .sm-l { animation-play-state: paused; }
+  }
+
+  /* Push transitions share one curve so the handovers feel like one move. */
+
+  /* 0 to 1.5s: the chevron collage drifts left, then is pushed off.
+     It is back in place under the final shot from 5.2s, ready for the loop. */
+  @keyframes sm-a {
+    0%   { opacity: 1; transform: translateX(6%) scale(1.1); }
+    18%  { opacity: 1; transform: translateX(0) scale(1.04); animation-timing-function: cubic-bezier(.65,0,.35,1); }
+    25%  { opacity: 1; transform: translateX(-100%) scale(1.04); }
+    25.1%, 86% { opacity: 0; transform: translateX(6%) scale(1.1); }
+    86.1%, 100% { opacity: 1; transform: translateX(6%) scale(1.1); }
+  }
+  /* 1.1 to 2.8s: the logo lockup pushes in from the right and settles. */
+  @keyframes sm-b {
+    0%, 17.9% { opacity: 0; transform: translateX(100%); }
+    18%  { opacity: 1; transform: translateX(100%); animation-timing-function: cubic-bezier(.65,0,.35,1); }
+    25%  { opacity: 1; transform: translateX(0) scale(1); }
+    40%  { opacity: 1; transform: translateX(0) scale(1.04); animation-timing-function: cubic-bezier(.65,0,.35,1); }
+    47%  { opacity: 1; transform: translateX(-100%) scale(1.04); }
+    47.1%, 100% { opacity: 0; transform: translateX(100%); }
+  }
+  /* 2.4 to 4s: the three chevrons slide through and drift. */
+  @keyframes sm-c {
+    0%, 39.9% { opacity: 0; transform: translateX(100%); }
+    40%  { opacity: 1; transform: translateX(100%); animation-timing-function: cubic-bezier(.65,0,.35,1); }
+    47%  { opacity: 1; transform: translateX(0); animation-timing-function: linear; }
+    70%  { opacity: 1; transform: translateX(-7%); }
+    70.1%, 100% { opacity: 0; transform: translateX(-7%); }
+  }
+  /* 3.4s on: the final shot dissolves in and eases into a slow push,
+     rather than a hard wipe. From 5.3s it dissolves away to reveal the
+     collage already waiting underneath, so the loop has no seam. */
+  @keyframes sm-d {
+    0%, 55% { opacity: 0; transform: scale(1.12); }
+    56%  { opacity: 0; transform: scale(1.12); animation-timing-function: cubic-bezier(.33,0,.2,1); }
+    68%  { opacity: 1; transform: scale(1.06); animation-timing-function: cubic-bezier(.25,.1,.25,1); }
+    88%  { opacity: 1; transform: scale(1.01); animation-timing-function: ease-in-out; }
+    100% { opacity: 0; transform: scale(1); }
+  }
+</style>
+
+<script>
+  const motionOk = window.matchMedia('(prefers-reduced-motion: no-preference)');
+
+  document.querySelectorAll<HTMLElement>('[data-stills-motion]').forEach((el) => {
+    const btn = el.querySelector<HTMLButtonElement>('.sm-toggle')!;
+
+    const start = () => {
+      if (!motionOk.matches) { el.classList.remove('is-running'); btn.hidden = true; return; }
+      btn.hidden = false;
+      el.classList.add('is-running');
+    };
+    start();
+    motionOk.addEventListener('change', start);
+
+    btn.addEventListener('click', () => {
+      const paused = el.classList.toggle('is-paused');
+      btn.setAttribute('aria-label', paused ? 'Play animation' : 'Pause animation');
+    });
+
+    // Hold still while off screen. Nobody is watching and it saves battery.
+    new IntersectionObserver((entries) => {
+      el.classList.toggle('is-offscreen', !entries[0].isIntersecting);
+    }).observe(el);
+  });
+</script>

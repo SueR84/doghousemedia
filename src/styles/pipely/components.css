@@ -30,6 +30,21 @@
 .pl-btn:hover { transform: scale(0.95); }
 .pl-btn:active { transform: scale(0.93); }
 
+/* Very narrow phones (320px, found 21 September 2026): a long label such as
+   "Tell us about your Project" is wider than the panel, and nowrap pushed it
+   past the edge where the panel clipped it. Below 400px a button may wrap
+   onto two lines and never exceeds its container. */
+@media (max-width: 399px) {
+  .pl-btn {
+    max-width: 100%;
+    height: auto;
+    min-height: 3.5rem;
+    padding-block: 0.75rem;
+    white-space: normal;
+    text-align: center;
+  }
+}
+
 /* Every variant hovers to Red. That is the brand's one rule for buttons. */
 .pl-btn:hover { background-color: var(--pl-btn-bg-hover); color: var(--pl-btn-text-hover); }
 
@@ -199,15 +214,42 @@
 .pl-nav__inner {
   margin: var(--pl-s-lg) var(--pl-shell-pad) 0;
   padding: var(--pl-s-md) var(--pl-s-2xl);
+  border: 1px solid transparent;
   border-radius: var(--pl-r-panel);
   background-color: var(--pl-primary);
+  transition:
+    background-color var(--pl-dur-hover) var(--pl-ease-out-quad),
+    border-color var(--pl-dur-hover) var(--pl-ease-out-quad);
+}
+/* The logo steps down 15% once the page scrolls (24px to 20.4px), so the
+   bar sits lighter over the content. Font-size rather than a transform so
+   the wordmark and mark scale together as one lockup. The bar keeps its
+   height: the CTA button and links set that, not the logo. */
+.pl-nav .pl-nav__brand .logo { transition: font-size var(--pl-dur-hover) var(--pl-ease-out-quad); }
+.pl-nav.is-scrolled:not(.is-open) .pl-nav__brand .logo { font-size: 20.4px; }
+@media (prefers-reduced-motion: reduce) {
+  .pl-nav .pl-nav__brand .logo { transition: none; }
+}
+/* Frosted glass once the page scrolls: white at 72% over an 18px blur.
+   Ink text on that stays above 9:1 even with the black footer behind it,
+   so contrast holds over anything that scrolls past. A hairline edge
+   stands in for the solid panel's edge; still no shadow. Browsers without
+   backdrop-filter keep the solid panel, since 72% white with no blur would
+   let sharp text show through and fight the nav links. */
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .pl-nav.is-scrolled:not(.is-open) .pl-nav__inner {
+    background-color: rgb(255 255 255 / 0.72);
+    border-color: rgb(15 20 23 / 0.08);
+    -webkit-backdrop-filter: blur(18px) saturate(1.6);
+    backdrop-filter: blur(18px) saturate(1.6);
+  }
 }
 .pl-nav__content { display: flex; align-items: center; justify-content: space-between; gap: var(--pl-s-md); }
 .pl-nav__list { display: flex; align-items: center; gap: var(--pl-s-lg); }
 .pl-nav__link {
   display: flex; align-items: center; gap: var(--pl-s-xs);
   padding: var(--pl-s-sm);
-  font-size: var(--pl-sm);
+  font-size: var(--pl-base);
   font-weight: var(--pl-fw-medium);
   line-height: var(--pl-lh-sm);
   letter-spacing: var(--pl-tr-nav);
@@ -268,7 +310,10 @@
 /* The nav must not slide away while the menu is open. */
 .pl-nav.is-open { transform: none !important; }
 
-@media (max-width: 1100px) {
+/* Collapses to the Menu button below 1200px. Raised from 1100px on 18
+   September 2026 when the logo went to 24px and the links to 16px: the
+   full bar needs about 1200px, and below that the logo was squeezed. */
+@media (max-width: 1199px) {
   .pl-nav__list { display: none; }
   .pl-nav__toggle { display: inline-flex; }
 }
@@ -283,37 +328,123 @@
   .pl-nav__cta { display: none; }
 }
 
-/* ---- Footer ------------------------------------------------- */
+/* ---- Footer -------------------------------------------------
+   Intro column, three link columns, a copyright line, and the hound
+   peeking over the bottom edge. The giant DOGHOUSE wordmark that used to
+   bleed off the bottom was removed 18 September 2026. */
 .pl-footer { background-color: var(--pl-inverse); color: var(--pl-text-on-dark); }
 .pl-footer .pl-container { container-type: inline-size; }
-.pl-footer__top { display: grid; grid-template-columns: 1fr min-content min-content min-content; gap: 5rem; width: 100%; }
-.pl-footer__column { display: flex; flex-direction: column; gap: var(--pl-s-xs); }
-.pl-footer__link {
-  padding: var(--pl-s-sm);
-  font-size: var(--pl-sm);
-  font-weight: var(--pl-fw-medium);
-  line-height: var(--pl-lh-sm);
-  white-space: nowrap;
-  color: var(--pl-text-on-dark);
-  transition: color var(--pl-dur-hover) var(--pl-ease-out-quad);
+.pl-footer__top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr));
+  gap: var(--pl-s-5xl);
+  width: 100%;
 }
-.pl-footer__link:hover { color: var(--pl-text-inverse); }
-/* Oversized wordmark bleeding off the bottom edge. Pipely hardcodes
-   35vw, which only works for a six-letter word. Set --wordmark-chars. */
-.pl-footer__wordmark {
-  display: flex; align-items: center; justify-content: center;
-  width: 100%; margin-bottom: -12%;
+.pl-footer__intro { display: flex; flex-direction: column; align-items: flex-start; gap: var(--pl-s-md); }
+.pl-footer__statement {
+  max-width: 22rem;
   font-family: var(--font-display);
-  font-weight: var(--fw-black);
-  font-size: min(35cqw, calc(152cqw / var(--wordmark-chars, 6)));
-  line-height: 1.15;
-  letter-spacing: -0.06em;
-  white-space: nowrap;
-  color: var(--color-teal-light);
+  font-size: var(--pl-3xl);
+  line-height: 1.2;
+  letter-spacing: var(--pl-tr-tight);
+  color: var(--pl-text-inverse);
+}
+/* Links on dark: cream, underline on hover. Red text on Ink fails for
+   normal text, so red stays off link text here, per CLAUDE.md. */
+.pl-footer__email,
+.pl-footer__link {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 0.3em;
+  text-decoration-thickness: 1px;
+  transition: color var(--pl-dur-hover) var(--pl-ease-out-quad), text-decoration-color var(--pl-dur-hover) var(--pl-ease-out-quad);
+}
+.pl-footer__email { color: var(--pl-text-inverse); text-decoration-color: color-mix(in srgb, var(--color-cream) 40%, transparent); }
+.pl-footer__email:hover { text-decoration-color: currentColor; }
+.pl-footer__column { display: flex; flex-direction: column; gap: var(--pl-s-md); }
+.pl-footer__column ul { display: flex; flex-direction: column; }
+/* Flush left under the column heading. Vertical padding only, which keeps
+   each link a comfortable target (well over the 24px in WCAG 2.5.8)
+   without pushing the text in from its heading. */
+.pl-footer__link {
+  display: inline-block;
+  padding-block: 0.375rem;
+  font-size: var(--pl-base);
+  line-height: var(--pl-lh-sm);
+  color: var(--pl-text-on-dark);
+}
+.pl-footer__link:hover { color: var(--pl-text-inverse); text-decoration-color: currentColor; }
+
+.pl-footer__base {
+  margin-top: var(--pl-s-7xl);
+  padding-top: var(--pl-s-lg);
+  border-top: 1px solid var(--pl-border-inverse);
+}
+
+/* The hound. Its box ends exactly at the panel's bottom edge (the negative
+   margin cancels the panel padding) and the panel clips, so the lower half
+   of the head is cut off by the edge. */
+.pl-footer__hound {
+  width: clamp(11rem, 22cqw, 16rem);
+  margin: var(--pl-s-3xl) auto calc(-1 * var(--pl-pad-sm));
+  line-height: 0;
+}
+.pl-footer__hound svg { display: block; width: 100%; height: auto; overflow: visible; }
+.pl-hound__body { fill: var(--color-cream); }
+.pl-hound__red { fill: var(--color-red); }
+.pl-hound__knockout { fill: var(--color-ink); }
+
+/* Each moving part turns about its own box, so the origins below are
+   percentages of that part rather than of the whole drawing. */
+.pl-hound__head,
+.pl-hound__band,
+.pl-hound__zip,
+.pl-hound__eye { transform-box: fill-box; }
+/* Pivots at the back of the neck, below the edge, so tipping the head
+   lifts the nose without lifting the body off the edge. */
+.pl-hound__head { transform-origin: 15% 100%; }
+/* The brand's earwag origin, 60 36 in mark units, as a share of the band. */
+.pl-hound__band { transform-origin: 79% 67%; }
+.pl-hound__zip { transform-origin: 100% 50%; }
+.pl-hound__eye { transform-origin: 50% 50%; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .pl-footer__hound svg { transition: transform 900ms var(--pl-ease-out-quart); }
+  .pl-footer__hound.is-ducked svg { transform: translateY(80%); }
+
+  .pl-footer__hound.is-alive .pl-hound__head { animation: pl-hound-look 2.4s ease-in-out; }
+  .pl-footer__hound.is-alive .pl-hound__band { animation: pl-hound-earwag 2.6s ease-in-out; }
+  .pl-footer__hound.is-alive .pl-hound__zip { animation: pl-hound-zip 1.2s linear 0.3s; }
+  .pl-footer__hound.is-alive .pl-hound__eye { animation: pl-hound-blink 2.6s linear; }
+
+  @keyframes pl-hound-look {
+    0%, 100% { transform: rotate(0); }
+    20%, 55% { transform: rotate(-7deg); }
+    75% { transform: rotate(2deg); }
+  }
+  @keyframes pl-hound-earwag {
+    0%, 100% { transform: rotate(0); }
+    25% { transform: rotate(-9deg); }
+    50% { transform: rotate(6deg); }
+    75% { transform: rotate(-4deg); }
+  }
+  @keyframes pl-hound-zip {
+    0%, 30%, 60%, 100% { opacity: 1; transform: scale(1); }
+    15%, 45% { opacity: 0; transform: scale(0.4); }
+  }
+  @keyframes pl-hound-blink {
+    0%, 44%, 56%, 100% { transform: scaleY(1); }
+    50% { transform: scaleY(0.1); }
+  }
+}
+
+@media (max-width: 991px) {
+  .pl-footer__top { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--pl-s-3xl); }
+  .pl-footer__intro { grid-column: 1 / -1; }
 }
 @media (max-width: 767px) {
-  .pl-footer__top { grid-template-columns: 1fr 1fr; gap: 2rem; }
-  .pl-footer__wordmark { font-size: min(32cqw, calc(148cqw / var(--wordmark-chars, 6))); }
+  .pl-footer__top { grid-template-columns: 1fr 1fr; }
+  .pl-footer__statement { font-size: var(--pl-xl); }
 }
 
 /* ---- Tabs (drive the sticky horizontal section) ------------- */
@@ -382,8 +513,23 @@
   .pl-hero__row { grid-template-columns: calc(1fr + 160px) calc(1fr - 160px); }
 }
 
+/* Between 768 and 1199 the two columns are narrow enough that the lead
+   runs to four lines, so the aside takes a bigger share of the row and
+   the lead steps down a size. Above 1200 the 32rem below is what holds it
+   to three lines (24 September 2026). */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .pl-hero__row { grid-template-columns: 1fr 1.3fr; }
+}
+@media (min-width: 768px) and (max-width: 1079px) {
+  /* .pipely qualifier needed: the paragraph also carries .u-lg, which
+     would otherwise win on specificity. */
+  .pipely .pl-hero__lead { font-size: 1rem; }
+}
+
 .pl-hero__aside {
-  max-width: 26rem;
+  /* 32rem, widened from 26rem (24 September 2026) so the studio line
+     lands on three lines rather than four. */
+  max-width: 32rem;
   margin-left: auto;
   display: flex;
   flex-direction: column;
@@ -498,9 +644,13 @@
    one sits under a pair of tilted phones and the other under a
    carousel.
 
-   The paused state keys off aria-pressed rather than a class on an
-   ancestor, so what the icon shows and what a screen reader
-   announces cannot disagree. */
+   The paused state keys off data-paused on the button itself, set in
+   the same line of script that swaps the label between Pause and
+   Play, so the icon and what a screen reader announces cannot
+   disagree. Not aria-pressed (changed 22 September 2026): a toggle
+   button with aria-pressed must keep one fixed label, and these
+   change theirs, which made a paused button read as "Play video,
+   pressed". */
 .pl-pause {
   display: inline-flex;
   align-items: center;
@@ -525,7 +675,7 @@
   border-right: 3px solid currentColor;
 }
 /* Paused swaps the two bars for a play triangle, as the hero does. */
-.pl-pause[aria-pressed='true'] .pl-pause__icon {
+.pl-pause[data-paused='true'] .pl-pause__icon {
   width: 0;
   height: 0;
   border: 0;
@@ -533,6 +683,77 @@
   border-bottom: 0.375rem solid transparent;
   border-left: 0.625rem solid currentColor;
 }
+
+/* ---- Graph paper backdrop -----------------------------------
+   A faint grid with a small cross-hair at every fifth intersection,
+   drawn under the content of any panel (24 September 2026). Decorative
+   and behind everything, so it carries no meaning and needs no text
+   alternative; it is drawn on a pseudo-element rather than an image, so
+   it is a few lines of CSS rather than a request.
+
+   The lines are ink at 4% and the cross-hairs at 2%, settled 24 September
+   2026 after 4%/7%, 1.8%/3.5%, 1%/2%, 1.5%/2.5%, 2%/2.5%, 3%/2.5% and
+   4%/2.5%. Much below 1% the grid stops rendering at all on some
+   displays. It should register as texture only once you look for it, and
+   never compete with type. It fades in from nothing at the top of the
+   panel and back out at the foot (24 September 2026), so the grid neither
+   collides with the nav above nor runs into the section below. */
+.pl-graph { position: relative; }
+.pl-graph::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    /* cross-hairs: a short horizontal and vertical stroke, every 10rem */
+    linear-gradient(to right, rgb(15 20 23 / 0.02) 0 10px, transparent 10px),
+    linear-gradient(to bottom, rgb(15 20 23 / 0.02) 0 10px, transparent 10px),
+    /* graph paper: 2rem squares */
+    linear-gradient(to right, rgb(15 20 23 / 0.04) 0 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(15 20 23 / 0.04) 0 1px, transparent 1px);
+  background-size:
+    10rem 10rem,
+    10rem 10rem,
+    2rem 2rem,
+    2rem 2rem;
+  background-position:
+    calc(50% - 5px) calc(50% - 0.5px),
+    calc(50% - 0.5px) calc(50% - 5px),
+    0 0,
+    0 0;
+  --pl-graph-fade: linear-gradient(to bottom, transparent 0%, rgb(0 0 0 / 0.3) 25%, rgb(0 0 0 / 0.85) 50%, rgb(0 0 0 / 0.7) 62%, transparent 100%);
+  -webkit-mask-image: var(--pl-graph-fade);
+  mask-image: var(--pl-graph-fade);
+}
+/* The panel's own children sit above the backdrop. */
+.pl-graph > * { position: relative; }
+
+/* ---- Background blob ----------------------------------------
+   One very soft, off-centre shape on a panel's own background, sitting
+   under everything in the section (24 September 2026). Built from wide
+   radial gradients rather than a shape plus `filter: blur()`, because a
+   blurred layer renders as nothing in Chromium here.
+
+   It leans to the side the media sits on, so on the pillar blocks it
+   falls behind the phones or the tablet without touching them: the
+   devices themselves are untouched. Decorative, behind everything, no
+   motion.
+
+   The z-index pair matters: a positioned pseudo-element otherwise paints
+   over the section's own content, which tinted the phones (found
+   24 September 2026). The blob is pinned to 0 and the content to 1. */
+.pl-blob { position: relative; }
+.pl-blob::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(22% 44% at 76% 44%, rgb(115 149 161 / 0.55), rgb(115 149 161 / 0.24) 52%, transparent 78%),
+    radial-gradient(15% 28% at 70% 62%, rgb(44 110 127 / 0.34), transparent 74%);
+}
+.pl-blob > * { position: relative; z-index: 1; }
 
 /* ---- Pillar block -------------------------------------------
    Two on the homepage, one per pillar. The second is reversed so
@@ -571,6 +792,9 @@
   text-transform: uppercase;
   text-decoration: underline;
   text-underline-offset: 0.25em;
+  /* 24px tall, the WCAG 2.5.8 target minimum, without leaning on the
+     spacing exception. The text measured 21px on 21 September 2026. */
+  min-height: 1.5rem;
 }
 .pipely .pl-link:hover { color: var(--pl-accent-film); }
 
@@ -640,3 +864,80 @@
 /* ---- Embedded video ------------------------------------------ */
 .pl-media.is-video { aspect-ratio: 16 / 9; }
 .pl-media.is-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+/* ---- Video lightbox -------------------------------------------------
+   Films without a case study play here instead of sending the visitor to
+   vimeo.com. The dialog is built by WorkCard.astro's script, so these rules
+   live here rather than in a component's scoped style block.
+
+   Width is capped by the viewport height as well as its width, so the 16:9
+   frame never grows taller than the screen and the close button above it
+   always has room. */
+.pipely .pl-lightbox {
+  width: min(100% - 2rem, 1200px, (100dvh - 7rem) * 16 / 9);
+  padding: 0;
+  border: 0;
+  background-color: transparent;
+  color: var(--pl-text-inverse);
+  overflow: visible;
+}
+
+/* Ink at 88%. Written out rather than tokenised because ::backdrop sits
+   outside the element tree in older engines and cannot be relied on to
+   inherit a custom property. */
+.pipely .pl-lightbox::backdrop { background-color: rgb(15 20 23 / 0.88); }
+
+.pipely .pl-lightbox__inner { position: relative; }
+
+.pipely .pl-lightbox__frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--pl-r-media);
+  background-color: #000;
+}
+.pipely .pl-lightbox__frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Sits above the frame so it never covers the film or Vimeo's own controls.
+   Red on hover is the brand's button behaviour, and an icon is a non-text
+   accent, so red is in bounds on a dark ground. */
+.pipely .pl-lightbox__close {
+  position: absolute;
+  top: -2.75rem;
+  right: 0;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: 0;
+  border-radius: var(--pl-r-pill);
+  background-color: color-mix(in srgb, var(--color-cream) 14%, transparent);
+  color: var(--color-cream);
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+.pipely .pl-lightbox__close:hover { background-color: var(--color-red); }
+.pipely .pl-lightbox__close svg { width: 1.125rem; height: 1.125rem; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .pipely .pl-lightbox[open] { animation: pl-lightbox-in 240ms ease-out; }
+  @keyframes pl-lightbox-in { from { opacity: 0; } to { opacity: 1; } }
+}
+
+/* The dialog makes the page behind it inert, but most browsers still let it
+   scroll under the backdrop. Scoped to the root element because that is
+   where the scrollbar is, not inside .pipely. */
+html.has-lightbox { overflow: hidden; }
+
+/* CTA panel headings: keep to three lines on small phones. */
+@media (max-width: 480px) {
+  .pipely .pl-panel.is-inverse .pl-container.u-center > h2.u-h2 { font-size: clamp(1.25rem, 6.4vw, 1.75rem); }
+}

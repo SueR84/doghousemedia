@@ -28,7 +28,7 @@ const { title, description, image, noindex = false } = Astro.props;
 <!doctype html>
 <html lang="en-IE">
   <head>
-    <BaseHead title={title} description={description} image={image} noindex={noindex} display="host-grotesk" />
+    <BaseHead title={title} description={description} image={image} noindex={noindex} />
     {/* Scroll reveals hide their elements until JavaScript brings them in.
         This marks the document so that state only applies where JS is
         actually running, rather than leaving a blank page if it is not. */}
@@ -61,7 +61,7 @@ const { title, description, image, noindex = false } = Astro.props;
         padding: 0.75rem 1.25rem;
         border-radius: 999px;
         background: var(--color-ink, #0f1417);
-        color: var(--color-cream, #faf7f0);
+        color: var(--color-cream, #f3f6f8);
         font-size: 0.875rem;
         text-decoration: none;
         transform: translateY(-200%);
