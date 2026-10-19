@@ -81,6 +81,13 @@ interface Props {
    * with the pause control, never runs under reduced motion.
    */
   swap?: number;
+  /**
+   * Screen colour behind the film. Default black. Added 19 October 2026 for
+   * Coroflo's social cuts, which are 4:5 feed posts padded white into a 9:16
+   * frame: on a white screen the padding reads as the app, not as a
+   * letterbox, and nothing has to be cropped to hide it.
+   */
+  screenBg?: string;
 }
 
 const {
@@ -96,6 +103,7 @@ const {
   zoom = 1.02,
   behindStyle = 'soft',
   swap = 0,
+  screenBg,
 } = Astro.props;
 
 const loopSrc = (id: string) =>
@@ -104,7 +112,7 @@ const loopSrc = (id: string) =>
 const backPoster = behind?.poster ?? '/video-pillar-poster-back.jpg';
 ---
 
-<div class:list={['dhpv', { 'is-clear-back': behindStyle === 'clear' }]} data-phone-video data-swap={swap || undefined} style={`--dhpv-tilt:${tilt}deg;--dhpv-zoom:${zoom}`}>
+<div class:list={['dhpv', { 'is-clear-back': behindStyle === 'clear', 'has-screen-bg': !!screenBg }]} data-phone-video data-swap={swap || undefined} style={`--dhpv-tilt:${tilt}deg;--dhpv-zoom:${zoom}${screenBg ? `;--dhpv-screen-bg:${screenBg}` : ''}`}>
   <div class="dhpv-stage" data-phone-parallax>
     <div class="dhpv-phone dhpv-phone--back" aria-hidden="true">
       <div class="dhpv-rail">
@@ -288,6 +296,9 @@ const backPoster = behind?.poster ?? '/video-pillar-poster-back.jpg';
       linear-gradient(158deg, rgb(255 255 255 / 0.14) 0%, rgb(255 255 255 / 0.04) 28%, transparent 56%),
       #0d1114;
   }
+
+  .dhpv.has-screen-bg .dhpv-screen,
+  .dhpv.has-screen-bg .dhpv-screen.is-idle { background: var(--dhpv-screen-bg); }
 
   /* contain, not cover, so the still is framed exactly as the player frames
      the film. Otherwise the reduced-motion view crops what the loop does not. */
