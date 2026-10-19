@@ -36,6 +36,9 @@ const columns = [
             <p class="u-eyebrow u-inverse">{col.title}</p>
             <ul role="list">
               {col.links.map((l) => <li><a class="pl-footer__link" href={l.href}>{l.label}</a></li>)}
+              {col.title === 'Legal' && (
+                <li><button type="button" class="pl-footer__link" data-consent-open>Cookie settings</button></li>
+              )}
             </ul>
           </nav>
         ))}

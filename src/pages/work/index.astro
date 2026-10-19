@@ -2,13 +2,15 @@
 /**
  * Work index. MESSAGING-PLAN section 8.
  *
- * Two sections, not a filter row. Film first, then websites.
+ * One projects section with a Video / Web pill switch at its top, right above
+ * the grid it controls (Sue, 19 Oct 2026). Video is selected by default so
+ * film still leads.
  *
- * A filter makes the two disciplines peers you choose between, which quietly
- * undoes the decision that video leads. Two labelled sections let film sit
- * first and read bigger, they are linkable (#film, #websites), and they need
- * no JavaScript and no live region announcing "showing 6 of 24", which matters
- * against the WCAG 2.2 AA commitment and the 15KB JS budget in BUILD-SPEC.
+ * Built as ARIA tabs over two panels. Without JavaScript the pills are plain
+ * anchor links and both panels show, one after the other, so nothing is lost.
+ * With it, one section shows at a time, arrow keys move between the pills,
+ * and the choice is kept in the URL (#film, #websites) so links from the
+ * Video and Web pages land on the right set.
  *
  * A `craft: both` project appears once, under Film, and carries the "Web +
  * video" tag. Showing it twice would be worse than showing it once.
@@ -68,27 +70,29 @@ const sections = [
     </div>
   </section>
 
-  {sections.map((section, s) => (
-    <section
-      class:list={['pl-panel', s % 2 === 0 ? 'is-secondary' : null]}
-      id={section.id}
-      aria-labelledby={`${section.id}-heading`}
-    >
-      <div class="pl-gutter pl-pad-md">
-        <div class="pl-container is-md">
-          <h2 class="u-h3 u-balance" id={`${section.id}-heading`} data-reveal>{section.heading}</h2>
-          <div style="height:.75rem"></div>
-          <p class="u-max-40 u-muted" data-reveal>{section.lead}</p>
-          <div class="pl-gap-sm"></div>
-          <div class="pl-grid-3" data-reveal-stagger="100">
-            {section.items.map((p, i) => (
-              <WorkCard project={p} tint={tintFor(i)} reveal />
-            ))}
-          </div>
+  <section class="pl-panel is-secondary" aria-labelledby="projects-heading">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <h2 class="sr-only" id="projects-heading">Projects</h2>
+        <div class="wk-switch" role="tablist" aria-label="Show work by type" data-reveal>
+          <a class="wk-pill" role="tab" id="tab-film" href="#film" aria-controls="film" aria-selected="true">Video</a>
+          <a class="wk-pill" role="tab" id="tab-websites" href="#websites" aria-controls="websites" aria-selected="false">Web</a>
         </div>
+        {sections.map((section) => (
+          <div class="wk-panel" id={section.id} data-work-panel>
+            <h3 class="sr-only">{section.heading}</h3>
+            <p class="u-max-40 u-muted" data-reveal>{section.lead}</p>
+            <div class="pl-gap-sm"></div>
+            <div class="pl-grid-3" data-reveal-stagger="100">
+              {section.items.map((p, i) => (
+                <WorkCard project={p} tint={tintFor(i)} reveal />
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
-    </section>
-  ))}
+    </div>
+  </section>
 
   <section class="pl-panel is-inverse">
     <div class="pl-gutter pl-pad-lg">
@@ -104,3 +108,91 @@ const sections = [
     </div>
   </section>
 </Site>
+
+<style>
+  .wk-switch {
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px;
+    border: 1.5px solid var(--pl-border-strong);
+    border-radius: var(--pl-r-pill);
+    background: var(--pl-primary);
+  }
+  .wk-pill {
+    display: inline-block;
+    min-width: 6.5rem;
+    padding: 10px 22px;
+    border-radius: var(--pl-r-pill);
+    color: var(--pl-text);
+    font-size: 15px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+  }
+  .wk-pill:hover { background: var(--pl-secondary); }
+  .wk-pill[aria-selected='true'] { background: var(--color-ink); color: var(--color-cream); }
+  .wk-pill:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { .wk-pill { transition: none; } }
+  [data-work-panel][hidden] { display: none !important; }
+  .wk-panel { margin-top: 1.5rem; scroll-margin-top: 7rem; }
+  .wk-panel:not([hidden]) + .wk-panel:not([hidden]) { margin-top: 4rem; }
+</style>
+
+<script>
+  const tabs = Array.from(document.querySelectorAll<HTMLAnchorElement>('.wk-switch [role="tab"]'));
+  const panels = Array.from(document.querySelectorAll<HTMLElement>('[data-work-panel]'));
+
+  if (tabs.length && panels.length) {
+    panels.forEach((p) => {
+      p.setAttribute('role', 'tabpanel');
+      const tab = tabs.find((t) => t.getAttribute('aria-controls') === p.id);
+      if (tab) p.setAttribute('aria-labelledby', tab.id);
+      p.querySelector('h3')?.remove();   // the tab names the panel once the switch is live
+    });
+
+    const select = (id: string, focus = false, updateUrl = true) => {
+      tabs.forEach((t) => {
+        const on = t.getAttribute('aria-controls') === id;
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
+        if (on && focus) t.focus();
+      });
+      panels.forEach((p) => {
+        p.hidden = p.id !== id;
+        // Panels start hidden by the reveal animation; make the shown one visible.
+        if (p.id === id) p.querySelectorAll<HTMLElement>('[data-reveal], [data-reveal-stagger] > *').forEach((el) => {
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+        });
+      });
+      if (updateUrl) history.replaceState(null, '', `#${id}`);
+    };
+
+    const fromHash = () => {
+      const id = location.hash.slice(1);
+      return panels.some((p) => p.id === id) ? id : panels[0].id;
+    };
+
+    select(fromHash(), false, false);
+
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', (e) => {
+        e.preventDefault();
+        select(t.getAttribute('aria-controls')!);
+      });
+      t.addEventListener('keydown', (e) => {
+        let next = -1;
+        if (e.key === 'ArrowRight') next = (i + 1) % tabs.length;
+        else if (e.key === 'ArrowLeft') next = (i - 1 + tabs.length) % tabs.length;
+        else if (e.key === 'Home') next = 0;
+        else if (e.key === 'End') next = tabs.length - 1;
+        if (next < 0) return;
+        e.preventDefault();
+        select(tabs[next].getAttribute('aria-controls')!, true);
+      });
+    });
+
+    window.addEventListener('hashchange', () => select(fromHash(), false, false));
+  }
+</script>

@@ -1,0 +1,168 @@
+---
+/**
+ * Cookie consent and Google Analytics 4.
+ *
+ * Added 19 October 2026. Property: Doghouse Media, G-E9DMXMW36W.
+ *
+ * Consent Mode v2, basic implementation. Nothing from Google loads until the
+ * visitor presses Accept: no gtag.js, no cookieless pings. That is the
+ * stricter reading of the Irish DPC's cookie guidance, and the safer one for
+ * a studio that sells accessibility and compliance work.
+ *
+ * - Accept and Reject are the same size and style. The DPC expects rejecting
+ *   to be as easy as accepting.
+ * - The choice is stored in localStorage under `dhm-consent`. Storing the
+ *   choice itself is strictly necessary and needs no consent.
+ * - "Cookie settings" in the footer reopens the banner. Rejecting after an
+ *   earlier Accept turns analytics storage off and clears the _ga cookies.
+ * - Ad storage, ad user data and ad personalisation are always denied. We do
+ *   not run ads.
+ * - The banner is a labelled region, not a modal. It does not trap focus or
+ *   block the page, and it does not animate, so reduced motion has nothing
+ *   to switch off.
+ */
+const GA_ID = 'G-E9DMXMW36W';
+---
+
+<div class="pl-consent" data-consent hidden role="region" aria-labelledby="pl-consent-title">
+  <div class="pl-consent__inner">
+    <div class="pl-consent__text">
+      <h2 id="pl-consent-title" class="pl-consent__title">Cookies</h2>
+      <p>
+        We would like to use Google Analytics to see which pages people visit, so we can
+        improve the site. It sets cookies only if you accept. <a href="/privacy/#cookies-and-analytics">Read the privacy policy</a>.
+      </p>
+    </div>
+    <div class="pl-consent__actions">
+      <button type="button" class="pl-btn on-dark" data-consent-choice="denied">Reject</button>
+      <button type="button" class="pl-btn on-dark" data-consent-choice="granted">Accept</button>
+    </div>
+  </div>
+</div>
+
+<script is:inline define:vars={{ GA_ID }}>
+  (function () {
+    var KEY = 'dhm-consent';
+    var banner = document.querySelector('[data-consent]');
+    var loaded = false;
+
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { window.dataLayer.push(arguments); };
+    gtag('consent', 'default', {
+      analytics_storage: 'denied',
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+    });
+
+    function read() {
+      try { return localStorage.getItem(KEY); } catch (e) { return null; }
+    }
+    function write(v) {
+      try { localStorage.setItem(KEY, v); } catch (e) {}
+    }
+
+    function loadGA() {
+      if (loaded) return;
+      loaded = true;
+      gtag('consent', 'update', { analytics_storage: 'granted' });
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+      document.head.appendChild(s);
+      gtag('js', new Date());
+      gtag('config', GA_ID);
+    }
+
+    function clearGACookies() {
+      var host = location.hostname.replace(/^www\./, '');
+      document.cookie.split(';').forEach(function (c) {
+        var name = c.split('=')[0].trim();
+        if (name === '_ga' || name.indexOf('_ga_') === 0) {
+          ['', '.' + host, host].forEach(function (d) {
+            document.cookie = name + '=; Max-Age=0; path=/' + (d ? '; domain=' + d : '');
+          });
+        }
+      });
+    }
+
+    function hide() { if (banner) banner.hidden = true; }
+    function show() {
+      if (!banner) return;
+      banner.hidden = false;
+      var first = banner.querySelector('button');
+      if (first) first.focus();
+    }
+
+    function choose(v) {
+      write(v);
+      if (v === 'granted') {
+        loadGA();
+      } else {
+        gtag('consent', 'update', { analytics_storage: 'denied' });
+        clearGACookies();
+      }
+      hide();
+    }
+
+    var stored = read();
+    if (stored === 'granted') loadGA();
+    else if (stored !== 'denied' && banner) banner.hidden = false;
+
+    if (banner) {
+      banner.addEventListener('click', function (e) {
+        var b = e.target.closest('[data-consent-choice]');
+        if (b) choose(b.getAttribute('data-consent-choice'));
+      });
+    }
+    document.addEventListener('click', function (e) {
+      if (e.target.closest('[data-consent-open]')) { e.preventDefault(); show(); }
+    });
+  })();
+</script>
+
+<style is:global>
+  .pipely .pl-consent {
+    position: fixed;
+    z-index: 150;
+    inset-inline: var(--pl-s-lg, 1.25rem);
+    bottom: var(--pl-s-lg, 1.25rem);
+    max-width: 44rem;
+    margin-inline: auto;
+    border-radius: var(--pl-r-panel, 1rem);
+    background-color: var(--pl-inverse);
+    color: var(--color-cream);
+    border: 1px solid var(--pl-border-inverse);
+  }
+  .pipely .pl-consent[hidden] { display: none; }
+  .pipely .pl-consent__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--pl-s-lg, 1.25rem);
+    padding: var(--pl-s-lg, 1.25rem) 1.5rem;
+  }
+  .pipely .pl-consent__text { flex: 1 1 20rem; }
+  .pipely .pl-consent__title {
+    font-family: var(--font-body);
+    font-size: var(--pl-base, 1rem);
+    font-weight: var(--pl-fw-medium, 500);
+    letter-spacing: 0;
+    margin-bottom: 0.25rem;
+  }
+  .pipely .pl-consent p { font-size: var(--pl-sm, 0.875rem); line-height: 1.5; }
+  .pipely .pl-consent a { text-decoration: underline; text-underline-offset: 0.2em; }
+  .pipely .pl-consent__actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+  .pipely .pl-consent__actions .pl-btn { height: 3rem; padding-inline: 1.5rem; }
+
+  /* The footer's "Cookie settings" is a button that has to look like the
+     links around it. */
+  .pipely button.pl-footer__link {
+    background: none;
+    border: 0;
+    font: inherit;
+    font-size: var(--pl-base);
+    cursor: pointer;
+    text-align: left;
+  }
+</style>
