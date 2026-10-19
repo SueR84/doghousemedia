@@ -1,0 +1,346 @@
+---
+/**
+ * A learner's journey through an LMS, step by step. Built for the Shapes of
+ * Grief case study, "What we built" (19 October 2026), on the same pattern
+ * as AuditChecklist: a highlight works down the list, each step lights up
+ * as it is reached, and a line fills behind it.
+ *
+ * Illustrative, not a real learner: the score is an example. The steps are
+ * what the platform does: sign-up, an upsell at checkout, an automatic
+ * receipt, the course opening, embedded video with a transcript, module
+ * quizzes and scores, progression through the levels, and the certificate.
+ *
+ * Motion: one step every 0.85 seconds, a three second hold on the finished
+ * journey, then it starts again. It loops past five seconds, so WCAG 2.2.2
+ * applies and there is a visible pause button. It only runs while on
+ * screen. Under prefers-reduced-motion, or with JavaScript off, the journey
+ * is shown finished and still, and the pause button never appears.
+ *
+ * Accessibility: the card is one image to assistive tech, with a label that
+ * says what it shows. The steps are hidden from the accessibility tree so a
+ * screen reader is not read a list that keeps changing. The pause button
+ * sits outside the image so it stays reachable.
+ */
+type Stage = 'join' | 'learn' | 'finish';
+
+const steps: { stage: Stage; name: string; note: string; tag?: string; bar?: boolean; cert?: boolean }[] = [
+  { stage: 'join', name: 'Sign up', note: 'Account created at checkout' },
+  { stage: 'join', name: 'Upsell', note: 'Next level offered as a bundle' },
+  { stage: 'join', name: 'Receipt', note: 'Emailed automatically', tag: 'Sent' },
+  { stage: 'learn', name: 'Start course', note: 'Level 1 unlocks' },
+  { stage: 'learn', name: 'Video lesson', note: 'Embedded in the lesson page' },
+  { stage: 'learn', name: 'Transcript', note: 'Read along or download' },
+  { stage: 'learn', name: 'Module quiz', note: 'Answered at the end of each module' },
+  { stage: 'learn', name: 'Score', note: 'Recorded against the learner', tag: '8/10' },
+  { stage: 'finish', name: 'Progression', note: 'Next level opens', bar: true },
+  { stage: 'finish', name: 'Certificate', note: 'Shapes of Grief certificate issued', cert: true },
+];
+
+const stageLabel: Record<Stage, string> = { join: 'Join', learn: 'Learn', finish: 'Finish' };
+---
+
+<div class="lmsf" data-lms-flow>
+  <div
+    class="lmsf-card"
+    role="img"
+    aria-label="Illustration of a learner moving through the Shapes of Grief learning management system: sign-up, an upsell at checkout, an automatic receipt, starting the course, an embedded video lesson with a transcript, a module quiz and its score, progression to the next level, and a Shapes of Grief certificate."
+  >
+    <div class="lmsf-head" aria-hidden="true">
+      <span class="lmsf-head__title">A learner&rsquo;s journey</span>
+      <span class="lmsf-head__tag">LMS</span>
+    </div>
+
+    <ol class="lmsf-list" aria-hidden="true" data-list>
+      <li class="lmsf-rail"><span data-rail></span></li>
+      {steps.map((s, i) => (
+        <li
+          class:list={['lmsf-step', 'is-done', { 'is-cert': s.cert, 'is-stage-start': i === 0 || steps[i - 1].stage !== s.stage }]}
+          data-stage={stageLabel[s.stage]}
+        >
+          <span class="lmsf-node">
+            {s.cert ? (
+              <svg viewBox="0 0 16 16"><circle cx="8" cy="6.5" r="3.5" /><path d="M5.8 9.6 5 14l3-1.6 3 1.6-.8-4.4" /></svg>
+            ) : (
+              <svg viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-7" /></svg>
+            )}
+          </span>
+          <span class="lmsf-text">
+            <span class="lmsf-name">{s.name}</span>
+            <span class="lmsf-note">{s.note}</span>
+            {s.bar && <span class="lmsf-bar"><i></i></span>}
+          </span>
+          {s.tag && <span class="lmsf-tag">{s.tag}</span>}
+        </li>
+      ))}
+    </ol>
+  </div>
+
+  <button class="pl-pause lmsf-pause" type="button" data-pause hidden data-paused="false">
+    <span class="pl-pause__icon" aria-hidden="true"></span>
+    <span class="sr-only" data-pause-label>Pause learner journey animation</span>
+  </button>
+</div>
+
+<style>
+  .lmsf {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--pl-s-sm);
+    width: 100%;
+    max-width: 26rem;
+    margin-inline: auto;
+  }
+  .lmsf-card {
+    width: 100%;
+    display: grid;
+    gap: var(--pl-s-md);
+    padding: var(--pl-s-lg);
+    border: 1px solid var(--pl-border);
+    border-radius: var(--pl-r-card, 1rem);
+    background-color: var(--pl-secondary);
+  }
+
+  .lmsf-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--pl-s-sm);
+  }
+  .lmsf-head__title { font-weight: var(--pl-fw-medium); }
+  .lmsf-head__tag {
+    font-family: var(--font-mono);
+    font-size: var(--pl-xs);
+    letter-spacing: 0.12em;
+    color: var(--pl-accent-web);
+  }
+
+  .lmsf-list {
+    --lmsf-node: 1.375rem;
+    position: relative;
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* The line the steps hang off, filling as the learner moves down it. */
+  .lmsf-rail {
+    position: absolute;
+    left: calc(var(--lmsf-node) / 2 - 1px);
+    top: calc(var(--lmsf-node) / 2 + 0.5rem);
+    bottom: calc(var(--lmsf-node) / 2 + 0.5rem);
+    width: 2px;
+    background-color: rgb(15 20 23 / 0.1);
+  }
+  .lmsf-rail span {
+    display: block;
+    width: 100%;
+    height: var(--lmsf-fill, 100%);
+    background-color: var(--pl-accent-web);
+  }
+
+  .lmsf-step {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--lmsf-node) 1fr auto;
+    align-items: center;
+    gap: var(--pl-s-sm);
+    padding-block: 0.4rem;
+    font-size: var(--pl-sm);
+  }
+  /* Stage label (Join, Learn, Finish) above the first step of each stage. */
+  /* Absolutely placed so it never takes a grid cell from the step. */
+  .lmsf-step.is-stage-start { margin-top: 1.1rem; }
+  .lmsf-step.is-stage-start:first-of-type { margin-top: 0; }
+  .lmsf-step.is-stage-start::before {
+    content: attr(data-stage);
+    position: absolute;
+    left: calc(var(--lmsf-node) + var(--pl-s-sm));
+    top: -0.75rem;
+    line-height: 1;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--pl-text-meta);
+  }
+  .lmsf-step.is-stage-start:first-of-type::before { display: none; }
+
+  .lmsf-node {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: var(--lmsf-node);
+    height: var(--lmsf-node);
+    border: 1.5px solid rgb(15 20 23 / 0.3);
+    border-radius: 50%;
+    background-color: var(--pl-secondary);
+  }
+  .lmsf-node svg { width: 70%; height: 70%; }
+  .lmsf-node path, .lmsf-node circle {
+    fill: none;
+    stroke: var(--color-cream);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .lmsf-node path { stroke-dasharray: 20; stroke-dashoffset: 20; }
+  .lmsf-node circle { opacity: 0; }
+
+  .lmsf-step.is-done .lmsf-node { border-color: var(--color-ink); background-color: var(--color-ink); }
+  .lmsf-step.is-done .lmsf-node path { stroke-dashoffset: 0; }
+  .lmsf-step.is-done .lmsf-node circle { opacity: 1; }
+  .lmsf-step.is-active .lmsf-node { border-color: var(--pl-accent-web); }
+
+  .lmsf-text { display: grid; min-width: 0; }
+  .lmsf-name { font-weight: var(--pl-fw-medium); color: var(--pl-text); }
+  .lmsf-note { font-size: var(--pl-xs); color: var(--pl-text-muted); }
+  .lmsf-step:not(.is-done):not(.is-active) .lmsf-name,
+  .lmsf-step:not(.is-done):not(.is-active) .lmsf-note { opacity: 0.45; }
+
+  .lmsf-tag {
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: var(--pl-xs);
+    background-color: rgb(44 110 127 / 0.12);
+    color: var(--color-teal);
+    opacity: 0;
+  }
+  .lmsf-step.is-done .lmsf-tag { opacity: 1; }
+
+  .lmsf-bar {
+    display: block;
+    height: 4px;
+    margin-top: 0.35rem;
+    border-radius: 2px;
+    background-color: rgb(15 20 23 / 0.08);
+    overflow: clip;
+  }
+  .lmsf-bar i {
+    display: block;
+    width: 0;
+    height: 100%;
+    background-color: var(--pl-accent-web);
+  }
+  .lmsf-step.is-done .lmsf-bar i { width: 50%; }
+
+  /* The certificate lands as a small card of its own. */
+  .lmsf-step.is-cert {
+    margin-top: 0.4rem;
+    padding: 0.6rem 0.75rem 0.6rem 0;
+    border-radius: 0.6rem;
+  }
+  .lmsf-step.is-cert.is-done {
+    background-color: var(--pl-primary, #fff);
+    box-shadow: inset 0 0 0 1px var(--pl-border);
+  }
+
+  .lmsf-pause {
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+  }
+
+  @media (max-width: 599px) {
+    .lmsf-card { padding: var(--pl-s-md); }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .lmsf-rail span { transition: height 500ms var(--pl-ease-out-quart); }
+    .lmsf-node { transition: background-color 200ms ease, border-color 200ms ease; }
+    .lmsf-node path { transition: stroke-dashoffset 300ms ease 100ms; }
+    .lmsf-node circle { transition: opacity 300ms ease 100ms; }
+    .lmsf-name, .lmsf-note { transition: opacity 250ms ease; }
+    .lmsf-tag { transition: opacity 300ms ease 150ms; }
+    .lmsf-bar i { transition: width 600ms var(--pl-ease-out-quart) 150ms; }
+    .lmsf-step.is-cert { transition: background-color 300ms ease, box-shadow 300ms ease; }
+    .lmsf-step.is-active .lmsf-node { animation: lmsf-pulse 700ms ease-in-out infinite; }
+  }
+  @keyframes lmsf-pulse {
+    50% { box-shadow: 0 0 0 5px rgb(44 110 127 / 0.18); }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-lms-flow]').forEach((root) => {
+    const motionOk = window.matchMedia('(prefers-reduced-motion: no-preference)');
+    if (!motionOk.matches || !('IntersectionObserver' in window)) return;
+
+    const steps = [...root.querySelectorAll<HTMLElement>('.lmsf-step')];
+    const rail = root.querySelector<HTMLElement>('[data-rail]')!.parentElement!;
+    const pause = root.querySelector<HTMLButtonElement>('[data-pause]')!;
+    const pauseLabel = root.querySelector<HTMLElement>('[data-pause-label]')!;
+
+    const STEP = 850;
+    const HOLD = 3000;
+    let i = -1;
+    let timer = 0;
+    let inView = false;
+    let userPaused = false;
+
+    // The rail fills to the centre of the step the learner has reached.
+    const setRail = () => {
+      const first = steps[0];
+      const last = steps[steps.length - 1];
+      const reached = i < 0 ? first : steps[Math.min(i, steps.length - 1)];
+      const span = last.offsetTop - first.offsetTop || 1;
+      const pct = ((reached.offsetTop - first.offsetTop) / span) * 100;
+      rail.style.setProperty('--lmsf-fill', `${i < 0 ? 0 : pct}%`);
+    };
+
+    const reset = () => {
+      steps.forEach((s) => s.classList.remove('is-done', 'is-active'));
+      i = -1;
+      setRail();
+    };
+
+    const tick = () => {
+      if (i >= 0) {
+        steps[i].classList.remove('is-active');
+        steps[i].classList.add('is-done');
+      }
+      i += 1;
+      if (i >= steps.length) {
+        timer = window.setTimeout(() => { reset(); tick(); }, HOLD);
+        return;
+      }
+      steps[i].classList.add('is-active');
+      setRail();
+      timer = window.setTimeout(tick, STEP);
+    };
+
+    const stop = () => { window.clearTimeout(timer); timer = 0; };
+    const start = () => {
+      if (timer || userPaused || !inView || !motionOk.matches) return;
+      if (i < 0 || i >= steps.length) reset();
+      timer = window.setTimeout(tick, i < 0 ? 400 : STEP);
+    };
+
+    pause.addEventListener('click', () => {
+      userPaused = !userPaused;
+      pause.setAttribute('data-paused', String(userPaused));
+      pauseLabel.textContent = userPaused ? 'Play learner journey animation' : 'Pause learner journey animation';
+      if (userPaused) stop(); else start();
+    });
+
+    // Turning reduced motion on mid-visit: stop, and show the finished journey.
+    motionOk.addEventListener('change', () => {
+      if (motionOk.matches) return;
+      stop();
+      steps.forEach((s) => { s.classList.remove('is-active'); s.classList.add('is-done'); });
+      i = steps.length - 1;
+      setRail();
+      pause.hidden = true;
+    });
+
+    pause.hidden = false;
+    new IntersectionObserver(([e]) => {
+      inView = e.isIntersecting;
+      if (inView) start(); else stop();
+    }, { threshold: 0.3 }).observe(root);
+  });
+</script>

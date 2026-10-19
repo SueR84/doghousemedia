@@ -72,9 +72,9 @@ const work = [
     job: 'A learning platform for an award-winning grief training course, with enrolment, payment, lessons and certificates in one place.',
     result: 'The whole course and every participant moved across from the old platform.',
     short: 'A learning platform for grief specialists and healthcare practitioners, a full LMS with enrolment, lessons and certificates in one place.',
-    href: 'https://shapesofgrief.com',
-    label: 'Visit shapesofgrief.com',
-    external: true,
+    // Linked to the case study 19 October 2026 (was the live site).
+    href: '/work/shapes-of-grief-lms/',
+    label: 'Read the Shapes of Grief case study',
   },
   {
     client: 'Western Rheumatology',
@@ -104,6 +104,7 @@ const builds = [
     who: 'Trainers, course providers and professional bodies.',
     text: 'Online courses with enrolment, payment, progress tracking and certificates, running without someone administering every step by hand.',
     examples: 'Shapes of Grief',
+    examplesHref: '/work/shapes-of-grief-lms/',
   },
   {
     title: 'E-commerce, bookings and donations',
@@ -228,7 +229,7 @@ const moreWork = moreWorkIds.map((id) => moreWorkAll.find((p) => p.id === id)).f
               <h3 class="wd-build__title">{b.title}</h3>
               <p class="wd-build__who">{b.who}</p>
               <p class="u-muted">{b.text}</p>
-              <p class="wd-build__examples u-sm"><span class="u-eyebrow">Examples</span> {b.examples}</p>
+              <p class="wd-build__examples u-sm"><span class="u-eyebrow">Examples</span> {'examplesHref' in b && b.examplesHref ? <a class="pl-link" href={b.examplesHref}>{b.examples}</a> : b.examples}</p>
             </li>
           ))}
         </ul>

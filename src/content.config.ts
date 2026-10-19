@@ -28,6 +28,10 @@ const projects = defineCollection({
     // instead of a flat image. Opt-in per project; see PhoneFold.astro.
     coverDevice: z.enum(['fold']).optional(),
     hideCover: z.boolean().optional(),
+    // An image in the right-hand column of the case study hero, beside the
+    // title. Added 19 October 2026 for Shapes of Grief. Ignored when `facts`
+    // is set, since the facts already take that column.
+    heroImage: z.object({ src: z.string(), alt: z.string() }).optional(),
     logo: z.string().optional(),
     // Vimeo id for video-craft projects.
     video: z.string().optional(),
