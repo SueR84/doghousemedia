@@ -42,7 +42,7 @@ Grep for `data-placeholder` and `TODO`. Nothing with either may go live. Current
 4. ~~Photos of Sue and Emma at `/team/sue-ryan.jpg` and `/team/emma-walkin.jpg`.~~ In place 13 October 2026, shown as small round portraits on `/about/`; placeholder note removed.
 5. `/showreel-poster.jpg` is a title card with a green wordmark and it is the LCP image. Replace with a mid-reel frame.
 6. Captions on the showreel embed, written not auto-generated.
-7. ~~The contact form posts nowhere.~~ All three forms post to `/api/enquiry` (Mailgun, 19 October 2026). Live only once `MAILGUN_API_KEY`, `MAILGUN_DOMAIN` and `MAILGUN_REGION` are set in Vercel; until then they fall back to a pre-filled email. Still owed: link the LeadConnector booking widget.
+7. ~~The contact form posts nowhere.~~ All three forms post to `/api/enquiry` (Mailgun, 19 October 2026). Live only once `MAILGUN_API_KEY`, `MAILGUN_DOMAIN` and `MAILGUN_REGION` are set in Vercel; until then they fall back to a pre-filled email. No booking widget is used.
 8. `/work/` renders all twenty-one legacy projects. Curate to twelve to fifteen.
 9. Run the accessibility audit on this site and fill in the real known-issues and testing sections of `/accessibility/`.
 10. ~~Blog nav label still open.~~ Resolved 11 September 2026: nav now reads Video, Web, Articles.

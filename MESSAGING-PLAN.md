@@ -712,7 +712,7 @@ Copy can be drafted without any of these. The site cannot launch without them.
 | 10  | EAA and Web Accessibility Directive scope wording, checked before publishing | Open                                                                                         |
 
 
-**Contact page:** form as the primary route, `hello@doghousemedia.ie` visible, and the existing LeadConnector booking widget linked properly rather than orphaned as it is now. No phone number for the moment.
+**Contact page:** form as the primary route, `hello@doghousemedia.ie` visible. No phone number for the moment.
 
 ---
 

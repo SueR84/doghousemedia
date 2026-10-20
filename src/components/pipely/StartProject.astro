@@ -329,6 +329,12 @@ const enquiryEmail = 'hello@doghousemedia.ie';
         submitBtn.textContent = 'Send enquiry';
       }
 
+      // GA4 key event. Only counts real sends, not the email fallback.
+      // gtag only reaches Google if the visitor accepted analytics cookies.
+      if (sent && typeof window.gtag === 'function') {
+        window.gtag('event', 'generate_lead', { form_name: 'start_project' });
+      }
+
       if (sent) {
         doneTitle.textContent = "Thanks, we're on it.";
         doneBody.textContent = "Your enquiry is on its way. We'll be in touch within one working day.";

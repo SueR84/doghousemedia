@@ -317,6 +317,12 @@ const timelines = ['As soon as possible', 'In the next 3 months', 'Just explorin
         submitBtn.textContent = 'Send request';
       }
 
+      // GA4 key event. Only counts real sends, not the email fallback.
+      // gtag only reaches Google if the visitor accepted analytics cookies.
+      if (sent && typeof window.gtag === 'function') {
+        window.gtag('event', 'generate_lead', { form_name: 'audit_request' });
+      }
+
       if (sent) {
         doneTitle.textContent = "Thanks, we're on it.";
         doneBody.textContent = "Your request is on its way. We'll look at the site and be in touch within one working day.";

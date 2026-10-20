@@ -4,7 +4,6 @@ updated: 2026-10-19
 ---
 
 <!-- TODO before launch: add the legal entity name (sole trader, partnership or company), CRO number if there is one, and a postal address to "Who we are". The DPC expects a controller to be identifiable. -->
-<!-- TODO when the LeadConnector booking widget is linked: add it under "Other services that load on this site" and check what cookies it sets. -->
 
 This policy explains what personal information Doghouse Media collects through doghousemedia.ie, why, who else handles it, and what you can ask us to do with it. We have tried to keep it plain. If anything is unclear, email [hello@doghousemedia.ie](mailto:hello@doghousemedia.ie).
 

@@ -11,9 +11,6 @@
  * JSON POST to /api/enquiry (Mailgun), falling back to a pre-filled email
  * if that fails. Keep the two in step.
  *
- * TODO before launch:
- *   - link the existing LeadConnector booking widget properly rather than
- *     leaving it orphaned as it is on the old site.
  * No phone number for the moment, on purpose.
  */
 import Site from '../layouts/Site.astro';
@@ -230,6 +227,12 @@ const timelines = ['As soon as possible', '1 to 3 months', '3 to 6 months', 'Jus
         }
         submitBtn.disabled = false;
         submitBtn.textContent = 'Send enquiry';
+      }
+
+      // GA4 key event. Only counts real sends, not the email fallback.
+      // gtag only reaches Google if the visitor accepted analytics cookies.
+      if (sent && typeof window.gtag === 'function') {
+        window.gtag('event', 'generate_lead', { form_name: 'contact' });
       }
 
       if (!sent) {

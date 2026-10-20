@@ -4,29 +4,91 @@
  *
  * Support offer, not a pillar. Footer-only, deliberately out of the main
  * nav. No public pricing: price tiers are exactly the comparison shopping
- * this page exists to avoid.
+ * this page exists to avoid. The two plans are described by what they do
+ * and who they suit, and the cost conversation happens on a quote.
+ *
+ * Content source: "Doghouse Media - Growth, Support, Hosting proposal 2026"
+ * (Express Support and Dedicated Growth). Prices, hourly rates and plugin
+ * names from that document are deliberately left out.
  *
  * Pitched at what a large organisation actually worries about, which is who
  * is responsible when it breaks in year three.
  */
 import Site from '../layouts/Site.astro';
 import Button from '../components/pipely/Button.astro';
+import Accordion from '../components/pipely/Accordion.astro';
+import CareDashboard from '../components/sections/CareDashboard.astro';
 
-const covers = [
-  { title: 'Hosting', text: 'On infrastructure we choose and manage, sized to what the site actually does.' },
-  { title: 'Security', text: 'Hardening, monitoring and the unglamorous patching that stops the interesting problems.' },
-  { title: 'Updates', text: 'Core, plugins and dependencies, tested before they go near the live site.' },
-  { title: 'Backups', text: 'Taken regularly, stored off the server, and restored occasionally so we know they work.' },
-  { title: 'Uptime and performance', text: 'Watched continuously, so we usually know before you do.' },
-  { title: 'Accessibility checks', text: 'Ongoing, so a site that passed at launch is still passing a year later.' },
-  { title: 'Development and bug fixes', text: 'The small things that come up, done without a new quote each time.' },
-  { title: 'Content updates', text: 'For the times your team would rather hand it to us.' },
+const plans = [
+  {
+    name: 'Express Support',
+    tone: 'is-a2',
+    for: 'For brochure sites that need to stay stable, secure and quick, without anyone in your team having to think about it.',
+    points: [
+      'Daily database backups and a full backup every week, kept off the server',
+      'Plugins and themes updated weekly, security fixes applied as soon as they land',
+      'Firewall, monthly malware scans, and a clean-up if anything gets through',
+      'Uptime monitoring, so we usually know about an outage before you do',
+      'Premium plugin licences covered',
+      'A care report every year',
+    ],
+  },
+  {
+    name: 'Dedicated Growth',
+    tone: 'is-a1',
+    for: 'For shops, membership, e-learning and business sites that change often and cannot afford a bad day.',
+    points: [
+      'Everything in Express Support',
+      'Full backups every day, not every week',
+      'Daily malware scans, file change detection and two-factor login on request',
+      'A staging copy of your site, so changes are tested before they go live',
+      'Monthly speed tests and broken link scans, with the fixes done',
+      'Regular care reports and analytics reports to your inbox',
+      'An hour of growth work every month',
+    ],
+  },
+];
+
+const hour = [
+  'A strategy call about where the site goes next',
+  'A new landing page for a campaign or event',
+  'Content and structure changes',
+  'New features or changes to how something works',
+  'Keeping your business listing up to date',
+  'Help with email marketing',
+];
+
+const faqs = [
+  {
+    q: 'How much does it cost?',
+    a: 'It depends on the site and which plan suits it. Tell us about yours and we will send a fixed yearly quote, so there are no surprises.',
+  },
+  {
+    q: 'Do I have to host with you?',
+    a: 'No. If you already have hosting you are happy with, we work with it. If you would rather hand the whole thing over, we set up and run managed cloud hosting for you.',
+  },
+  {
+    q: 'What does covering the licences mean?',
+    a: 'Most sites we build use a handful of paid plugins for things like forms, speed, search and page layouts, each with a yearly licence. On a care plan, we pay for the ones we set up, so you are not chasing separate renewal bills. Anything outside that list stays with you, and we will tell you what it is.',
+  },
+  {
+    q: 'Will a care plan improve my search rankings?',
+    a: 'To a point. A site that is fast, secure and free of errors gives search engines nothing to mark it down for, and both plans keep it that way. Climbing the rankings takes content, keyword and link work on top, which is a separate piece of work we can quote for.',
+  },
+  {
+    q: 'What happens if I need more than the plan covers?',
+    a: 'We do it by the hour, and we tell you before we start. On Dedicated Growth, the included hour each month often covers it.',
+  },
+  {
+    q: 'Can you look after a site someone else built?',
+    a: 'Yes. We start with a check of where it is hosted, who holds the logins, what it runs on and what state it is in, then tell you plainly what needs fixing before it goes onto a plan.',
+  },
 ];
 ---
 
 <Site
   title="Care and hosting"
-  description="Hosting, security, updates, backups and accessibility monitoring for websites we build and websites we inherit."
+  description="Backups, updates, security, monitoring and managed hosting for websites we build and websites we inherit. Two care plans, Express Support and Dedicated Growth."
 >
   <section class="pl-panel" aria-labelledby="ch-heading">
     <div class="pl-gutter pl-pad-md">
@@ -35,53 +97,144 @@ const covers = [
           <p class="u-eyebrow is-web" data-reveal>Care and hosting</p>
           <div class="pl-gap-sm"></div>
           <h1 class="u-h1 u-max-40 u-balance" id="ch-heading" data-reveal>
-            Someone is still responsible in year three.
+            Website care plans and managed hosting.
           </h1>
           <div class="pl-gap-sm"></div>
           <p class="u-lg u-muted u-max-33" data-reveal>
-            Most websites are not abandoned deliberately. The person who commissioned it moves on, the agency
-            that built it stops answering, and nobody notices until something breaks in public. This is the
-            arrangement that stops that happening.
+            We keep your website updated, backed up, secure and fast, so you can get on with running your
+            business. Two plans, one team to call, and hosting too if you want it.
           </p>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="pl-panel is-secondary" aria-labelledby="ch-covers">
+  <section class="pl-panel is-secondary" aria-labelledby="ch-why">
     <div class="pl-gutter pl-pad-md">
       <div class="pl-container is-md">
-        <h2 class="u-h2 u-max-26" id="ch-covers" data-reveal>What it covers.</h2>
+        <div class="pl-grid-2 is-top is-wide ch-why-grid">
+          <div>
+            <h2 class="u-h2 u-balance" id="ch-why" data-reveal>A website needs servicing, like anything else that runs.</h2>
+            <div class="pl-gap-lg"></div>
+            <ul class="ch-why" data-reveal-stagger="80">
+            <li data-reveal>
+              <h3 class="u-xl">Updates</h3>
+              <p class="u-muted">
+                Out-of-date software and weak passwords are how most sites get broken into. Updates also bring
+                fixes and speed improvements, and keep everything working together.
+              </p>
+            </li>
+            <li data-reveal>
+              <h3 class="u-xl">Backups</h3>
+              <p class="u-muted">
+                A hack, a server failure or a page deleted by mistake. With a recent backup kept somewhere else,
+                each of those is an hour's work, not a rebuild.
+              </p>
+            </li>
+            <li data-reveal>
+              <h3 class="u-xl">Security</h3>
+              <p class="u-muted">
+                Shops and membership sites are constant targets for bots. A firewall, scanning and someone
+                watching stop most attacks before they cost you customers or get you blacklisted.
+              </p>
+            </li>
+            </ul>
+          </div>
+          <div class="ch-why-graphic" data-reveal>
+            <CareDashboard />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pl-panel" aria-labelledby="ch-plans">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <h2 class="u-h2 u-max-26" id="ch-plans" data-reveal>Two plans.</h2>
+        <div class="pl-gap-sm"></div>
+        <p class="u-lg u-muted u-max-33" data-reveal>
+          Both cover the essentials properly. The difference is how often we check, how closely we watch, and
+          how much of our time comes with it.
+        </p>
         <div class="pl-gap-lg"></div>
+        <div class="pl-grid-2 is-top" data-reveal-stagger="100">
+          {plans.map((p) => (
+            <article class={`pl-card is-tight ch-plan ${p.tone}`} data-reveal aria-labelledby={`plan-${p.tone}`}>
+              <h3 class="u-h3" id={`plan-${p.tone}`}>{p.name}</h3>
+              <p class="u-muted">{p.for}</p>
+              <ul class="ch-plan__list">
+                {p.points.map((pt) => <li>{pt}</li>)}
+              </ul>
+            </article>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pl-panel is-secondary" aria-labelledby="ch-hour">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
         <div class="pl-grid-2 is-top is-wide">
-          <ul class="pl-service-points" data-reveal-stagger="80">
-            {covers.slice(0, 4).map((c) => (
-              <li class="pl-service-points__item" data-reveal>
-                <span class="pl-service-points__title">{c.title}</span>
-                <span class="pl-service-points__text u-muted">{c.text}</span>
-              </li>
-            ))}
-          </ul>
-          <ul class="pl-service-points" data-reveal-stagger="80">
-            {covers.slice(4).map((c) => (
-              <li class="pl-service-points__item" data-reveal>
-                <span class="pl-service-points__title">{c.title}</span>
-                <span class="pl-service-points__text u-muted">{c.text}</span>
-              </li>
-            ))}
+          <div data-reveal-stagger="100">
+            <p class="u-eyebrow is-web" data-reveal>Dedicated Growth</p>
+            <div class="pl-gap-sm"></div>
+            <h2 class="u-h2 u-balance" id="ch-hour" data-reveal>An hour a month to move the site forward.</h2>
+            <div class="pl-gap-sm"></div>
+            <p class="u-lg u-muted" data-reveal>
+              Keeping a site safe is the floor. The hour is for making it better, spent on whatever matters
+              most that month.
+            </p>
+          </div>
+          <ul class="ch-plan__list ch-hour" data-reveal-stagger="80">
+            {hour.map((h) => <li data-reveal>{h}</li>)}
           </ul>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="pl-panel" aria-labelledby="ch-inherit">
+  <section class="pl-panel" aria-labelledby="ch-hosting">
     <div class="pl-gutter pl-pad-md">
-      <div class="pl-container is-sm">
-        <h2 class="u-h3 u-balance" id="ch-inherit" data-reveal>
-          We take on sites we did not build. If yours was left somewhere you cannot reach, that is usually the
-          first thing to fix.
-        </h2>
+      <div class="pl-container is-md">
+        <div class="pl-grid-2 is-top is-wide">
+          <div data-reveal-stagger="100">
+            <h2 class="u-h2 u-balance" id="ch-hosting" data-reveal>Managed WordPress hosting.</h2>
+            <div class="pl-gap-sm"></div>
+            <p class="u-lg u-muted" data-reveal>
+              Cheap shared hosting is the most common reason a good site feels slow. We recommend cloud hosting,
+              and we can run it for you.
+            </p>
+          </div>
+          <div class="pl-stack-lg" data-reveal-stagger="80">
+            <div data-reveal>
+              <h3 class="u-xl">Managed by us</h3>
+              <p class="u-muted">
+                We set up a cloud server sized to your site, with the security certificate included, and look
+                after it alongside your care plan. As traffic grows, the server grows with it. One invoice,
+                one number to call.
+              </p>
+            </div>
+            <div data-reveal>
+              <h3 class="u-xl">Your own hosting</h3>
+              <p class="u-muted">
+                If you already have an account with a good host, keep it. We work with the main providers and
+                will tell you honestly if yours is holding the site back.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pl-panel is-secondary" aria-labelledby="ch-faq">
+    <div class="pl-gutter pl-pad-md">
+      <div class="pl-container is-md">
+        <h2 class="u-h2 u-max-26" id="ch-faq" data-reveal>Questions.</h2>
+        <div class="pl-gap-lg"></div>
+        <Accordion items={faqs} />
       </div>
     </div>
   </section>
@@ -100,3 +253,29 @@ const covers = [
     </div>
   </section>
 </Site>
+
+<style>
+  .ch-why { display: grid; gap: 2rem; }
+  .ch-why h3 { margin-bottom: 0.5rem; }
+  .ch-why-graphic { position: sticky; top: 7rem; }
+  @media (max-width: 767px) { .ch-why-graphic { position: static; } }
+
+  .ch-plan { height: 100%; }
+  .ch-plan__list { display: grid; gap: 0.75rem; }
+  .ch-plan__list li {
+    position: relative;
+    padding-left: 1.5rem;
+  }
+  .ch-plan__list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background-color: var(--pl-accent-web);
+  }
+  .ch-hour { font-size: var(--pl-lg); }
+
+</style>
