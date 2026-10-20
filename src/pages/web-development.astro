@@ -89,36 +89,31 @@ const work = [
   },
 ];
 
-// 3. What we build. Who it helps, what it enables, and real examples.
+// 3. What we build. Who it helps and what it enables.
 const builds = [
   {
     title: 'Websites for businesses and organisations',
     icon: 'website' as const,
     who: 'Companies, charities, clinics, clubs and public bodies.',
     text: 'A clear, well-organised site that explains what you do, reaches the people you need to reach and is simple for your own team to keep up to date.',
-    examples: 'Galway Braces, Oakfire Adventures, Pembroke Wanderers',
   },
   {
     title: 'Learning platforms',
     icon: 'learning' as const,
     who: 'Trainers, course providers and professional bodies.',
     text: 'Online courses with enrolment, payment, progress tracking and certificates, running without someone administering every step by hand.',
-    examples: 'Shapes of Grief',
-    examplesHref: '/work/shapes-of-grief-lms/',
   },
   {
     title: 'E-commerce, bookings and donations',
     icon: 'commerce' as const,
     who: 'Shops, clinics, venues and charities.',
     text: 'Payments, appointments, subscriptions and one-off or monthly donations that work reliably, including where clinical or regulatory rules apply.',
-    examples: 'Loreto South Sudan',
   },
   {
     title: 'Bilingual websites',
     icon: 'bilingual' as const,
     who: 'Public bodies, schools and organisations working in Irish.',
     text: 'English and Irish sites, with the Irish text reviewed.',
-    examples: 'Someone Like Me Art Awards and Our World Awards, both built in partnership with Real Nation, who designed and ran the projects',
   },
 ];
 
@@ -229,7 +224,6 @@ const moreWork = moreWorkIds.map((id) => moreWorkAll.find((p) => p.id === id)).f
               <h3 class="wd-build__title">{b.title}</h3>
               <p class="wd-build__who">{b.who}</p>
               <p class="u-muted">{b.text}</p>
-              <p class="wd-build__examples u-sm"><span class="u-eyebrow">Examples</span> {'examplesHref' in b && b.examplesHref ? <a class="pl-link" href={b.examplesHref}>{b.examples}</a> : b.examples}</p>
             </li>
           ))}
         </ul>
@@ -475,7 +469,6 @@ const moreWork = moreWorkIds.map((id) => moreWorkAll.find((p) => p.id === id)).f
     letter-spacing: -0.01em;
   }
   .wd-build__who { font-weight: var(--pl-fw-medium); }
-  .wd-build__examples .u-eyebrow { margin-right: 0.5rem; }
   @media (max-width: 767px) {
     .wd-build { grid-template-columns: 1fr; }
   }
