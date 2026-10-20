@@ -537,6 +537,12 @@
   text-align: right;
 }
 .pl-hero__aside .pl-stack { align-items: flex-end; }
+/* Single column on mobile: everything left-aligned with the heading
+   (20 October 2026). Right-aligned only works beside the heading. */
+@media (max-width: 767px) {
+  .pl-hero__aside { margin-left: 0; align-items: flex-start; text-align: left; }
+  .pl-hero__aside .pl-stack { align-items: flex-start; }
+}
 .pl-hero__lead { color: var(--pl-text-muted); }
 
 .pl-hero__media {
