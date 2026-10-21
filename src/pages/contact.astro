@@ -18,6 +18,7 @@ import '../styles/pipely/start-project.css';
 
 const email = 'hello@doghousemedia.ie';
 const endpoint = '/api/enquiry';
+const mapsUrl = 'https://www.google.com/maps/place//data=!4m2!3m1!1s0x48670f59b52a1ffb:0x1f4310d4c18b925b';
 
 const interests = [
   { value: 'Video Production', tag: 'Video', cls: 'is-film', name: 'Video Production', desc: 'Brand films, promos, event and social content.' },
@@ -47,6 +48,12 @@ const timelines = ['As soon as possible', '1 to 3 months', '3 to 6 months', 'Jus
             <p class="u-muted">
               Or write to us directly at <a class="pl-link" href={`mailto:${email}`}>{email}</a>
             </p>
+            <address class="ct-address u-muted" style="font-style:normal;display:grid;gap:0.5rem;margin-top:0.5rem">
+              <span class="u-eyebrow">Studio</span>
+              <a class="pl-link" href={mapsUrl}>
+                13 Adelaide Road, Saint Kevin's<br />Dublin, D02 P950
+              </a>
+            </address>
           </div>
 
           <div class="pl-card is-tight ct-card" data-reveal>
