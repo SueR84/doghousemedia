@@ -6,6 +6,10 @@ import vercel from '@astrojs/vercel';
 
 export default defineConfig({
   site: 'https://doghousemedia.ie',
+  // /ai/ was the holding page's slug until 21 October 2026.
+  redirects: {
+    '/ai': '/ai-automation/',
+  },
   // Pages stay static. The adapter is only here so src/pages/api/enquiry.ts
   // (prerender = false) runs as a Vercel function for the enquiry forms.
   adapter: vercel(),

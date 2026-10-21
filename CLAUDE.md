@@ -28,6 +28,7 @@ The fork has been promoted. `/pipely` no longer exists as a route.
 
 - `src/layouts/Site.astro` is the site layout. It loads `styles/pipely/index.css`, the six-item nav, the footer and the motion engine. The old Fabrica layout, components, scripts and styles are archived under `_to_delete/`.
 - Live routes: `/`, `/work/`, `/work/[slug]`, `/video-production/`, `/web-development/`, `/accessibility-audits/`, `/care-and-hosting/`, `/about/`, `/blog/`, `/blog/[slug]`, `/contact/`, `/accessibility/`, `/privacy/`.
+- `/ai-automation/` (built out 21 October 2026, renamed from `/ai/`, which redirects) is footer-only, not in the nav. It carries the four AI Solutions services and the examples. TODOs in its header comment must be cleared before launch.
 - The sitemap filter is gone from `astro.config.mjs` and no page carries `noindex`.
 - `src/components/sections/PillarBlock.astro` is the only non-Pipely component. Everything else lives under `components/pipely/`.
 - `HOMEPAGE-COPY.md` holds the approved homepage copy and the list of gaps behind it.
