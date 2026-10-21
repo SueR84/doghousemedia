@@ -7,8 +7,11 @@
  * motion, so the poster carries LCP and nothing third-party blocks first
  * paint.
  *
- * Accessibility, per CLAUDE.md: the loop is muted, carries no essential
- * audio, and has a visible pause control. Any type sitting over moving
+ * Accessibility, per CLAUDE.md: the loop starts muted, carries no essential
+ * audio, and has a visible pause control. Sound is opt-in through its own
+ * toggle (21 October 2026). That is why the embed is controls=0 rather than
+ * background=1: background mode locks the volume at zero. Sound switches
+ * itself back off when the hero scrolls out of view. Any type sitting over moving
  * footage needs a solid backing, which is why the copy sits above the
  * panel rather than on it.
  */
@@ -42,7 +45,7 @@ const {
   secondary,
 } = Astro.props;
 
-const ambientSrc = `https://player.vimeo.com/video/${vimeoId}?background=1&autoplay=1&muted=1&loop=1&autopause=0&dnt=1`;
+const ambientSrc = `https://player.vimeo.com/video/${vimeoId}?autoplay=1&muted=1&loop=1&autopause=0&controls=0&title=0&byline=0&portrait=0&playsinline=1&keyboard=0&dnt=1`;
 ---
 
 <section class="pl-hero pl-panel" data-hero data-ambient={ambientSrc}>
@@ -98,10 +101,20 @@ const ambientSrc = `https://player.vimeo.com/video/${vimeoId}?background=1&autop
         />
       </picture>
 
-      <button class="pl-hero__pause" type="button" data-hero-pause hidden>
-        <span class="pl-hero__pause-icon" aria-hidden="true"></span>
-        <span data-hero-pause-label>Pause background video</span>
-      </button>
+      <div class="pl-hero__controls" data-hero-controls hidden>
+        <button class="pl-hero__pause" type="button" data-hero-sound aria-pressed="false">
+          <svg class="pl-hero__sound-icon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false">
+            <path d="M2 6h3l4-3v10L5 10H2z" fill="currentColor" />
+            <path class="is-off" d="M11 6l4 4M15 6l-4 4" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" />
+            <path class="is-on" d="M11 5.5a3.5 3.5 0 0 1 0 5M12.5 3.5a6 6 0 0 1 0 9" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" />
+          </svg>
+          <span data-hero-sound-label>Sound on</span>
+        </button>
+        <button class="pl-hero__pause" type="button" data-hero-pause>
+          <span class="pl-hero__pause-icon" aria-hidden="true"></span>
+          <span data-hero-pause-label>Pause background video</span>
+        </button>
+      </div>
     </div>
   </div>
 </section>
@@ -110,17 +123,22 @@ const ambientSrc = `https://player.vimeo.com/video/${vimeoId}?background=1&autop
   document.querySelectorAll<HTMLElement>('[data-hero]').forEach((hero) => {
     const slot = hero.querySelector<HTMLElement>('.pl-hero__frame-slot');
     const src = hero.dataset.ambient;
+    const controls = hero.querySelector<HTMLElement>('[data-hero-controls]');
     const pause = hero.querySelector<HTMLButtonElement>('[data-hero-pause]');
     const label = hero.querySelector<HTMLElement>('[data-hero-pause-label]');
+    const sound = hero.querySelector<HTMLButtonElement>('[data-hero-sound]');
+    const soundLabel = hero.querySelector<HTMLElement>('[data-hero-sound-label]');
     if (!slot || !src) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     if (slot.querySelector('iframe')) return;
 
     let frame: HTMLIFrameElement | null = null;
     let playing = true;
+    let audible = false;
 
-    const send = (method: string) => {
-      frame?.contentWindow?.postMessage(JSON.stringify({ method }), 'https://player.vimeo.com');
+    const send = (method: string, value?: unknown) => {
+      const msg = value === undefined ? { method } : { method, value };
+      frame?.contentWindow?.postMessage(JSON.stringify(msg), 'https://player.vimeo.com');
     };
 
     const setState = (next: boolean) => {
@@ -129,6 +147,18 @@ const ambientSrc = `https://player.vimeo.com/video/${vimeoId}?background=1&autop
       hero.classList.toggle('is-paused', !next);
       if (pause) pause.setAttribute('data-paused', String(!next));
       if (label) label.textContent = next ? 'Pause background video' : 'Play background video';
+    };
+
+    // Starts muted. Turning sound on also resumes playback, since asking
+    // for sound on a paused frame does nothing visible.
+    const setSound = (next: boolean) => {
+      audible = next;
+      send('setMuted', !next);
+      send('setVolume', next ? 1 : 0);
+      if (next && !playing) setState(true);
+      hero.classList.toggle('is-audible', next);
+      if (sound) sound.setAttribute('aria-pressed', String(next));
+      if (soundLabel) soundLabel.textContent = next ? 'Sound off' : 'Sound on';
     };
 
     const mount = () => {
@@ -140,13 +170,20 @@ const ambientSrc = `https://player.vimeo.com/video/${vimeoId}?background=1&autop
       frame.setAttribute('aria-hidden', 'true');
       frame.addEventListener('load', () => {
         hero.classList.add('is-playing');
-        // The control only appears once there is something to pause.
-        if (pause) { pause.hidden = false; pause.setAttribute('data-paused', 'false'); }
+        // The controls only appear once there is something to pause.
+        if (controls) controls.hidden = false;
+        if (pause) pause.setAttribute('data-paused', 'false');
       }, { once: true });
       slot.replaceChildren(frame);
     };
 
     pause?.addEventListener('click', () => setState(!playing));
+    sound?.addEventListener('click', () => setSound(!audible));
+
+    // Nobody wants the reel talking over the rest of the page.
+    new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting && audible) setSound(false);
+    }).observe(hero);
 
     if (document.readyState === 'complete') mount();
     else window.addEventListener('load', mount, { once: true });

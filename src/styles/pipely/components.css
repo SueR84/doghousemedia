@@ -605,11 +605,16 @@
    no essential audio, but it still needs a visible pause. Sits on
    a solid ink pill so it reads over any frame of the footage. */
 .pl-hero__media { position: relative; }
-.pl-hero__pause {
+.pl-hero__controls {
   position: absolute;
   right: var(--pl-s-md);
   bottom: var(--pl-s-md);
   z-index: 2;
+  display: flex;
+  gap: 0.5rem;
+}
+.pl-hero__controls[hidden] { display: none; }
+.pl-hero__pause {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -631,6 +636,11 @@
   border-left: 3px solid currentColor;
   border-right: 3px solid currentColor;
 }
+/* Sound icon: crossed speaker while muted, waves once sound is on. */
+.pl-hero__sound-icon { flex: none; }
+.pl-hero__sound-icon .is-on { display: none; }
+.pl-hero.is-audible .pl-hero__sound-icon .is-on { display: inline; }
+.pl-hero.is-audible .pl-hero__sound-icon .is-off { display: none; }
 /* Paused state swaps the two bars for a single play triangle. */
 .pl-hero.is-paused .pl-hero__pause-icon {
   width: 0;

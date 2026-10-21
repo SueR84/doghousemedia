@@ -11,13 +11,14 @@
  *
  * Structure:
  *   1. Hero, with the Western Rheumatology assistant on a phone.
- *   2. What we offer: the four services Doghouse sells under AI Solutions
- *      (readiness review, team training and workshops, custom assistants,
- *      workflow automation).
+ *   2. How we can work together: the four services Doghouse sells under AI Solutions
+ *      (practical AI audit, hands-on team workshops, custom built assistants,
+ *      everyday automations).
  *   3. Examples: the carousel from the holding page.
  *   4. How we work: look first, one workflow at a time, built with your
- *      team, handed over.
- *   5. Where we draw the line: approval, data, limits.
+ *      team, handed over cleanly. Safety and privacy (approval, data,
+ *      limits) sits under the steps in the same panel.
+ *   5. (Was Safety and privacy as its own panel, merged into 4.)
  *   6. Who leads the work.
  *   7. Questions.
  *   8. Contact.
@@ -38,28 +39,29 @@ import Button from '../components/pipely/Button.astro';
 import Accordion from '../components/pipely/Accordion.astro';
 import StartProject from '../components/pipely/StartProject.astro';
 import ChatPhone from '../components/sections/ChatPhone.astro';
+import AiWorkflow from '../components/sections/AiWorkflow.astro';
 
-// 2. What we offer. Order runs from least to most commitment.
+// 2. How we can work together. Order runs from least to most commitment.
 const services = [
   {
     n: '01',
-    title: 'AI readiness review',
-    text: 'We look at how your team spends its week: where information is re-typed, chased or answered twice, and what you hold that an assistant could work from. You get a short written report on what is worth automating, what is not, and what needs to be in place first.',
+    title: 'Practical AI Audit',
+    text: 'A realistic assessment of your operations to spot repetitive bottlenecks. We map out where information is manually moved or repeatedly requested, evaluate your existing internal knowledge, and deliver a short report that cuts through the noise: what will save you time, what isn’t worth the hassle, and what to set up first.',
   },
   {
     n: '02',
-    title: 'Team training and workshops',
-    text: 'Practical sessions built around your staff’s own tasks, not generic demonstrations. What these tools do well, where they get things wrong, and how to use them without putting client or patient information at risk.',
+    title: 'Hands-On Team Workshops',
+    text: 'Training focused on your staff’s actual workload, not hypothetical examples. We show your team what AI handles brilliantly, where it gets things wrong, and how to build daily habits that keep your client and patient information completely secure.',
   },
   {
     n: '03',
-    title: 'Custom AI assistants',
-    text: 'Assistants that answer from your own information, on your website or inside your team. They stay within what you have given them, say when they do not know, and point people to the right person or form.',
+    title: 'Custom Built Assistants',
+    text: 'AI assistants that draw exclusively from your verified information. Designed for customer-facing sites or internal team platforms, they operate safely within set guardrails: acknowledging their limits and directing users to human support when needed.',
   },
   {
     n: '04',
-    title: 'Workflow automation',
-    text: 'Information moves between your website and the systems you already use, so nobody re-types it. Enquiries are sorted and sent to the right person, replies are drafted for checking, and routine reports arrive without anyone building them.',
+    title: 'Everyday Automations',
+    text: 'We connect your internal platforms, software, and website so information flows smoothly without manual copy-pasting. We sort incoming enquiries to the right team member, draft initial replies for quick approval, and automate repetitive reporting tasks.',
   },
 ];
 
@@ -68,38 +70,38 @@ const steps = [
   {
     n: '01',
     title: 'Look first',
-    text: 'We find out where the hours actually go before anything is automated. Some of it does not need AI at all, and we will say so.',
+    text: 'We map out where your team’s hours actually go before building anything. If a job doesn’t need AI, or just needs a simpler fix, we’ll tell you straight.',
   },
   {
     n: '02',
     title: 'One workflow at a time',
-    text: 'We start with the job that has the clearest payback, scope it small and measure it against the time it was meant to save.',
+    text: 'We start with the task that offers the clearest payoff. We keep the scope tight and measure it directly against the time it was meant to save.',
   },
   {
     n: '03',
     title: 'Built with your team',
-    text: 'The people who do the work test it while it is built. Their corrections shape how it behaves, and they decide when it is ready.',
+    text: 'The people doing the job test the system while we build it. Their feedback shapes how it behaves, and they decide when it’s genuinely ready to use.',
   },
   {
     n: '04',
-    title: 'Handed over',
-    text: 'Every workflow is documented and handed over, so it runs without us. If you would rather we keep looking after it, we can.',
+    title: 'Handed over cleanly',
+    text: 'We document every workflow so it runs smoothly without us. If you’d prefer us to keep looking after it, we can do that too.',
   },
 ];
 
-// 5. How we keep it safe.
+// 5. Safety and privacy.
 const lines = [
   {
-    title: 'You decide what it does alone',
-    text: 'An assistant answering from information you have approved can reply on its own. Anything else, like a reply to a new enquiry, is drafted for a person to check and send.',
+    title: 'Human-in-the-loop control',
+    text: 'Routine answers can be automated, but anything new or sensitive is prepared as a draft so a real person always has final approval.',
   },
   {
-    title: 'You know where your data goes',
-    text: 'Before anything is built, we tell you which provider will process your information and on what terms. Personal information is kept out of services that use it to train their models.',
+    title: 'Full data visibility',
+    text: 'We lay out every provider and their privacy terms before building. Confidential data is always protected and excluded from model training.',
   },
   {
-    title: 'It says when it does not know',
-    text: 'An assistant is limited to your own information. When a question falls outside that, or needs a professional judgement, it says so and points to a person.',
+    title: 'Grounded in your facts',
+    text: 'Assistants operate strictly within the boundaries of your internal information. If an answer isn’t in your docs or needs a human touch, it passes the question straight to a team member.',
   },
 ];
 
@@ -174,7 +176,7 @@ const timeline = [
 const faqs = [
   {
     q: 'Do we need our information in order first?',
-    a: 'It helps, and the readiness review will tell you where you stand. An assistant is only as good as the information it works from, so tidying that up is often part of the job.',
+    a: 'It helps, and the AI audit will tell you where you stand. An assistant is only as good as the information it works from, so tidying that up is often part of the job.',
   },
   {
     q: 'Is it safe to use with client or patient information?',
@@ -185,15 +187,31 @@ const faqs = [
     a: 'Usually, yes. It does not need a new site. We look at what the site runs on and what the assistant would need to draw from, and tell you if anything has to change first.',
   },
   {
-    q: 'How much does it cost?',
-    a: 'It depends on the scope. We start with a conversation, then send a fixed quote for the review, the training or the first workflow, so you know the cost before anything starts.',
+    q: 'Can we start with training only?',
+    a: 'Yes. Plenty of teams start with a workshop to get comfortable with the tools before deciding whether to build anything. There’s no obligation to go further.',
+  },
+  {
+    q: 'Do we need technical staff to run it?',
+    a: 'No. We build around the people you already have, and every workflow is documented and handed over with training, so your team can run it day to day. If you’d prefer us to keep looking after it, we can.',
+  },
+  {
+    q: 'Will AI replace our staff?',
+    a: 'That’s not what we build it for. The aim is to take the repetitive work off your team’s plate, so they have more time for the work that actually needs them. A person always has the final say on anything new or sensitive.',
+  },
+  {
+    q: 'What happens if it gets something wrong?',
+    a: 'Assistants only answer from the information you’ve given them, and anything outside that goes to a team member. If an answer isn’t right, we fix the source information or the rules behind it, so it doesn’t happen again.',
+  },
+  {
+    q: 'How soon will we know if it’s working?',
+    a: 'Fairly quickly. First projects are kept small on purpose, and we agree up front what we’re measuring, so you can see whether it’s saving the time it was meant to save.',
   },
 ];
 ---
 
 <Site
   title="AI and automation"
-  description="Practical AI for Irish organisations: readiness reviews, team training, custom assistants and workflow automation, built around how your team already works."
+  description="Practical AI for Irish organisations: AI audits, team training, custom assistants and workflow automation, built around how your team already works."
 >
   {/* ---------- 1. Hero ---------- */}
   <section class="pl-panel" aria-labelledby="ai-heading">
@@ -208,8 +226,8 @@ const faqs = [
             </h1>
             <div class="pl-gap-sm"></div>
             <p class="u-lg u-muted u-max-33" data-reveal>
-              We work out where AI fits in your organisation, train the people who will use it, and build
-              assistants and automations around how you already work.
+              We help you pinpoint where AI actually makes sense for your business, train your team to use it
+              with confidence, and build simple automations around the way you already work.
             </p>
             <div class="pl-gap-sm"></div>
             <div class="pl-btn-group" data-reveal>
@@ -226,15 +244,16 @@ const faqs = [
     </div>
   </section>
 
-  {/* ---------- 2. What we offer ---------- */}
+  {/* ---------- 2. How we can work together ---------- */}
   <section class="pl-panel" aria-labelledby="ai-offer">
     <div class="pl-gutter pl-pad-md">
       <div class="pl-container is-md">
         <div class="pl-grid-2 is-top is-wide">
-          <h2 class="u-h2 u-max-26 u-balance" id="ai-offer" data-reveal>What we offer.</h2>
+          <h2 class="u-h2 u-max-26 u-balance" id="ai-offer" data-reveal>How we can work together.</h2>
           <p class="u-lg u-muted u-max-33" data-reveal>
-            Four ways in, from a first look at where AI could help to a working system your team uses every day.
-            Most organisations start with the review or the training.
+            You don't need to jump in at the deep end. We offer four straightforward ways to work together,
+            whether you're just scoping out the possibilities or ready to build. A simple review or team
+            training is usually the best place to begin.
           </p>
         </div>
         <div class="pl-gap-lg"></div>
@@ -324,39 +343,36 @@ const faqs = [
           <div class="pl-stack pl-stack-md" data-reveal>
             <h2 class="u-h2 u-max-26 u-balance" id="ai-how">How we work.</h2>
             <p class="u-muted u-max-26">
-              No AI for the sake of it. Each piece of work is small enough to judge on whether it saved the time it
-              was meant to.
+              No AI for the sake of it. We keep every project focused and measurable, so you can judge whether it
+              actually saved the time it was built to save.
             </p>
+            <div class="pl-gap-sm"></div>
+            <AiWorkflow />
           </div>
-          <ol class="ai-steps" role="list" data-reveal-stagger="100">
-            {steps.map((s) => (
-              <li class="ai-steps__step" data-reveal>
-                <span class="u-eyebrow" aria-hidden="true">{s.n}</span>
-                <h3 class="ai-steps__title">{s.title}</h3>
-                <p class="u-muted">{s.text}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </div>
-    </div>
-  </section>
+          <div class="ai-how__right">
+            <ol class="ai-steps" role="list" data-reveal-stagger="100">
+              {steps.map((s) => (
+                <li class="ai-steps__step" data-reveal>
+                  <span class="u-eyebrow" aria-hidden="true">{s.n}</span>
+                  <h3 class="ai-steps__title">{s.title}</h3>
+                  <p class="u-muted">{s.text}</p>
+                </li>
+              ))}
+            </ol>
 
-  {/* ---------- 5. How we keep it safe ---------- */}
-  <section class="pl-panel is-secondary" aria-labelledby="ai-lines">
-    <div class="pl-gutter pl-pad-md">
-      <div class="pl-container is-md">
-        <h2 class="u-h2 u-max-26 u-balance" id="ai-lines" data-reveal>How we keep it safe.</h2>
-        <div class="pl-gap-lg"></div>
-        <div class="pl-grid-3" data-reveal-stagger="100">
-          {lines.map((l) => (
-            <article class="pl-card is-tight" data-reveal>
-              <div class="pl-stack pl-stack-sm">
-                <h3 class="u-xl u-medium">{l.title}</h3>
-                <p class="u-muted">{l.text}</p>
-              </div>
-            </article>
-          ))}
+            {/* Safety and privacy, folded into How we work on 21 October 2026.
+                Was its own grey panel. */}
+            <div class="pl-gap-lg"></div>
+            <h3 class="u-h3 u-balance ai-safety__heading" id="ai-lines" data-reveal>Safety &amp; Privacy.</h3>
+            <ul class="ai-safety" role="list" aria-labelledby="ai-lines" data-reveal-stagger="100">
+              {lines.map((l) => (
+                <li class="ai-safety__item" data-reveal>
+                  <h4 class="u-lg u-medium ai-safety__title">{l.title}</h4>
+                  <p class="u-muted">{l.text}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -490,7 +506,7 @@ const faqs = [
     .ai-hero-phone { justify-content: flex-start; }
   }
 
-  /* What we offer: two by two, grey cards on the white panel. */
+  /* How we can work together: two by two, grey cards on the white panel. */
   .ai-offer {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -530,6 +546,25 @@ const faqs = [
   @media (max-width: 599px) {
     .ai-steps { grid-template-columns: 1fr; }
   }
+
+  /* Safety and privacy, under the steps: grey cards on the white panel,
+     same surface step as the offer cards. */
+  .ai-safety__heading { margin: 0 0 var(--pl-s-lg); }
+  .ai-safety {
+    display: grid;
+    gap: var(--pl-s-sm, 0.75rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .ai-safety__item {
+    display: grid;
+    gap: 0.375rem;
+    padding: var(--pl-s-md) var(--pl-s-lg);
+    border-radius: var(--pl-r-card, 1.25rem);
+    background-color: var(--pl-secondary);
+  }
+  .ai-safety__title { margin: 0; }
 
   /* Susan's timeline: a teal rule down the left with a dot per step. The
      current step gets a filled, ringed dot. Non-text accents only, so teal
