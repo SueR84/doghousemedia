@@ -1,0 +1,49 @@
+diff --git a/src/content/legal/privacy-policy.md b/src/content/legal/privacy-policy.md
+index 28cc0d8..fba7424 100644
+--- a/src/content/legal/privacy-policy.md
++++ b/src/content/legal/privacy-policy.md
+@@ -1,6 +1,6 @@
+ ---
+ title: Privacy Policy
+-updated: 2026-10-19
++updated: 2026-10-21
+ ---
+ 
+ <!-- TODO before launch: add the legal entity name (sole trader, partnership or company), CRO number if there is one, and a postal address to "Who we are". The DPC expects a controller to be identifiable. -->
+@@ -31,6 +31,12 @@ If the form cannot send for a technical reason, it offers to open a pre-filled e
+ 
+ If you email us directly, we receive your email address, your name as it appears on your email, and whatever you write.
+ 
++### When you use the chat assistant
++
++Bandit, the chat assistant in the corner of each page, is an AI assistant. What you type, and the replies, are sent to Anthropic, the company whose AI model writes the replies, along with the address of the page you are on. We do not store the conversation, and Bandit does not ask for your name or contact details. Please leave out personal, health or financial information; if you want us to get back to you, use a form or email us.
++
++So the conversation carries on as you move between pages, your browser keeps it until you close the tab. It also remembers if you closed the assistant, so it does not keep popping up. Neither is a cookie, and neither is sent to us.
++
+ ### When you browse the site
+ 
+ If you accept analytics cookies, Google Analytics records which pages you visit, how you arrived, roughly where in the world you are (country and city level), and the type of device and browser you use. See [Cookies and analytics](#cookies-and-analytics) below. If you do not accept, none of this is collected.
+@@ -46,6 +52,7 @@ GDPR requires us to give a legal reason for each use.
+ - **Replying to your enquiry and preparing a quote.** Legitimate interests: you have asked us to get back to you, and we need your details to do so. If the enquiry turns into a project, the basis becomes taking steps to enter into, and then performing, a contract with you.
+ - **Doing the work and invoicing for it.** Performance of a contract, and legal obligation for tax and accounting records.
+ - **Understanding how the site is used.** Consent, given through the cookie banner. You can withdraw it at any time.
++- **Answering questions in the chat assistant.** Legitimate interests: you have asked a question, and we use an AI service to answer it.
+ - **Keeping the site secure and working.** Legitimate interests.
+ 
+ We will not add you to a mailing list because you sent an enquiry. If we ever start a newsletter, we will ask separately.
+@@ -58,6 +65,7 @@ We use a small number of service providers to run the site and the studio. They
+ 
+ - **Google Analytics** measures site visits, only if you accept analytics cookies.
+ - **Vimeo** hosts and plays the films on the site. See [Video embeds](#video-embeds).
++- **Anthropic** writes the chat assistant's replies. Under its commercial terms it does not use the conversations to train its models. See [When you use the chat assistant](#when-you-use-the-chat-assistant).
+ 
+ If you become a client, we also use accounting software for invoices and keep project records with the tools we use to deliver the work.
+ 
+@@ -117,6 +125,7 @@ We do not use advertising cookies, social media tracking pixels, heatmaps or ses
+ - **Client records, contracts and invoices:** six years after the end of the financial year they relate to, as Irish tax law requires.
+ - **Project correspondence:** for the life of the project and up to six years after, in case questions come up about the work.
+ - **Analytics data:** as set out in [Cookies and analytics](#cookies-and-analytics).
++- **Chat assistant conversations:** not kept by us. Anthropic deletes them within 30 days, unless it needs to keep them longer to enforce its usage policies or the law requires it.
+ - **Hosting logs:** kept by our hosting provider for a short period, typically days, then deleted.
+ 
+ ## How we protect it

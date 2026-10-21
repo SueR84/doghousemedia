@@ -222,6 +222,13 @@ const enquiryEmail = 'hello@doghousemedia.ie';
       });
     });
 
+    // Bandit's enquiry button (components/pipely/Bandit.astro) asks for the
+    // modal this way, because it is added after this script has run.
+    document.addEventListener('dhm:start-project', (e) => {
+      trigger = e.detail?.trigger || null;
+      open();
+    });
+
     // Close triggers
     dialog.querySelectorAll('[data-sp-close]').forEach((b) => b.addEventListener('click', close));
     dialog.addEventListener('click', (e) => {

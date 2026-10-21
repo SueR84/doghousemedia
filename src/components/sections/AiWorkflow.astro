@@ -1,0 +1,303 @@
+---
+/**
+ * AI workflow motion graphic. /ai-automation/, "How we work" section, left
+ * column under the intro (21 October 2026).
+ *
+ * Illustrative only. It is not a screenshot of a real tool, names none, and
+ * is not a map of any client's internal workflow. One enquiry tells the How
+ * we work story in order: it arrives, gets sorted to the right person, a
+ * reply is drafted from the organisation's own information, a person
+ * approves it, and the time saved that week reads out. Last frame lands at
+ * about 4.7s.
+ *
+ * Accessibility, same pattern as CareDashboard:
+ * - One role="img" with a text alternative. Everything inside is
+ *   aria-hidden.
+ * - Plays ONCE when it scrolls into view and finishes in under five
+ *   seconds, then holds still, so WCAG 2.2.2 needs no pause control. Do not
+ *   make it loop without adding one.
+ * - Reduced motion, or no JavaScript: .is-armed is never added, so the
+ *   finished state shows straight away.
+ * - Teal is used for fills and non-text accents. Text stays ink or meta
+ *   grey, and white on teal (about 5.9:1) only inside the approved pill.
+ */
+const lines = [100, 92, 64];
+const days = [
+  { d: 'M', v: 0.45 },
+  { d: 'T', v: 0.7 },
+  { d: 'W', v: 0.55 },
+  { d: 'T', v: 0.85 },
+  { d: 'F', v: 0.6 },
+];
+---
+
+<div
+  class="aiw"
+  data-ai-flow
+  role="img"
+  aria-label="Illustration of an everyday automation: a new enquiry arrives, it is sorted and sent to the right team, a reply is drafted from the organisation's own information, a member of staff checks and approves it, and the time saved that week is shown."
+>
+  <div class="aiw__card" aria-hidden="true">
+    <div class="aiw__head">
+      <span class="aiw__site">Enquiries</span>
+      <span class="aiw__pill">
+        <span class="aiw__dot"></span>
+        <span class="aiw-swap" style="--swap:4.5s">
+          <span class="aiw-swap__a">Working</span>
+          <span class="aiw-swap__b">All done</span>
+        </span>
+      </span>
+    </div>
+
+    <div class="aiw__row">
+      <div class="aiw__rowhead">
+        <span class="aiw__label">New enquiry</span>
+        <span class="aiw__note">09:14</span>
+      </div>
+      <p class="aiw__msg">Hi, do you have a date free in March for a half-day session with our team?</p>
+    </div>
+
+    <div class="aiw__row">
+      <div class="aiw__rowhead">
+        <span class="aiw__label">Sorted</span>
+        <span class="aiw-swap aiw__note" style="--swap:1.5s">
+          <span class="aiw-swap__a">Reading</span>
+          <span class="aiw-swap__b">Sent to the right person</span>
+        </span>
+      </div>
+      <div class="aiw__chips">
+        <span class="aiw__chip" style="--at:0.9s">Booking request</span>
+        <span class="aiw__chip is-to" style="--at:1.2s">
+          <svg viewBox="0 0 16 16"><path d="M3 8h9M8.5 4.5L12 8l-3.5 3.5" /></svg>
+          Events team
+        </span>
+      </div>
+    </div>
+
+    <div class="aiw__row">
+      <div class="aiw__rowhead">
+        <span class="aiw__label">Draft reply</span>
+        <span class="aiw-swap aiw__note" style="--swap:2.7s">
+          <span class="aiw-swap__a">Drafting</span>
+          <span class="aiw-swap__b">From your own information</span>
+        </span>
+      </div>
+      <div class="aiw__lines">
+        {lines.map((w, i) => <span style={`--w:${w}%;--i:${i}`}><i></i></span>)}
+      </div>
+    </div>
+
+    <div class="aiw__row aiw__approve">
+      <span class="aiw__avatar">You</span>
+      <span class="aiw-swap aiw__approve-text" style="--swap:3.4s">
+        <span class="aiw-swap__a">Waiting for you to check</span>
+        <span class="aiw-swap__b">Checked and sent</span>
+      </span>
+      <span class="aiw__btn">
+        <svg class="aiw__tick" viewBox="0 0 20 20"><path d="M5.5 10.5l3 3L14.5 7" /></svg>
+        <span class="aiw-swap" style="--swap:3.4s">
+          <span class="aiw-swap__a">Approve</span>
+          <span class="aiw-swap__b">Approved</span>
+        </span>
+      </span>
+    </div>
+
+    <div class="aiw__row">
+      <div class="aiw__rowhead">
+        <span class="aiw__label">Time saved this week</span>
+        <span class="aiw-swap aiw__value" style="--swap:4.4s">
+          <span class="aiw-swap__a">Measuring</span>
+          <span class="aiw-swap__b">2h 15m</span>
+        </span>
+      </div>
+      <ul class="aiw__days">
+        {days.map((x, i) => (
+          <li style={`--v:${x.v};--i:${i}`}>
+            <span class="aiw__bar"><i></i></span>
+            <span class="aiw__day">{x.d}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll<HTMLElement>('[data-ai-flow]').forEach((el) => {
+    if (REDUCED || !('IntersectionObserver' in window)) return;
+    el.classList.add('is-armed');
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            el.classList.add('is-playing');
+            io.disconnect();
+          }
+        });
+      },
+      { threshold: 0.45 }
+    );
+    io.observe(el);
+  });
+</script>
+
+<style>
+  .aiw {
+    --teal: var(--color-teal, #2c6e7f);
+    --line: var(--color-line, #e1e7ea);
+    width: 100%;
+    max-width: 30rem;
+  }
+  .aiw__card {
+    display: grid;
+    gap: 0.75rem;
+    padding: var(--pl-s-lg, 1.25rem);
+    border-radius: var(--pl-r-card, 1.25rem);
+    background-color: var(--pl-primary, #fff);
+    border: 1px solid var(--line);
+    font-size: var(--pl-sm, 0.875rem);
+    line-height: 1.3;
+  }
+
+  .aiw__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.25rem 0.25rem 0.5rem;
+  }
+  .aiw__site,
+  .aiw__label {
+    font-family: var(--font-mono, monospace);
+    font-size: var(--pl-xs, 0.75rem);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .aiw__site { letter-spacing: 0.04em; }
+  .aiw__pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    background-color: var(--pl-a1, #eaf1f4);
+    font-weight: 500;
+  }
+  .aiw__dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; background-color: var(--teal); }
+
+  .aiw__row {
+    display: grid;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    border-radius: 0.75rem;
+    background-color: var(--pl-secondary, #f3f6f8);
+  }
+  .aiw__rowhead { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+  .aiw__note { color: var(--pl-text-meta, #5a646a); text-align: right; }
+
+  .aiw-swap { display: inline-grid; }
+  .aiw-swap > span { grid-area: 1 / 1; }
+  .aiw-swap__a { opacity: 0; }
+  .aiw__note.aiw-swap,
+  .aiw__value { justify-items: end; }
+  .aiw__label { white-space: nowrap; }
+
+  /* Incoming message: a white bubble, like a real inbox preview. */
+  .aiw__msg {
+    margin: 0;
+    padding: 0.75rem 0.875rem;
+    border-radius: 0.75rem 0.75rem 0.75rem 0.25rem;
+    background-color: var(--pl-primary, #fff);
+    border: 1px solid var(--line);
+  }
+
+  .aiw__chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .aiw__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.65rem;
+    border-radius: 999px;
+    background-color: var(--pl-primary, #fff);
+    border: 1px solid var(--line);
+    font-weight: 500;
+  }
+  .aiw__chip.is-to { background-color: var(--pl-a1, #eaf1f4); border-color: transparent; }
+  .aiw__chip svg { width: 0.875rem; height: 0.875rem; fill: none; stroke: var(--teal); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Draft reply: three text lines that write themselves. */
+  .aiw__lines { display: grid; gap: 0.45rem; }
+  .aiw__lines span { display: block; width: var(--w); height: 0.5rem; border-radius: 999px; background-color: var(--line); overflow: hidden; }
+  .aiw__lines i { display: block; height: 100%; border-radius: inherit; background-color: color-mix(in srgb, var(--teal) 45%, #fff); transform-origin: left; }
+
+  /* Approval: the person stays in charge. */
+  .aiw__approve { grid-template-columns: auto 1fr auto; align-items: center; gap: 0.75rem; }
+  .aiw__avatar {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background-color: var(--color-ink, #0f1417);
+    color: var(--color-white, #fff);
+    font-size: 0.6875rem;
+    font-weight: 600;
+  }
+  .aiw__approve-text { font-weight: 500; }
+  .aiw__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 999px;
+    background-color: var(--teal);
+    color: #fff;
+    font-weight: 500;
+  }
+  .aiw__tick { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 14; }
+
+  .aiw__value { font-family: var(--font-display, inherit); font-size: var(--pl-lg, 1.125rem); }
+  .aiw__days { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+  .aiw__days li { display: grid; gap: 0.35rem; justify-items: center; }
+  .aiw__bar { display: flex; align-items: flex-end; width: 100%; height: 2.5rem; }
+  .aiw__bar i { display: block; width: 100%; height: calc(var(--v) * 100%); border-radius: 0.25rem; background-color: var(--teal); transform-origin: bottom; }
+  .aiw__day { font-family: var(--font-mono, monospace); font-size: var(--pl-xs, 0.75rem); color: var(--pl-text-meta, #5a646a); }
+
+  @media (max-width: 400px) {
+    .aiw__approve { grid-template-columns: auto 1fr; }
+    .aiw__btn { grid-column: 1 / -1; justify-self: start; }
+  }
+
+  /* ---- Motion. Only attached once the script arms it. ---------------- */
+  .aiw.is-armed * { animation-play-state: paused; }
+  .aiw.is-armed.is-playing * { animation-play-state: running; }
+
+  .is-armed .aiw-swap__a { animation: aiw-show-hide var(--swap, 4.5s) linear both; }
+  .is-armed .aiw-swap__b { animation: aiw-in 0.3s ease var(--swap, 4.5s) both; }
+  .is-armed .aiw__dot { animation: aiw-dot 0.6s ease 4.5s both; }
+
+  .is-armed .aiw__msg { animation: aiw-up 0.45s cubic-bezier(.2, .8, .2, 1) 0.2s both; }
+  .is-armed .aiw__chip { animation: aiw-pop 0.3s cubic-bezier(.3, 1.4, .5, 1) var(--at) both; }
+  .is-armed .aiw__lines i { animation: aiw-fill 0.5s cubic-bezier(.4, 0, .2, 1) calc(1.8s + var(--i) * 0.3s) both; }
+  .is-armed .aiw__btn { animation: aiw-btn 0.3s ease 3.4s both; }
+  .is-armed .aiw__tick { animation: aiw-draw 0.3s ease 3.5s both; }
+  .is-armed .aiw__bar i { animation: aiw-rise 0.35s ease calc(3.8s + var(--i) * 0.1s) both; }
+
+  @keyframes aiw-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes aiw-show-hide { 0%, 96% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes aiw-up { from { opacity: 0; transform: translateY(0.5rem); } to { opacity: 1; transform: none; } }
+  @keyframes aiw-pop { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
+  @keyframes aiw-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes aiw-btn {
+    from { background-color: var(--color-ink, #0f1417); }
+    to { background-color: var(--teal); }
+  }
+  @keyframes aiw-draw { from { stroke-dashoffset: 14; } to { stroke-dashoffset: 0; } }
+  @keyframes aiw-rise { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+  @keyframes aiw-dot {
+    0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--teal) 50%, transparent); }
+    100% { box-shadow: 0 0 0 0.5rem transparent; }
+  }
+</style>

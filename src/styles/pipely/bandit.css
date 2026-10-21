@@ -1,0 +1,386 @@
+/* ============================================================
+   Bandit, the chat assistant. See components/pipely/Bandit.astro.
+
+   A floating window over the page, so it breaks the panel-on-ground
+   rule on purpose: it sits above the panels rather than among them.
+   It still keeps the house style. No shadows; the edge comes from a
+   1px border in --color-gray, which measures 4.6:1 on white and so
+   passes as a component boundary. Light title bar, because the window
+   dots are brand colours and red on ink would only reach 3:1.
+   ============================================================ */
+
+.bd {
+  --bd-inset: var(--pl-s-lg, 1.25rem);
+  /* Window dots, measured on the cream title bar (#f3f6f8). Each needs
+     3:1 as a control; the white glyph on each dot is over 5:1 too. */
+  --bd-close: var(--color-red);   /* 5.7:1 */
+  --bd-min: #9a5b00;              /* 5.0:1, a darkened amber */
+  --bd-max: var(--color-teal);    /* 5.3:1 */
+  font-family: var(--font-body);
+}
+
+/* ---------- Launcher ---------- */
+
+.bd-launcher {
+  position: fixed;
+  z-index: 140;
+  right: var(--bd-inset);
+  bottom: var(--bd-inset);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 3.25rem;
+  padding: 0 1.25rem 0 1rem;
+  border: 0;
+  border-radius: var(--pl-r-pill);
+  background: var(--color-ink);
+  color: var(--color-cream);
+  font: inherit;
+  font-size: var(--pl-sm);
+  font-weight: var(--pl-fw-medium);
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background-color var(--pl-dur-press) var(--pl-ease-out-quart),
+    transform var(--pl-dur-press) var(--pl-ease-out-quart);
+}
+.bd-launcher:hover { background: var(--color-red); transform: scale(0.97); }
+.bd-launcher[hidden] { display: none; }
+
+.bd-hound { width: 1.9rem; height: auto; overflow: visible; }
+.bd-hound__body { fill: var(--color-cream); }
+.bd-hound__red { fill: var(--color-red); }
+.bd-hound__eye { fill: var(--color-ink); }
+.bd-launcher:hover .bd-hound__red { fill: var(--color-ink); }
+
+/* ---------- Peek ---------- */
+
+.bd-peek {
+  position: fixed;
+  z-index: 140;
+  right: var(--bd-inset);
+  bottom: calc(var(--bd-inset) + 4rem);
+  width: min(19rem, calc(100vw - 2 * var(--bd-inset)));
+  padding: 1rem 2.75rem 1rem 1.1rem;
+  border: 1px solid var(--color-gray);
+  border-radius: var(--pl-r-panel);
+  background: var(--pl-primary);
+  color: var(--pl-text);
+  animation: bd-peek var(--pl-dur-panel) var(--pl-ease-out-quart) both;
+}
+.bd-peek[hidden] { display: none; }
+.bd-peek__text { font-size: var(--pl-sm); line-height: var(--pl-lh-body); }
+.bd-peek__open {
+  margin-top: 0.6rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: var(--pl-sm);
+  font-weight: var(--pl-fw-semi);
+  color: var(--color-ink);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+  min-height: 1.5rem;
+}
+.bd-peek__open:hover { color: var(--color-red); }
+.bd-peek__close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--pl-text-meta);
+  cursor: pointer;
+}
+.bd-peek__close:hover { background: var(--pl-secondary); color: var(--color-ink); }
+.bd-peek__close svg { width: 0.9rem; height: 0.9rem; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; fill: none; }
+
+@keyframes bd-peek {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---------- Window ---------- */
+
+.bd-win {
+  position: fixed;
+  z-index: 145;
+  right: var(--bd-inset);
+  bottom: var(--bd-inset);
+  display: flex;
+  flex-direction: column;
+  width: 24rem;
+  height: min(38rem, calc(100dvh - 2 * var(--bd-inset)));
+  border: 1px solid var(--color-gray);
+  border-radius: var(--pl-r-card);
+  background: var(--pl-primary);
+  color: var(--pl-text);
+  overflow: hidden;
+  animation: bd-open var(--pl-dur-hover) var(--pl-ease-out-quart) both;
+}
+.bd-win[hidden] { display: none; }
+.bd-win.is-placed { right: auto; bottom: auto; }
+.bd-win.is-max {
+  width: min(46rem, calc(100vw - 2 * var(--bd-inset)));
+  height: min(52rem, calc(100dvh - 2 * var(--bd-inset)));
+}
+.bd-win[data-state='min'] { height: auto; }
+.bd-win[data-state='min'] .bd-body { display: none; }
+.bd-win.is-dragging { user-select: none; }
+
+@keyframes bd-open {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Title bar */
+.bd-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem 0.5rem 0.5rem;
+  border-bottom: 1px solid var(--pl-border);
+  background: var(--pl-secondary);
+  touch-action: none;
+}
+@media (min-width: 768px) {
+  .bd-win:not(.is-max) .bd-bar { cursor: grab; }
+  .bd-win.is-dragging .bd-bar { cursor: grabbing; }
+}
+
+.bd-dots { display: flex; }
+.bd-dot {
+  position: relative;
+  width: 1.5rem;   /* 24px target, WCAG 2.5.8 */
+  height: 1.5rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.bd-dot::before {
+  content: '';
+  position: absolute;
+  inset: 0.3125rem; /* 14px visible dot */
+  border-radius: 50%;
+  background: var(--dot);
+}
+.bd-dot.is-close { --dot: var(--bd-close); }
+.bd-dot.is-min { --dot: var(--bd-min); }
+.bd-dot.is-max { --dot: var(--bd-max); }
+.bd-dot svg {
+  position: absolute;
+  inset: 0.4375rem;
+  width: 0.625rem;
+  height: 0.625rem;
+  stroke: #fff;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  fill: none;
+  opacity: 0;
+}
+.bd-dots:hover .bd-dot svg,
+.bd-dot:focus-visible svg { opacity: 1; }
+.bd-dot:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 0; border-radius: 50%; }
+@media (max-width: 767px) {
+  .bd-dot.is-max { display: none; }
+}
+
+/* .pipely prefix: beats the site's `.pipely h2` size. */
+.pipely .bd-title {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  min-width: 0;
+  font-family: var(--font-display);
+  font-size: var(--pl-base);
+  font-weight: var(--pl-fw-medium);
+  letter-spacing: var(--pl-tr-tight);
+  line-height: 1.2;
+}
+.bd-title__sub {
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--pl-text-meta);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Body */
+.bd-body { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+
+.bd-log {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+.bd-log:focus { outline: none; }
+.bd-log:focus-visible { outline: 2px solid var(--color-ink); outline-offset: -2px; }
+
+.bd-msg { max-width: 88%; font-size: var(--pl-sm); line-height: var(--pl-lh-body); }
+.bd-msg.is-bot { align-self: flex-start; }
+.bd-msg.is-user { align-self: flex-end; }
+.bd-msg__text {
+  padding: 0.7rem 0.9rem;
+  border-radius: var(--pl-r-media);
+}
+.bd-msg.is-bot .bd-msg__text { background: var(--pl-secondary); border-bottom-left-radius: 0.25rem; }
+.bd-msg.is-user .bd-msg__text {
+  background: var(--color-ink);
+  color: var(--color-cream);
+  border-bottom-right-radius: 0.25rem;
+  white-space: pre-wrap;
+}
+.bd-msg__text p + p,
+.bd-msg__text p + ul,
+.bd-msg__text ul + p { margin-top: 0.6em; }
+.bd-msg__text ul { padding-left: 1.1em; list-style: disc; }
+.bd-msg__text li + li { margin-top: 0.25em; }
+.bd-msg__text a { color: inherit; text-decoration: underline; text-underline-offset: 0.2em; }
+.bd-msg__text a:hover { color: var(--color-red); }
+.bd-msg__text strong { font-weight: var(--pl-fw-semi); }
+
+.pipely .bd-cta { margin-top: 0.6rem; height: 2.75rem; padding-inline: 1.1rem; font-size: var(--pl-xs); }
+
+/* Typing indicator */
+.bd-typing { display: inline-flex; gap: 0.25rem; padding: 0.35rem 0; }
+.bd-typing i {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--pl-text-meta);
+  animation: bd-blink 1.2s infinite both;
+}
+.bd-typing i:nth-child(2) { animation-delay: 0.2s; }
+.bd-typing i:nth-child(3) { animation-delay: 0.4s; }
+@keyframes bd-blink { 0%, 80%, 100% { opacity: 0.25; } 40% { opacity: 1; } }
+
+/* Suggested questions */
+.bd-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.bd-chip {
+  min-height: 2rem;
+  padding: 0.35rem 0.8rem;
+  border: 1px solid var(--color-gray);
+  border-radius: var(--pl-r-pill);
+  background: var(--pl-primary);
+  color: var(--color-ink);
+  font: inherit;
+  font-size: 0.8125rem;
+  line-height: 1.3;
+  text-align: left;
+  cursor: pointer;
+}
+.bd-chip:hover { border-color: var(--color-red); color: var(--color-red); }
+
+/* Composer */
+.bd-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  margin: 0 0.75rem;
+  padding: 0.4rem 0.4rem 0.4rem 0.9rem;
+  border: 1px solid var(--color-gray);
+  border-radius: var(--pl-r-media);
+  background: var(--pl-primary);
+}
+.bd-form:focus-within { border-color: var(--color-ink); box-shadow: var(--pl-focus-ring); }
+.bd-input {
+  flex: 1;
+  min-height: 2.5rem;
+  max-height: 8rem;
+  padding: 0.55rem 0;
+  border: 0;
+  background: none;
+  color: var(--pl-text);
+  font: inherit;
+  font-size: 1rem; /* 16px stops iOS zooming in on focus */
+  line-height: 1.4;
+  resize: none;
+}
+/* The composer draws the focus state on its border (see .bd-form), so the
+   site-wide outline on the textarea itself would double it. */
+.pipely .bd-input:focus,
+.pipely .bd-input:focus-visible { outline: none; box-shadow: none; }
+.bd-input::placeholder { color: var(--pl-text-meta); opacity: 1; }
+.bd-send {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0;
+  border-radius: var(--pl-r-button);
+  background: var(--color-ink);
+  color: var(--color-cream);
+  cursor: pointer;
+  transition: background-color var(--pl-dur-press) var(--pl-ease-out-quart);
+}
+.bd-send:hover { background: var(--color-red); }
+.bd-send:disabled { background: var(--pl-text-meta); cursor: wait; }
+.bd-send svg { width: 1.1rem; height: 1.1rem; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+
+.bd-note {
+  padding: 0.6rem 1rem 0.8rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--pl-text-meta);
+}
+.bd-note a { color: inherit; text-decoration: underline; text-underline-offset: 0.2em; }
+
+/* Focus, matching the site's buttons */
+.bd-launcher:focus-visible,
+.bd-peek__open:focus-visible,
+.bd-peek__close:focus-visible,
+.bd-chip:focus-visible,
+.bd-send:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 3px;
+}
+
+/* ---------- Phones: a sheet, not a window ---------- */
+
+@media (max-width: 767px) {
+  .bd { --bd-inset: 0.75rem; }
+  .bd-launcher { height: 3rem; padding: 0 1rem 0 0.8rem; }
+  .bd-win,
+  .bd-win.is-max {
+    left: 0.5rem;
+    right: 0.5rem;
+    bottom: 0.5rem;
+    width: auto;
+    height: calc(100dvh - 1rem);
+  }
+  .bd-win[data-state='min'] { height: auto; }
+  .bd-msg { max-width: 92%; }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .bd-peek,
+  .bd-win { animation: none; }
+  .bd-launcher,
+  .bd-send { transition: none; }
+  .bd-launcher:hover { transform: none; }
+  .bd-typing i { animation: none; opacity: 0.6; }
+}
+
+/* Printing a page should not print the chat. */
+@media print {
+  .bd { display: none; }
+}

@@ -14,7 +14,8 @@
  *   2. How we can work together: the four services Doghouse sells under AI Solutions
  *      (practical AI audit, hands-on team workshops, custom built assistants,
  *      everyday automations).
- *   3. Examples: the carousel from the holding page.
+ *   3. Examples: the support assistant plus five things we build, each
+ *      with a PlatformMark (the hound line drawings).
  *   4. How we work: look first, one workflow at a time, built with your
  *      team, handed over cleanly. Safety and privacy (approval, data,
  *      limits) sits under the steps in the same panel.
@@ -30,7 +31,6 @@
  * internal finance and reporting automation out.
  *
  * TODO before launch:
- *   - Edithouse and Off Script Tapes wording in the examples is unconfirmed.
  *   - Confirm the data wording in section 5 and the safety answer in the
  *     questions match how each client build actually handles data.
  */
@@ -40,6 +40,7 @@ import Accordion from '../components/pipely/Accordion.astro';
 import StartProject from '../components/pipely/StartProject.astro';
 import ChatPhone from '../components/sections/ChatPhone.astro';
 import AiWorkflow from '../components/sections/AiWorkflow.astro';
+import PlatformMark from '../components/pipely/PlatformMark.astro';
 
 // 2. How we can work together. Order runs from least to most commitment.
 const services = [
@@ -64,6 +65,44 @@ const services = [
     text: 'We connect your internal platforms, software, and website so information flows smoothly without manual copy-pasting. We sort incoming enquiries to the right team member, draft initial replies for quick approval, and automate repetitive reporting tasks.',
   },
 ];
+
+// 3. Examples. The first is the Western Rheumatology assistant, now unnamed
+// in its title (Susan, 21 October 2026); the case study link beside the
+// carousel still names the clinic.
+const examples: { icon: 'assistant' | 'leads' | 'inbox' | 'research' | 'reporting' | 'social'; title: string; text: string }[] = [
+  {
+    icon: 'assistant',
+    title: 'Clinic website patient assistant',
+    text: 'The clinic’s assistant answers patients’ common questions using the clinic’s own information, so fewer people need to ring the practice. Patients can also order repeat prescriptions online.',
+  },
+  {
+    icon: 'leads',
+    title: 'Lead management',
+    text: 'Every enquiry from your website, email and socials lands in one place, sorted by what it is and how urgent it is, with a reply drafted for checking. Follow-ups go out on time, and you can see at a glance which leads are new, waiting or booked.',
+  },
+  {
+    icon: 'inbox',
+    title: 'Your morning to-do list, in your inbox',
+    text: 'Before the day starts, an email arrives with what needs doing: enquiries waiting on a reply, today’s meetings, upcoming deadlines and anything that’s been left too long. You know where to start before you open anything else.',
+  },
+  {
+    icon: 'research',
+    title: 'A research assistant on your market',
+    text: 'A short research note, ready each morning or before an important meeting. What competitors are doing, news in your sector and what people are searching for, so you get the headlines without the hour of digging.',
+  },
+  {
+    icon: 'reporting',
+    title: 'Live reporting on your website and socials',
+    text: 'Website traffic, enquiries and social media results in one place, updated automatically. A plain-English summary tells you what changed this week and what’s worth acting on, so nobody has to build the report by hand.',
+  },
+  {
+    icon: 'social',
+    title: 'Answers on your social channels',
+    text: 'The questions people ask in comments and messages, answered from your own information, like opening hours, availability or how to book. Anything new or sensitive goes to your team to reply to themselves.',
+  },
+];
+const words = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'];
+const countWord = words[examples.length] ?? String(examples.length);
 
 // 4. How we work.
 const steps = [
@@ -173,38 +212,58 @@ const timeline = [
 ];
 
 // 7. Questions.
+// EU AI Act answer: Article 4 (AI literacy) still requires providers and
+// deployers to take measures for staff AI literacy after the AI Omnibus
+// recalibration (checked 21 October 2026, ki-campus.org, 28 July 2026).
+// Do not claim more than that, and re-check before launch.
 const faqs = [
   {
-    q: 'Do we need our information in order first?',
-    a: 'It helps, and the AI audit will tell you where you stand. An assistant is only as good as the information it works from, so tidying that up is often part of the job.',
+    q: 'Where does AI actually make sense in a business like ours?',
+    a: 'Usually in the repetitive, text-heavy work: answering the same questions, summarising documents, drafting first versions and moving information between systems. The AI audit pinpoints where that time goes in your business, and where it doesn’t make sense at all.',
   },
   {
-    q: 'Is it safe to use with client or patient information?',
-    a: 'It can be, with the right provider, settings and agreements in place. We check that before anything is built, and we will tell you if something you want to do is not a good idea.',
-  },
-  {
-    q: 'Can you add an assistant to the website we already have?',
-    a: 'Usually, yes. It does not need a new site. We look at what the site runs on and what the assistant would need to draw from, and tell you if anything has to change first.',
+    q: 'What does the AI audit involve?',
+    a: 'We talk to the people doing the work, look at where information is moved, chased or retyped, and review what you already have written down. You get a short report on what’s worth doing, what isn’t, and where to start.',
   },
   {
     q: 'Can we start with training only?',
     a: 'Yes. Plenty of teams start with a workshop to get comfortable with the tools before deciding whether to build anything. There’s no obligation to go further.',
   },
   {
+    q: 'Who should come to the workshops?',
+    a: 'Anyone who will use AI in their work, from the front desk to management. We tailor each session to the group, so a reception team and a leadership team get different examples.',
+  },
+  {
+    q: 'Our staff already use AI tools on their own. Is that a problem?',
+    a: 'It’s very common, and it isn’t a problem in itself. The risk is client or company information going into tools nobody has checked. A workshop and a simple set of ground rules give your team clarity on what’s fine and what isn’t.',
+  },
+  {
+    q: 'Does the EU AI Act affect us?',
+    a: 'If your team uses AI at work, the Act expects you to take steps so they understand it, known as AI literacy. Our workshops are built with that in mind. If anything you’re planning needs a closer look under the Act, we’ll tell you before we build it.',
+  },
+  {
+    q: 'Is it safe to use with client or patient information?',
+    a: 'It can be, with the right provider, settings and agreements in place. We check that before anything is built, and we will tell you if something you want to do is not a good idea.',
+  },
+  {
+    q: 'Is AI accurate enough to rely on?',
+    a: 'Not on its own. It’s very good at first drafts, summaries and sorting, but it can still get facts wrong with complete confidence. That’s why we build in checks, keep assistants to your own information, and teach your team to review what it produces.',
+  },
+  {
     q: 'Do we need technical staff to run it?',
-    a: 'No. We build around the people you already have, and every workflow is documented and handed over with training, so your team can run it day to day. If you’d prefer us to keep looking after it, we can.',
+    a: 'It depends on the size of the project and the business. Whatever the scale, we always advocate for a dedicated product owner when a new tool is brought in, someone who owns how it’s used and makes the calls. Enthusiastic champions within the team matter just as much. They’re often the difference between a tool your team actually takes up and one that gets quietly left behind. Every workflow is documented and handed over with training, and if you’d prefer us to keep looking after it, we can.',
   },
   {
-    q: 'Will AI replace our staff?',
-    a: 'That’s not what we build it for. The aim is to take the repetitive work off your team’s plate, so they have more time for the work that actually needs them. A person always has the final say on anything new or sensitive.',
+    q: 'Do we need our information in order first?',
+    a: 'Yes, but it doesn’t need to be perfect. Start small, with a list of the repetitive tasks your team does every week. Any standard operating procedures (SOPs) you already have are a good starting point, along with access to the data behind the work, such as sales figures, marketing results and website traffic. The AI audit will show you what’s ready to use and what’s missing.',
   },
   {
-    q: 'What happens if it gets something wrong?',
-    a: 'Assistants only answer from the information you’ve given them, and anything outside that goes to a team member. If an answer isn’t right, we fix the source information or the rules behind it, so it doesn’t happen again.',
+    q: 'Can you add an assistant to the website we already have?',
+    a: 'Usually, yes. It does not need a new site. We look at what the site runs on and what the assistant would need to draw from, and tell you if anything has to change first.',
   },
   {
-    q: 'How soon will we know if it’s working?',
-    a: 'Fairly quickly. First projects are kept small on purpose, and we agree up front what we’re measuring, so you can see whether it’s saving the time it was meant to save.',
+    q: 'How do we measure whether it’s working?',
+    a: 'Before we build anything, we record a baseline: how often the task comes up, how long it takes and who does it. For example, 40 enquiry emails a week at six minutes each is four hours of someone’s time. Once the workflow is live, we measure the same task again after the first month and show you the difference in hours saved, response times and how often a person had to step in.',
   },
 ];
 ---
@@ -273,9 +332,10 @@ const faqs = [
   </section>
 
   {/* ---------- 3. Examples ----------
-      The carousel from the 9 October holding page. Western Rheumatology is
-      the substantiated case; Edithouse and Off Script Tapes are listed as
-      client work, not as the studio's own businesses. */}
+      Western Rheumatology is the one named, substantiated case. The other
+      items (21 October 2026, from Susan) describe what we build, not named
+      client results, so do not attach client names or figures to them
+      without her say-so. The count is generated from the array. */}
   <section class="pl-panel is-ground" aria-labelledby="ai-examples">
     <div class="pl-gutter pl-pad-md">
       <div class="pl-container is-md">
@@ -284,14 +344,14 @@ const faqs = [
             <p class="u-eyebrow is-web">Examples</p>
             <h2 class="u-h2 u-balance" id="ai-examples">What it looks like in practice.</h2>
             <p class="u-lg u-max-33" style="color:var(--pl-text)">
-              Assistants that answer from an organisation’s own information, and automation that moves
-              information between the website and the systems behind it, so nobody re-types it.
+              Assistants that answer from your own information, and automations that bring the right
+              information to you, so nobody has to go looking for it or build it by hand.
             </p>
             <a class="pl-link" href="/work/western-rheumatology/">Read the Western Rheumatology case study</a>
           </div>
           <div class="ai-feature" data-reveal>
             <div class="ai-feature__bar">
-              <p class="ai-feature__count u-eyebrow is-web">Four examples</p>
+              <p class="ai-feature__count u-eyebrow is-web">{countWord} examples</p>
               <div class="ai-feature__nav">
                 <button type="button" class="ai-feature__btn" data-ai-prev aria-controls="ai-feature-list" aria-label="Previous example">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 10l5-5 5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
@@ -303,30 +363,13 @@ const faqs = [
             </div>
             <div class="ai-feature__scroll" id="ai-feature-list" data-ai-scroll tabindex="0" role="region" aria-label="AI and automation examples, scroll for more">
               <ul class="ai-connect" role="list">
-                <li class="ai-connect__item">
-                  <h3 class="ai-feature__title">Western Rheumatology: patient assistant</h3>
-                  <p style="color:var(--pl-text)">
-                    The clinic’s assistant answers patients’ common questions using the clinic’s own information, so fewer people need to ring the practice. Patients can also order repeat prescriptions online.
-                  </p>
-                </li>
-                <li class="ai-connect__item">
-                  <h3 class="ai-feature__title">Western Rheumatology: medication hub</h3>
-                  <p style="color:var(--pl-text)">
-                    Our workflow lets the clinic manage more than 50 medications on its own website. Each one has its dosage, what it is used for and a short video explainer, and the clinic updates it in one place.
-                  </p>
-                </li>
-                <li class="ai-connect__item">
-                  <h3 class="ai-feature__title">Edithouse</h3>
-                  <p style="color:var(--pl-text)">
-                    A chatbot on the website answers the questions couples ask before they enquire, and looks at each lead that comes in. We have also designed Edithouse’s lead generation and its in-house editing workflows.
-                  </p>
-                </li>
-                <li class="ai-connect__item">
-                  <h3 class="ai-feature__title">Off Script Tapes</h3>
-                  <p style="color:var(--pl-text)">
-                    A camcorder hire service with lead handling built around the enquiry. Quotes, questionnaires and invoices run through one client portal, and replies are drafted in the brand’s own voice, so each enquiry gets a prompt, consistent answer.
-                  </p>
-                </li>
+                {examples.map((e) => (
+                  <li class="ai-connect__item mk-host">
+                    <span class="ai-connect__icon"><PlatformMark name={e.icon} size={64} /></span>
+                    <h3 class="ai-feature__title">{e.title}</h3>
+                    <p style="color:var(--pl-text)">{e.text}</p>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
@@ -340,14 +383,15 @@ const faqs = [
     <div class="pl-gutter pl-pad-md">
       <div class="pl-container is-md">
         <div class="pl-grid-2 is-top is-wide">
-          <div class="pl-stack pl-stack-md" data-reveal>
+          <div class="pl-stack pl-stack-md ai-how__left" data-reveal>
             <h2 class="u-h2 u-max-26 u-balance" id="ai-how">How we work.</h2>
             <p class="u-muted u-max-26">
               No AI for the sake of it. We keep every project focused and measurable, so you can judge whether it
               actually saved the time it was built to save.
             </p>
             <div class="pl-gap-sm"></div>
-            <AiWorkflow />
+            {/* Sticks while the steps and Safety & Privacy scroll past. */}
+            <div class="ai-how__sticky"><AiWorkflow /></div>
           </div>
           <div class="ai-how__right">
             <ol class="ai-steps" role="list" data-reveal-stagger="100">
@@ -363,15 +407,17 @@ const faqs = [
             {/* Safety and privacy, folded into How we work on 21 October 2026.
                 Was its own grey panel. */}
             <div class="pl-gap-lg"></div>
-            <h3 class="u-h3 u-balance ai-safety__heading" id="ai-lines" data-reveal>Safety &amp; Privacy.</h3>
-            <ul class="ai-safety" role="list" aria-labelledby="ai-lines" data-reveal-stagger="100">
+            <div class="ai-safety__box" data-reveal>
+            <h3 class="u-h3 u-balance ai-safety__heading" id="ai-lines">Safety &amp; Privacy.</h3>
+            <ul class="ai-safety" role="list" aria-labelledby="ai-lines">
               {lines.map((l) => (
-                <li class="ai-safety__item" data-reveal>
+                <li class="ai-safety__item">
                   <h4 class="u-lg u-medium ai-safety__title">{l.title}</h4>
                   <p class="u-muted">{l.text}</p>
                 </li>
               ))}
             </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -547,8 +593,22 @@ const faqs = [
     .ai-steps { grid-template-columns: 1fr; }
   }
 
-  /* Safety and privacy, under the steps: grey cards on the white panel,
-     same surface step as the offer cards. */
+  /* How we work, left column: stretches to the full row so the graphic
+     has room to stick while the right column scrolls. Two columns only. */
+  .ai-how__left { align-self: stretch; }
+  .ai-how__sticky { position: sticky; top: 7rem; width: 100%; }
+  @media (max-width: 767px) { .ai-how__sticky { position: static; } }
+
+  /* Safety and privacy, under the steps: a steel-tint box with a teal
+     edge so it reads as its own block, white cards inside. */
+  .ai-safety__box {
+    padding: var(--pl-s-xl, 2rem);
+    border-radius: var(--pl-r-card, 1.25rem);
+    background-color: var(--pl-a1);
+    border: 1px solid color-mix(in srgb, var(--color-teal) 35%, transparent);
+    border-top: 4px solid var(--color-teal);
+  }
+  @media (max-width: 599px) { .ai-safety__box { padding: var(--pl-s-lg); } }
   .ai-safety__heading { margin: 0 0 var(--pl-s-lg); }
   .ai-safety {
     display: grid;
@@ -562,7 +622,7 @@ const faqs = [
     gap: 0.375rem;
     padding: var(--pl-s-md) var(--pl-s-lg);
     border-radius: var(--pl-r-card, 1.25rem);
-    background-color: var(--pl-secondary);
+    background-color: var(--pl-primary);
   }
   .ai-safety__title { margin: 0; }
 
@@ -651,6 +711,9 @@ const faqs = [
     border-top: 1px solid rgb(15 20 23 / 0.2);
   }
   .ai-connect__item p { line-height: 1.6; }
+  /* Doghouse marks (PlatformMark), the same set as the web development
+     page. Decorative: the title under each names the thing. */
+  .ai-connect__icon { display: block; margin-bottom: var(--pl-s-xs); }
 
   .ai-feature { display: grid; gap: var(--pl-s-sm); }
   .ai-feature__bar { display: flex; align-items: center; justify-content: space-between; gap: var(--pl-s-md); }
@@ -699,6 +762,17 @@ const faqs = [
 </style>
 
 <script>
+  // Examples: each mark plays its one-off flick when its item first comes
+  // into view, as on the web development page.
+  if ('IntersectionObserver' in window) {
+    const mio = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add('is-in'); mio.unobserve(e.target); }
+      });
+    }, { threshold: 0.7 });
+    document.querySelectorAll<HTMLElement>('.ai-connect__item.mk-host').forEach((el) => mio.observe(el));
+  }
+
   // Examples: sizes the window to show exactly two items, and wires the up
   // and down buttons. Nothing scrolls on its own.
   const scroller = document.querySelector<HTMLElement>('[data-ai-scroll]');

@@ -1,0 +1,244 @@
+---
+/**
+ * Bandit, the site's chat assistant. Added 21 October 2026, adapted from the
+ * assistant on runwithfoxes.com/answers.
+ *
+ * What it does
+ * - A launcher in the bottom right corner on every page. A few seconds after
+ *   the page settles (and only once the cookie banner is answered), a short
+ *   page-specific greeting peeks out beside it. Closing the peek or the chat
+ *   window stops the peek coming back. The launcher always stays.
+ * - The window is non-modal: the page behind it still works. It has three
+ *   window dots for close, minimise and expand, can be dragged by its title
+ *   bar on wider screens, and becomes a sheet on phones.
+ * - Replies stream in from /api/chat. Bandit answers only from
+ *   src/data/bandit/knowledge.ts and the Work collection.
+ * - Its sales job is the enquiry form. Bandit can end a reply with a button
+ *   that opens Start a project (or the audit request on the audits page) when
+ *   that modal is on the page, and goes to /contact/ when it is not.
+ *
+ * Weight
+ * - This file ships about 1KB of script. The chat itself
+ *   (scripts/pipely/bandit-chat.ts) only loads when someone opens the window,
+ *   or when they had it open on the previous page.
+ *
+ * Storage
+ * - localStorage `dhm-bandit-quiet`: set once the visitor closes the peek or
+ *   the window, so the peek does not come back. A preference, not tracking.
+ * - sessionStorage `dhm-bandit`: the conversation and window state for this
+ *   tab, so the chat survives moving between pages. Gone when the tab closes.
+ *
+ * Accessibility (WCAG 2.2 AA)
+ * - Every control is a real button with a name; the window dots have 24px
+ *   targets around the visible dot and show their symbol on hover and focus.
+ * - Replies are announced once, when complete, through a status region, so a
+ *   screen reader does not read every streamed word.
+ * - Escape closes the window and returns focus to the launcher.
+ * - Dragging is optional. Minimise moves the window out of the way with one
+ *   click, which is the single-pointer alternative (2.5.7).
+ * - Reduced motion: no peek slide, no typing animation, no smooth scrolling.
+ */
+import '../../styles/pipely/bandit.css';
+
+type Cta = 'start' | 'audit' | 'none';
+interface PageConfig {
+  greeting: string;
+  peek: string;
+  chips: string[];
+  cta: Cta;
+}
+
+const PAGES: Record<string, PageConfig> = {
+  '/': {
+    peek: "Hi, I'm Bandit. Ask me anything about the studio.",
+    greeting:
+      "Hi, I'm Bandit, the hound in the logo. Emma and Susan are busy making things, so I answer the questions. Ask me about video, websites, AI or what it would take to get your project going.",
+    chips: ['What kind of video do you make?', 'Can you rebuild our website?', 'Where could AI help us?'],
+    cta: 'start',
+  },
+  '/video-production/': {
+    peek: 'Emma is probably on a shoot. I can answer for her.',
+    greeting:
+      "Hi, I'm Bandit. Emma runs the video side and she's usually on a shoot, so ask me instead. Medical procedures, events, brand video, how a production runs. If you have a video in mind, I can point you to the form so the brief lands with her.",
+    chips: ['Can you film in a hospital?', 'How does a shoot day work?', 'Do you do social cut-downs?'],
+    cta: 'start',
+  },
+  '/web-development/': {
+    peek: 'Susan is head down in code. Questions come to me.',
+    greeting:
+      "Hi, I'm Bandit. Susan builds the websites here and asked me to take the questions while she's head down in code. Learning platforms, shops, bookings, bilingual sites, accessibility. Ask away.",
+    chips: ['Can our team edit the site?', 'Do you build learning platforms?', 'Can you take over our current site?'],
+    cta: 'start',
+  },
+  '/ai-automation/': {
+    peek: "I'm the kind of thing Susan builds. Try me.",
+    greeting:
+      "Hi, I'm Bandit, and yes, I'm the kind of thing Susan builds. I answer from Doghouse's own information and send you to a person when I'm out of my depth. Tell me what eats up your team's week and I'll tell you where we'd start.",
+    chips: ['Where should a small team start?', 'Is it safe with client data?', 'Could you add an assistant to our site?'],
+    cta: 'start',
+  },
+  '/accessibility-audits/': {
+    peek: 'Not sure if the accessibility laws apply to you? Ask me.',
+    greeting:
+      "Hi, I'm Bandit. Wondering whether the accessibility laws apply to you, or what an audit actually involves? Ask me. For a proper answer about your own site, I can open the audit request.",
+    chips: ['Does the EAA apply to us?', 'What does an audit include?', 'Can you fix what you find?'],
+    cta: 'audit',
+  },
+  '/care-and-hosting/': {
+    peek: 'Questions about looking after your site? Ask me.',
+    greeting:
+      "Hi, I'm Bandit. Susan looks after the sites on care plans, and I look after the questions. Ask about backups, updates, hosting, or handing over a site someone else built.",
+    chips: ['What is the difference between the plans?', 'Do we have to host with you?', 'Can you look after a site you did not build?'],
+    cta: 'start',
+  },
+  '/contact/': {
+    peek: 'Not sure what to write? I can help.',
+    greeting:
+      "Hi, I'm Bandit. Not sure what to put in the form? Tell me roughly what you're working on and I'll help you shape it. A few lines is plenty, Susan and Emma will ask the rest.",
+    chips: ['Help me describe a video project', 'Help me describe a website project', 'Who will I hear back from?'],
+    cta: 'none',
+  },
+  '/work/': {
+    peek: 'Looking for something like your project? Ask me.',
+    greeting:
+      "Hi, I'm Bandit. Looking for work like your project? Tell me what you have in mind and I'll point you to the closest examples.",
+    chips: ['Show me medical work', 'Show me charity websites', 'What have you done with Real Nation?'],
+    cta: 'start',
+  },
+  '/about/': {
+    peek: "I'm the third member of the team. Loosely speaking.",
+    greeting:
+      "Hi, I'm Bandit, the third member of the team if you're not strict about it. Ask me anything about how Susan and Emma work.",
+    chips: ['Who would I deal with?', 'What sectors do you work in?', 'Which agencies do you work with?'],
+    cta: 'start',
+  },
+};
+
+const DEFAULT: PageConfig = {
+  peek: "Hi, I'm Bandit. Ask me anything about the studio.",
+  greeting:
+    "Hi, I'm Bandit, the hound in the logo. Ask me about the work on this page, or anything about the studio.",
+  chips: ['What does Doghouse do?', 'How do we get started?'],
+  cta: 'start',
+};
+
+const path = Astro.url.pathname.replace(/\/?$/, '/');
+const page = PAGES[path] || DEFAULT;
+
+const ctaLabel = page.cta === 'audit' ? 'Request an audit' : 'Tell us about your project';
+---
+
+<div class="bd" data-bandit data-page={path} data-cta={page.cta}>
+  <div class="bd-peek" data-bd-peek hidden>
+    <p class="bd-peek__text">{page.peek}</p>
+    <button type="button" class="bd-peek__open" data-bd-open>Chat with Bandit</button>
+    <button type="button" class="bd-peek__close" data-bd-peek-close aria-label="Dismiss message from Bandit">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" /></svg>
+    </button>
+  </div>
+
+  <button type="button" class="bd-launcher" data-bd-open data-bd-launcher aria-controls="bd-window" aria-expanded="false">
+    <svg class="bd-hound" viewBox="0 8 100 62" aria-hidden="true">
+      <path class="bd-hound__body" d="M 14 56 C 14 36, 30 22, 48 22 L 48 14 L 56 24 L 62 14 L 64 26 C 78 30, 90 38, 96 50 L 92 54 L 96 58 C 88 64, 70 62, 56 60 C 44 64, 22 66, 14 56 Z"></path>
+      <path class="bd-hound__red" d="M 22 32 C 36 24, 60 26, 70 34 L 67 42 C 56 36, 38 36, 28 42 Z"></path>
+      <circle class="bd-hound__red" cx="92" cy="50" r="3"></circle>
+      <circle class="bd-hound__eye" cx="50" cy="40" r="2.5"></circle>
+    </svg>
+    <span>Ask Bandit</span>
+  </button>
+
+  <section id="bd-window" class="bd-win" data-bd-window role="dialog" aria-modal="false" aria-labelledby="bd-title" hidden>
+    <div class="bd-bar" data-bd-bar>
+      <div class="bd-dots">
+        <button type="button" class="bd-dot is-close" data-bd-close aria-label="Close chat">
+          <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3.5 3.5l5 5M8.5 3.5l-5 5" /></svg>
+        </button>
+        <button type="button" class="bd-dot is-min" data-bd-min aria-label="Minimise chat">
+          <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 6h6" /></svg>
+        </button>
+        <button type="button" class="bd-dot is-max" data-bd-max aria-label="Expand chat">
+          <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 3v6M3 6h6" /></svg>
+        </button>
+      </div>
+      <h2 class="bd-title" id="bd-title">Bandit <span class="bd-title__sub">Doghouse Media assistant</span></h2>
+    </div>
+
+    <div class="bd-body" data-bd-body>
+      <div class="bd-log" data-bd-log role="region" aria-label="Conversation with Bandit" tabindex="-1">
+        <div class="bd-msg is-bot" data-bd-greeting>
+          <div class="bd-msg__text"><p>{page.greeting}</p></div>
+          {page.cta !== 'none' && (
+            <a class="pl-btn is-sm bd-cta" href="/contact/" data-bd-cta={page.cta}>{ctaLabel}</a>
+          )}
+        </div>
+        <div class="bd-chips" data-bd-chips>
+          {page.chips.map((c) => <button type="button" class="bd-chip" data-bd-chip>{c}</button>)}
+        </div>
+      </div>
+
+      <p class="sr-only" role="status" data-bd-status></p>
+
+      <form class="bd-form" data-bd-form>
+        <label for="bd-input" class="sr-only">Message Bandit</label>
+        <textarea id="bd-input" class="bd-input" data-bd-input rows="1" maxlength="1500" placeholder="Ask Bandit about the studio" autocomplete="off"></textarea>
+        <button type="submit" class="bd-send" data-bd-send aria-label="Send message">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M10.5 5.5L15 10l-4.5 4.5" /></svg>
+        </button>
+      </form>
+      <p class="bd-note">
+        Bandit is an AI assistant and can get things wrong. Messages go to Anthropic to write the reply and are not stored by us. Please leave out personal details. <a href="/privacy/#when-you-use-the-chat-assistant">Privacy</a>
+      </p>
+    </div>
+  </section>
+</div>
+
+<script>
+  /*
+   * Bootstrap. Decides whether to peek, and loads the chat on first open.
+   * Kept tiny on purpose: most visitors never open the chat.
+   */
+  const root = document.querySelector<HTMLElement>('[data-bandit]');
+  if (root) {
+    const peek = root.querySelector<HTMLElement>('[data-bd-peek]')!;
+    const QUIET = 'dhm-bandit-quiet';
+    const SESSION = 'dhm-bandit';
+
+    const get = (s: Storage, k: string) => { try { return s.getItem(k); } catch { return null; } };
+    let chat: Promise<typeof import('../../scripts/pipely/bandit-chat')> | null = null;
+    const load = () => (chat ??= import('../../scripts/pipely/bandit-chat'));
+
+    // Pick up a chat the visitor had open on the previous page.
+    let saved: { state?: string } | null = null;
+    try { saved = JSON.parse(get(sessionStorage, SESSION) || 'null'); } catch {}
+    if (saved && (saved.state === 'open' || saved.state === 'min')) {
+      load().then((m) => m.start(root, { restore: true }));
+    }
+
+    root.querySelectorAll('[data-bd-open]').forEach((b) =>
+      b.addEventListener('click', () => {
+        peek.hidden = true;
+        load().then((m) => m.start(root, { restore: false }));
+      })
+    );
+
+    root.querySelector('[data-bd-peek-close]')?.addEventListener('click', () => {
+      peek.hidden = true;
+      try { localStorage.setItem(QUIET, '1'); } catch {}
+      root.querySelector<HTMLElement>('[data-bd-launcher]')?.focus();
+    });
+
+    // Peek once the page has settled, never over the cookie banner or a
+    // modal, and never once the visitor has closed Bandit.
+    if (!get(localStorage, QUIET) && !saved) {
+      const tryPeek = (left: number) => {
+        const banner = document.querySelector<HTMLElement>('[data-consent]');
+        const busy = (banner && !banner.hidden) || document.documentElement.classList.contains('has-modal');
+        const win = root.querySelector<HTMLElement>('[data-bd-window]')!;
+        if (!win.hidden) return;
+        if (busy) { if (left > 0) setTimeout(() => tryPeek(left - 1), 3000); return; }
+        peek.hidden = false;
+      };
+      setTimeout(() => tryPeek(40), 6000);
+    }
+  }
+</script>

@@ -32,6 +32,7 @@ The fork has been promoted. `/pipely` no longer exists as a route.
 - The sitemap filter is gone from `astro.config.mjs` and no page carries `noindex`.
 - `src/components/sections/PillarBlock.astro` is the only non-Pipely component. Everything else lives under `components/pipely/`.
 - `HOMEPAGE-COPY.md` holds the approved homepage copy and the list of gaps behind it.
+- **Bandit**, the chat assistant (built 21 October 2026, adapted from runwithfoxes.com/answers), is **switched off** until Sue decides to launch it. The files are kept: `components/pipely/Bandit.astro` (launcher, window, page greetings), `scripts/pipely/bandit-chat.ts`, `styles/pipely/bandit.css`, and in `src/data/bandit/` the knowledge, the rules (`prompt.ts`), the server route parked as `chat-route.ts`, and the privacy policy additions as `privacy-policy-additions.diff`. To switch on: move `chat-route.ts` to `src/pages/api/chat.ts` (point its two imports back at `../../data/bandit/`), add `<Bandit />` after `<CookieConsent />` in `Site.astro`, apply the privacy diff, check `knowledge.ts` against the current page copy, and set `ANTHROPIC_API_KEY` in Vercel with a spend limit. Start a project and the audit request already listen for Bandit's `dhm:start-project` and `dhm:audit-request` events, which do nothing while it is off.
 
 ### Before this can launch
 

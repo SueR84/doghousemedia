@@ -228,6 +228,13 @@ const timelines = ['As soon as possible', 'In the next 3 months', 'Just explorin
       });
     });
 
+    // Bandit's enquiry button (components/pipely/Bandit.astro) asks for the
+    // modal this way, because it is added after this script has run.
+    document.addEventListener('dhm:audit-request', (e) => {
+      trigger = e.detail?.trigger || null;
+      open();
+    });
+
     dialog.querySelectorAll('[data-ar-close]').forEach((b) => b.addEventListener('click', close));
     dialog.addEventListener('click', (e) => { if (e.target === dialog) close(); });
     document.addEventListener('keydown', (e) => {
