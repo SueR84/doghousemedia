@@ -109,7 +109,7 @@ const timeline = [
     when: 'Early 2023',
     tool: 'ChatGPT',
     model: 'GPT-3.5',
-    // The one exclamation mark on the site, kept at Susan's request (21 October 2026).
+    // One of two exclamation marks on the site, both on this timeline at Susan's request (21 October 2026).
     text: 'Drafting, research, and mostly just marvelling at this incredible new tech!',
   },
   {
@@ -144,6 +144,12 @@ const timeline = [
     text: 'A second coding agent, used alongside Claude Code.',
   },
   {
+    when: 'Late 2025',
+    tool: 'Skills and connected tools',
+    model: 'Anthropic',
+    text: 'We started building our own skills for the work we repeat, and connecting Claude to the tools we already use through MCP.',
+  },
+  {
     when: 'Summer 2026',
     tool: 'Video and motion graphics',
     model: 'Claude, Codex',
@@ -151,15 +157,16 @@ const timeline = [
   },
   {
     when: 'Now',
-    tool: 'Hermes Agent',
-    model: 'Nous Research',
-    text: 'Open-source AI agents, powered by local LLMs, that carry out multi-step tasks on their own.',
+    tool: 'Claude Team',
+    model: 'Anthropic',
+    text: 'One shared workspace for the studio, with our projects, documents and ways of working in it.',
   },
   {
     when: 'Now',
-    tool: 'Claude Team',
-    model: 'Claude Opus 5.5',
-    text: 'One shared workspace for the studio, with our projects, documents and ways of working in it.',
+    tool: 'Our own second brain',
+    model: 'Hermes Agent, Nous Research',
+    // Second exclamation mark, also at Susan's request (21 October 2026).
+    text: 'A longer-term project, running on our own local hardware. Free local LLMs handle most tasks, while we switch to Claude Opus for more complicated workflows. The future!',
   },
 ];
 
@@ -562,6 +569,29 @@ const faqs = [
   .ai-time__step.is-now .ai-time__dot {
     background: var(--pl-accent-web);
     box-shadow: 0 0 0 5px color-mix(in srgb, var(--pl-accent-web) 22%, transparent);
+  }
+  /* Current steps pulse when they scroll into view (the reveal adds .is-in).
+     Three pulses, 4.5 seconds in all, then they rest on the static ring.
+     Kept under five seconds so no pause control is needed (WCAG 2.2.2), and
+     off entirely under reduced motion. */
+  .ai-time__step.is-now .ai-time__dot::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    border: 2px solid var(--pl-accent-web);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .ai-time__step.is-now.is-in .ai-time__dot::after {
+    animation: ai-time-pulse 1.5s cubic-bezier(0.2, 0.6, 0.4, 1) 0.4s 3 both;
+  }
+  @keyframes ai-time-pulse {
+    0% { transform: scale(1); opacity: 0.7; }
+    100% { transform: scale(2.8); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ai-time__step.is-now.is-in .ai-time__dot::after { animation: none; }
   }
   /* The certification is the one step that is not a tool: a square marker
      instead of a round one. */
