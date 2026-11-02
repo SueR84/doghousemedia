@@ -4,8 +4,9 @@
  * All three enquiry forms post JSON here: the contact page, the Start a
  * project modal (StartProject) and the accessibility audit modal
  * (AuditRequest). This route checks the fields and sends the lead to
- * ENQUIRY_TO through the Mailgun HTTP API. The visitor's address is set as
- * Reply-To, so replying in Gmail goes straight to them.
+ * ENQUIRY_TO through the Mailgun HTTP API, and pushes it to HighLevel. The
+ * visitor's address is set as Reply-To, so replying in Gmail goes straight
+ * to them.
  *
  * Every page stays static. Only this file runs on demand, as a Vercel
  * function (prerender = false, @astrojs/vercel in astro.config.mjs).
@@ -17,11 +18,16 @@
  *   ENQUIRY_TO        optional. Defaults to hello@doghousemedia.ie. Comma-separate for more than one.
  *   ENQUIRY_FROM      optional. Defaults to "Doghouse Media website <website@MAILGUN_DOMAIN>".
  *
- * Failure is deliberate and loud. If the settings are missing or Mailgun
- * refuses the message, this returns an error status and the form falls back
- * to opening a pre-filled email, so a lead is never silently lost.
+ * HighLevel: each lead is also pushed to HighLevel as a contact with tags,
+ * a note and (optionally) an opportunity. See src/lib/highlevel.ts for its
+ * settings. Mailgun and HighLevel run side by side; either can be left off.
+ *
+ * Failure is deliberate and loud. If neither channel is configured, or every
+ * configured channel fails, this returns an error status and the form falls
+ * back to opening a pre-filled email, so a lead is never silently lost.
  */
 import type { APIRoute } from 'astro';
+import { pushToHighLevel, type PushResult } from '../../lib/highlevel';
 
 export const prerender = false;
 
@@ -117,13 +123,46 @@ export const POST: APIRoute = async ({ request }) => {
     `Sent from the enquiry form on ${host || 'doghousemedia.ie'}. Reply to this email to answer ${name} directly.`
   );
 
+  const text = lines.join('\n');
+  const tag = isAudit ? 'audit-request' : 'website-enquiry';
+
+  const [mail, crm] = await Promise.all([
+    sendMail({ host, subject, text, name, email, tag }),
+    pushToHighLevel({
+      name,
+      email,
+      organisation,
+      interest,
+      isAudit,
+      subject,
+      note: text,
+      website: isAudit ? clean(body.site, 300) : undefined,
+    }),
+  ]);
+
+  if (mail === 'off' && crm === 'off') {
+    console.error('[enquiry] Neither Mailgun nor HighLevel is configured');
+    return json(503, { ok: false, error: 'not_configured' });
+  }
+  // One working channel is enough. If both are set up and both fail, the
+  // form falls back to a pre-filled email.
+  if (mail !== 'sent' && crm !== 'sent') return json(502, { ok: false, error: 'send_failed' });
+
+  return json(200, { ok: true });
+};
+
+async function sendMail(opts: {
+  host: string | null;
+  subject: string;
+  text: string;
+  name: string;
+  email: string;
+  tag: string;
+}): Promise<PushResult> {
   const env = process.env;
   const apiKey = env.MAILGUN_API_KEY;
   const domain = env.MAILGUN_DOMAIN;
-  if (!apiKey || !domain) {
-    console.error('[enquiry] MAILGUN_API_KEY or MAILGUN_DOMAIN is not set');
-    return json(503, { ok: false, error: 'not_configured' });
-  }
+  if (!apiKey || !domain) return 'off';
 
   const base = (env.MAILGUN_REGION || '').toLowerCase() === 'eu'
     ? 'https://api.eu.mailgun.net'
@@ -134,10 +173,10 @@ export const POST: APIRoute = async ({ request }) => {
   const form = new URLSearchParams();
   form.set('from', from);
   form.set('to', to);
-  form.set('subject', subject.slice(0, 200));
-  form.set('text', lines.join('\n'));
-  form.set('h:Reply-To', `${name.replace(/["<>]/g, '')} <${email}>`);
-  form.set('o:tag', isAudit ? 'audit-request' : 'website-enquiry');
+  form.set('subject', opts.subject.slice(0, 200));
+  form.set('text', opts.text);
+  form.set('h:Reply-To', `${opts.name.replace(/["<>]/g, '')} <${opts.email}>`);
+  form.set('o:tag', opts.tag);
 
   try {
     const res = await fetch(`${base}/v3/${encodeURIComponent(domain)}/messages`, {
@@ -148,12 +187,11 @@ export const POST: APIRoute = async ({ request }) => {
     });
     if (!res.ok) {
       console.error('[enquiry] Mailgun refused the message', res.status, (await res.text()).slice(0, 500));
-      return json(502, { ok: false, error: 'send_failed' });
+      return 'failed';
     }
+    return 'sent';
   } catch (err) {
     console.error('[enquiry] Could not reach Mailgun', err);
-    return json(502, { ok: false, error: 'send_failed' });
+    return 'failed';
   }
-
-  return json(200, { ok: true });
-};
+}

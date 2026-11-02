@@ -23,7 +23,7 @@ Planning is at the heart of every project: scope, timelines and risks are agreed
 
 Agencies including Custodian, Real Nation and Dynamic EU have brought the studio in on significant projects, and through them it has worked with clients including An Post, Diageo, Heineken Ireland, Kerry Group, Lego and the National Disability Authority. Directly, it has worked mostly with medical and healthcare, charities and non-profits, and corporate teams, including Boston Scientific, Amgen and the Irish Red Cross. It also builds and manages websites for smaller businesses when the brief is a good fit.
 
-Contact: hello@doghousemedia.ie. Studio: 13 Adelaide Road, Saint Kevin's, Dublin, D02 P950. Enquiries are answered within one working day. If a project is not a fit, they say so and point people somewhere better.
+Contact: hello@doghousemedia.ie. Studio: 13 Adelaide Road, Dublin, D02 P950. Enquiries are answered within one working day. If a project is not a fit, they say so and point people somewhere better.
 
 ## Video production
 
